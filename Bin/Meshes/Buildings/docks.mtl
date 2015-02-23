@@ -1,0 +1,13 @@
+# Wavefront MTL file
+# Creator: Ultimate Unwrap3D Pro v3.27
+# URL: http://www.unwrap3d.com
+# Time: Thu Apr 11 09:30:02 2013
+# num_materials: 1
+
+newmtl _1___Default_Smoothing
+colormap docks1_diff.dds
+has_alpha false
+alpha_func 0.7
+do_bloom false
+
+# num_materials: 1

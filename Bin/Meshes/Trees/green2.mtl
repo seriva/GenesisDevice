@@ -1,0 +1,19 @@
+# 
+# Wavefront material file
+# Converted by the DEEP Exploration  Deep Exploration 5 5.0.3.1555 Release
+# Right Hemisphere, LTD
+# http://www.righthemisphere.com/
+# 
+
+newmtl Material__Material
+colormap barkgC.dds
+has_alpha true
+alpha_func 0.7
+do_bloom false
+
+newmtl Material__Material1
+colormap leafGrC.dds
+has_alpha true
+alpha_func 0.7
+do_bloom false
+

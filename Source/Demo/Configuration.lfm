@@ -1,0 +1,701 @@
+object ConfigurationForm: TConfigurationForm
+  Left = 1191
+  Height = 380
+  Top = 480
+  Width = 398
+  BorderIcons = [biSystemMenu]
+  BorderStyle = bsSingle
+  Caption = 'Genesis Device Configuration'
+  ClientHeight = 380
+  ClientWidth = 398
+  Color = clBtnFace
+  Font.Color = clWindowText
+  Font.Height = -13
+  Font.Name = 'MS Sans Serif'
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  OnShow = FormShow
+  Position = poDefault
+  LCLVersion = '1.2.6.0'
+  object LowButton: TButton
+    Left = 75
+    Height = 26
+    Top = 344
+    Width = 60
+    Caption = 'Low'
+    Font.Color = clWindowText
+    Font.Height = -12
+    Font.Name = 'MS Sans Serif'
+    Font.Style = [fsBold]
+    OnClick = LowButtonClick
+    ParentFont = False
+    TabOrder = 0
+  end
+  object MediumButton: TButton
+    Left = 140
+    Height = 26
+    Top = 344
+    Width = 60
+    Caption = 'Medium'
+    Font.Color = clWindowText
+    Font.Height = -12
+    Font.Name = 'MS Sans Serif'
+    Font.Style = [fsBold]
+    OnClick = MediumButtonClick
+    ParentFont = False
+    TabOrder = 1
+  end
+  object HighlButton: TButton
+    Left = 207
+    Height = 26
+    Top = 344
+    Width = 60
+    Caption = 'High'
+    Font.Color = clWindowText
+    Font.Height = -12
+    Font.Name = 'MS Sans Serif'
+    Font.Style = [fsBold]
+    OnClick = HighlButtonClick
+    ParentFont = False
+    TabOrder = 2
+  end
+  object RunButton: TButton
+    Left = 328
+    Height = 26
+    Top = 344
+    Width = 60
+    Caption = 'Run'
+    Font.Color = clWindowText
+    Font.Height = -12
+    Font.Name = 'MS Sans Serif'
+    Font.Style = [fsBold]
+    OnClick = RunButtonClick
+    ParentFont = False
+    TabOrder = 3
+  end
+  object SafeButton: TButton
+    Left = 8
+    Height = 26
+    Top = 344
+    Width = 60
+    Caption = 'Safe'
+    Font.Color = clWindowText
+    Font.Height = -12
+    Font.Name = 'MS Sans Serif'
+    Font.Style = [fsBold]
+    OnClick = SafeButtonClick
+    ParentFont = False
+    TabOrder = 4
+  end
+  object PageControl: TPageControl
+    Left = -1
+    Height = 337
+    Top = -1
+    Width = 400
+    ActivePage = WindowTabSheet
+    Font.Color = clWindowText
+    Font.Height = -12
+    Font.Name = 'MS Sans Serif'
+    Font.Style = [fsBold]
+    ParentFont = False
+    TabIndex = 0
+    TabOrder = 5
+    object WindowTabSheet: TTabSheet
+      Caption = 'Window'
+      ClientHeight = 308
+      ClientWidth = 392
+      object WindowPanel: TPanel
+        Left = 0
+        Height = 308
+        Top = 0
+        Width = 392
+        Align = alClient
+        BevelOuter = bvNone
+        ClientHeight = 308
+        ClientWidth = 392
+        TabOrder = 0
+        object ResolutionLabel: TLabel
+          Left = 6
+          Height = 16
+          Top = 47
+          Width = 64
+          Caption = 'Resolution'
+          Font.Color = clWindowText
+          Font.Height = -13
+          Font.Name = 'MS Sans Serif'
+          ParentColor = False
+          ParentFont = False
+        end
+        object GammaLabel: TLabel
+          Left = 8
+          Height = 16
+          Top = 145
+          Width = 51
+          Caption = 'Gamma:'
+          Font.Color = clWindowText
+          Font.Height = -13
+          Font.Name = 'MS Sans Serif'
+          ParentColor = False
+          ParentFont = False
+        end
+        object ResolutionsComboBox: TComboBox
+          Left = 134
+          Height = 24
+          Top = 43
+          Width = 245
+          ItemHeight = 16
+          ParentShowHint = False
+          ShowHint = True
+          Style = csDropDownList
+          TabOrder = 0
+        end
+        object FullScreenCheckBox: TCheckBox
+          Left = 6
+          Height = 23
+          Top = 80
+          Width = 146
+          Caption = 'Fullscreen                    '
+          Font.Color = clWindowText
+          Font.Height = -13
+          Font.Name = 'MS Sans Serif'
+          ParentFont = False
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 1
+        end
+        object VerticalSyncCheckBox: TCheckBox
+          Left = 6
+          Height = 23
+          Top = 112
+          Width = 102
+          Caption = 'Vertical Sync'
+          Font.Color = clWindowText
+          Font.Height = -13
+          Font.Name = 'MS Sans Serif'
+          ParentFont = False
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 2
+        end
+        object GammaTrackBar: TTrackBar
+          Left = 127
+          Height = 27
+          Top = 142
+          Width = 258
+          Max = 110
+          Min = 10
+          PageSize = 1
+          Position = 55
+          TickStyle = tsNone
+          TabOrder = 3
+        end
+        object MonitorLabel: TLabel
+          Left = 8
+          Height = 16
+          Top = 12
+          Width = 44
+          Caption = 'Monitor'
+          Font.Color = clWindowText
+          Font.Height = -13
+          Font.Name = 'MS Sans Serif'
+          ParentColor = False
+          ParentFont = False
+        end
+        object MonitorComboBox: TComboBox
+          Left = 134
+          Height = 24
+          Top = 8
+          Width = 245
+          ItemHeight = 16
+          OnChange = MonitorComboBoxChange
+          ParentShowHint = False
+          ShowHint = True
+          Style = csDropDownList
+          TabOrder = 4
+        end
+      end
+    end
+    object RenderingTabSheet: TTabSheet
+      Caption = 'Rendering'
+      ClientHeight = 308
+      ClientWidth = 392
+      ImageIndex = 1
+      object RenderingPanel: TPanel
+        Left = 0
+        Height = 308
+        Top = 0
+        Width = 392
+        Align = alClient
+        BevelOuter = bvNone
+        ClientHeight = 308
+        ClientWidth = 392
+        TabOrder = 0
+        object WaterDetailLabel: TLabel
+          Left = 8
+          Height = 16
+          Top = 213
+          Width = 74
+          Caption = 'Water Detail'
+          Font.Color = clWindowText
+          Font.Height = -13
+          Font.Name = 'MS Sans Serif'
+          ParentColor = False
+          ParentFont = False
+        end
+        object ViewDistanceLabel: TLabel
+          Left = 8
+          Height = 16
+          Top = 12
+          Width = 85
+          Caption = 'View Distance'
+          Font.Color = clWindowText
+          Font.Height = -13
+          Font.Name = 'MS Sans Serif'
+          ParentColor = False
+          ParentFont = False
+        end
+        object GrassDistanceLabel: TLabel
+          Left = 8
+          Height = 16
+          Top = 42
+          Width = 92
+          Caption = 'Grass Distance'
+          Font.Color = clWindowText
+          Font.Height = -13
+          Font.Name = 'MS Sans Serif'
+          ParentColor = False
+          ParentFont = False
+        end
+        object GrassDensityLabel: TLabel
+          Left = 8
+          Height = 16
+          Top = 74
+          Width = 84
+          Caption = 'Grass Density'
+          Font.Color = clWindowText
+          Font.Height = -13
+          Font.Name = 'MS Sans Serif'
+          ParentColor = False
+          ParentFont = False
+        end
+        object TextureDetailLabel: TLabel
+          Left = 8
+          Height = 16
+          Top = 104
+          Width = 83
+          Caption = 'Texture Detail'
+          Font.Color = clWindowText
+          Font.Height = -13
+          Font.Name = 'MS Sans Serif'
+          ParentColor = False
+          ParentFont = False
+        end
+        object TextureFilteringLabel: TLabel
+          Left = 8
+          Height = 16
+          Top = 138
+          Width = 95
+          Caption = 'Texture Filtering'
+          Font.Color = clWindowText
+          Font.Height = -13
+          Font.Name = 'MS Sans Serif'
+          ParentColor = False
+          ParentFont = False
+        end
+        object WaterReflectionLabel: TLabel
+          Left = 8
+          Height = 16
+          Top = 176
+          Width = 99
+          Caption = 'Water Reflection'
+          Font.Color = clWindowText
+          Font.Height = -13
+          Font.Name = 'MS Sans Serif'
+          ParentColor = False
+          ParentFont = False
+        end
+        object ViewDistanceTrackBar: TTrackBar
+          Left = 126
+          Height = 26
+          Top = 8
+          Width = 265
+          Max = 9
+          Min = 5
+          Position = 5
+          TickStyle = tsNone
+          TabOrder = 0
+        end
+        object GrassDistanceTrackBar: TTrackBar
+          Left = 126
+          Height = 26
+          Top = 38
+          Width = 265
+          Max = 5
+          Min = 1
+          Position = 1
+          TickStyle = tsNone
+          TabOrder = 1
+        end
+        object GrassDensityTrackBar: TTrackBar
+          Left = 126
+          Height = 26
+          Top = 70
+          Width = 265
+          Max = 20
+          Min = 10
+          Position = 10
+          TickStyle = tsNone
+          TabOrder = 2
+        end
+        object TextureDetailComboBox: TComboBox
+          Left = 136
+          Height = 24
+          Top = 102
+          Width = 247
+          Font.Color = clWindowText
+          Font.Height = -12
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ItemHeight = 16
+          ParentFont = False
+          ParentShowHint = False
+          ShowHint = True
+          Style = csDropDownList
+          TabOrder = 3
+        end
+        object TextureFilterComboBox: TComboBox
+          Left = 135
+          Height = 24
+          Top = 137
+          Width = 248
+          Font.Color = clWindowText
+          Font.Height = -12
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ItemHeight = 16
+          Items.Strings = (
+            ''
+          )
+          ParentFont = False
+          ParentShowHint = False
+          ShowHint = True
+          Style = csDropDownList
+          TabOrder = 4
+        end
+        object WaterReflectionComboBox: TComboBox
+          Left = 136
+          Height = 24
+          Top = 174
+          Width = 247
+          Font.Color = clWindowText
+          Font.Height = -12
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ItemHeight = 16
+          Items.Strings = (
+            ''
+          )
+          ParentFont = False
+          Style = csDropDownList
+          TabOrder = 5
+        end
+        object WaterDetailComboBox: TComboBox
+          Left = 135
+          Height = 24
+          Top = 209
+          Width = 248
+          Font.Color = clWindowText
+          Font.Height = -12
+          Font.Name = 'MS Sans Serif'
+          Font.Style = [fsBold]
+          ItemHeight = 16
+          Items.Strings = (
+            ''
+          )
+          ParentFont = False
+          Style = csDropDownList
+          TabOrder = 6
+        end
+        object BloomCheckBox: TCheckBox
+          Left = 8
+          Height = 23
+          Top = 280
+          Width = 63
+          Caption = 'Bloom'
+          Font.Color = clWindowText
+          Font.Height = -13
+          Font.Name = 'MS Sans Serif'
+          ParentFont = False
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 7
+        end
+        object FXAACheckBox: TCheckBox
+          Left = 8
+          Height = 23
+          Top = 248
+          Width = 58
+          Caption = 'FXAA'
+          Font.Color = clWindowText
+          Font.Height = -13
+          Font.Name = 'MS Sans Serif'
+          ParentFont = False
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 8
+        end
+      end
+    end
+    object InputTabSheet: TTabSheet
+      Caption = 'Input'
+      ClientHeight = 308
+      ClientWidth = 392
+      ImageIndex = 2
+      object InputPanel: TPanel
+        Left = 0
+        Height = 308
+        Top = 0
+        Width = 392
+        Align = alClient
+        BevelOuter = bvNone
+        ClientHeight = 308
+        ClientWidth = 392
+        TabOrder = 0
+        object MouseSensitivityLabel: TLabel
+          Left = 5
+          Height = 16
+          Top = 10
+          Width = 104
+          Caption = 'Mouse Sensitivity'
+          Font.Color = clWindowText
+          Font.Height = -13
+          Font.Name = 'MS Sans Serif'
+          ParentColor = False
+          ParentFont = False
+        end
+        object MouseSensitivityTrackBar: TTrackBar
+          Left = 126
+          Height = 26
+          Top = 6
+          Width = 257
+          Max = 9
+          Position = 5
+          TickStyle = tsNone
+          TabOrder = 0
+        end
+        object InvertMouseCheckBox: TCheckBox
+          Left = 5
+          Height = 23
+          Top = 42
+          Width = 136
+          Caption = 'Invert Mouse            '
+          Font.Color = clWindowText
+          Font.Height = -13
+          Font.Name = 'MS Sans Serif'
+          ParentFont = False
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 1
+        end
+        object KeyBindingsPanel: TPanel
+          Left = 5
+          Height = 172
+          Top = 65
+          Width = 378
+          BevelOuter = bvNone
+          BorderStyle = bsSingle
+          ClientHeight = 168
+          ClientWidth = 374
+          TabOrder = 2
+          object KeybindingsLabel: TLabel
+            Left = 0
+            Height = 16
+            Top = 0
+            Width = 374
+            Align = alTop
+            Alignment = taCenter
+            AutoSize = False
+            Caption = 'Keybindings'
+            Font.Color = clWindowText
+            Font.Height = -13
+            Font.Name = 'MS Sans Serif'
+            Font.Style = [fsBold]
+            Layout = tlCenter
+            ParentColor = False
+            ParentFont = False
+          end
+          object ControlValueListEditor: TValueListEditor
+            Left = 0
+            Height = 153
+            Top = 16
+            Width = 379
+            FixedCols = 0
+            RowCount = 1
+            TabOrder = 0
+            TabStop = False
+            TitleFont.Color = clWindowText
+            TitleFont.Height = -12
+            TitleFont.Name = 'MS Sans Serif'
+            TitleFont.Style = [fsBold]
+            OnKeyDown = ControlValueListEditorKeyDown
+            OnKeyUp = ControlValueListEditorKeyUp
+            OnSelectCell = ControlValueListEditorSelectCell
+            DisplayOptions = [doAutoColResize, doKeyColFixed]
+            Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goDrawFocusSelected]
+            Strings.Strings = (
+              ''
+            )
+            TitleCaptions.Strings = (
+              'Action'
+              'Control'
+            )
+            ColWidths = (
+              185
+              169
+            )
+          end
+        end
+      end
+    end
+    object SoundTabSheet: TTabSheet
+      Caption = 'Sound'
+      ClientHeight = 308
+      ClientWidth = 392
+      ImageIndex = 3
+      object SoundPanel: TPanel
+        Left = 0
+        Height = 308
+        Top = 0
+        Width = 392
+        Align = alClient
+        BevelOuter = bvNone
+        ClientHeight = 308
+        ClientWidth = 392
+        TabOrder = 0
+        object SoundDriverLabel: TLabel
+          Left = 6
+          Height = 16
+          Top = 9
+          Width = 78
+          Caption = 'Sound Driver'
+          Font.Color = clWindowText
+          Font.Height = -13
+          Font.Name = 'MS Sans Serif'
+          ParentColor = False
+          ParentFont = False
+        end
+        object MusicVolumeLabel: TLabel
+          Left = 6
+          Height = 16
+          Top = 73
+          Width = 84
+          Caption = 'Music Volume'
+          Font.Color = clWindowText
+          Font.Height = -13
+          Font.Name = 'MS Sans Serif'
+          ParentColor = False
+          ParentFont = False
+        end
+        object SoundVolumeLabel: TLabel
+          Left = 6
+          Height = 16
+          Top = 104
+          Width = 88
+          Caption = 'Sound Volume'
+          Font.Color = clWindowText
+          Font.Height = -13
+          Font.Name = 'MS Sans Serif'
+          ParentColor = False
+          ParentFont = False
+        end
+        object SoundDriverComboBox: TComboBox
+          Left = 134
+          Height = 24
+          Top = 5
+          Width = 245
+          ItemHeight = 16
+          ParentShowHint = False
+          ShowHint = True
+          Style = csDropDownList
+          TabOrder = 0
+        end
+        object MuteSoundCheckBox: TCheckBox
+          Left = 6
+          Height = 23
+          Top = 42
+          Width = 155
+          Caption = 'Mute Sound                    '
+          Font.Color = clWindowText
+          Font.Height = -13
+          Font.Name = 'MS Sans Serif'
+          ParentFont = False
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 1
+        end
+        object MusicVolumeTrackBar: TTrackBar
+          Left = 126
+          Height = 26
+          Top = 70
+          Width = 257
+          Max = 100
+          PageSize = 1
+          Position = 50
+          TickStyle = tsNone
+          TabOrder = 2
+        end
+        object SoundVolumeTrackBar: TTrackBar
+          Left = 126
+          Height = 26
+          Top = 102
+          Width = 257
+          Max = 100
+          PageSize = 1
+          Position = 50
+          TickStyle = tsNone
+          TabOrder = 3
+        end
+      end
+    end
+    object DemoTabSheet: TTabSheet
+      Caption = 'Demo'
+      ClientHeight = 308
+      ClientWidth = 392
+      ImageIndex = 4
+      object DemoPanel: TPanel
+        Left = 0
+        Height = 308
+        Top = 0
+        Width = 392
+        Align = alClient
+        BevelOuter = bvNone
+        ClientHeight = 308
+        ClientWidth = 392
+        TabOrder = 0
+        object MapLabel: TLabel
+          Left = 6
+          Height = 16
+          Top = 9
+          Width = 86
+          Caption = 'Map Selection'
+          Font.Color = clWindowText
+          Font.Height = -13
+          Font.Name = 'MS Sans Serif'
+          ParentColor = False
+          ParentFont = False
+        end
+        object MapComboBox: TComboBox
+          Left = 134
+          Height = 24
+          Top = 5
+          Width = 245
+          ItemHeight = 16
+          ParentShowHint = False
+          ShowHint = True
+          Style = csDropDownList
+          TabOrder = 0
+        end
+      end
+    end
+  end
+end
