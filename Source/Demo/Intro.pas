@@ -185,7 +185,7 @@ begin
   gdFontsRenderText( FFontId, 430, 485, 0.9, '- F1 to F5 toggle some debug functions');
   gdFontsRenderText( FFontId, 430, 515, 0.9, '- F6 to create a screenshot');
   gdFontsRenderText( FFontId, 430, 455, 0.9, 'Contact information:');
-  gdFontsRenderText( FFontId, 430, 425, 0.9, 'www.disapproval.net');
+  gdFontsRenderText( FFontId, 430, 425, 0.9, 'www.luukvanvenrooij.nl');
   gdFontsRenderText( FFontId, 430, 395, 0.9, 'luukvanvenrooij84@gmail.com');
 
   If CheckInsideButton() then

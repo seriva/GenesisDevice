@@ -65,7 +65,7 @@ const
   TWaterReflection : array[1..2] of String  = ('Terrain Only', 'All');
 
   //engine constants
-  ENGINE_BUILDDATE = '5 January 2015';
+  ENGINE_BUILDDATE = '24 Februari 2015';
   ENGINE_BUILD     = '67';
 
   //renderer constants

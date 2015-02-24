@@ -280,6 +280,7 @@
       <Unit47>
         <Filename Value="..\Libraries\DirectX\DXInput.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="DXInput"/>
       </Unit47>
       <Unit48>
         <Filename Value="..\Libraries\FMod\fmod.inc"/>
