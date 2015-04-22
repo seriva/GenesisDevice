@@ -227,7 +227,7 @@ var
   iFileName : String;
   iError : string;
 begin
-  Log.AddNewLine('Loading water...');
+  Log.Write('Loading water...');
   Log.Use := False;
   try
     result        := true;
@@ -286,15 +286,7 @@ begin
   end;
   Log.Use := True;
 
-  If result then
-  begin
-    Log.AddToLastLine('Succeeded');
-  end
-  else
-  begin
-    Log.AddToLastLine('Failed');
-    Log.AddNewLine('Error Message: ' + iError);
-  end;
+  Log.WriteOkFail(result, iError);
 end;
 
 {******************************************************************************}

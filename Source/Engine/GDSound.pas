@@ -183,7 +183,7 @@ function   TGDSound.InitSoundEngine() : boolean;
 var
   iError    : string;
 begin
-  Log.AddNewLine('Initializing soundengine...');
+  Log.Write('Initializing soundengine...');
   try
     Result := true;
 
@@ -205,13 +205,7 @@ begin
     end;
   end;
 
-  If result then
-    Log.AddToLastLine('Succeeded')
-  else
-  begin
-    Log.AddToLastLine('Failed');
-    Log.AddNewLine('Error Message: ' + iError);
-  end;
+  Log.WriteOkFail(result, iError);
 end;
 
 {******************************************************************************}
@@ -222,7 +216,7 @@ function  TGDSound.ShutDownSoundEngine(): boolean;
 var
   iError    : string;
 begin
-  Log.AddNewLine('Shutting down soundengine...');
+  Log.Write('Shutting down soundengine...');
   try
     result := true;
 
@@ -237,13 +231,7 @@ begin
     end;
   end;
 
-  If result then
-    Log.AddToLastLine('Succeeded')
-  else
-  begin
-    Log.AddToLastLine('Failed');
-    Log.AddNewLine('Error Message: ' + iError);
-  end;
+  Log.WriteOkFail(result, iError);
 end;
 
 {******************************************************************************}
@@ -283,7 +271,7 @@ var
   iError : string;
   iMode  : Cardinal;
 begin
-  Log.AddNewLine('Loading sound from file ' + aFileName + '...');
+  Log.Write('Loading sound from file ' + aFileName + '...');
   try
     Clear();
     result := true;
@@ -302,15 +290,7 @@ begin
     end;
   end;
 
-  If result then
-  begin
-    Log.AddToLastLine('Succeeded');
-  end
-  else
-  begin
-    Log.AddToLastLine('Failed');
-    Log.AddNewLine('Error Message: ' + iError);
-  end;
+  Log.WriteOkFail(result, iError);
 end;
 
 {******************************************************************************}

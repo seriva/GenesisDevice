@@ -117,7 +117,7 @@ var
 
 begin
   Timer.Start();
-  Log.AddNewLine('......Initializing base recources');
+  Log.Write('......Initializing base recources');
   iPathString := Settings.ApplicationFilePath + FP_INITS + ENGINE_INI;
   iIniFile := TIniFile.Create( iPathString );
 
@@ -164,7 +164,7 @@ begin
   Modes.InitModes();
 
   Timer.Stop();
-  Log.AddNewLine('......Done initializing base resources (' + Timer.TimeInSeconds + ' Sec)');
+  Log.Write('......Done initializing base resources (' + Timer.TimeInSeconds + ' Sec)');
 end;
 
 {******************************************************************************}

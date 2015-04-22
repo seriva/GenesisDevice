@@ -227,7 +227,7 @@ function TGDInput.InitDirectInput(): Boolean;
 var
   iError    : string;
 begin
-  Log.AddNewLine('Initializing direct input...');
+  Log.Write('Initializing direct input...');
   try
     result := true;
     FEnableInput := false;
@@ -241,9 +241,10 @@ begin
     end;
   end;
 
+  Log.WriteOkFail(result, iError);
+
   If result then
   begin
-    Log.AddToLastLine('Succeeded');
     If InitKeyBoard() and InitMouse() then
     begin
       result := true;
@@ -254,11 +255,6 @@ begin
       result := false;
       FUseDXInput := false;
     end;
-  end
-  else
-  begin
-    Log.AddToLastLine('Failed');
-    Log.AddNewLine('Error Message: ' + iError);
   end;
 end;
 
@@ -270,7 +266,7 @@ function TGDInput.ShutDownInput(): Boolean;
 var
   iError    : string;
 begin
-  Log.AddNewLine('Shutting down direct input and registered devices...');
+  Log.Write('Shutting down direct input and registered devices...');
   try
     result := true;
     if Assigned(FDirectInput) then
@@ -295,16 +291,7 @@ begin
     end;
   end;
 
-  If result then
-  begin
-    FUseDXInput := false;
-    Log.AddToLastLine('Succeeded')
-  end
-  else
-  begin
-    Log.AddToLastLine('Failed');
-    Log.AddNewLine('Error Message: ' + iError);
-  end;
+  Log.WriteOkFail(result, iError);
 end;
 
 {******************************************************************************}
@@ -315,7 +302,7 @@ function TGDInput.InitKeyBoard(): Boolean;
 var
   iError    : string;
 begin
-  Log.AddNewLine('Initializing keyboard...');
+  Log.Write('Initializing keyboard...');
   try
     result := true;
 
@@ -342,13 +329,7 @@ begin
     end;
   end;
 
-  If result then
-    Log.AddToLastLine('Succeeded')
-  else
-  begin
-    Log.AddToLastLine('Failed');
-    Log.AddNewLine('Error Message: ' + iError);
-  end;
+  Log.WriteOkFail(result, iError);
 end;
 
 {******************************************************************************}
@@ -488,7 +469,7 @@ var iProp : TDIPropDWord;
 var
   iError    : string;
 begin
-  Log.AddNewLine('Initializing mouse...');
+  Log.Write('Initializing mouse...');
   try
     result := true;
     DIMButSwapped := GetSystemMetrics(SM_SWAPBUTTON) <> 0;
@@ -521,13 +502,7 @@ begin
     end;
   end;
 
-  If result then
-    Log.AddToLastLine('Succeeded')
-  else
-  begin
-    Log.AddToLastLine('Failed');
-    Log.AddNewLine('Error Message: ' + iError);
-  end;
+  Log.WriteOkFail(result, iError);
 end;
 
 {******************************************************************************}

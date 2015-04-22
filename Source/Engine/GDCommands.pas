@@ -51,9 +51,7 @@ type
 
   TGDCommands  = Class
   published
-
     procedure Help( aParams : String );
-    procedure Clear( aParams : String );
     procedure ScreenShot( aParams : String );
 
     procedure RVSync( aParams : String );
@@ -146,7 +144,6 @@ begin
   FHelp.Clear();
   FHelp.Add( '' );
   FHelp.Add( '---Help---' );
-  FHelp.Add( 'Clear : Clear the log' );
   FHelp.Add( 'ScreenShot <filename> : take a screenshot (can be found in the base screenshot directory)' );
   FHelp.Add( 'RVSync 0,1 : Enable or disable vertical sync' );
   FHelp.Add( 'RGamma 0.0 to 3.0 : Set the gamma value' );
@@ -216,7 +213,7 @@ end;
 
 procedure TGDCommands.UnknownCommand();
 begin
-    Log.AddNewLine('Error Message: Unknown command!');
+    Log.Write('Error Message: Unknown command!');
     Console.Row := Console.Row + 1;
 end;
 
@@ -226,7 +223,7 @@ end;
 
 procedure TGDCommands.UnknownParameter();
 begin
-   Log.AddNewLine('Error Message: Unknown parameter!');
+   Log.Write('Error Message: Unknown parameter!');
    Console.Row := Console.Row + 1;
 end;
 
@@ -236,7 +233,7 @@ end;
 
 procedure TGDCommands.ParameterOutOfBound();
 begin
-   Log.AddNewLine('Error Message: Parameter out of bound!');
+   Log.Write('Error Message: Parameter out of bound!');
    Console.Row := Console.Row + 1;
 end;
 
@@ -397,29 +394,13 @@ begin
   Log.Save := false;
   for iI := 0 to FHelp.Count - 1 do
   begin
-    Log.AddNewLine( FHelp[iI]  );
+    Log.Write( FHelp[iI]  );
   end;
   Log.Save := true;
 
   Console.Row :=  Console.Row + FHelp.Count;
 end;
 
-{******************************************************************************}
-{* Clear the log                                                              *}
-{******************************************************************************}
-
-procedure TGDCommands.Clear( aParams : String );
-begin
-  If aParams <> '' then
-  begin
-     UnknownParameter();
-     exit;
-  end;
-  Console.Show := false;
-  Log.ClearLog();
-  Console.Row := -1;
-  Console.Show := true;
-end;
 
 {******************************************************************************}
 {* Create a screenshot                                                        *}

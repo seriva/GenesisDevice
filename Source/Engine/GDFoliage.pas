@@ -326,7 +326,7 @@ var
   iError : String;
 begin
   Clear();
-  Log.AddNewLine('Loading foliage...');
+  Log.Write('Loading foliage...');
   try
     result := true;
 
@@ -373,15 +373,7 @@ begin
     end;
   end;
 
-  If result then
-  begin
-    Log.AddToLastLine('Succeeded');
-  end
-  else
-  begin
-    Log.AddToLastLine('Failed');
-    Log.AddNewLine('Error Message: ' + iError);
-  end;
+  Log.WriteOkFail(result, iError);
 end;
 
 {******************************************************************************}

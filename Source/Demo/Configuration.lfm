@@ -1,5 +1,5 @@
 object ConfigurationForm: TConfigurationForm
-  Left = 1191
+  Left = 2311
   Height = 380
   Top = 480
   Width = 398
@@ -17,48 +17,6 @@ object ConfigurationForm: TConfigurationForm
   OnShow = FormShow
   Position = poDefault
   LCLVersion = '1.2.6.0'
-  object LowButton: TButton
-    Left = 75
-    Height = 26
-    Top = 344
-    Width = 60
-    Caption = 'Low'
-    Font.Color = clWindowText
-    Font.Height = -12
-    Font.Name = 'MS Sans Serif'
-    Font.Style = [fsBold]
-    OnClick = LowButtonClick
-    ParentFont = False
-    TabOrder = 0
-  end
-  object MediumButton: TButton
-    Left = 140
-    Height = 26
-    Top = 344
-    Width = 60
-    Caption = 'Medium'
-    Font.Color = clWindowText
-    Font.Height = -12
-    Font.Name = 'MS Sans Serif'
-    Font.Style = [fsBold]
-    OnClick = MediumButtonClick
-    ParentFont = False
-    TabOrder = 1
-  end
-  object HighlButton: TButton
-    Left = 207
-    Height = 26
-    Top = 344
-    Width = 60
-    Caption = 'High'
-    Font.Color = clWindowText
-    Font.Height = -12
-    Font.Name = 'MS Sans Serif'
-    Font.Style = [fsBold]
-    OnClick = HighlButtonClick
-    ParentFont = False
-    TabOrder = 2
-  end
   object RunButton: TButton
     Left = 328
     Height = 26
@@ -71,21 +29,7 @@ object ConfigurationForm: TConfigurationForm
     Font.Style = [fsBold]
     OnClick = RunButtonClick
     ParentFont = False
-    TabOrder = 3
-  end
-  object SafeButton: TButton
-    Left = 8
-    Height = 26
-    Top = 344
-    Width = 60
-    Caption = 'Safe'
-    Font.Color = clWindowText
-    Font.Height = -12
-    Font.Name = 'MS Sans Serif'
-    Font.Style = [fsBold]
-    OnClick = SafeButtonClick
-    ParentFont = False
-    TabOrder = 4
+    TabOrder = 0
   end
   object PageControl: TPageControl
     Left = -1
@@ -99,7 +43,7 @@ object ConfigurationForm: TConfigurationForm
     Font.Style = [fsBold]
     ParentFont = False
     TabIndex = 0
-    TabOrder = 5
+    TabOrder = 1
     object WindowTabSheet: TTabSheet
       Caption = 'Window'
       ClientHeight = 308

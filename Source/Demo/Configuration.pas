@@ -71,13 +71,9 @@ type
 
   TConfigurationForm = class(TForm)
     FXAACheckBox: TCheckBox;
-    LowButton: TButton;
-    MediumButton: TButton;
-    HighlButton: TButton;
     MonitorLabel: TLabel;
     MonitorComboBox: TComboBox;
     RunButton: TButton;
-    SafeButton: TButton;
     PageControl: TPageControl;
     WindowTabSheet: TTabSheet;
     WindowPanel: TPanel;
@@ -130,10 +126,6 @@ type
     procedure FormShow(Sender: TObject);
     procedure MonitorComboBoxChange(Sender: TObject);
 
-    procedure SafeButtonClick(Sender: TObject);
-    procedure LowButtonClick(Sender: TObject);
-    procedure MediumButtonClick(Sender: TObject);
-    procedure HighlButtonClick(Sender: TObject);
     procedure RunButtonClick(Sender: TObject);
     procedure ControlValueListEditorKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
@@ -486,46 +478,6 @@ begin
 
   //pas the settings to the engine
   gdSettingsSetCurrent(iSettings);
-end;
-
-{******************************************************************************}
-{* Set the engine`s safe settings                                             *}
-{******************************************************************************}
-
-procedure TConfigurationForm.SafeButtonClick(Sender: TObject);
-begin
-  gdSettingsSafe();
-  SettingsToInterface();
-end;
-
-{******************************************************************************}
-{* Set the engine`s low settings                                              *}
-{******************************************************************************}
-
-procedure TConfigurationForm.LowButtonClick(Sender: TObject);
-begin
-  gdSettingsLow();
-  SettingsToInterface();
-end;
-
-{******************************************************************************}
-{* Set the engine`s medium settings                                           *}
-{******************************************************************************}
-
-procedure TConfigurationForm.MediumButtonClick(Sender: TObject);
-begin
-  gdSettingsMedium();
-  SettingsToInterface();
-end;
-
-{******************************************************************************}
-{* Set the engine`s high settings                                             *}
-{******************************************************************************}
-
-procedure TConfigurationForm.HighlButtonClick(Sender: TObject);
-begin
-  gdSettingsHigh();
-  SettingsToInterface();
 end;
 
 {******************************************************************************}

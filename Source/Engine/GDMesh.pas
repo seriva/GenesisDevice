@@ -291,7 +291,7 @@ begin
 end;
 
 begin
-  Log.AddNewLine('Loading mesh ' + aFileName + '...');
+  Log.Write('Loading mesh ' + aFileName + '...');
   try
     result := true;
     If Not(FileExistsUTF8(aFileName) ) then
@@ -374,15 +374,7 @@ begin
   end;
 
   Log.Use:=true;
-  If result then
-  begin
-    Log.AddToLastLine('Succeeded');
-  end
-  else
-  begin
-    Log.AddToLastLine('Failed');
-    Log.AddNewLine('Error Message: ' + iError);
-  end;
+  Log.WriteOkFail(result, iError);
 
   CreateMaterialSegmentLists();
 end;

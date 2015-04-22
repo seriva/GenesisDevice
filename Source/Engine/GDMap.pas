@@ -151,8 +151,8 @@ begin
   iTimer.Start();
   iIniFile := TIniFile.Create(aFileName);
   Clear();
-  Log.AddNewLine('......Loading map');
-  Log.AddNewLine('Loading mapsettings from file ' + aFileName + '...');
+  Log.Write('......Loading map');
+  Log.Write('Loading mapsettings from file ' + aFileName + '...');
   try
     result := true;
 
@@ -259,9 +259,10 @@ begin
     end;
   end;
 
+  Log.WriteOkFail(result, iError);
+
   If result then
   begin
-    Log.AddToLastLine('Succeeded');
 
     //init terrain
     Terrain.InitTerrain(iTerrainInput);
@@ -357,15 +358,10 @@ begin
       iI := iI + 1;
     end;
     GUIManager.LoadingScreen.UpdateBar();
-  end
-  else
-  begin
-    Log.AddToLastLine('Failed');
-    Log.AddNewLine('Error Message: ' + iError);
   end;
   iTimer.Stop();
   FreeAndNil(iIniFile);
-  Log.AddNewLine('......Done loading map (' + iTimer.TimeInSeconds + ' Sec)');
+  Log.Write('......Done loading map (' + iTimer.TimeInSeconds + ' Sec)');
   FreeAndNil(iTimer)
 end;
 

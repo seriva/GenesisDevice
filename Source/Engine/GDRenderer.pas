@@ -177,7 +177,7 @@ var
   iError    : string;
   iPixelFormat : Integer;
 begin
-  Log.AddNewLine('Initializing renderer...');
+  Log.Write('Initializing renderer...');
   try
     Result := true;
 
@@ -276,17 +276,13 @@ begin
     end;
   end;
 
+  Log.WriteOkFail(result, iError);
+
   If result then
   begin
-    Log.AddToLastLine('Succeeded');
     InitShaders();
     Main.InitBaseResources();
     DirectionalLight.Clear();
-  end
-  else
-  begin
-    Log.AddToLastLine('Failed');
-    Log.AddNewLine('Error Message: ' + iError);
   end;
 end;
 
@@ -298,7 +294,7 @@ function TGDRenderer.ShutDownRenderer() : boolean;
 var
   iError    : string;
 begin
-  Log.AddNewLine('Shutting down renderer...');
+  Log.Write('Shutting down renderer...');
   try
     FCanResize := false;
     result := true;
@@ -324,13 +320,7 @@ begin
     end;
   end;
 
-  If result then
-    Log.AddToLastLine('Succeeded')
-  else
-  begin
-    Log.AddToLastLine('Failed');
-    Log.AddNewLine('Error Message: ' + iError);
-  end;
+  Log.WriteOkFail(result, iError);
 end;
 
 {******************************************************************************}
@@ -394,7 +384,7 @@ end;
 procedure TGDRenderer.InitShaders();
 begin
   Timer.Start();
-  Log.AddNewLine('......Initializing shaders');
+  Log.Write('......Initializing shaders');
   FTerrainShader  := TGDGLShader.Create();
   FTerrainShader.InitShaders( SHADER_TERRAIN );
   FSkyShader      := TGDGLShader.Create();
@@ -419,7 +409,7 @@ begin
   FTextureShader.InitShaders( SHADER_TEXTURE );
 
   Timer.Stop();
-  Log.AddNewLine('......Done initializing shaders (' + Timer.TimeInSeconds + ' Sec)');
+  Log.Write('......Done initializing shaders (' + Timer.TimeInSeconds + ' Sec)');
 end;
 
 {******************************************************************************}
@@ -606,7 +596,7 @@ var
   BMPheader     : TBMPheader;
 begin
   Log.Save := false;
-  Log.AddNewLine('Saving screenshot to file ' + aFileName + '...');
+  Log.Write('Saving screenshot to file ' + aFileName + '...');
   try
     result := true;
 
@@ -655,13 +645,7 @@ begin
     end;
   end;
 
-  If result then
-    Log.AddToLastLine('Succeeded')
-  else
-  begin
-    Log.AddToLastLine('Failed');
-    Log.AddNewLine('Error Message: ' + iError);
-  end;
+  Log.WriteOkFail(result, iError);
 
   Log.Save := true;
 end;

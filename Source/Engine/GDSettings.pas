@@ -188,10 +188,6 @@ type
     constructor Create();
     destructor  Destroy(); override;
 
-    procedure SafeSettings();
-    procedure LowSettings();
-    procedure MediumSettings();
-    procedure HighSettings();
     procedure LoadIniFile( aIniFile : String );
     procedure SaveIniFile( aIniFile : String );
     function  GetSettings() : TSettings;
@@ -218,7 +214,22 @@ begin
   FApplicationFilePath := '';
   FApplicationFileName := '';
 
-  SafeSettings();
+  //viewport settings
+  FWidth            := 800;
+  FHeight           := 600;
+  FFullScreen       := false;
+  FVerticalSync     := false;
+
+  //renderer
+  FViewDistance     := 5;
+  FGrassDistance    := 1;
+  FGrassDensity     := 10;
+  FTextureDetail    := TD_LOW;
+  FWaterDetail      := WD_LOW;
+  FWaterReflection  := WR_TERRAIN_ONLY;
+  FTextureFilter    := TF_BILINEAR;
+  FUseBloom         := false;
+  FUseFXAA          := false;
 
   //set right en left
   FTop := 0;
@@ -243,102 +254,6 @@ end;
 destructor  TGDSettings.Destroy();
 begin
   inherited;
-end;
-
-{******************************************************************************}
-{* Set the settings to high                                                   *}
-{******************************************************************************}
-
-procedure TGDSettings.HighSettings();
-begin
-  //viewport settings
-  FWidth            := 800;
-  FHeight           := 600;
-  FFullScreen       := true;
-  FVerticalSync     := true;
-
-  //renderer
-  FViewDistance     := 9;
-  FGrassDistance    := 5;
-  FGrassDensity     := 20;
-  FTextureDetail    := TD_HIGH;
-  FWaterDetail      := WD_HIGH;
-  FWaterReflection  := WR_ALL;
-  FTextureFilter    := TF_AF16;
-  FUseBloom         := true;
-  FUseFXAA          := true;
-end;
-
-{******************************************************************************}
-{* Set the settings to medium                                                 *}
-{******************************************************************************}
-
-procedure TGDSettings.MediumSettings();
-begin
-  //viewport settings
-  FWidth            := 800;
-  FHeight           := 600;
-  FFullScreen       := True;
-  FVerticalSync     := True;
-
-  //renderer
-  FViewDistance     := 7;
-  FGrassDistance    := 3;
-  FGrassDensity     := 15;
-  FTextureDetail    := TD_MEDIUM;
-  FWaterDetail      := WD_MEDIUM;
-  FWaterReflection  := WR_TERRAIN_ONLY;
-  FTextureFilter    := TF_AF8;
-  FUseBloom         := true;
-  FUseFXAA          := true;
-end;
-
-{******************************************************************************}
-{* Set the settings to low                                                    *}
-{******************************************************************************}
-
-procedure TGDSettings.LowSettings();
-begin
-  //viewport settings
-  FWidth            := 800;
-  FHeight           := 600;
-  FFullScreen       := true;
-  FVerticalSync     := true;
-
-  //renderer
-  FViewDistance     := 5;
-  FGrassDistance    := 1;
-  FGrassDensity     := 10;
-  FTextureDetail    := TD_LOW;
-  FWaterDetail      := WD_LOW;
-  FWaterReflection  := WR_TERRAIN_ONLY;
-  FTextureFilter    := TF_TRILINEAR;
-  FUseBloom         := false;
-  FUseFXAA          := false;
-end;
-
-{******************************************************************************}
-{* Set the settings to safe                                                   *}
-{******************************************************************************}
-
-procedure TGDSettings.SafeSettings();
-begin
-  //viewport settings
-  FWidth            := 800;
-  FHeight           := 600;
-  FFullScreen       := false;
-  FVerticalSync     := false;
-
-  //renderer
-  FViewDistance     := 5;
-  FGrassDistance    := 1;
-  FGrassDensity     := 10;
-  FTextureDetail    := TD_LOW;
-  FWaterDetail      := WD_LOW;
-  FWaterReflection  := WR_TERRAIN_ONLY;
-  FTextureFilter    := TF_BILINEAR;
-  FUseBloom         := false;
-  FUseFXAA          := false;
 end;
 
 {******************************************************************************}
@@ -727,19 +642,19 @@ begin
 end;
 
 begin
-  Log.AddNewLine('---OpenGL Detection---');
+  Log.Write('---OpenGL Detection---');
   Try
     result := true;
     if not(glCreateWnd()) then
       Raise Exception.Create('Failed to create test window!');
 
     Log.Save := False;;
-    Log.AddNewLine('GL_VENDOR: ' + glGetString(GL_VENDOR));
-    Log.AddNewLine('GL_RENDERER: ' + glGetString(GL_RENDERER));
-    Log.AddNewLine('GL_VERSION: ' + glGetString(GL_VERSION));
+    Log.Write('GL_VENDOR: ' + glGetString(GL_VENDOR));
+    Log.Write('GL_RENDERER: ' + glGetString(GL_RENDERER));
+    Log.Write('GL_VERSION: ' + glGetString(GL_VERSION));
 
     iString1 := glGetString(GL_EXTENSIONS);
-    Log.AddNewLine('List of Supported Extensions: ');
+    Log.Write('List of Supported Extensions: ');
     iString2 := '   ';
     For iI := 1 to  length(iString1)-1 do
     begin
@@ -747,20 +662,20 @@ begin
         iString2 := iString2 + iString1[iI]
       else
       begin
-        Log.AddNewLine(iString2);
+        Log.Write(iString2);
         iString2 := '   ';
       end;
     end;
     Log.Save := True;
 
     glGetIntegerv(GL_MAX_TEXTURE_UNITS_ARB, @FMaxTextureUnits);
-    Log.AddNewLine('Number of Texture Units: ' + IntToStr(FMaxTextureUnits) );
+    Log.Write('Number of Texture Units: ' + IntToStr(FMaxTextureUnits) );
 
     glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, @FMaxAnisotropicFilter);
-    Log.AddNewLine('Maximum Anisotropic Filter: ' + FloatToStr(FMaxAnisotropicFilter));
+    Log.Write('Maximum Anisotropic Filter: ' + FloatToStr(FMaxAnisotropicFilter));
 
     glGetFloatv(GL_MAX_TEXTURE_SIZE, @FMaxtextureSize);
-    Log.AddNewLine('Maximum Texture Size : ' + FloatToStr(FMaxtextureSize));
+    Log.Write('Maximum Texture Size : ' + FloatToStr(FMaxtextureSize));
 
     If ((Pos('GL_ARB_shader_objects', iString1) <= 0) or
        (Pos('GL_ARB_fragment_program', iString1) <= 0) or
@@ -769,23 +684,23 @@ begin
        (Pos('GL_ARB_vertex_shader', iString1) <= 0)) then
     begin
        FSupportGLSL := false;
-       Log.AddNewLine('OpenGL Shading Language: not supported');
+       Log.Write('OpenGL Shading Language: not supported');
     end
     else
     begin
        FSupportGLSL := true;
-       Log.AddNewLine('OpenGL Shading Language: supported');
+       Log.Write('OpenGL Shading Language: supported');
     end;
 
     if Pos('GL_EXT_framebuffer_object', iString1) <= 0 then
     begin
        FSupportFBO := false;
-       Log.AddNewLine('Frame Buffer Objects: not supported');
+       Log.Write('Frame Buffer Objects: not supported');
     end
     else
     begin
        FSupportFBO := true;
-       Log.AddNewLine('Frame Buffer Objects: supported');
+       Log.Write('Frame Buffer Objects: supported');
     end;
        
     glKillWnd();
@@ -799,11 +714,11 @@ begin
 
   If not(result) then
   begin
-    Log.AddNewLine('Failed to complete OpenGL detection');
-    Log.AddNewLine('Error Message: ' + iError);
+    Log.Write('Failed to complete OpenGL detection');
+    Log.Write('Error Message: ' + iError);
   end;
-  Log.AddNewLine('----------------------');
-  Log.AddNewLine('');
+  Log.Write('----------------------');
+  Log.Write('');
 end;
 
 {******************************************************************************}
@@ -814,15 +729,15 @@ function TGDSettings.CheckFileSystem(): boolean;
 
 function CheckDir(aPath : String) : bool;
 begin
-  Log.AddNewLine('Checking ' + aPath + '...');
+  Log.Write('Checking ' + aPath + '...');
   if not DirectoryExistsUTF8(aPath) then
   begin
-    Log.AddToLastLine('Failed');
+    Log.Write('Failed', false);
     result := false;
     exit
   end
   else
-    Log.AddToLastLine('Succeeded');
+    Log.Write('Ok', false);
 end;
 
 begin
@@ -877,31 +792,28 @@ end;
 
 Function  TGDSettings.CheckCapabilities() : boolean;
 begin
-  Log.AddNewLine('Checking capabilities...');
+  Log.Write('Checking capabilities...');
   result := false;
 
   If FMaxTextureUnits < MRS_TEXTURE_UNITS then
   begin
-    Log.AddToLastLine('Failed');
-    Log.AddNewLine('Error Message: Not ennough texture units!');
+    Log.WriteOkFail(result, 'Not ennough texture units!');
     exit;
   end;
 
   if Not(FSupportGLSL) then
   begin
-    Log.AddToLastLine('Failed');
-    Log.AddNewLine('Error Message: Opengl Shading Language not supported!');
+    Log.WriteOkFail(result, 'Opengl Shading Language not supported!');
     exit;
   end;
 
   if Not(FSupportFBO) then
   begin
-    Log.AddToLastLine('Failed');
-    Log.AddNewLine('Error Message: Frame Buffer Objects not supported!');
+    Log.WriteOkFail(result, 'Frame Buffer Objects not supported!');
     exit;
   end;
 
-  Log.AddToLastLine('Succeeded');
+  Log.Write('Ok', false);
   result := true;
 end;
 

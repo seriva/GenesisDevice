@@ -224,7 +224,7 @@ var
 begin
   Clear();
 
-  Log.AddNewLine('Loading terrain...');
+  Log.Write('Loading terrain...');
   Log.Use := false;
   try
     result := true;
@@ -344,15 +344,7 @@ begin
 
   Log.Use := true;
 
-  If result then
-  begin
-    Log.AddToLastLine('Succeeded');
-  end
-  else
-  begin
-    Log.AddToLastLine('Failed');
-    Log.AddNewLine('Error Message: ' + iError);
-  end;
+  Log.WriteOkFail(result, iError);
 end;
 
 {******************************************************************************}

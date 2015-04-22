@@ -379,7 +379,7 @@ Begin
   end;
   FreeAndNil(iPos);
   iTimer.Stop();
-  Log.AddNewLine('......Generated foliage (' + iTimer.TimeInSeconds + ' Sec)');
+  Log.Write('......Generated foliage (' + iTimer.TimeInSeconds + ' Sec)');
   FreeAndNil(iTimer)
 End;
 

@@ -77,7 +77,7 @@ begin
   //initialize the gamerecources
   gdTimerStart();
   gdGUILoadingScreenSetup( 'Loading game...', 3);
-  gdLogAddNewLine('......Initializing game resources');
+  gdLogWrite('......Initializing game resources');
   //intro
   Intro   := TIntro.Create();
   Intro.InitializeIntro('Inits\Intro.ini');
@@ -91,7 +91,7 @@ begin
   Player.InitializePlayer('');
   gdGUILoadingScreenUpdate();
   gdTimerStop();
-  gdLogAddNewLine( PChar('......Done initializing game resources (' + gdTimerGetInSeconds() + ' Sec)') );
+  gdLogWrite( PChar('......Done initializing game resources (' + gdTimerGetInSeconds() + ' Sec)') );
 
   //load the gameworld
   gdMapLoad( PChar( 'Maps\' + ConfigurationForm.Map + '\map.ini') );

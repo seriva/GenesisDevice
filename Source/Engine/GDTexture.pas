@@ -293,7 +293,7 @@ begin
 end;
 
 begin
-  Log.AddNewLine('Loading texture from file ' + aFileName + '...');
+  Log.Write('Loading texture from file ' + aFileName + '...');
   try
     Clear();
     Result := True;
@@ -336,15 +336,7 @@ begin
     end;
   end;
 
-  If result then
-  begin
-    Log.AddToLastLine('Succeeded');
-  end
-  else
-  begin
-    Log.AddToLastLine('Failed');
-    Log.AddNewLine('Error Message: ' + iError);
-  end;
+  Log.WriteOkFail(result, iError);
 end;
 
 end.

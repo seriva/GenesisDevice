@@ -244,7 +244,7 @@ var
   iBool : Bool;
 begin
   If Not(FShow) then Exit;
-  Log.AddNewLine(FInputString);
+  Log.Write(FInputString);
 
   iBool := false;
   For iI := 0 to FInputStringList.Count-1 do

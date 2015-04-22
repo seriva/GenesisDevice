@@ -241,45 +241,39 @@ end;
 
 procedure TGDGLShader.InitShaders(aPath : string);
 var
-  iVert, ifrag : String;
+  iVert, ifrag, iError : String;
 begin
-  Log.AddNewLine('Loading shader ' + ExtractFileName(aPath) + '...');
+  Log.Write('Loading shader ' + ExtractFileName(aPath) + '...');
   FLoadedOk := True;
 
-  iVert := aPath + SHADER_VERT_EXT;
-  ifrag := aPath + SHADER_FRAG_EXT;
+  try
+    iVert := aPath + SHADER_VERT_EXT;
+    ifrag := aPath + SHADER_FRAG_EXT;
+    Clear();
+    FVertexShader := glCreateShaderObjectARB(GL_VERTEX_SHADER_ARB);
+    FFragmentShader := glCreateShaderObjectARB(GL_FRAGMENT_SHADER_ARB);
 
-  Clear();
-  FVertexShader := glCreateShaderObjectARB(GL_VERTEX_SHADER_ARB);
-	FFragmentShader := glCreateShaderObjectARB(GL_FRAGMENT_SHADER_ARB);
+    If FileExistsUTF8(iVert ) and FileExistsUTF8(ifrag ) then
+    begin
+      FVertexShader := LoadShaderFromFile(iVert, GL_VERTEX_SHADER_ARB);
+      FFragmentShader := LoadShaderFromFile(ifrag, GL_FRAGMENT_SHADER_ARB);
+    end
+    else
+      raise Exception.Create('Shader files not present');
 
-  If FileExistsUTF8(iVert ) { *Converted from FileExists* } and FileExistsUTF8(ifrag ) { *Converted from FileExists* } then
-  begin
-    FVertexShader := LoadShaderFromFile(iVert, GL_VERTEX_SHADER_ARB);
-    FFragmentShader := LoadShaderFromFile(ifrag, GL_FRAGMENT_SHADER_ARB);
-  end
-  else
-  begin
-    FLoadedOk := False;
-    Log.AddToLastLine('Failed');
-    Log.AddNewLine('Error Message: Shader files not present' );
-    exit;
-  end;
-
-  If FLoadedOk then
-  begin
     FProgramObject := glCreateProgramObjectARB();
-   	glAttachObjectARB(FProgramObject,FVertexShader);
-   	glAttachObjectARB(FProgramObject,FFragmentShader);
-
-   	glLinkProgramARB(FProgramObject);
-    Log.AddToLastLine('Succeeded');
-  end
-  else
-  begin
-    Log.AddToLastLine('Failed');
-    Log.AddNewLine('Error Message: ' + FMessage  );
+    glAttachObjectARB(FProgramObject,FVertexShader);
+    glAttachObjectARB(FProgramObject,FFragmentShader);
+    glLinkProgramARB(FProgramObject);
+  except
+    on E: Exception do
+    begin
+      iError := E.Message;
+      FLoadedOk := False;
+    end;
   end;
+
+  Log.WriteOkFail(FLoadedOk, iError);
 end;
 
 {******************************************************************************}
@@ -462,23 +456,23 @@ begin
     GL_FRAMEBUFFER_COMPLETE_EXT:
       Exit;
     GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT_EXT:
-      Log.AddNewLine('Error messages: FBO : Incomplete attachment');
+      Log.Write('Error messages: FBO : Incomplete attachment');
     GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT_EXT:
-      Log.AddNewLine('Error messages: FBO : Incomplete attachment');
+      Log.Write('Error messages: FBO : Incomplete attachment');
     GL_FRAMEBUFFER_INCOMPLETE_DUPLICATE_ATTACHMENT_EXT:
-      Log.AddNewLine('Error messages: FBO : Duplicate attachment');
+      Log.Write('Error messages: FBO : Duplicate attachment');
     GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT:
-      Log.AddNewLine('Error messages: FBO : Incomplete dimensions');
+      Log.Write('Error messages: FBO : Incomplete dimensions');
     GL_FRAMEBUFFER_INCOMPLETE_FORMATS_EXT:
-      Log.AddNewLine('Error messages: FBO : Incomplete formats');
+      Log.Write('Error messages: FBO : Incomplete formats');
     GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER_EXT:
-      Log.AddNewLine('Error messages: FBO : Incomplete draw buffer');
+      Log.Write('Error messages: FBO : Incomplete draw buffer');
     GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER_EXT:
-      Log.AddNewLine('Error messages: FBO : Incomplete read buffer');
+      Log.Write('Error messages: FBO : Incomplete read buffer');
     GL_FRAMEBUFFER_UNSUPPORTED_EXT:
-      Log.AddNewLine('Error messages: FBO : Framebuffer unsupported');
+      Log.Write('Error messages: FBO : Framebuffer unsupported');
     else
-      Log.AddNewLine('Error messages: FBO : Framebuffer unsupported');
+      Log.Write('Error messages: FBO : Framebuffer unsupported');
   end;
 end;
 

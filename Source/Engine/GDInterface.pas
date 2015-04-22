@@ -84,20 +84,13 @@ function  gdEngineBuildNumber() : String;
 
 //settings functions
 procedure gdSettingsLoad( aIniFile : String );
-procedure gdSettingsSave( aIniFile : String ); 
-procedure gdSettingsHigh();
-procedure gdSettingsMedium();
-procedure gdSettingsLow();
-procedure gdSettingsSafe();
+procedure gdSettingsSave( aIniFile : String );
 function  gdSettingsGetCurrent() : TSettings; 
 procedure gdSettingsSetCurrent(aSettings : TSettings); 
 function  gdSettingsGetMaximum() : TMaximumSettings; 
 
 //log functions
-procedure gdLogAddNewLine(aText : String); 
-procedure gdLogAddToLastLine(aText : String); 
-procedure gdLogSave(); 
-procedure gdLogClear(); 
+procedure gdLogWrite(aText : String; aNewLine : boolean = true);
 
 //timing functions
 procedure gdTimerStart(); 
@@ -948,46 +941,6 @@ begin
 end;
 
 {******************************************************************************}
-{* Set settings to high                                                       *}
-{******************************************************************************}
-
-procedure gdSettingsHigh();
-begin
-  If Not(FEngineInitialized) then exit;
-  Settings.HighSettings();
-end;
-
-{******************************************************************************}
-{* Set settings to medium                                                     *}
-{******************************************************************************}
-
-procedure gdSettingsMedium();
-begin
-  If Not(FEngineInitialized) then exit;
-  Settings.MediumSettings();
-end;
-
-{******************************************************************************}
-{* Set settings to low                                                        *}
-{******************************************************************************}
-
-procedure gdSettingsLow();
-begin
-  If Not(FEngineInitialized) then exit;
-  Settings.LowSettings();
-end;
-
-{******************************************************************************}
-{* Set settings to safe                                                       *}
-{******************************************************************************}
-
-procedure gdSettingsSafe();
-begin
-  If Not(FEngineInitialized) then exit;
-  Settings.SafeSettings();
-end;
-
-{******************************************************************************}
 {* Retrieve the current settings                                              *}
 {******************************************************************************}
 
@@ -1021,42 +974,11 @@ end;
 {* Add a text to the log                                                      *}
 {******************************************************************************}
 
-procedure gdLogAddNewLine(aText : String); 
+procedure gdLogWrite(aText : String; aNewLine : boolean = true);
 begin
   If Not(FEngineInitialized) then exit;
   If aText = '' then exit;
-  Log.AddNewLine(String(aText));
-end;
-
-{******************************************************************************}
-{* Add a text to the last line of the log                                     *}
-{******************************************************************************}
-
-procedure gdLogAddToLastLine(aText : String); 
-begin
-  If Not(FEngineInitialized) then exit;
-  If aText = '' then exit;
-  Log.AddToLastLine(String(aText));
-end;
-
-{******************************************************************************}
-{* Save the log                                                               *}
-{******************************************************************************}
-
-procedure gdLogSave(); 
-begin
-  If Not(FEngineInitialized) then exit;
-  Log.SaveLog();
-end;
-
-{******************************************************************************}
-{* Clear the log                                                              *}
-{******************************************************************************}
-
-procedure gdLogClear(); 
-begin
-  If Not(FEngineInitialized) then exit;
-  Log.ClearLog();
+  Log.Write(aText, aNewLine);
 end;
 
 {******************************************************************************}

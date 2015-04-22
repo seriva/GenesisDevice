@@ -57,10 +57,8 @@ type
     constructor Create(aFileName : String);
     destructor  Destroy(); override;
 
-    procedure AddNewLine(aString : String);
-    procedure AddToLastLine(aString : String);
-    procedure ClearLog();
-    procedure SaveLog();
+    procedure Write(aString : String; aNewLine : boolean = true);
+    procedure WriteOkFail(aResult : boolean; aError : String);
   end;
 
 var
@@ -73,29 +71,16 @@ implementation
 {******************************************************************************}
 
 constructor TGDLog.Create(aFileName : String);
-var
-  iDateTime : TDateTime;
-  iString : String;
 begin
   FText := TStringList.Create();
-  FUse := true;
+  FUse  := true;
   FSave := true;
-
   FFileName := aFileName;
 
-  iString := 'Log started at ';
-  iDateTime := Date();
-  iString := iString + DateToStr(iDateTime) + ', ';
-  iDateTime := Time();
-  iString := iString + TimeToStr(iDateTime);
-  AddNewLine(iString);
-  AddNewLine('');
-
-  AddNewLine('---Engine Information---');
-  AddNewLine('Build: ' + ENGINE_BUILD);
-  AddNewLine('Build Date: ' + ENGINE_BUILDDATE);
-  AddNewLine('------------------------');
-  AddNewLine('');
+  Write('Log started at ' + DateToStr(Date()) + ', ' + TimeToStr(Time()));
+  Write('');
+  Write('Engine Build: ' + ENGINE_BUILD + ', ' + 'Build Date: ' + ENGINE_BUILDDATE);
+  Write('');
 end;
 
 {******************************************************************************}
@@ -103,61 +88,41 @@ end;
 {******************************************************************************}
 
 destructor  TGDLog.Destroy();
-var
-  iDateTime : TDateTime;
-  iString : String;
 begin
   inherited;
-  AddNewLine('');
-  iString := 'Log ended at ';
-  iDateTime := Date();
-  iString := iString + DateToStr(iDateTime) + ', ';
-  iDateTime := Time();
-  iString := iString + TimeToStr(iDateTime);
-  AddNewLine(iString);
-  SaveLog();
+  Write('Log ended at ' + DateToStr(Date()) + ', ' + TimeToStr(Time()));
   FreeAndNil(FText);
 end;
 
 {******************************************************************************}
-{* Add a new line to the log                                                  *}
+{* Write to the log                                                           *}
 {******************************************************************************}
 
-procedure TGDLog.AddNewLine(aString : String);
+procedure TGDLog.Write(aString : String; aNewLine : boolean = true);
 begin
   If FUse = False then exit;
-  FText.Add(aString);
-  SaveLog();
-end;
-
-{******************************************************************************}
-{* Add behind the last log line                                               *}
-{******************************************************************************}
-
-procedure TGDLog.AddToLastLine(aString : String);
-begin
-  If FUse = False then exit;
-  FText.Strings[FText.Count-1] := FText.Strings[FText.Count-1] + aString;
-  SaveLog();
-end;
-
-{******************************************************************************}
-{* Clear the log                                                              *}
-{******************************************************************************}
-
-procedure TGDLog.ClearLog();
-begin
-  FText.Clear();
-  SaveLog();
-end;
-
-{******************************************************************************}
-{* Save the log to a file                                                     *}
-{******************************************************************************}
-
-procedure TGDLog.SaveLog();
-begin
+  if aNewLine then
+    FText.Add(aString)
+  else
+    FText.Strings[FText.Count-1] := FText.Strings[FText.Count-1] + aString;
   If FSave then FText.SaveToFile(FFileName);
+end;
+
+{******************************************************************************}
+{* Write Ok or fail to the log                                                *}
+{******************************************************************************}
+
+procedure TGDLog.WriteOkFail(aResult : boolean; aError : String);
+begin
+  If aResult then
+  begin
+    Log.Write('Ok', false);
+  end
+  else
+  begin
+    Log.Write('Failed', false);
+    Log.Write('Error Message: ' + aError);
+  end;
 end;
 
 end.
