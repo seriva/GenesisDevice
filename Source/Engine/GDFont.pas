@@ -221,10 +221,12 @@ begin
     glTexCoord2f(u2, v2); glVertex2f( x+width, y);
     glTexCoord2f(u3, v3); glVertex2f( x+width, y+height);
     glTexCoord2f(u4, v4); glVertex2f( x,       y+height);
+  glEnd();
 end;
 
 begin
   FTexture.BindTexture(GL_TEXTURE0);
+  glColor4fv(FColor.ArrayPointer());
   x := Round(aLeft);
   y := Round(aTop);
   for i := 1 to length(aString) do
@@ -233,7 +235,9 @@ begin
     c := Ord(aString[i])-33;
     if(c < 0) or (c >= 95) then continue;
     inleft   := FONT_CHARCOORDS[c][0]   / FONT_TEXHEIGHT;
+    intop    := ((FONT_CHARCOORDS[c][1+2]) / FONT_TEXHEIGHT);
     inright  := FONT_CHARCOORDS[c][2]   / FONT_TEXHEIGHT;
+    inbottom := ((FONT_CHARCOORDS[c][3-2]) / FONT_TEXHEIGHT);
     inwidth  := Round((FONT_CHARCOORDS[c][2] - FONT_CHARCOORDS[c][0]) * aScale);
     inheight := Round((FONT_CHARCOORDS[c][3] - FONT_CHARCOORDS[c][1]) * aScale);
     RenderTexturedQuad(x,y,inwidth,inheight,inleft,intop,inright,intop,inright,inbottom,inleft,inbottom);
