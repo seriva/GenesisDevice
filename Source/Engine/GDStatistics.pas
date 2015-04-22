@@ -163,7 +163,7 @@ begin
 
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   glEnable(GL_BLEND);
-  glColor4f(0.4,0.4,0.4,0.5);
+  glColor4f(0.4,0.4,0.4,0.7);
   glBegin(GL_QUADS);
     glVertex2f(20, 215);
     glVertex2f(20, 25);
@@ -179,20 +179,21 @@ begin
   glEnd;
 
   Renderer.RenderState( RS_TEXTS );
-  SystemFont.Render(25,215,1,'FPS');
-  SystemFont.Render(25,190,1,'TRIS');
-  SystemFont.Render(25,165,1,'VOBJ');
-  SystemFont.Render(25,140,1,'FTIME');
-  SystemFont.Render(25,115,1,'X');
-  SystemFont.Render(25,90,1,'Y');
-  SystemFont.Render(25,65,1,'Z');
-  SystemFont.Render(150,215,1,': ' + IntToStr(FFpsCount));
-  SystemFont.Render(150,190,1,': ' + IntToStr(FTriangleCount));
-  SystemFont.Render(150,165,1,': ' + IntToStr(FOBJCount));
-  SystemFont.Render(150,140,1,': ' + FFrameTimeSlice + ' ms' );;
-  SystemFont.Render(150,115,1,': ' + IntToStr( Round(Camera.Position.X) ));
-  SystemFont.Render(150,90,1,': ' + IntToStr( Round(Camera.Position.Y) ));
-  SystemFont.Render(150,65,1,': ' + IntToStr( Round(Camera.Position.Z) ));
+  Font.Color.White();
+  Font.Render(25,215-32,0.4,'FPS');
+  Font.Render(25,190-32,0.4,'TRIS');
+  Font.Render(25,165-32,0.4,'VOBJ');
+  Font.Render(25,140-32,0.4,'FTIME');
+  Font.Render(25,115-32,0.4,'X');
+  Font.Render(25,90-32,0.4,'Y');
+  Font.Render(25,65-32,0.4,'Z');
+  Font.Render(150,215-32,0.4,': ' + IntToStr(FFpsCount));
+  Font.Render(150,190-32,0.4,': ' + IntToStr(FTriangleCount));
+  Font.Render(150,165-32,0.4,': ' + IntToStr(FOBJCount));
+  Font.Render(150,140-32,0.4,': ' + FFrameTimeSlice + ' ms' );;
+  Font.Render(150,115-32,0.4,': ' + IntToStr( Round(Camera.Position.X) ));
+  Font.Render(150,90-32,0.4,': ' + IntToStr( Round(Camera.Position.Y) ));
+  Font.Render(150,65-32,0.4,': ' + IntToStr( Round(Camera.Position.Z) ));
   glDisable(GL_BLEND);
 end;
 

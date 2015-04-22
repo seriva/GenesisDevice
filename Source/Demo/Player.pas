@@ -129,7 +129,7 @@ end;
 
 procedure TPlayer.MoveForward();
 begin
-  if Not(Intro.FRenderIntroText) and Not(GamePause) then
+  if Not(Intro.FRenderIntroText) then
     gdCameraMove( MovementSpeed );
 end;
 
@@ -139,7 +139,7 @@ end;
 
 procedure TPlayer.MoveBackWard();
 begin
-  if Not(Intro.FRenderIntroText) and Not(GamePause) then
+  if Not(Intro.FRenderIntroText) then
     gdCameraMove( -MovementSpeed );
 end;
 
@@ -149,7 +149,7 @@ end;
 
 procedure TPlayer.MoveLeft();
 begin
-  if Not(Intro.FRenderIntroText) and Not(GamePause) then
+  if Not(Intro.FRenderIntroText) then
     gdCameraStrafe(MovementSpeed);
 end;
 
@@ -159,7 +159,7 @@ end;
 
 procedure TPlayer.MoveRight();
 begin
-  if Not(Intro.FRenderIntroText) and Not(GamePause) then
+  if Not(Intro.FRenderIntroText) then
     gdCameraStrafe(-MovementSpeed);
 end;
 
@@ -236,7 +236,6 @@ begin
   FSinkSpeed     := FSinkMultiplier * gdRenderSystemGetFrameTime() / 1000;
 
   If Not(Clip) then exit;
-  IF GamePause then exit;
 
   if PlayerInWater() then
   begin

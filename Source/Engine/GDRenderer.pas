@@ -369,7 +369,7 @@ begin
                    end;
     RS_WIREFRAME : begin
                      glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-                     glClearColor(0.5, 0.5, 0.5, 1.0);
+                     glClearColor(0.3, 0.3, 0.3, 1.0);
                      FColorShader.Enable();
                    end;
     RS_TEXTS   :   begin
@@ -745,7 +745,7 @@ begin
 
   CopyShader.Enable();
   CopyShader.SetInt('T_SOURCE_IMAGE',0);
-  FVerticalBlurImage.BindTexture( TU_1 );
+  FVerticalBlurImage.BindTexture( GL_TEXTURE0 );
   RenderQuad();
   CopyShader.Disable();
 
@@ -786,8 +786,8 @@ begin
   FFrameBuffer.AttachTexture(FSourceImage2,GL_COLOR_ATTACHMENT0_EXT,GL_TEXTURE_2D);
   FFrameBuffer.Status();
 
-  FSourceImage1.BindTexture( TU_1 );
-  FVerticalBlurImage.BindTexture( TU_2 );
+  FSourceImage1.BindTexture( GL_TEXTURE0 );
+  FVerticalBlurImage.BindTexture( GL_TEXTURE1 );
   RenderQuad();
 
   FFrameBuffer.Unbind();
@@ -814,14 +814,14 @@ begin
   FFrameBuffer.Status();
 
   BlurShader.SetFloat4('V_BLUR_OFFSET',aBlurStrength / Settings.Width, 0, 0, 1);
-  aSourceImage.BindTexture( TU_1 );
+  aSourceImage.BindTexture( GL_TEXTURE0 );
   RenderQuad();
 
   //vertical
   FFrameBuffer.AttachTexture(FVerticalBlurImage,GL_COLOR_ATTACHMENT0_EXT,GL_TEXTURE_2D);
   FFrameBuffer.Status();
   BlurShader.SetFloat4('V_BLUR_OFFSET', 0, aBlurStrength / Settings.Height, 0, 1);
-  FHorizontalBlurImage.BindTexture( TU_1 );
+  FHorizontalBlurImage.BindTexture( GL_TEXTURE0 );
   RenderQuad();;
 
   FFrameBuffer.Unbind();
@@ -852,14 +852,14 @@ begin
 
   if Water.UnderWater then
   begin
-    FSourceImage2.BindTexture( TU_1 );
+    FSourceImage2.BindTexture( GL_TEXTURE0 );
   end
   else
   begin
     If Settings.UseBloom then
-      FSourceImage2.BindTexture( TU_1 )
+      FSourceImage2.BindTexture( GL_TEXTURE0 )
     else
-      FSourceImage1.BindTexture( TU_1 );
+      FSourceImage1.BindTexture( GL_TEXTURE0 );
   end;
 
   RenderQuad();

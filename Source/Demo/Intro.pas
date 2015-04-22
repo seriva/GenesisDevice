@@ -67,9 +67,6 @@ type
 
 implementation
 
-uses
-  Main;
-
 {******************************************************************************}
 {* Create the intro class                                                     *}
 {******************************************************************************}
@@ -101,7 +98,7 @@ begin
   iIniFile := TIniFile.Create( aIniPath );
 
   FRenderIntroText := true;
-  FFontId          := gdFontsLoad( Pchar( iIniFile.ReadString('Intro', 'Font', '')) );
+  //FFontId          := gdFontsLoad( Pchar( iIniFile.ReadString('Intro', 'Font', '')) );
   FPaperTexId      := gdTexturesLoad( PChar( iIniFile.ReadString('Intro', 'Paper', '')) );
   gdInputSystemUseMouseLook(False);
   gdGUIMouseCursorShow(true);
@@ -115,7 +112,7 @@ end;
 
 procedure TIntro.ClearIntro();
 begin
-  gdFontsRemove(FFontId);
+  //gdFontsRemove(FFontId);
   gdTexturesRemove(FPaperTexId);
   FFontId     := nil;
   FPaperTexId := nil;
@@ -156,12 +153,11 @@ begin
   glEnd;
 end;
 
-procedure RenderIntroScreen();
 begin
   if Not(FRenderIntroText) then Exit;
 
   gdRenderSystemSetState(RS_TEXTURE);
-  gdTexturesBind( FPaperTexId, TU_1 );
+  gdTexturesBind( FPaperTexId, GL_TEXTURE0 );
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   glEnable(GL_BLEND);
   glColor4f(1,1,1,1);
@@ -169,43 +165,31 @@ begin
   glDisable(GL_BLEND);
 
   gdRenderSystemSetState(RS_TEXTS);
-  gdFontsSetColor(FFontId,0,0,0,1);
-  gdFontsRenderText( FFontId, 400, 875, 0.9, 'Welcome to the Genesis Device Engine Demo');
-  gdFontsRenderText( FFontId, 400, 845, 0.9, 'This demo shows the following capabilities:');
-  gdFontsRenderText( FFontId, 430, 815, 0.9, '- Terrain');
-  gdFontsRenderText( FFontId, 430, 785, 0.9, '- Sky');
-  gdFontsRenderText( FFontId, 430, 755, 0.9, '- Water with reflections, distortion and waves');
-  gdFontsRenderText( FFontId, 430, 725, 0.9, '- Meshes');
-  gdFontsRenderText( FFontId, 430, 695, 0.9, '- Foliage');
-  gdFontsRenderText( FFontId, 430, 665, 0.9, '- Bloom and post processing effects');
-  gdFontsRenderText( FFontId, 430, 635, 0.9, 'Some tips:');
-  gdFontsRenderText( FFontId, 430, 605, 0.9, '- WASD keys (default) for movement');
-  gdFontsRenderText( FFontId, 430, 575, 0.9, '- Mouse to look arround');
-  gdFontsRenderText( FFontId, 430, 545, 0.9, '- Tilde for console, type help for commands');
-  gdFontsRenderText( FFontId, 430, 485, 0.9, '- F1 to F5 toggle some debug functions');
-  gdFontsRenderText( FFontId, 430, 515, 0.9, '- F6 to create a screenshot');
-  gdFontsRenderText( FFontId, 430, 455, 0.9, 'Contact information:');
-  gdFontsRenderText( FFontId, 430, 425, 0.9, 'www.luukvanvenrooij.nl');
-  gdFontsRenderText( FFontId, 430, 395, 0.9, 'luukvanvenrooij84@gmail.com');
+  gdTextColor(0,0,0);
+  gdTextRender( 400, 845, 0.45, 'Welcome to the Genesis Device Engine Demo');
+  gdTextRender( 400, 815, 0.45, 'This demo shows the following capabilities:');
+  gdTextRender( 430, 785, 0.45, '- Terrain');
+  gdTextRender( 430, 755, 0.45, '- Sky');
+  gdTextRender( 430, 725, 0.45, '- Water with reflections, distortion and waves');
+  gdTextRender( 430, 695, 0.45, '- Meshes');
+  gdTextRender( 430, 665, 0.45, '- Foliage');
+  gdTextRender( 430, 635, 0.45, '- Bloom and post processing effects');
+  gdTextRender( 430, 605, 0.45, 'Some tips:');
+  gdTextRender( 430, 575, 0.45, '- WASD keys (default) for movement');
+  gdTextRender( 430, 545, 0.45, '- Mouse to look arround');
+  gdTextRender( 430, 515, 0.45, '- Tilde for console, type help for commands');
+  gdTextRender( 430, 455, 0.45, '- F1 to F5 toggle some debug functions');
+  gdTextRender( 430, 485, 0.45, '- F6 to create a screenshot');
+  gdTextRender( 430, 425, 0.45, 'Contact information:');
+  gdTextRender( 430, 395, 0.45, 'www.luukvanvenrooij.nl');
+  gdTextRender( 430, 365, 0.45, 'luukvanvenrooij84@gmail.com');
 
-  If CheckInsideButton() then
-    gdFontsSetColor(FFontId,1,1,1,1)
+  if CheckInsideButton() then
+    gdTextColor(1,1,1)
   else
-    gdFontsSetColor(FFontId,0,0,0,1);
-    
-  gdFontsRenderText( FFontId, 1150, 300, 1.25, 'Hide');
-end;
+    gdTextColor(0,0,0);
 
-begin
-  if GamePause then
-  begin
-    gdRenderSystemSetState(RS_TEXTS);
-    gdFontsSetColor(FFontId,1,1,1,1);
-    gdFontsRenderText( FFontId, 710, 645, 2.5, 'Pause');
-    exit;
-  end;
-
-  RenderIntroScreen();
+  gdTextRender( 1150, 250, 0.6, 'Hide');
 end;
 
 {******************************************************************************}

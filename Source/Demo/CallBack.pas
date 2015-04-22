@@ -61,33 +61,6 @@ begin
 end;
 
 {******************************************************************************}
-{* Toggle the gamepause                                                       *}
-{******************************************************************************}
-
-procedure ToggleGamePauseCallback(); stdcall;
-begin
-  GamePause := not(GamePause);
-  if GamePause then
-  begin
-    gdInputSystemUseMouseLook(false);
-    gdGUIMouseCursorShow(false);
-  end
-  else
-  begin
-    If Main.Intro.FRenderIntroText then
-    begin
-      gdGUIMouseCursorShow(true);
-      gdInputSystemUseMouseLook(false);
-    end
-    else
-    begin
-      gdGUIMouseCursorShow(false);
-      gdInputSystemUseMouseLook(true);
-    end;
-  end;
-end;
-
-{******************************************************************************}
 {* Exit thee engine                                                           *}
 {******************************************************************************}
 
@@ -165,21 +138,25 @@ begin
 end;
 
 {******************************************************************************}
+{* Bool to string                                                             *}
+{******************************************************************************}
+
+function BoolToStr(b : boolean): String;
+begin
+  If b then
+    result := '1'
+  else
+    result := '0';
+end;
+
+{******************************************************************************}
 {* Toggle the stats                                                           *}
 {******************************************************************************}
 
 procedure ToggleStats(); stdcall;
 begin
-  If Stats then
-  begin
-     gdCommandExecute('RStats 0');
-     Stats := false;
-  end
-  else
-  begin
-     gdCommandExecute('RStats 1');
-     Stats := true;
-  end;
+  Stats := not(Stats);
+  gdCommandExecute('RStats ' + BoolToStr(Stats));
 end;
 
 {******************************************************************************}
@@ -188,16 +165,8 @@ end;
 
 procedure ToggleWireFrame(); stdcall;
 begin
-  If WireFrame then
-  begin
-     gdCommandExecute('RMode 1');
-     WireFrame := false;
-  end
-  else
-  begin
-     gdCommandExecute('RMode 2');
-     WireFrame := true;
-  end;
+  WireFrame := not(WireFrame);
+  gdCommandExecute('RWireframe ' + BoolToStr(WireFrame));
 end;
 
 {******************************************************************************}
@@ -206,16 +175,8 @@ end;
 
 procedure ToggleOctreeNodes(); stdcall;
 begin
-  If TreeNodes then
-  begin
-     gdCommandExecute('RTreeNodes 0');
-     TreeNodes := false;
-  end
-  else
-  begin
-     gdCommandExecute('RTreeNodes 1');
-     TreeNodes := true;
-  end;
+  TreeNodes := not(TreeNodes);
+  gdCommandExecute('RTreeNodes ' + BoolToStr(TreeNodes));
 end;
 
 {******************************************************************************}
@@ -224,16 +185,8 @@ end;
 
 procedure ToggleOBJBoxes(); stdcall;
 begin
-  If ObjBoxes then
-  begin
-     gdCommandExecute('ROBJBoxes 0');
-     ObjBoxes := false;
-  end
-  else
-  begin
-     gdCommandExecute('ROBJBoxes 1');
-     ObjBoxes := true;
-  end;
+  ObjBoxes := not(ObjBoxes);
+  gdCommandExecute('ROBJBoxes ' + BoolToStr(ObjBoxes));
 end;
 
 {******************************************************************************}
@@ -276,10 +229,7 @@ begin
   begin
     if Not(Intro.FRenderIntroText) then
     begin
-      if GamePause then
-        gdInputSystemUseMouseLook(false)
-      else
-        gdInputSystemUseMouseLook(true);
+      gdInputSystemUseMouseLook(true);
       gdGUIMouseCursorShow(false);
       gdInputSystemEnable(true);
     end;
@@ -309,7 +259,6 @@ begin
   gdCallBackSetBeforeRender( @BeforeRender );
   
   //input funtions
-  gdInputSystemRegisterAction(IT_SINGLE,'ToggleGamePause','P',@ToggleGamePauseCallback, true );
   gdInputSystemRegisterAction(IT_SINGLE,'ExitGame','ESCAPE',@ExitCallback, false );
   gdInputSystemRegisterAction(IT_DIRECT,'Forward',PChar(ConfigurationForm.AForwards),@PlayerForward, true );
   gdInputSystemRegisterAction(IT_DIRECT,'Backward',PChar(ConfigurationForm.ABackwards),@PlayerBackward, true );

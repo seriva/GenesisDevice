@@ -36,7 +36,6 @@ type
   TGDRenderState     = (RS_COLOR, RS_WIREFRAME, RS_TEXTS, RS_TEXTURE);
   TGDRenderMode      = (RM_NORMAL, RM_WIREFRAME);
   TGDRenderAttribute = (RA_NORMAL, RA_FRUSTUM_BOXES, RA_NORMALS);
-  TGDTextureUnit     = (TU_1,TU_2,TU_3,TU_4,TU_5,TU_6,TU_7,TU_8);
   TGDRenderFor       = (RF_NORMAL, RF_WATER, RF_BLOOM);
 
   //settings types

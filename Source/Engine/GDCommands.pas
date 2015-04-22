@@ -58,10 +58,9 @@ type
 
     procedure RVSync( aParams : String );
     procedure RGamma( aParams : String );
-    procedure RMode( aParams : String );
+    procedure RWireframe( aParams : String );
     procedure RStats( aParams : String );
     procedure RNormals( aParams : String );
-    procedure ROCPlanes( aParams : String );
     procedure RGrid( aParams : String );
     procedure RTerrain( aParams : String );
     procedure RSky( aParams : String );
@@ -151,10 +150,9 @@ begin
   FHelp.Add( 'ScreenShot <filename> : take a screenshot (can be found in the base screenshot directory)' );
   FHelp.Add( 'RVSync 0,1 : Enable or disable vertical sync' );
   FHelp.Add( 'RGamma 0.0 to 3.0 : Set the gamma value' );
-  FHelp.Add( 'RMode 1,2 : Set the rendermode' );
+  FHelp.Add( 'RWireframe 0,1 : Enable or disable wireframe' );
   FHelp.Add( 'RStats 0,1 : Show or hide stats' );
   FHelp.Add( 'RNormals 0,1 : Show or hide normals' );
-  FHelp.Add( 'ROCPlanes 0,1 : Show or hide occlusion culling planes' );
   FHelp.Add( 'RGrid 0,1 : Show or hide grid' );
   FHelp.Add( 'RTerrain 0,1 : Show or hide terrain' );
   FHelp.Add( 'RSky 0,1 : Show or hide sky' );
@@ -368,15 +366,15 @@ begin
 end;
 
 {******************************************************************************}
-{* Set the rendermode                                                         *}
+{* Set the wireframe                                                          *}
 {******************************************************************************}
 
-procedure TGDCommands.RMode( aParams : String );
+procedure TGDCommands.RWireframe( aParams : String );
 begin
-  If aParams = '1' then
+  If aParams = '0' then
     Modes.RenderMode := RM_NORMAL
   else
-    If aParams = '2' then
+    If aParams = '1' then
       Modes.RenderMode := RM_WIREFRAME
     else
       UnknownParameter();
@@ -455,16 +453,6 @@ procedure TGDCommands.RNormals( aParams : String );
 begin
  if CheckBoolean(aParams) then
    Modes.RenderNormals := SetBoolean(aParams);
-end;
-
-{******************************************************************************}
-{* Show or hide the occlusion planes                                          *}
-{******************************************************************************}
-
-procedure TGDCommands.ROCPlanes( aParams : String );
-begin
- if CheckBoolean(aParams) then
-   Modes.RenderOCPlanes := SetBoolean(aParams);
 end;
 
 {******************************************************************************}

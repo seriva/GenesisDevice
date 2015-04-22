@@ -220,7 +220,7 @@ procedure TViewPortForm.FormKeyPress(Sender: TObject; var Key : Char);
 begin
   //pas chars to the engine using the WM_CHAR message
   //we use this instead of direct input because it is better in timing and detecting
-  gdInputSystemHandleChar( PChar(Key) );
+  gdInputSystemHandleChar( Key );
 end;
 
 {******************************************************************************}

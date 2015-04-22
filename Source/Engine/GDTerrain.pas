@@ -575,11 +575,11 @@ begin
                                      Renderer.TerrainShader.SetInt('T_WEIGHT_LOOKUP', 4);
                                      Renderer.TerrainShader.SetInt('T_CAUSTIC_TEX', 5);
 
-                                     FColorTexture.BindTexture(TU_1);
-                                     FDetailTexture1.BindTexture(TU_2);
-                                     FDetailTexture2.BindTexture(TU_3);
-                                     FDetailTexture3.BindTexture(TU_4);
-                                     FDetailLookup.BindTexture(TU_5);
+                                     FColorTexture.BindTexture(GL_TEXTURE0);
+                                     FDetailTexture1.BindTexture(GL_TEXTURE1);
+                                     FDetailTexture2.BindTexture(GL_TEXTURE2);
+                                     FDetailTexture3.BindTexture(GL_TEXTURE3);
+                                     FDetailLookup.BindTexture(GL_TEXTURE4);
                                      Water.BindCausticTexture();
 
                                      If Water.WaterHeight > Camera.Position.Y then

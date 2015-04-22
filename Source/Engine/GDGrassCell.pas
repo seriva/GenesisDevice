@@ -282,7 +282,7 @@ begin
   FDisplayList.StartList();
   For iI := 0 to Length(iParticalLists)-1 do
   begin
-    TGDGrassType(Foliage.GrassTypes.GetObjectI(iI)).Texture.BindTexture( TU_1 );
+    TGDGrassType(Foliage.GrassTypes.GetObjectI(iI)).Texture.BindTexture( GL_TEXTURE0 );
     for iJ := 0 to Length( iParticalLists[iI] )-1 do
       iParticalLists[iI,iJ].Render();
   end;

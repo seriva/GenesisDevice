@@ -25,76 +25,139 @@ unit GDFont;
 
 {$MODE Delphi}
 
-{******************************************************************************}
-{* Hold the main font class the use of Fontstudio 3 files.                    *}
-{* Fontstudio 3 can be found at http://www.nitrogen.za.org/                   *}
-{******************************************************************************}
-
 interface
 
 Uses
  Classes,
- LCLIntf, LCLType, LMessages,
- Graphics, FileUtil,
  SysUtils,
- Contnrs,
  dglOpenGL,
+ GDConstants,
  GDTypes,
- GDLog,
- GDObjectList;
+ GDTexture;
 
-type
-
-{******************************************************************************}
-{* Character record                                                           *}
-{******************************************************************************}
-
-  FCharRect = Record
-    FT1,FU1,FT2,FU2, FW, FH, FKernW: single;
-  end;
+const
+  FONT_TEXHEIGHT = 512;
+  FONT_HEIGHT    = 64;
+  FONT_CHARCOORDS : array[0..93,0..3] of Word = (
+      (0,0,25,64),        //!
+      (25,0,54,64),       //"
+      (54,0,107,64),      //#
+      (107,0,148,64),     //$
+      (148,0,217,64),     //%
+      (217,0,263,64),     //&
+      (263,0,280,64),     //'
+      (280,0,309,64),     //(
+      (309,0,338,64),     //)
+      (338,0,379,64),     //*
+      (379,0,432,64),     //+
+      (432,0,455,64),     //,
+      (455,0,484,64),     //-
+      (0,64,21,128),      //.
+      (23,64,52,128),     ///
+      (52,64,93,128),     //0
+      (93,64,133,128),    //1
+      (133,64,174,128),   //2
+      (174,64,215,128),   //3
+      (215,64,256,128),   //4
+      (256,64,296,128),   //5
+      (296,64,337,128),   //6
+      (337,64,378,128),   //7
+      (378,64,419,128),   //8
+      (419,64,459,128),   //9
+      (459,64,488,128),   //:
+      (0,128,29,192),     //;
+      (29,128,81,192),    //<
+      (81,128,134,192),   //=
+      (134,128,186,192),  //>
+      (186,128,221,192),  //?
+      (221,128,285,192),  //@
+      (285,128,329,192),  //A
+      (329,128,373,192),  //B
+      (373,128,418,192),  //C
+      (418,128,467,192),  //D
+      (0,192,40,256),     //E
+      (40,192,77,256),    //F
+      (77,192,127,256),   //G
+      (127,192,175,256),  //H
+      (175,192,202,256),  //I
+      (202,192,231,256),  //J
+      (231,192,275,256),  //K
+      (275,192,311,256),  //L
+      (311,192,365,256),  //M
+      (365,192,413,256),  //N
+      (413,192,463,256),  //O
+      (1,256,38,320),     //P
+      (38,256,89,320),    //Q
+      (89,256,133,320),   //R
+      (133,256,176,320),  //S
+      (177,256,216,320),  //T
+      (217,256,263,320),  //U
+      (263,256,307,320),  //V
+      (307,256,370,320),  //W
+      (370,256,414,320),  //X
+      (414,256,453,320),  //Y
+      (453,256,497,320),  //Z
+      (0,320,29,384),     //[
+      (29,320,58,384),    //"\"
+      (59,320,87,384),    //]
+      (87,320,139,384),   //^
+      (139,320,180,384),  //_
+      (180,320,221,384),  //`
+      (221,320,259,384),  //a
+      (259,320,299,384),  //b
+      (299,320,332,384),  //c
+      (332,320,372,384),  //d
+      (372,320,411,384),  //e
+      (411,320,433,384),  //f
+      (435,320,473,384),  //g
+      (0,384,40,448),     //h
+      (40,384,56,448),    //i
+      (58,384,80,448),    //j
+      (80,384,118,448),   //k
+      (118,384,135,448),  //l
+      (135,384,197,448),  //m
+      (197,384,238,448),  //n
+      (238,384,277,448),  //o
+      (277,384,317,448),  //p
+      (317,384,356,448),  //q
+      (357,384,384,448),  //r
+      (385,384,417,448),  //s
+      (417,384,442,448),  //t
+      (443,384,483,448),  //u
+      (0,448,38,512),     //v
+      (38,448,90,512),    //w
+      (90,448,128,512),   //x
+      (128,448,166,512),  //y
+      (166,448,200,512),  //z
+      (200,448,241,512),  //{
+      (241,448,270,512),  //|
+      (270,448,310,512),  //}
+      (310,448,363,512)   //~
+  );
 
 {******************************************************************************}
 {* Font class                                                                 *}
 {******************************************************************************}
 
+type
   TGDFont = class
   private
-    FChars         : array of FCharRect;
-    FFontTexture   : glUInt;
-    FStartChar     : integer;
-    FFontLength    : integer;
-    FCharOffset    : integer;
-    FSpaceWidth    : single;
-    FAverageHeight : single;
-    FColor         : TGDColor;
-
-    procedure   RenderChar(aX, aY, aWidth, aHeigt, aTU1, aTU2, aTV1,aTV2: Double);
-    procedure   SetColor(aC : TGDColor);
+    FTexture : TGDTexture;
+    FColor   : TGDColor;
   public
-    Property Color : TGDColor read FColor write SetColor;
+    property Color : TGDColor read FColor write FColor;
 
     constructor Create();
     destructor  Destroy(); override;
-    function    InitFont( aFileName : string) : boolean;
+    function    InitFont( aTexture : string) : boolean;
     procedure   Clear();
-    procedure   Render( aX, aY, aScale : Double; aString : string);
+    procedure   Render( aLeft, aTop, aScale : Double; aString : string);
   end;
 
 var
-  SystemFont : TGDFont;
-  FontList   : TGDObjectList;
+  Font : TGDFont;
 
 implementation
-
-{******************************************************************************}
-{* Set the text color                                                         *}
-{******************************************************************************}
-
-procedure TGDFont.SetColor(aC : TGDColor);
-begin
-  FreeAndNil(FColor);
-  FColor := aC;
-end;
 
 {******************************************************************************}
 {* Create the font class                                                      *}
@@ -102,9 +165,9 @@ end;
 
 constructor TGDFont.Create();
 begin
-  SetLength(FChars,0);
-  FColor := TGDColor.Create();
+  FColor   := TGDColor.Create();
   FColor.White();
+  FTexture := TGDTexture.Create();
 end;
 
 {******************************************************************************}
@@ -115,129 +178,18 @@ destructor TGDFont.Destroy();
 begin
   Clear();
   FreeAndNil(FColor);
+  FreeAndNil(FTexture);
   inherited;
 end;
 
-{******************************************************************************}
-{* Render a single character                                                  *}
-{******************************************************************************}
-
-Procedure TGDFont.RenderChar(aX, aY, aWidth, aHeigt, aTU1, aTU2, aTV1,aTV2: Double);
-begin
-  aTV1 := 1-aTV1;
-  aTV2 := 1-aTV2;
-  glBegin(GL_QUADS);
-    glTexCoord2f(aTU1, aTV2); glVertex2f(aX,        aY-aHeigt);
-    glTexCoord2f(aTU2, aTV2); glVertex2f(aX+aWidth, aY-aHeigt);
-    glTexCoord2f(aTU2, aTV1); glVertex2f(aX+aWidth, aY);
-    glTexCoord2f(aTU1, aTV1); glVertex2f(aX,        aY);
-  glEnd;
-end;
 
 {******************************************************************************}
 {* Init the font                                                              *}
 {******************************************************************************}
 
-function TGDFont.InitFont( aFileName : string) : boolean;
-Var
-  iF1, iF2: TfileStream;
-  iI, iIData: integer;
-  iStPos, iCtPos: longint;
-  iOther: string;
-  iData : Array of Byte;
-  iW, iWidth : Integer;
-  iH, iHeight : Integer;
-  iBMP : TBitmap;
-  iJPG: TJPEGImage;
-  iC : LongWord;
-  iLine : PByteArray;
-  iError : string;
+function TGDFont.InitFont( aTexture : string) : boolean;
 begin
-  result := true;
-  Log.AddNewLine('Loading font from file ' + aFileName + '...');
-  try
-    Setlength(FChars, 1);
-    FFontLength := 0;
-    FSpaceWidth := 20;
-    iOther := Copy(aFileName, 1, length(aFileName)-3)+'jpg';
-    iF1 := TFileStream.Create(aFileName, $0000);
-    iF2 := Tfilestream.Create(iOther, FmCreate or $0000);
-    iF1.Seek(-(sizeof(longint)*2), soFromEnd);
-    iF1.Read(iCtpos, sizeof(longint));
-    iF1.Read(iStpos, sizeof(longint));
-    iF1.Seek(iCtpos, soFromBeginning);
-    iF2.CopyFrom(iF1, iStPos-iCtPos-1);
-    iF2.Free;
-    iF1.Seek(iStpos, soFromBeginning);
-    iF1.Read(FFontLength, Sizeof(integer));
-    iF1.Read(FStartChar, Sizeof(integer));
-    iF1.Read(FCharOffset, Sizeof(integer));
-    iF1.Read(iIData, Sizeof(integer));
-    Setlength(FChars, FFontLength+1);
-    FAverageHeight := 0;
-    For iI := 0 to high(FChars) do
-    begin
-      iF1.Read(FChars[iI], sizeof(FCharRect));
-      FAverageHeight := FAverageHeight + FChars[iI].FH;
-    end;
-    FAverageHeight := FAverageHeight / (FFontLength+1);
-    iF1.Free;
-    iJPG := TJPEGImage.Create;
-    iJPG.LoadFromFile(aFileName);
-    iBMP             := TBitmap.Create;
-    iBMP.pixelformat := pf24bit;
-    iBMP.width       := iJPG.width;
-    iBMP.height      := iJPG.height;
-    iBMP.canvas.draw(0,0,iJPG);
-    iWidth  := iBMP.Width;
-    iHeight := iBMP.Height;
-    SetLength(iData, iWidth*iHeight*4);
-    For iH:=0 to iHeight-1 do
-    Begin
-      iLine := iBMP.ScanLine[iHeight-iH-1];
-      For iW:=0 to iWidth-1 do
-      Begin
-        iData[(iW*4)+(iH*iWidth*4)]   := iLine[iW*3];
-        iData[(iW*4)+1+(iH*iWidth*4)] := iLine[iW*3+1];
-        iData[(iW*4)+2+(iH*iWidth*4)] := iLine[iW*3+2];
-      End;
-    End;
-    iJPG.LoadFromFile(iOther);
-    iBMP.canvas.draw(0,0,iJPG);
-    For iH:=0 to iHeight-1 do
-    Begin
-      iLine := iBMP.ScanLine[iHeight-iH-1];
-      For iW:=0 to iWidth-1 do
-      Begin
-        iData[(iW*4)+3+(iH*iWidth*4)] := iLine[iW*3];
-      End;
-    End;
-    iBMP.free;
-    iJPG.free;
-    glGenTextures(1, @FFontTexture);
-    glBindTexture(GL_TEXTURE_2D, FFontTexture);
-    glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGBA, iWidth, iHeight, GL_RGBA, GL_UNSIGNED_BYTE, addr(iData[0]));
-    DeleteFileUTF8(iOther); { *Converted from DeleteFile* }
-  except
-    on E: Exception do
-    begin
-      iError := E.Message;
-      result := false;
-    end;
-  end;
-
-  If result then
-  begin
-    Log.AddToLastLine('Succeeded');
-  end
-  else
-  begin
-    Log.AddToLastLine('Failed');
-    Log.AddNewLine('Error Message: ' + iError);
-  end;
+  result := FTexture.InitTexture(aTexture, TD_HIGH, TF_TRILINEAR);
 end;
 
 {******************************************************************************}
@@ -246,54 +198,47 @@ end;
 
 Procedure TGDFont.Clear();
 begin
-  SetLength(FChars,0);
-  glDeleteTextures(1, @FFontTexture);
+  FTexture.Clear();
 end;
 
 {******************************************************************************}
 {* Render a string                                                            *}
 {******************************************************************************}
 
-Procedure TGDFont.Render( aX, aY, aScale : Double; aString : string);
-Var
-  iI, iLet: integer;
-  iX : Single;
+Procedure TGDFont.Render( aLeft, aTop, aScale : Double; aString : string);
+var
+  i, x, y, c, inwidth, inheight : integer;
+  inleft, intop, inright, inbottom : Single;
+
+procedure RenderTexturedQuad(x,y,width,height: Single;
+                               u1 : Single=0; v1 : Single=0;
+                               u2 : Single=1; v2 : Single=0;
+                               u3 : Single=1; v3 : Single=1;
+                               u4 : Single=0; v4 : Single=1);
 begin
-  if aString = '' then exit;
-  iX := 0;
-  glActiveTexture(GL_TEXTURE0);  
-  glBindTexture(GL_TEXTURE_2D, FFontTexture);
-  glColor4fv(FColor.ArrayPointer);
-  glPushMatrix();
-  glLoadIdentity();
-  glTranslatef(aX, aY,0);
-  For iI := 1 to length(aString) do
+  glBegin(GL_QUADS);
+    glTexCoord2f(u1, v1); glVertex2f( x,       y);
+    glTexCoord2f(u2, v2); glVertex2f( x+width, y);
+    glTexCoord2f(u3, v3); glVertex2f( x+width, y+height);
+    glTexCoord2f(u4, v4); glVertex2f( x,       y+height);
+end;
+
+begin
+  FTexture.BindTexture(GL_TEXTURE0);
+  x := Round(aLeft);
+  y := Round(aTop);
+  for i := 1 to length(aString) do
   begin
-    if aString[iI] = ' ' then
-    begin
-      iX := iX + FSpaceWidth*aScale;
-    end
-    else
-    begin
-      iLet := Ord(aString[iI])-FStartChar;
-      if ((iLet > -1) and not (iLet > FFontLength)) then
-      begin
-        RenderChar(iX,0,
-                   FChars[iLet].FW*aScale,
-                   FChars[iLet].FH*aScale,
-                   FChars[iLet].FT1,
-                   FChars[iLet].FT2,
-                   FChars[iLet].FU1,
-                   FChars[iLet].FU2);
-         iX := iX + (FChars[iLet].FKernW*aScale);
-       end
-       else
-       begin
-         iX := iX + (FSpaceWidth*aScale);
-       end;
-    end;
+    if(aString[i] = ' ') then begin x := x + round((FONT_HEIGHT/2) * aScale); continue; end;
+    c := Ord(aString[i])-33;
+    if(c < 0) or (c >= 95) then continue;
+    inleft   := FONT_CHARCOORDS[c][0]   / FONT_TEXHEIGHT;
+    inright  := FONT_CHARCOORDS[c][2]   / FONT_TEXHEIGHT;
+    inwidth  := Round((FONT_CHARCOORDS[c][2] - FONT_CHARCOORDS[c][0]) * aScale);
+    inheight := Round((FONT_CHARCOORDS[c][3] - FONT_CHARCOORDS[c][1]) * aScale);
+    RenderTexturedQuad(x,y,inwidth,inheight,inleft,intop,inright,intop,inright,inbottom,inleft,inbottom);
+    x := x + inwidth + 1;
   end;
-  glPopMatrix();
 end;
 
 end.

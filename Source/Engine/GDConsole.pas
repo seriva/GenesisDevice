@@ -47,29 +47,12 @@ uses
 type
 
 {******************************************************************************}
-{* Console input record                                                       *}
-{******************************************************************************}
-
-  TGDConsoleInput = record
-    LineR : Double;
-    LineG : Double;
-    LineB : Double;
-    LineA : Double;
-    BackR : Double;
-    BackG : Double;
-    BackB : Double;
-    BackA : Double;
-  end;
-
-{******************************************************************************}
 {* Console class                                                              *}
 {******************************************************************************}
 
   TGDConsole = class
   private
     FShow              : Boolean;
-    FBackGroundColor   : TGDColor;
-    FLineColor         : TGDColor;
     FInputString       : String;
     FRow               : integer;
     FInputRow          : integer;
@@ -86,7 +69,7 @@ type
     constructor Create();
     destructor  Destroy(); override;
 
-    procedure InitConsole( aInput : TGDConsoleInput );
+    procedure InitConsole();
     procedure Clear();
 
     procedure Render();
@@ -115,8 +98,6 @@ constructor TGDConsole.Create();
 begin
   FShow := False;
   FCursorUpdate := False;
-  FLineColor := TGDColor.Create(1,1,1,1);
-  FBackGroundColor := TGDColor.Create(1,1,1,1);
   FInputStringList := TStringList.Create();
   FUpdateTimer  := TimeSetEvent(C_CURSOR_TIME, 0, @UpdateConsoleCallBack, 0, TIME_PERIODIC);
 end;
@@ -128,8 +109,6 @@ end;
 destructor  TGDConsole.Destroy();
 begin
   TimeKillEvent(FUpdateTimer);
-  FreeAndNil(FBackGroundColor);
-  FreeAndNil(FLineColor);
   FreeAndNil(FInputStringList);
 end;
 
@@ -137,11 +116,9 @@ end;
 {* Init the console                                                           *}
 {******************************************************************************}
 
-procedure TGDConsole.InitConsole( aInput : TGDConsoleInput );
+procedure TGDConsole.InitConsole();
 begin
   Clear();
-  FLineColor.Reset( aInput.LineR, aInput.LineG, aInput.LineB, aInput.LineA);
-  FBackGroundColor.Reset(aInput.BackR, aInput.BackG, aInput.BackB, aInput.BackA);
   FRow := Log.Text.Count-1;
 end;
 
@@ -152,8 +129,6 @@ end;
 procedure TGDConsole.Clear();
 begin
   FExecuteCommand := false;
-  FLineColor.Reset(1,1,1,1);
-  FBackGroundColor.Reset(1,1,1,1);
 end;
 
 {******************************************************************************}
@@ -171,7 +146,7 @@ begin
   end;
 
   Renderer.RenderState( RS_COLOR );
-  glColor4fv(FBackGroundColor.ArrayPointer);
+  glColor4f(0.4,0.4,0.4,0.7);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   glEnable(GL_BLEND);
   glBegin(GL_QUADS);
@@ -181,7 +156,7 @@ begin
     glVertex2f(0, R_HUDHEIGHT);
   glEnd;
   glDisable(GL_BLEND);
-  glColor4fv(FLineColor.ArrayPointer);
+  glColor4f(1,1,1,1);
   glBegin(GL_LINES);
     glVertex2f(0,          (R_HUDHEIGHT/2)-7);
     glVertex2f(R_HUDWIDTH, (R_HUDHEIGHT/2)-7);
@@ -196,19 +171,19 @@ begin
     If  ((iI) >= 0) then
     begin
       If copy(Uppercase(Log.Text.Strings[iI]), 0, 5) = 'ERROR' then
-        SystemFont.Color.Red
+        Font.Color.Red
       else
-        SystemFont.Color.White;
-      SystemFont.Render(0, (R_HUDHEIGHT/2)+63+(iJ*25), 1, Log.Text.Strings[iI] );
+       Font.Color.White;
+      Font.Render(0, (R_HUDHEIGHT/2)+28+(iJ*25), 0.40, Log.Text.Strings[iI] );
       iJ := iJ + 1;
     end
   end;
 
-  SystemFont.Color.White;
+  Font.Color.White;
   if FCursorUpdate then
-     SystemFont.Render(0, (R_HUDHEIGHT/2)+32, 1, FInputString + '_' )
+     Font.Render(0, (R_HUDHEIGHT/2)-3, 0.40, FInputString + '_' )
   else
-     SystemFont.Render(0, (R_HUDHEIGHT/2)+32, 1, FInputString );
+     Font.Render(0, (R_HUDHEIGHT/2)-3, 0.40, FInputString );
 
   glDisable(GL_BLEND);
 end;

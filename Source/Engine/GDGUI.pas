@@ -235,7 +235,7 @@ begin
 
   If ShowMouse then
   begin
-    FCursorTexture.BindTexture( TU_1 );
+    FCursorTexture.BindTexture( GL_TEXTURE0 );
     
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_BLEND);
@@ -397,14 +397,13 @@ begin
   glEnd;
 
   glPopMatrix();
-
   iPercent := (FPosition * 100) / FMax;
 
   If Not(FBarOnly) then
   begin
     Renderer.RenderState( RS_TEXTS );
-    SystemFont.Render(7+FX,105+FY,1,FProcesName);
-    SystemFont.Render(270+FX,56+FY,1,IntToStr(round(iPercent)) + '%');
+    Font.Render(7+FX,65+FY,0.5,FProcesName);
+    Font.Render(270+FX,16+FY,0.5,IntToStr(round(iPercent)) + '%');
   end;
 
   Renderer.SwitchToPerspective();

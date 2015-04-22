@@ -461,9 +461,9 @@ begin
                                      else
                                        Renderer.WaterShader.SetInt('I_UNDER_WATER', 0);
 
-                                     FReflection.BindTexture(TU_1);
+                                     FReflection.BindTexture(GL_TEXTURE0);
                                      BindWaterTexture();
-                                     FDepthMap.BindTexture(TU_3);
+                                     FDepthMap.BindTexture(GL_TEXTURE2);
                                      glEnable(GL_BLEND);
                                      glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
                           end;
@@ -530,7 +530,7 @@ procedure TGDWater.BindCausticTexture();
 begin
   If FWaterLoaded then
   begin
-    TGDTexture(FCausticTextures.GetObjectI( FCausticCounter )).BindTexture(TU_6);
+    TGDTexture(FCausticTextures.GetObjectI( FCausticCounter )).BindTexture(GL_TEXTURE5);
   end;
 end;
 
@@ -542,7 +542,7 @@ procedure TGDWater.BindWaterTexture();
 begin
   If FWaterLoaded then
   begin
-    TGDTexture(FWaterTextures.GetObjectI(FWaterCounter)).BindTexture(TU_2);
+    TGDTexture(FWaterTextures.GetObjectI(FWaterCounter)).BindTexture(GL_TEXTURE1);
   end;
 end;
 

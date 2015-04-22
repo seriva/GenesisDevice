@@ -113,7 +113,6 @@ procedure TGDMain.InitBaseResources();
 var
   iIniFile      : TIniFile;
   iPathString   : String;
-  iConsoleInput : TGDConsoleInput;
   iLoadingInput : TGDLoadingInput;
 
 begin
@@ -123,22 +122,14 @@ begin
   iIniFile := TIniFile.Create( iPathString );
 
   //init system font
-  SystemFont.InitFont( iIniFile.ReadString('Base', 'SystemFont', 'console.fnt') );
+  Font.InitFont( iIniFile.ReadString('Base', 'SystemFont', 'console.fnt') );
 
   //init the mouse
   GUIManager.MouseCursor.InitMouse( iIniFile.ReadString('Base', 'MouseCursor', 'mouse.bmp'),40);
   ShowCursor(false);
 
   //init the console
-  iConsoleInput.LineR := 1.0;
-  iConsoleInput.LineG := 1.0;
-  iConsoleInput.LineB := 1.0;
-  iConsoleInput.LineA := 1.0;
-  iConsoleInput.BackR := 0.3;
-  iConsoleInput.BackG := 0.3;
-  iConsoleInput.BackB := 0.3;
-  iConsoleInput.BackA := 0.5;
-  Console.InitConsole( iConsoleInput );
+  Console.InitConsole();
   Console.Show := false;
   Console.CommandString := '';
 
@@ -182,14 +173,13 @@ end;
 
 procedure TGDMain.ClearBaseResources();
 begin
-  SystemFont.Clear();
+  Font.Clear();
   Console.Clear();
   Octree.Clear();
   ShowCursor(true);
   CellManager.Clear();
   GUIManager.Clear();
   Map.Clear();
-  FontList.Clear();
   SoundList.Clear();
 end;
 
@@ -283,7 +273,7 @@ begin
        iDateTime := Time();
        iString := iString + TimeToStr(iDateTime);
        Renderer.RenderState( RS_TEXTS );
-       SystemFont.Render(10,50,1, iString );
+       Font.Render(10,50,1, iString );
     end;
   Renderer.SwitchToPerspective();
 end;

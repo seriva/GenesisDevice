@@ -160,7 +160,7 @@ begin
 
   FDisplayList.InitDisplayList();
   FDisplayList.StartList();
-  FSkyTexture.BindTexture(TU_1);
+  FSkyTexture.BindTexture(GL_TEXTURE0);
   For iI := 0 to (COMPLEXITY div 4)-1 do
   begin
     glBegin(GL_TRIANGLE_STRIP);

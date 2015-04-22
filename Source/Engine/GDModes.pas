@@ -51,7 +51,6 @@ type
     FRenderNodeBoxes        : Boolean;
     FRenderObjectBoxes      : Boolean;
     FRenderNormals          : Boolean;
-    FRenderOCPlanes         : Boolean;
     FRenderStats            : Boolean;
     FRenderGrid             : Boolean;
     FRenderTerrain          : Boolean;
@@ -66,7 +65,6 @@ type
     property RenderNodeBoxes : boolean read FRenderNodeBoxes write FRenderNodeBoxes;
     property RenderObjectBoxes : boolean read FRenderObjectBoxes write FRenderObjectBoxes;
     property RenderNormals : boolean read FRenderNormals write FRenderNormals;
-    property RenderOCPlanes : boolean read FRenderOCPlanes write FRenderOCPlanes;
     property RenderStats : boolean read FRenderStats write FRenderStats;
     property RenderGrid : boolean read FRenderGrid write FRenderGrid;
     property RenderTerrain : boolean read FRenderTerrain write FRenderTerrain;
@@ -107,7 +105,6 @@ begin
   FRenderNormals     := false;
   FRenderStats       := false;
   FRenderGrid        := false;
-  FRenderOCPlanes    := false;
   FRenderTerrain     := true;
   FRenderSky         := true;
   FRenderWater       := true;

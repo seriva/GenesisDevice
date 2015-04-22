@@ -45,7 +45,6 @@ var
   TreeNodes  : boolean;
   ObjBoxes   : boolean;
   Clip       : boolean;
-  GamePause  : boolean;
   OCPlanes   : boolean;
 
   //main classes
@@ -73,7 +72,6 @@ begin
   TreeNodes  := false;
   ObjBoxes   := false;
   Clip       := true;
-  GamePause  := false;
   OCPlanes   := false;
 
   //initialize the gamerecources

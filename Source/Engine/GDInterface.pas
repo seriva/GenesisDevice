@@ -77,14 +77,14 @@ function CheckInputInitialized(): boolean;
 function CheckSoundInitialized(): boolean; 
 
 //Engine Functions
-function  gdEngineInit(aApplicationPath, aApplicationName : PChar) : Boolean; 
+function  gdEngineInit(aApplicationPath, aApplicationName : String) : Boolean; 
 procedure gdEngineShutDown(); 
-function  gdEngineBuildDate() : PChar; 
-function  gdEngineBuildNumber() : PChar;  
+function  gdEngineBuildDate() : String; 
+function  gdEngineBuildNumber() : String;  
 
 //settings functions
-procedure gdSettingsLoad( aIniFile : PChar );
-procedure gdSettingsSave( aIniFile : PChar ); 
+procedure gdSettingsLoad( aIniFile : String );
+procedure gdSettingsSave( aIniFile : String ); 
 procedure gdSettingsHigh();
 procedure gdSettingsMedium();
 procedure gdSettingsLow();
@@ -94,17 +94,16 @@ procedure gdSettingsSetCurrent(aSettings : TSettings);
 function  gdSettingsGetMaximum() : TMaximumSettings; 
 
 //log functions
-function  gdLogGetLine(aRow : Integer) : Pchar; 
-procedure gdLogAddNewLine(aText : Pchar); 
-procedure gdLogAddToLastLine(aText : Pchar); 
+procedure gdLogAddNewLine(aText : String); 
+procedure gdLogAddToLastLine(aText : String); 
 procedure gdLogSave(); 
 procedure gdLogClear(); 
 
 //timing functions
 procedure gdTimerStart(); 
 procedure gdTimerStop(); 
-function  gdTimerGetInSeconds() : PChar; 
-function  gdTimerGetInMilliSeconds() : PChar; 
+function  gdTimerGetInSeconds() : String; 
+function  gdTimerGetInMilliSeconds() : String; 
 
 //callback functions
 procedure gdCallBackSetInterfaceRenderer( aFunction : TGDProcEngineCallback );
@@ -112,8 +111,7 @@ procedure gdCallBackSetBeforeRender( aFunction : TGDProcEngineCallback );
 procedure gdCallBackSetAfterRender( aFunction : TGDProcEngineCallback ); 
 
 //loop functions
-procedure gdLoopMain(); 
-procedure gdLoopRender();                                                   
+procedure gdLoopMain();
 
 //renderer functions
 function  gdRenderSystemInit( aWnd  : HWND ) : boolean; 
@@ -122,44 +120,42 @@ function  gdRenderSystemRestart() : boolean;
 procedure gdRenderSystemResize(aTop, aLeft, aWidth, aHeight : integer); 
 procedure gdRenderSystemSetState(aState : TGDRenderState);
 function  gdRenderSystemGetFrameTime() : Integer; 
-procedure gdRenderSystemScreenShot( aFileName : PChar ) ; 
+procedure gdRenderSystemScreenShot( aFileName : String ) ; 
 
 //sound functions
 function  gdSoundSystemCheckVersion() : Boolean; 
 function  gdSoundSystemNumberOfDrivers() : Integer; 
-function  gdSoundSystemGetDriverName( aDriverNumber : Integer ) : PChar; 
+function  gdSoundSystemGetDriverName( aDriverNumber : Integer ) : String; 
 function  gdSoundSystemInit() : boolean; 
 function  gdSoundSystemShutDown() : boolean; 
 
 //input functions
 function  gdInputSystemInit() : boolean; 
 function  gdInputSystemShutDown() : boolean; 
-function  gdInputSystemStringToKey( aName : PChar ) : Integer ; 
-function  gdInputSystemKeyToString( aKey : Integer ) : Pchar ; 
-function  gdInputSystemDetectCurrentKeyString() : Pchar ; 
+function  gdInputSystemStringToKey( aName : String ) : Integer ; 
+function  gdInputSystemKeyToString( aKey : Integer ) : String ; 
+function  gdInputSystemDetectCurrentKeyString() : String ; 
 function  gdInputSystemDetectCurrentKey() : Integer ; 
-procedure gdInputSystemRegisterAction(aType : TGDInputTypes; aName, aKeyString : PChar ;
+procedure gdInputSystemRegisterAction(aType : TGDInputTypes; aName, aKeyString : String ;
                                       aAction : TGDProcEngineCallback;  aConsoleDisabled : boolean ); 
-procedure gdInputSystemHandleChar( aChar : PChar ); 
+procedure gdInputSystemHandleChar( aChar : Char );
 procedure gdInputSystemUseMouseLook( aUse : boolean ); 
 procedure gdInputSystemEnable( aEnable : boolean ); 
 
 //console functions
-procedure gdConsoleInit( aInput : TGDConsoleInput ); 
-procedure gdConsoleClear(); 
 procedure gdConsoleToggle(); 
 
 //commands functions
-procedure gdCommandExecute( aString : PChar ); 
+procedure gdCommandExecute( aString : String ); 
 
 //gui functions
-procedure gdGUIMouseCursorInit( aFileName : PChar; aSize : integer ); 
+procedure gdGUIMouseCursorInit( aFileName : String; aSize : integer ); 
 procedure gdGUIMouseCursorClear(); 
 procedure gdGUIMouseCursorShow(aShow : boolean); 
 function  gdGUIMouseCursorGetPosition() : TPoint; 
 procedure gdGUILoadingScreenInit( aInput : TGDLoadingInput ); 
 procedure gdGUILoadingScreenClear(); 
-procedure gdGUILoadingScreenSetup( aProcessName : PChar; aMax : Integer ); 
+procedure gdGUILoadingScreenSetup( aProcessName : String; aMax : Integer ); 
 procedure gdGUILoadingScreenUpdate(); 
 
 //camera functions
@@ -169,66 +165,31 @@ function  gdCameraGetPosition() : TGDVectorRecord;
 procedure gdCameraSetDirection(aX,aY,aZ : double); 
 function  gdCameraGetDirection() : TGDVectorRecord; 
 procedure gdCameraMove(aStep : double); 
-procedure gdCameraStrafe(aStep : double); 
-procedure gdCameraUpDown(aStep : double); 
-procedure gdCameraMouseLook(aOldX, aOldY, aNewX, aNewY  : Integer; aSensitivity : Double; aInvertMouse : Boolean); 
-procedure gdCameraMouseLookHorizontal(aOldX, aNewX  : Integer; aSensitivity : Double; aInvertMouse : Boolean); 
-procedure gdCameraMouseStrafe(aOldX, aNewX  : Integer; aStep : Double); 
-procedure gdCameraMouseUpDown(aOldY, aNewY  : Integer; aStep : Double); 
-procedure gdCameraMouseMove(aOldY, aNewY : Integer; aStep : Double);
-
-//octree functions
-procedure gdOctreeRebuild(); 
-procedure gdOctreeClear();
+procedure gdCameraStrafe(aStep : double);
 
 //map functions
-function  gdMapLoad( aFileName : PChar ) : boolean; 
+function  gdMapLoad( aFileName : String ) : boolean; 
 procedure gdMapClear(); 
 
 //terrain functions
-function  gdTerrainInit( aInput : TGDTerrainInput ) : boolean; 
-procedure gdTerrainClear(); 
 function  gdTerrainHeight(aX, aZ : Double) : Double; 
-function  gdTerrainRotation(aX, aZ : Double) : TGDVectorRecord; 
-
-//skydome functions
-procedure gdSkyDomeInit(aFileName : PChar); 
-procedure gdSkyDomeClear(); 
-
-//distancefog functions
-procedure gdDistanceFogInit( aR,aG,aB,aA : Double  ); 
-procedure gdDistanceFogClear(); 
+function  gdTerrainRotation(aX, aZ : Double) : TGDVectorRecord;
 
 //water functions
-function  gdWaterInit( aInput : TGDWaterInput ) : boolean; 
-procedure gdWaterClear(); 
-function  gdWaterHeight(): Double; 
-
-//foliage function
-procedure gdFoliageInit( aInput : TGDFoliageInput );
-procedure gdFoliageAddGrassType( aInput : TGDGrassTypesInput );
-procedure gdFoliageAddTreeType( aInput : TGDTreeTypesInput );
-procedure gdFoliageClear();
+function  gdWaterHeight(): Double;
 
 //texture functions
 function  gdTexturesLoad( aFileName : String ) : pointer; 
-procedure gdTexturesBind( aPointer : pointer; aTextureUnit : TGDTextureUnit ); 
+procedure gdTexturesBind( aPointer : pointer; aTextureUnit : GLEnum );
 procedure gdTexturesClear(); 
 procedure gdTexturesRemove( aPointer : pointer ); 
 
-//font functions
-function  gdFontsLoad( aFileName : String ) : pointer; 
-procedure gdFontsSetColor(aPointer : pointer; aR,aG,aB,aA : double); 
-procedure gdFontsRenderText(aPointer : pointer; aX,aY,aScale : Double; aText : Pchar); 
-procedure gdFontsClear(); 
-procedure gdFontsRemove( aPointer : pointer ); 
-
-//main ambient light
-procedure gdMainDirectionalLightSet( aInput : TGDDirectionalLightInput );
-procedure gdMainDirectionalLightClear();
+//text functions
+procedure gdTextColor(aR,aG,aB : Double);
+procedure gdTextRender(aX,aY,aScale : Double; aText : String);
 
 //sound functions
-function  gdSoundFilesLoad( aFileName : PChar; aType : TGDSoundTypes ) : pointer; 
+function  gdSoundFilesLoad( aFileName : String; aType : TGDSoundTypes ) : pointer; 
 procedure gdSoundFilesRemove( aPointer : pointer ); 
 procedure gdSoundFilesClear(); 
 procedure gdSoundFilesPlay( aPointer : pointer ); 
@@ -281,7 +242,7 @@ end;
 {* Initialize the engine`s core                                               *}
 {******************************************************************************}
 
-function gdEngineInit(aApplicationPath, aApplicationName : PChar) : Boolean; 
+function gdEngineInit(aApplicationPath, aApplicationName : String) : Boolean; 
 begin
   If FEngineInitialized then
   begin
@@ -325,7 +286,7 @@ begin
   Console      := TGDConsole.Create();
   Camera       := TGDCamera.Create();
   Frustum      := TGDFrustum.Create();
-  SystemFont   := TGDFont.Create();
+  Font         := TGDFont.Create();
   Timer        := TGDPerformanceTiming.Create();
   Timing       := TGDTiming.Create();
   Map          := TGDMap.Create();
@@ -343,7 +304,6 @@ begin
   MaterialList   := TGDMaterialList.Create();
   GUIManager     := TGDGUIManager.Create();
   MeshList       := TGDMeshList.Create();
-  FontList       := TGDObjectList.Create;
   Commands       := TGDCommands.Create();
   DirectionalLight := TGDDirectionalLight.Create();
   result := true;
@@ -366,8 +326,7 @@ begin
   FreeAndNil(Sound);
   FreeAndNil(GUIManager);
   FreeAndNil(Frustum);
-  FreeAndNil(SystemFont);
-  FreeAndNil(FontList);
+  FreeAndNil(Font);
   FreeAndNil(Map);
   FreeAndNil(Terrain);
   FreeAndNil(Timing);
@@ -395,7 +354,7 @@ end;
 {* Get the builddate of the engine                                            *}
 {******************************************************************************}
 
-function gdEngineBuildDate() : PChar; 
+function gdEngineBuildDate() : String; 
 begin
    result := ENGINE_BUILDDATE;
 end;
@@ -404,7 +363,7 @@ end;
 {* Get the buildnumber of the engine                                          *}
 {******************************************************************************}
 
-function gdEngineBuildNumber() : PChar; 
+function gdEngineBuildNumber() : String; 
 begin
   result := ENGINE_BUILD;
 end;
@@ -519,7 +478,7 @@ end;
 {* Save a screenshot to a file                                                *}
 {******************************************************************************}
 
-procedure gdRenderSystemScreenShot( aFileName : PChar ) ; 
+procedure gdRenderSystemScreenShot( aFileName : String ) ; 
 begin
   If Not(FEngineInitialized) then exit;
   If Not(FRendererInitialized) then exit;
@@ -552,10 +511,10 @@ end;
 {* Get the name string of a driver                                            *}
 {******************************************************************************}
 
-function gdSoundSystemGetDriverName( aDriverNumber : Integer ) : PChar; 
+function gdSoundSystemGetDriverName( aDriverNumber : Integer ) : String; 
 begin
   If Not(FEngineInitialized) then exit;
-  result :=  PChar(Sound.GetDriverName( aDriverNumber ));
+  result :=  String(Sound.GetDriverName( aDriverNumber ));
 end;
 
 {******************************************************************************}
@@ -670,7 +629,7 @@ end;
 {* Keystring to key                                                           *}
 {******************************************************************************}
 
-function gdInputSystemStringToKey( aName : PChar ) : Integer ; 
+function gdInputSystemStringToKey( aName : String ) : Integer ; 
 begin
   If Not(FEngineInitialized) then exit;
   If Not(FInputInitialized) then exit;
@@ -681,22 +640,22 @@ end;
 {* Key to keytring                                                            *}
 {******************************************************************************}
 
-function gdInputSystemKeyToString( aKey : Integer ) : Pchar ; 
+function gdInputSystemKeyToString( aKey : Integer ) : String ; 
 begin
   If Not(FEngineInitialized) then exit;
   If Not(FInputInitialized) then exit;
-  result := PChar(Input.KeyToString( aKey ));
+  result := String(Input.KeyToString( aKey ));
 end;
 
 {******************************************************************************}
 {* Detect which Key is currently pressed and returns the keystring            *}
 {******************************************************************************}
 
-function gdInputSystemDetectCurrentKeyString() : Pchar ; 
+function gdInputSystemDetectCurrentKeyString() : String ; 
 begin
   If Not(FEngineInitialized) then exit;
   If Not(FInputInitialized) then exit;
-  result := PChar(Input.DetectCurrentKeyString());
+  result := String(Input.DetectCurrentKeyString());
 end;
 
 {******************************************************************************}
@@ -714,7 +673,7 @@ end;
 {* Register a keyaction                                                       *}
 {******************************************************************************}
 
-procedure gdInputSystemRegisterAction(aType : TGDInputTypes; aName, aKeyString : PChar ;
+procedure gdInputSystemRegisterAction(aType : TGDInputTypes; aName, aKeyString : String ;
                                       aAction : TGDProcEngineCallback;  aConsoleDisabled : boolean ); 
 begin
   If Not(FEngineInitialized) then exit;
@@ -727,12 +686,12 @@ end;
 {* Pas down a char the engine (used for typing and such)                      *}
 {******************************************************************************}
 
-procedure gdInputSystemHandleChar( aChar : PChar ); 
+procedure gdInputSystemHandleChar( aChar : Char );
 begin
   If Not(FEngineInitialized) then exit;
   If Not(FRendererInitialized) then exit;
   If Not(FInputInitialized) then exit;
-  InputManager.ExecuteCharInput( Char(aChar) );
+  InputManager.ExecuteCharInput( aChar );
 end;
 
 {******************************************************************************}
@@ -760,30 +719,6 @@ begin
 end;
 
 {******************************************************************************}
-{* Initialize the console                                                     *}
-{******************************************************************************}
-
-procedure gdConsoleInit( aInput : TGDConsoleInput ); 
-begin
-  If Not(FEngineInitialized) then exit;
-  If Not(FRendererInitialized) then exit;
-  If Not(FInputInitialized) then exit;
-  Console.InitConsole( aInput  );
-end;
-
-{******************************************************************************}
-{* Clear the console                                                          *}
-{******************************************************************************}
-
-procedure gdConsoleClear(); 
-begin
-  If Not(FEngineInitialized) then exit;
-  If Not(FRendererInitialized) then exit;
-  If Not(FInputInitialized) then exit;
-  Console.Clear();
-end;
-
-{******************************************************************************}
 {* Toggle the console                                                         *}
 {******************************************************************************}
 
@@ -799,7 +734,7 @@ end;
 {* Excute command                                                             *}
 {******************************************************************************}
 
-procedure gdCommandExecute(aString : PChar ); 
+procedure gdCommandExecute(aString : String ); 
 begin
   If Not(FEngineInitialized) then exit;
   If Not(FRendererInitialized) then exit;
@@ -812,7 +747,7 @@ end;
 {* Initialize the mouse cursor                                                *}
 {******************************************************************************}
 
-procedure gdGUIMouseCursorInit( aFileName : PChar; aSize : integer ); 
+procedure gdGUIMouseCursorInit( aFileName : String; aSize : integer ); 
 begin
   If Not(FEngineInitialized) then exit;
   If Not(FRendererInitialized) then exit;
@@ -886,7 +821,7 @@ end;
 {* Setup the loadingscreen                                                    *}
 {******************************************************************************}
 
-procedure gdGUILoadingScreenSetup( aProcessName : PChar; aMax : Integer ); 
+procedure gdGUILoadingScreenSetup( aProcessName : String; aMax : Integer ); 
 begin
   If Not(FEngineInitialized) then exit;
   If Not(FRendererInitialized) then exit;
@@ -991,99 +926,12 @@ begin
   Camera.Strafe(aStep);
 end;
 
-{******************************************************************************}
-{* Move camera up or down                                                     *}
-{******************************************************************************}
-
-procedure gdCameraUpDown(aStep : double); 
-begin
-  If Not(FEngineInitialized) then exit;
-  If Not(FRendererInitialized) then exit;
-  Camera.UpDown(aStep);
-end;
-
-{******************************************************************************}
-{* Look arround with the mouse                                               *}
-{******************************************************************************}
-
-procedure gdCameraMouseLook(aOldX, aOldY, aNewX, aNewY  : Integer; aSensitivity : Double; aInvertMouse : Boolean); 
-begin
-  If Not(FEngineInitialized) then exit;
-  If Not(FRendererInitialized) then exit;
-  Camera.MouseLook(aOldX, aOldY, aNewX, aNewY,aSensitivity,aInvertMouse);
-end;
-
-{******************************************************************************}
-{* Look horizontaly with the mouse                                            *}
-{******************************************************************************}
-
-procedure gdCameraMouseLookHorizontal(aOldX, aNewX  : Integer; aSensitivity : Double; aInvertMouse : Boolean); 
-begin
-  If Not(FEngineInitialized) then exit;
-  If Not(FRendererInitialized) then exit;
-  Camera.MouseLookHorizontal(aOldX, aNewX, aSensitivity, aInvertMouse);
-end;
-
-{******************************************************************************}
-{* Strafe horizontaly with the mouse                                          *}
-{******************************************************************************}
-
-procedure gdCameraMouseStrafe(aOldX, aNewX  : Integer; aStep : Double); 
-begin
-  If Not(FEngineInitialized) then exit;
-  If Not(FRendererInitialized) then exit;
-  Camera.MouseStrafe(aOldX, aNewX, aStep );
-end;
-
-{******************************************************************************}
-{* Move up and down with the mouse                                            *}
-{******************************************************************************}
-
-procedure gdCameraMouseUpDown(aOldY, aNewY  : Integer; aStep : Double); 
-begin
-  If Not(FEngineInitialized) then exit;
-  If Not(FRendererInitialized) then exit;
-  Camera.MouseUpDown(aOldY, aNewY, aStep);
-end;
-
-{******************************************************************************}
-{* Move with the mouse                                                        *}
-{******************************************************************************}
-
-procedure gdCameraMouseMove(aOldY, aNewY : Integer; aStep : Double); 
-begin
-  If Not(FEngineInitialized) then exit;
-  If Not(FRendererInitialized) then exit;
-  Camera.MouseMove( aOldY, aNewY, aStep );
-end;
-
-{******************************************************************************}
-{* Rebuild the quadtree                                                       *}
-{******************************************************************************}
-
-procedure gdOctreeRebuild(); 
-begin
-  If Not(FEngineInitialized) then exit;
-  If Not(FRendererInitialized) then exit;
-  Octree.InitOcTree();
-end;
-
-{******************************************************************************}
-{* Rebuild the quadtree                                                       *}
-{******************************************************************************}
-
-procedure gdOctreeClear(); 
-begin
-  If Not(FEngineInitialized) then exit;
-  If Not(FRendererInitialized) then exit;
-  Octree.InitOcTree();
-end;
 
 {******************************************************************************}
 {* Load settings out an ini-file                                              *}
 {******************************************************************************}
 
-procedure gdSettingsLoad( aIniFile : PChar );
+procedure gdSettingsLoad( aIniFile : String );
 begin
   If Not(FEngineInitialized) then exit;
   Settings.LoadIniFile(aIniFile);
@@ -1093,7 +941,7 @@ end;
 {* Save settings to an ini-file                                               *}
 {******************************************************************************}
 
-procedure gdSettingsSave( aIniFile : PChar ); 
+procedure gdSettingsSave( aIniFile : String ); 
 begin
   If Not(FEngineInitialized) then exit;
   Settings.SaveIniFile( aIniFile );
@@ -1170,23 +1018,10 @@ begin
 end;
 
 {******************************************************************************}
-{* Retrieve a log-line                                                        *}
-{******************************************************************************}
-
-function gdLogGetLine(aRow : Integer) : Pchar; 
-begin
-  If Not(FEngineInitialized) then exit;
-  If (aRow < 0) or (aRow > Log.Text.Count-1) then
-    result := 'NO_LINE'
-  else
-    result := PCHar(Log.Text.Strings[aRow]);
-end;
-
-{******************************************************************************}
 {* Add a text to the log                                                      *}
 {******************************************************************************}
 
-procedure gdLogAddNewLine(aText : Pchar); 
+procedure gdLogAddNewLine(aText : String); 
 begin
   If Not(FEngineInitialized) then exit;
   If aText = '' then exit;
@@ -1197,7 +1032,7 @@ end;
 {* Add a text to the last line of the log                                     *}
 {******************************************************************************}
 
-procedure gdLogAddToLastLine(aText : Pchar); 
+procedure gdLogAddToLastLine(aText : String); 
 begin
   If Not(FEngineInitialized) then exit;
   If aText = '' then exit;
@@ -1248,20 +1083,20 @@ end;
 {* Get time in seconds                                                        *}
 {******************************************************************************}
 
-function gdTimerGetInSeconds() : PChar; 
+function gdTimerGetInSeconds() : String; 
 begin
   If Not(FEngineInitialized) then exit;
-  result := PChar(Timer.TimeInSeconds());
+  result := String(Timer.TimeInSeconds());
 end;
 
 {******************************************************************************}
 {* Get time in millids                                                        *}
 {******************************************************************************}
 
-function gdTimerGetInMilliSeconds() : PChar; 
+function gdTimerGetInMilliSeconds() : String; 
 begin
   If Not(FEngineInitialized) then exit;
-  result := PChar(Timer.TimeInMilliSeconds());
+  result := String(Timer.TimeInMilliSeconds());
 end;
 
 {******************************************************************************}
@@ -1311,21 +1146,10 @@ begin
 end;
 
 {******************************************************************************}
-{* Main render loop of the engine                                             *}
-{******************************************************************************}
-
-procedure gdLoopRender(); 
-begin
-  If Not(FEngineInitialized) then exit;
-  If Not(FRendererInitialized) then exit;
-  Main.RenderMain();
-end;
-
-{******************************************************************************}
 {* Load map                                                                   *}
 {******************************************************************************}
 
-function gdMapLoad( aFileName : PChar ) : boolean; 
+function gdMapLoad( aFileName : String ) : boolean; 
 begin
   result := false;
   If Not(FEngineInitialized) then exit;
@@ -1353,37 +1177,6 @@ begin
   Map.Clear();
   CellManager.Clear();
   Octree.Clear();
-end;
-
-{******************************************************************************}
-{* Load terrain                                                               *}
-{******************************************************************************}
-
-function gdTerrainInit( aInput : TGDTerrainInput ) : boolean; 
-begin
-  Result := false;
-  If Not(FEngineInitialized) then exit;
-  If Not(FRendererInitialized) then exit;
-  Terrain.Clear();
-  Result := Terrain.InitTerrain( aInput );
-  CellManager.RemoveCells( SO_TERRAINCELL );
-  CellManager.GenerateCellsFromTerrain();
-  Octree.Clear();
-  Octree.InitOcTree();
-end;
-
-{******************************************************************************}
-{* Clear terrain                                                              *}
-{******************************************************************************}
-
-procedure gdTerrainClear(); 
-begin
-  If Not(FEngineInitialized) then exit;
-  If Not(FRendererInitialized) then exit;
-  Terrain.Clear();
-  CellManager.RemoveCells( SO_TERRAINCELL );
-  Octree.Clear();
-  Octree.InitOcTree();
 end;
 
 {******************************************************************************}
@@ -1420,83 +1213,6 @@ begin
 end;
 
 {******************************************************************************}
-{* Init skydome                                                               *}
-{******************************************************************************}
-
-procedure gdSkyDomeInit(aFileName : PChar); 
-begin
-  If Not(FEngineInitialized) then exit;
-  If Not(FRendererInitialized) then exit;
-  SkyDome.InitSkyDome( String(aFileName), (Settings.ViewDistance * R_VIEW_DISTANCE_STEP));
-end;
-
-{******************************************************************************}
-{* Clear skydome                                                              *}
-{******************************************************************************}
-
-procedure gdSkyDomeClear(); 
-begin
-  If Not(FEngineInitialized) then exit;
-  If Not(FRendererInitialized) then exit;
-  SkyDome.Clear();
-end;
-
-{******************************************************************************}
-{* Init distancefog                                                           *}
-{******************************************************************************}
-
-procedure gdDistanceFogInit( aR,aG,aB,aA : Double  ); 
-begin
-  If Not(FEngineInitialized) then exit;
-  If Not(FRendererInitialized) then exit;
-  FogManager.InitDistanceFog(aR,aG,aB,aA,Settings.ViewDistance );
-  FogManager.UseDistanceFog();
-end;
-
-{******************************************************************************}
-{* Clear distancefog                                                          *}
-{******************************************************************************}
-
-procedure gdDistanceFogClear(); 
-begin
-  If Not(FEngineInitialized) then exit;
-  If Not(FRendererInitialized) then exit;
-  FogManager.ClearDistanceFog();
-end;
-
-{******************************************************************************}
-{* Init water                                                                 *}
-{******************************************************************************}
-
-function  gdWaterInit( aInput : TGDWaterInput ) : boolean; 
-begin
-  result := false;
-  If Not(FEngineInitialized) then exit;
-  If Not(FRendererInitialized) then exit;
-  Water.Clear();
-  result := Water.InitWater( aInput );
-  FogManager.InitWaterFog( aInput.UnderWaterColorR,aInput.UnderWaterColorG,aInput.UnderWaterColorB,aInput.UnderWaterColorA, aInput.Visibility );
-  CellManager.RemoveCells( SO_WATERCELL );
-  CellManager.GenerateCellsFromWater();
-  Octree.Clear();
-  Octree.InitOcTree();
-end;
-
-{******************************************************************************}
-{* Clear water                                                                *}
-{******************************************************************************}
-
-procedure gdWaterClear(); 
-begin
-  If Not(FEngineInitialized) then exit;
-  If Not(FRendererInitialized) then exit;
-  CellManager.RemoveCells( SO_WATERCELL );
-  Water.Clear();
-  Octree.Clear();
-  Octree.InitOcTree();
-end;
-
-{******************************************************************************}
 {* return the waterheight                                                     *}
 {******************************************************************************}
 
@@ -1506,65 +1222,6 @@ begin
   If Not(FEngineInitialized) then exit;
   If Not(FRendererInitialized) then exit;
   result := Water.WaterHeight;
-end;
-
-{******************************************************************************}
-{* Init foliage                                                               *}
-{******************************************************************************}
-
-procedure gdFoliageInit( aInput : TGDFoliageInput );
-begin
-  If Not(FEngineInitialized) then exit;
-  If Not(FRendererInitialized) then exit;
-  Foliage.InitFoliage( aInput );
-  CellManager.RemoveCells( SO_GRASSCELL );
-  CellManager.GenerateCellsFromFoliage();
-  Octree.Clear();
-  Octree.InitOcTree();
-end;
-
-{******************************************************************************}
-{* Add a grasstype                                                            *}
-{******************************************************************************}
-
-procedure gdFoliageAddGrassType( aInput : TGDGrassTypesInput );
-var
-  iGrassType : TGDGrassType;
-begin
-  If Not(FEngineInitialized) then exit;
-  If Not(FRendererInitialized) then exit;
-  iGrassType := TGDGrassType.Create();
-  iGrassType.InitGrassType( aInput );
-  Foliage.GrassTypes.Add(iGrassType);
-end;
-
-{******************************************************************************}
-{* Add a treetype                                                             *}
-{******************************************************************************}
-
-procedure gdFoliageAddTreeType( aInput : TGDTreeTypesInput );
-var
-  iTreeType : TGDTreeType;
-begin
-  If Not(FEngineInitialized) then exit;
-  If Not(FRendererInitialized) then exit;
-  iTreeType := TGDTreeType.Create();
-  //iTreeType.InitTreeType( aInput );
-  Foliage.TreeTypes.Add(iTreeType);
-end;
-
-{******************************************************************************}
-{* Clear foliage                                                              *}
-{******************************************************************************}
-
-procedure gdFoliageClear();
-begin
-  If Not(FEngineInitialized) then exit;
-  If Not(FRendererInitialized) then exit;
-  CellManager.RemoveCells( SO_GRASSCELL );
-  Foliage.Clear();
-  Octree.Clear();
-  Octree.InitOcTree();
 end;
 
 {******************************************************************************}
@@ -1588,7 +1245,7 @@ end;
 {* Bind texture to a texture unit                                             *}
 {******************************************************************************}
 
-procedure gdTexturesBind(aPointer : pointer; aTextureUnit : TGDTextureUnit ); 
+procedure gdTexturesBind(aPointer : pointer; aTextureUnit : GLEnum );
 var
   iTempTexture : TGDTexture;
 begin
@@ -1624,104 +1281,32 @@ begin
 end;
 
 {******************************************************************************}
-{* Load a font from a file and return the retrievel index                     *}
+{* Set text color                                                             *}
 {******************************************************************************}
 
-function gdFontsLoad( aFileName : String ) : pointer; 
-var
-  iTempFont : TGDFont;
-begin
-  result := nil;
-  If Not(FEngineInitialized) then exit;
-  If Not(FRendererInitialized) then exit;
-  iTempFont := TGDFont.Create();
-  If Not(iTempFont.InitFont( aFileName )) then exit;
-  result := FontList.AddObjectP( iTempFont );
-end;
-
-{******************************************************************************}
-{* Set the color of a font                                                    *}
-{******************************************************************************}
-
-procedure gdFontsSetColor(aPointer : pointer; aR,aG,aB,aA : double); 
-var
-  iTempFont : TGDFont;
+procedure gdTextColor(aR,aG,aB : Double);
 begin
   If Not(FEngineInitialized) then exit;
   If Not(FRendererInitialized) then exit;
-  iTempFont := TGDFont(FontList.GetObjectP(aPointer));
-  If iTempFont <> nil then
-    iTempFont.Color := TGDColor.Create(aR,aG,aB,aA)
-  ;
+  Font.Color.Reset(aR,aG,aB, 1);
 end;
 
 {******************************************************************************}
-{* Render a text with a font                                                  *}
+{* Render a text                                                              *}
 {******************************************************************************}
 
-procedure gdFontsRenderText(aPointer : pointer; aX,aY,aScale : Double; aText : Pchar); 
-var
-  iTempFont : TGDFont;
+procedure gdTextRender(aX,aY,aScale : Double; aText : String);
 begin
   If Not(FEngineInitialized) then exit;
   If Not(FRendererInitialized) then exit;
-  iTempFont := TGDFont( FontList.GetObjectP(aPointer));
-  If iTempFont <> nil then
-    iTempFont.Render(aX,aY,aScale,String(aText))
-  ;
-end;
-
-{******************************************************************************}
-{* Clear all the external fonts in the engine                                 *}
-{******************************************************************************}
-
-procedure gdFontsClear(); 
-begin
-  If Not(FEngineInitialized) then exit;
-  If Not(FRendererInitialized) then exit;
-  FontList.Clear();
-end;
-
-{******************************************************************************}
-{* remove a fonts in the engine                                               *}
-{******************************************************************************}
-
-procedure gdFontsRemove( aPointer : pointer ); 
-begin
-  If Not(FEngineInitialized) then exit;
-  If Not(FRendererInitialized) then exit;
-  FontList.RemoveObjectP(aPointer);
-  aPointer := nil
-end;
-
-{******************************************************************************}
-{* MainAmbientLight init                                                      *}
-{******************************************************************************}
-
-procedure gdMainDirectionalLightSet( aInput : TGDDirectionalLightInput );
-begin
-  If Not(FEngineInitialized) then exit;
-  If Not(FSoundInitialized) then exit;
-  DirectionalLight.InitDirectionalLight( aInput );
-end;
-
-
-{******************************************************************************}
-{* MainAmbientLight clear                                                     *}
-{******************************************************************************}
-
-procedure gdMainDirectionalLightClear();
-begin
-  If Not(FEngineInitialized) then exit;
-  If Not(FSoundInitialized) then exit;
-  DirectionalLight.Clear();
+  Font.Render(aX,aY,aScale,aText);
 end;
 
 {******************************************************************************}
 {* Init a soundfile                                                           *}
 {******************************************************************************}
 
-function  gdSoundFilesLoad( aFileName : PChar;  aType : TGDSoundTypes  ) : pointer; 
+function  gdSoundFilesLoad( aFileName : String;  aType : TGDSoundTypes  ) : pointer; 
 var
   iTempSoundFile : TGDSoundFile;
 begin

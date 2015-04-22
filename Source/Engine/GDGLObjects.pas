@@ -32,7 +32,6 @@ interface
 {* specification to make use of them easier. Included are:                    *}
 {* - Fragment and vertex Shaders (GLSL)                                       *}
 {* - Frame buffers and Render buffers                                         *}
-{* - Occlusion queries                                                        *}
 {* - Displaylists                                                             *}
 {* Still todo are:                                                            *}
 {* - Vertex arrays                                                            *}

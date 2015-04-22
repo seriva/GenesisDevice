@@ -63,7 +63,7 @@ type
 
     Function  InitTexture(aFileName : String; aDetail : TGDTextureDetail; aTextureFilter : TGDTextureFilter) : boolean;
     procedure Clear();
-    procedure BindTexture(aTU : TGDTextureUnit);
+    procedure BindTexture(aTU : GLEnum);
 
     procedure RenderTextureInteger( aSizeW, aSizeH : integer );
     procedure RenderTextureFloat( aSizeW, aSizeH: Integer );
@@ -105,42 +105,10 @@ end;
 {* Bind the texture to a texture unit                                         *}
 {******************************************************************************}
 
-procedure TGDTexture.BindTexture(aTU : TGDTextureUnit);
+procedure TGDTexture.BindTexture(aTU : GLenum);
 begin
-  case aTU of
-    TU_1 : begin
-             glActiveTexture(GL_TEXTURE0);
-             glBindTexture(GL_TEXTURE_2D, FTexture);
-    end;
-    TU_2 : begin
-             glActiveTexture(GL_TEXTURE1);
-             glBindTexture(GL_TEXTURE_2D, FTexture);
-           end;
-    TU_3 : begin
-             glActiveTexture(GL_TEXTURE2);
-             glBindTexture(GL_TEXTURE_2D, FTexture);
-           end;
-    TU_4 : begin
-             glActiveTexture(GL_TEXTURE3);
-             glBindTexture(GL_TEXTURE_2D, FTexture);
-           end;
-    TU_5 : begin
-             glActiveTexture(GL_TEXTURE4);
-             glBindTexture(GL_TEXTURE_2D, FTexture);
-           end;
-    TU_6 : begin
-             glActiveTexture(GL_TEXTURE5);
-             glBindTexture(GL_TEXTURE_2D, FTexture);
-           end;
-    TU_7 : begin
-             glActiveTexture(GL_TEXTURE6);
-             glBindTexture(GL_TEXTURE_2D, FTexture);
-           end;
-    TU_8 : begin
-             glActiveTexture(GL_TEXTURE7);
-             glBindTexture(GL_TEXTURE_2D, FTexture);
-           end;
-  end;
+  glActiveTexture(aTU);
+  glBindTexture(GL_TEXTURE_2D, FTexture);
 end;
 
 {******************************************************************************}

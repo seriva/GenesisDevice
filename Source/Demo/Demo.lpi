@@ -141,6 +141,7 @@
       <Unit19>
         <Filename Value="..\Engine\GDFrustum.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="GDFrustum"/>
       </Unit19>
       <Unit20>
         <Filename Value="..\Engine\GDGLObjects.pas"/>

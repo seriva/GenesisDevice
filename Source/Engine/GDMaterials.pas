@@ -180,7 +180,7 @@ end;
 
 procedure   TGDMaterial.BindMaterialTextures();
 begin
-  FTexture.BindTexture( TU_1 );
+  FTexture.BindTexture( GL_TEXTURE0 );
 end;
 
 {******************************************************************************}

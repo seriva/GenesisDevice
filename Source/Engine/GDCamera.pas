@@ -66,15 +66,10 @@ type
 
     procedure   InitCamera(aPositionX, aPositionY, aPositionZ : Double);
 
-    procedure   UpDown(aStep : Double);
     Procedure   Move(aStep : Double);
     Procedure   Strafe(aStep : Double);
 
     procedure   MouseLook(aOldX, aOldY, aNewX, aNewY  : Integer; aSensitivity : Double; aInvertMouse : Boolean);
-    procedure   MouseLookHorizontal(aOldX, aNewX  : Integer; aSensitivity : Double; aInvertMouse : Boolean);
-    procedure   MouseStrafe(aOldX, aNewX  : Integer; aStep : Double);
-    procedure   MouseUpDown(aOldY, aNewY  : Integer; aStep : Double);
-    procedure   MouseMove(aOldY, aNewY : Integer; aStep : Double);    
 
     Procedure   Translate();
   end;
@@ -236,15 +231,6 @@ begin
 end;
 
 {******************************************************************************}
-{* Move the camera up and down                                                *}
-{******************************************************************************}
-
-procedure TGDCamera.UpDown(aStep : Double);
-begin
-  FPosition.y := FPosition.y + aStep;
-end;
-
-{******************************************************************************}
 {* Use the mouse to look arround 6 degrees                                    *}
 {******************************************************************************}
 
@@ -274,87 +260,6 @@ begin
   iM.ApplyToVector(FDirection);
 
   FreeAndNil(iM);
-end;
-
-{******************************************************************************}
-{* Use the mouse to look arround 4 degrees                                    *}
-{******************************************************************************}
-
-procedure  TGDCamera.MouseLookHorizontal(aOldX, aNewX  : Integer; aSensitivity : Double; aInvertMouse : Boolean);
-var dDeltaX : double;
-    iM : TGDMatrix;
-begin
-  if (aOldX = aNewX) then exit;
-
-  iM := TGDMatrix.Create();
-
-  dDeltaX := aOldX-aNewX;
-
-  FRotation.y := FRotation.y - dDeltaX / (10-aSensitivity);
-
-  iM.CreateRotation( FRotation );
-  FDirection.Reset(0,0,-1);
-  iM.ApplyToVector(FDirection);
-
-  FreeAndNil(iM);
-end;
-
-{******************************************************************************}
-{* Move the camera forward or backward using the mouse                        *}
-{******************************************************************************}
-
-procedure TGDCamera.MouseMove(aOldY, aNewY : Integer; aStep : Double);
-var iDeltaY : integer;
-    sSpeed : Double;
-    iM : TGDMatrix;
-    iV : TGDVector;
-begin
-  if (aOldY = aNewY) then exit;
-
-  iM := TGDMatrix.Create();
-  iV := TGDVector.Create();
-
-  iDeltaY := aOldY-aNewY;
-  sSpeed := (iDeltaY*aStep);
-
-  iM.CreateRotation( FRotation );
-  FDirection.Reset(0,0,-1);
-  iM.ApplyToVector(FDirection);
-
-  iV.x := FDirection.x * sSpeed;
-  iV.y := 0;
-  iV.z := FDirection.z * sSpeed;
-
-  FPosition.Add( iV );
-
-  FreeAndNil(iM);
-  FreeAndNil(iV);
-end;
-
-{******************************************************************************}
-{* Strafe the camera left or right using the mouse                            *}
-{******************************************************************************}
-
-procedure TGDCamera.MouseStrafe(aOldX, aNewX  : Integer; aStep : Double);
-var iDeltaX : integer;
-    sSpeed : Double;
-begin
-  iDeltaX := aOldX-aNewX;
-  sSpeed := (iDeltaX*aStep);
-  Strafe(sSpeed);
-end;
-
-{******************************************************************************}
-{* Move the camera up and down using the mouse                                *}
-{******************************************************************************}
-
-procedure TGDCamera.MouseUpDown(aOldY, aNewY  : Integer; aStep : Double);
-var iDeltaY : integer;
-    sSpeed : Double;
-begin
-  iDeltaY := aOldY-aNewY;
-  sSpeed := (iDeltaY*aStep);
-  UpDown(sSpeed);
 end;
 
 end.
