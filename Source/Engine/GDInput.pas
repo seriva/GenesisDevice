@@ -43,7 +43,9 @@ unit GDInput;
 interface
 
 uses
-  LCLIntf, LCLType, LMessages,
+  LCLIntf,
+  LCLType,
+  LMessages,
   SysUtils,
   MMSystem,
   Classes,
@@ -65,7 +67,6 @@ type
 
   TGDInput = class
   private
-    FUseDXInput      : boolean;
     FDirectInput     : IDirectInput8 ;
     FKeyBoard        : IDirectInputDevice8;
     FMouse           : IDirectInputDevice8;
@@ -75,18 +76,14 @@ type
     DIMButSwapped    : boolean;
     FEnableInput     : Boolean;
   public
-    property UseDXInput    : Boolean read FUseDXInput;
     property KeyBoardEvent : THandle read FDIKeyBoardEvent;
     property MouseEvent    : THandle read FDIMouseEvent;
     property EnableInput   : boolean read FEnableInput write FEnableInput;
 
     Constructor Create();
     Destructor  Destroy();override;
+    function InitInput(): Boolean;
 
-    function InitDirectInput(): Boolean;
-    function ShutDownInput(): Boolean;
-
-    function InitKeyBoard(): Boolean;
     function KeyboardControl( aAcquire: boolean ): boolean;
     function KeyboardState(): Boolean;
     function KeyDown(aKey: byte): boolean;
@@ -95,7 +92,6 @@ type
     function DetectCurrentKey() : byte;
     function DetectCurrentKeyString() : String;
 
-    function InitMouse(): boolean;
     function MouseControl(aAcquire: boolean): boolean;
     function GetMousePosition(var aX, aY: LongInt) : boolean;
   end;
@@ -214,61 +210,14 @@ end;
 {******************************************************************************}
 
 Destructor  TGDInput.Destroy();
+var
+  iError  : string;
+  iResult : boolean;
 begin
-  If FUseDXInput then ShutDownInput();
   inherited;
-end;
-
-{******************************************************************************}
-{* Init the input                                                             *}
-{******************************************************************************}
-
-function TGDInput.InitDirectInput(): Boolean;
-var
-  iError    : string;
-begin
-  Log.Write('Initializing direct input...');
+  Log.Write('Shutting down input...');
   try
-    result := true;
-    FEnableInput := false;
-    DirectInput8Create(GetModuleHandle(nil), DIRECTINPUT_VERSION, IID_IDirectInput8, FDirectInput, NIL);
-    if FDirectInput = nil then Raise Exception.Create('Error initializing Direct Input!');
-  except
-    on E: Exception do
-    begin
-      iError := E.Message;
-      result := false;
-    end;
-  end;
-
-  Log.WriteOkFail(result, iError);
-
-  If result then
-  begin
-    If InitKeyBoard() and InitMouse() then
-    begin
-      result := true;
-      FUseDXInput := true;
-    end
-    else
-    begin
-      result := false;
-      FUseDXInput := false;
-    end;
-  end;
-end;
-
-{******************************************************************************}
-{* Shutdown the input                                                         *}
-{******************************************************************************}
-
-function TGDInput.ShutDownInput(): Boolean;
-var
-  iError    : string;
-begin
-  Log.Write('Shutting down direct input and registered devices...');
-  try
-    result := true;
+    iResult := true;
     if Assigned(FDirectInput) then
     begin
       if Assigned(FKeyBoard) then
@@ -287,25 +236,29 @@ begin
     on E: Exception do
     begin
       iError := E.Message;
-      result := false;
+      iResult := false;
     end;
   end;
-
-  Log.WriteOkFail(result, iError);
+  Log.WriteOkFail(iResult, iError);
 end;
 
 {******************************************************************************}
-{* Init the keyboard                                                          *}
+{* Init the input                                                             *}
 {******************************************************************************}
 
-function TGDInput.InitKeyBoard(): Boolean;
+function TGDInput.InitInput(): Boolean;
 var
   iError    : string;
+  iProp : TDIPropDWord;
 begin
-  Log.Write('Initializing keyboard...');
+  Log.Write('Initializing input...');
   try
     result := true;
+    FEnableInput := false;
+    DirectInput8Create(GetModuleHandle(nil), DIRECTINPUT_VERSION, IID_IDirectInput8, FDirectInput, NIL);
+    if FDirectInput = nil then Raise Exception.Create('Error initializing Direct Input!');
 
+    //Keyboard
     if failed(FDirectInput.CreateDevice(GUID_SysKeyboard, FKeyBoard, NIL)) then
       Raise Exception.Create('Unable to create a keyboard device!');
 
@@ -320,7 +273,31 @@ begin
       Raise Exception.Create('Unable to set the keyboard event notification!');
 
     If Not(KeyboardControl( true )) then
-      Raise Exception.Create('Unable to get the keyboard control!');      
+      Raise Exception.Create('Unable to get the keyboard control!');
+
+    //Mouse
+    DIMButSwapped := GetSystemMetrics(SM_SWAPBUTTON) <> 0;
+    if failed(FDirectInput.CreateDevice(GUID_SysMouse, FMouse, NIL)) then
+      Raise Exception.Create('Unable to create a mouse device!');
+
+    if failed(FMouse.SetDataFormat(@c_dfDIMouse)) then
+      Raise Exception.Create('Unable to set the mouse data format!');
+
+    FDIMouseEvent := CreateEvent(NIL, false, false, NIL);
+    if FDIMouseEvent = 0 then Raise Exception.Create('Unable to set the mouse event!');
+    if failed(FMouse.SetEventNotification(FDIMouseEvent)) then
+      Raise Exception.Create('Unable to set the mouse event notification!');
+    with iProp do begin
+      diph.dwSize       := SizeOf(TDIPropDWord);
+      diph.dwHeaderSize := SizeOf(TDIPropHeader);
+      diph.dwObj        := 0;
+      diph.dwHow        := DIPH_DEVICE;
+      dwData            := DIMBufSize;
+    end;
+    if failed(FMouse.SetProperty(DIPROP_BUFFERSIZE, iProp.diph)) then
+      Raise Exception.Create('Unable to set the mouse buffersize!');
+    If Not(MouseControl( true )) then
+      Raise Exception.Create('Unable to get the mouse control!');
   except
     on E: Exception do
     begin
@@ -458,51 +435,6 @@ begin
   result := FKeyNames[aKey];
   If result = '' then
      result := 'Unassigned';
-end;
-
-{******************************************************************************}
-{* Init the mouse                                                             *}
-{******************************************************************************}
-
-function  TGDInput.InitMouse(): boolean;
-var iProp : TDIPropDWord;
-var
-  iError    : string;
-begin
-  Log.Write('Initializing mouse...');
-  try
-    result := true;
-    DIMButSwapped := GetSystemMetrics(SM_SWAPBUTTON) <> 0;
-    if failed(FDirectInput.CreateDevice(GUID_SysMouse, FMouse, NIL)) then
-      Raise Exception.Create('Unable to create a mouse device!');
-
-    if failed(FMouse.SetDataFormat(@c_dfDIMouse)) then
-      Raise Exception.Create('Unable to set the mouse data format!');
-
-    FDIMouseEvent := CreateEvent(NIL, false, false, NIL);
-    if FDIMouseEvent = 0 then Raise Exception.Create('Unable to set the mouse event!');
-    if failed(FMouse.SetEventNotification(FDIMouseEvent)) then
-      Raise Exception.Create('Unable to set the mouse event notification!');
-    with iProp do begin
-      diph.dwSize       := SizeOf(TDIPropDWord);
-      diph.dwHeaderSize := SizeOf(TDIPropHeader);
-      diph.dwObj        := 0;
-      diph.dwHow        := DIPH_DEVICE;
-      dwData            := DIMBufSize;
-    end;
-    if failed(FMouse.SetProperty(DIPROP_BUFFERSIZE, iProp.diph)) then
-      Raise Exception.Create('Unable to set the mouse buffersize!');
-    If Not(MouseControl( true )) then
-      Raise Exception.Create('Unable to get the mouse control!');
-  except
-    on E: Exception do
-    begin
-      iError := E.Message;
-      result := false;
-    end;
-  end;
-
-  Log.WriteOkFail(result, iError);
 end;
 
 {******************************************************************************}

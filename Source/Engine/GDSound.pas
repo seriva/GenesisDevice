@@ -34,11 +34,7 @@ interface
 
 uses
   SysUtils,
-  Math,
-  Contnrs,
   fmod,
-  fmoderrors,
-  fmodpresets,
   fmodtypes,
   GDLog,
   GDConstants,
@@ -54,21 +50,18 @@ Type
   TGDSound = class
   private
     FSoundSystem   : FMOD_SYSTEM;
-    FSoundSystemOk : Boolean;
   public
     Property System : FMOD_SYSTEM read FSoundSystem;
 
     constructor Create();
     destructor  Destroy(); override;
+    function    InitSound() : boolean;
+    procedure   UpdateSound();
 
-    function    CheckVersion() : boolean;
     function    GetNumberOfDrivers() : Integer;
     function    GetDriverName( aDriverNumber : Integer ) : String;
-
-    function    InitSoundEngine() : boolean;
-    function    ShutDownSoundEngine(): boolean;
-
-    procedure   UpdateSound();
+    function    InitSoundDriver() : boolean;
+    function    ShutDownSoundDriver(): boolean;
   end;
 
 {******************************************************************************}
@@ -106,10 +99,37 @@ implementation
 
 constructor TGDSound.Create();
 begin
-  If FMOD_System_Create( FSoundSystem ) = FMOD_OK then
-     FSoundSystemOk := true
-  else
-     FSoundSystemOk := false;
+  FSoundSystem  := nil;
+end;
+
+{******************************************************************************}
+{* Init the sound engine (FMOD)                                               *}
+{******************************************************************************}
+
+function TGDSound.InitSound() : boolean;
+var
+  iError    : string;
+  iVersion : Cardinal;
+begin
+  Log.Write('Initializing sound...');
+  try
+    If not(FMOD_System_Create( FSoundSystem ) = FMOD_OK) then
+      Raise Exception.Create('Error initializing FMOD!');
+
+    if not(FMOD_System_GetVersion( FSoundSystem, iVersion) = FMOD_OK) then
+      Raise Exception.Create('Error getting FMOD version!');
+
+    If not(iVersion = FMOD_VERSION) Then
+      Raise Exception.Create('FMOD version is different!');
+  except
+    on E: Exception do
+    begin
+      iError := E.Message;
+      result := false;
+    end;
+  end;
+
+  Log.WriteOkFail(result, iError);
 end;
 
 {******************************************************************************}
@@ -117,45 +137,37 @@ end;
 {******************************************************************************}
 
 destructor TGDSound.Destroy();
-begin
-  FMOD_System_Release(FSoundSystem);
-end;
-
-{******************************************************************************}
-{* Check FMOD version                                                         *}
-{******************************************************************************}
-
-function   TGDSound.CheckVersion() : boolean;
 var
-  iVersion : Cardinal;
+  iError  : string;
+  iResult : boolean;
 begin
-  result := False;
-  if Not(FSoundSystemOk) then Exit;
-  if  FMOD_System_GetVersion( FSoundSystem, iVersion) = FMOD_OK  then
-  begin
-    If iVersion = FMOD_VERSION Then
-       result := True
-    else
-      FSoundSystemOk := false;
-  end
-  else
-    FSoundSystemOk := false;
+  inherited;
+  Log.Write('Shutting down sound...');
+  try
+    iResult := true;
+    if not(FMOD_System_Release(FSoundSystem) = FMOD_OK) then
+      Raise Exception.Create('Error shutting down FMOD!');
+  except
+    on E: Exception do
+    begin
+      iError := E.Message;
+      iResult := false;
+    end;
+  end;
+  Log.WriteOkFail(iResult, iError);
 end;
 
 {******************************************************************************}
 {* Get the number of available sound drivers                                  *}
 {******************************************************************************}
 
-function   TGDSound.GetNumberOfDrivers() : Integer;
+function TGDSound.GetNumberOfDrivers() : Integer;
 var
   iDriverCount : integer;
 begin
   result := -1;
-  if Not(FSoundSystemOk) then Exit;
   if  FMOD_System_GetNumDrivers( FSoundSystem, iDriverCount) = FMOD_OK  then
-       result := iDriverCount
-  else
-    FSoundSystemOk := false;
+    result := iDriverCount
 end;
 
 {******************************************************************************}
@@ -168,27 +180,20 @@ var
 begin
   result := 'NO_DRIVER';
   if FMOD_System_getDriverName(FSoundSystem, aDriverNumber, @iName[0], 256 ) = FMOD_OK  then
-  begin
     SetString(result, PAnsiChar(@iName[0]), 256);
-  end
-  else
-    FSoundSystemOk := false;
 end;
 
 {******************************************************************************}
 {* Init the sound engine                                                      *}
 {******************************************************************************}
 
-function   TGDSound.InitSoundEngine() : boolean;
+function   TGDSound.InitSoundDriver() : boolean;
 var
   iError    : string;
 begin
-  Log.Write('Initializing soundengine...');
+  Log.Write('Initializing sound driver...');
   try
     Result := true;
-
-    if Not(FSoundSystemOk) then
-      Raise Exception.Create('Error using FMOD!');
 
     If  Not(FMOD_System_setDriver( FSoundSystem, Settings.SoundDriver ) = FMOD_OK )then
       Raise Exception.Create('Unable to set the sounddriver!');
@@ -201,7 +206,6 @@ begin
     begin
       iError := E.Message;
       result := false;
-      FSoundSystemOk := false;
     end;
   end;
 
@@ -212,11 +216,11 @@ end;
 {* Shutdown the sound engine                                                  *}
 {******************************************************************************}
 
-function  TGDSound.ShutDownSoundEngine(): boolean;
+function  TGDSound.ShutDownSoundDriver(): boolean;
 var
   iError    : string;
 begin
-  Log.Write('Shutting down soundengine...');
+  Log.Write('Shutting down sound driver...');
   try
     result := true;
 

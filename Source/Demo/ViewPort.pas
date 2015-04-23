@@ -88,17 +88,18 @@ begin
   self.Caption := 'Genesis Device Engine - (Build : '+
                    gdEngineBuildNumber() + ' - Date : ' + gdEngineBuildDate() + ')';
 
+  //initialize the soundsystem with the current settings
+  If Not(gdSoundSystemInit()) then
+  begin
+    MessageBox(0, 'Error initializing sound driver. See Log.txt for details.', 'Error', MB_OK or MB_ICONERROR);
+    Application.Terminate();
+  end;
+
   //initialize the renderer with the current settings
   If Not(gdRenderSystemInit( self.Handle )) then
   begin
     MessageBox(0, 'Error initializing renderer. See Log.txt for details.', 'Error', MB_OK or MB_ICONERROR);
     Application.Terminate();
-  end;                   
-
-  //initialize the soundsystem with the current settings
-  If Not(gdSoundSystemInit()) then
-  begin
-    MessageBox(0, 'Error initializing soundengine, sound will be disabled. See Log.txt for details.', 'Error', MB_OK or MB_ICONERROR);
   end;
 
   //if fullscreen remove the border

@@ -67,13 +67,11 @@ uses
 Var
   FEngineInitialized   : Boolean = false;
   FRendererInitialized : Boolean = false;
-  FInputInitialized    : boolean = false;
   FSoundInitialized    : boolean = false;
 
  //some functions to check the engine 
 function CheckEngineInitialized(): boolean;
 function CheckRendererInitialized(): boolean;
-function CheckInputInitialized(): boolean;
 function CheckSoundInitialized(): boolean; 
 
 //Engine Functions
@@ -116,15 +114,12 @@ function  gdRenderSystemGetFrameTime() : Integer;
 procedure gdRenderSystemScreenShot( aFileName : String ) ; 
 
 //sound functions
-function  gdSoundSystemCheckVersion() : Boolean; 
 function  gdSoundSystemNumberOfDrivers() : Integer; 
 function  gdSoundSystemGetDriverName( aDriverNumber : Integer ) : String; 
 function  gdSoundSystemInit() : boolean; 
 function  gdSoundSystemShutDown() : boolean; 
 
 //input functions
-function  gdInputSystemInit() : boolean; 
-function  gdInputSystemShutDown() : boolean; 
 function  gdInputSystemStringToKey( aName : String ) : Integer ; 
 function  gdInputSystemKeyToString( aKey : Integer ) : String ; 
 function  gdInputSystemDetectCurrentKeyString() : String ; 
@@ -212,16 +207,6 @@ begin
 end;
 
 {******************************************************************************}
-{* Check if the input is initialized                                       *}
-{******************************************************************************}
-
-function CheckInputInitialized(): boolean;
-begin
-  If not(FInputInitialized) then MessageBox(0, 'Input is not initialized!', 'Error', MB_OK or MB_ICONERROR);
-  result := FInputInitialized;
-end;
-
-{******************************************************************************}
 {* Check if the sound is initialized                                          *}
 {******************************************************************************}
 
@@ -244,6 +229,7 @@ begin
      exit;
   end;
 
+  //Init log and check settings and capabilities.
   Log := TGDLog.Create( String(aApplicationPath) + String(aApplicationName) + '.log' );
   InitOpenGL();
   Settings := TGDSettings.Create();
@@ -269,36 +255,53 @@ begin
      exit;
   end;
 
-  //create all classes
-  Main         := TGDMain.Create();
-  Renderer     := TGDRenderer.Create();
-  Input        := TGDInput.Create();
-  InputManager := TGDInputManager.Create();
-  Sound        := TGDSound.Create();
-  SoundList    := TGDObjectList.Create();
-  Console      := TGDConsole.Create();
-  Camera       := TGDCamera.Create();
-  Frustum      := TGDFrustum.Create();
-  Font         := TGDFont.Create();
-  Timer        := TGDPerformanceTiming.Create();
-  Timing       := TGDTiming.Create();
-  Map          := TGDMap.Create();
-  Terrain      := TGDTerrain.Create();
-  SkyDome      := TGDSkyDome.Create();
-  Water        := TGDWater.Create();
-  Octree       := TGDOcTree.Create();
-  Foliage      := TGDFoliage.Create();
-  Statistics   := TGDStatistics.Create();
-  Modes        := TGDModes.Create();
-  CallBack     := TGDCallBack.Create();
-  FogManager     := TGDFogManager.Create();
-  CellManager    := TGDCellManager.Create();
-  TextureList    := TGDObjectList.Create();
-  MaterialList   := TGDMaterialList.Create();
-  GUIManager     := TGDGUIManager.Create();
-  MeshList       := TGDMeshList.Create();
-  Commands       := TGDCommands.Create();
+  //Create engine classes
+  Main             := TGDMain.Create();
+  Renderer         := TGDRenderer.Create();
+  Input            := TGDInput.Create();
+  InputManager     := TGDInputManager.Create();
+  Sound            := TGDSound.Create();
+  Console          := TGDConsole.Create();
+  Camera           := TGDCamera.Create();
+  Frustum          := TGDFrustum.Create();
+  Font             := TGDFont.Create();
+  Timer            := TGDPerformanceTiming.Create();
+  Timing           := TGDTiming.Create();
+  Map              := TGDMap.Create();
+  Terrain          := TGDTerrain.Create();
+  SkyDome          := TGDSkyDome.Create();
+  Water            := TGDWater.Create();
+  Octree           := TGDOcTree.Create();
+  Foliage          := TGDFoliage.Create();
+  Statistics       := TGDStatistics.Create();
+  Modes            := TGDModes.Create();
+  CallBack         := TGDCallBack.Create();
+  FogManager       := TGDFogManager.Create();
+  CellManager      := TGDCellManager.Create();
+  GUIManager       := TGDGUIManager.Create();
+  Commands         := TGDCommands.Create();
   DirectionalLight := TGDDirectionalLight.Create();
+
+
+  SoundList        := TGDObjectList.Create();
+  TextureList      := TGDObjectList.Create();
+  MaterialList     := TGDMaterialList.Create();
+  MeshList         := TGDMeshList.Create();
+
+  //Initialize sub systems.
+  //Input
+  If not(Input.InitInput()) then
+  begin
+     result := false;
+     exit;
+  end;
+  //Sound
+  If not(Sound.InitSound()) then
+  begin
+     result := false;
+     exit;
+  end;
+
   result := true;
   FEngineInitialized := true;
 end;
@@ -310,6 +313,8 @@ end;
 procedure gdEngineShutDown(); 
 begin
   If Not(FEngineInitialized) then exit;
+
+  //Clear engine classes
   FreeAndNil(InputManager);
   FreeAndNil(Input);
   FreeAndNil(Console);
@@ -480,17 +485,6 @@ begin
 end;
 
 {******************************************************************************}
-{* Check if the soundengine version is ok for the engine                      *}
-{******************************************************************************}
-
-function gdSoundSystemCheckVersion() : Boolean; 
-begin
-  result := false;
-  If Not(FEngineInitialized) then exit;
-  result := Sound.CheckVersion();
-end;
-
-{******************************************************************************}
 {* Get the number of sounddrivers the soundengine supports                    *}
 {******************************************************************************}
 
@@ -529,7 +523,7 @@ begin
      exit;
   end;
 
-  If Sound.InitSoundEngine() then
+  If Sound.InitSoundDriver() then
   begin
      result := true;
      FSoundInitialized := true;
@@ -559,63 +553,11 @@ begin
     exit;
   end;
 
-  result := Sound.ShutDownSoundEngine();
+  result := Sound.ShutDownSoundDriver();
   If result then
   begin
     FSoundInitialized := false;
   end;
-end;
-
-{******************************************************************************}
-{* Initialize input                                                           *}
-{******************************************************************************}
-
-function gdInputSystemInit() : boolean; 
-begin
-  If Not(CheckEngineInitialized()) then
-  begin
-    result := false;
-    exit;
-  end;
-
-  If FInputInitialized then
-  begin
-     MessageBox(0, 'Input is already initialized!', 'Error', MB_OK or MB_ICONERROR);
-     result := false;
-     exit;
-  end;
-  If Input.InitDirectInput() then
-  begin
-     result := true;
-     FInputInitialized := true;
-  end
-  else
-  begin
-     result := false;
-     FInputInitialized := false;
-  end;
-end;
-
-{******************************************************************************}
-{* Shutdown input                                                             *}
-{******************************************************************************}
-
-function gdInputSystemShutDown() : boolean; 
-begin
-  If Not(FEngineInitialized) then
-  begin
-    result := false;
-    exit;
-  end;
-
-  If Not(CheckInputInitialized()) then
-  begin
-    result := false;
-    exit;
-  end;
-
-  result := Input.ShutDownInput();
-  If result then FInputInitialized := false;
 end;
 
 {******************************************************************************}
@@ -625,7 +567,6 @@ end;
 function gdInputSystemStringToKey( aName : String ) : Integer ; 
 begin
   If Not(FEngineInitialized) then exit;
-  If Not(FInputInitialized) then exit;
   result := Input.StringToKey( aName );
 end;
 
@@ -636,7 +577,6 @@ end;
 function gdInputSystemKeyToString( aKey : Integer ) : String ; 
 begin
   If Not(FEngineInitialized) then exit;
-  If Not(FInputInitialized) then exit;
   result := String(Input.KeyToString( aKey ));
 end;
 
@@ -647,7 +587,6 @@ end;
 function gdInputSystemDetectCurrentKeyString() : String ; 
 begin
   If Not(FEngineInitialized) then exit;
-  If Not(FInputInitialized) then exit;
   result := String(Input.DetectCurrentKeyString());
 end;
 
@@ -658,7 +597,6 @@ end;
 function gdInputSystemDetectCurrentKey() : Integer ; 
 begin
   If Not(FEngineInitialized) then exit;
-  If Not(FInputInitialized) then exit;
   result := Input.DetectCurrentKey();
 end;
 
@@ -671,7 +609,6 @@ procedure gdInputSystemRegisterAction(aType : TGDInputTypes; aName, aKeyString :
 begin
   If Not(FEngineInitialized) then exit;
   If Not(FRendererInitialized) then exit;
-  If Not(FInputInitialized) then exit;
   InputManager.RegisterInputAction(aType, String(aName), String(aKeyString), aAction, aConsoleDisabled );
 end;
 
@@ -683,7 +620,6 @@ procedure gdInputSystemHandleChar( aChar : Char );
 begin
   If Not(FEngineInitialized) then exit;
   If Not(FRendererInitialized) then exit;
-  If Not(FInputInitialized) then exit;
   InputManager.ExecuteCharInput( aChar );
 end;
 
@@ -695,7 +631,6 @@ procedure gdInputSystemUseMouseLook( aUse : boolean );
 begin
   If Not(FEngineInitialized) then exit;
   If Not(FRendererInitialized) then exit;
-  If Not(FInputInitialized) then exit;
   InputManager.MouseLook := aUse;
 end;
 
@@ -707,7 +642,6 @@ procedure gdInputSystemEnable( aEnable : boolean );
 begin
   If Not(FEngineInitialized) then exit;
   If Not(FRendererInitialized) then exit;
-  If Not(FInputInitialized) then exit;
   Input.EnableInput := aEnable;
 end;
 
@@ -719,7 +653,6 @@ procedure gdConsoleToggle();
 begin
   If Not(FEngineInitialized) then exit;
   If Not(FRendererInitialized) then exit;
-  If Not(FInputInitialized) then exit;
   Console.Show := Not(Console.Show);
 end;
 
@@ -744,7 +677,6 @@ procedure gdGUIMouseCursorInit( aFileName : String; aSize : integer );
 begin
   If Not(FEngineInitialized) then exit;
   If Not(FRendererInitialized) then exit;
-  If Not(FInputInitialized) then exit;
   GUIManager.MouseCursor.InitMouse( String(aFileName) , aSize );
 end;
 
@@ -756,7 +688,6 @@ procedure gdGUIMouseCursorClear();
 begin
   If Not(FEngineInitialized) then exit;
   If Not(FRendererInitialized) then exit;
-  If Not(FInputInitialized) then exit;
   GUIManager.MouseCursor.Clear();
 end;
 
@@ -768,7 +699,6 @@ procedure gdGUIMouseCursorShow(aShow : boolean);
 begin
   If Not(FEngineInitialized) then exit;
   If Not(FRendererInitialized) then exit;
-  If Not(FInputInitialized) then exit;
   InputManager.CalculateMousePosStart();
   GUIManager.MouseCursor.ShowMouse := aShow;
 end;
@@ -781,7 +711,6 @@ function gdGUIMouseCursorGetPosition() : TPoint;
 begin
   If Not(FEngineInitialized) then exit;
   If Not(FRendererInitialized) then exit;
-  If Not(FInputInitialized) then exit;
   result.X := GUIManager.MouseCursor.Position.X;
   result.Y := GUIManager.MouseCursor.Position.Y;
 end;
@@ -794,7 +723,6 @@ procedure gdGUILoadingScreenInit( aInput : TGDLoadingInput );
 begin
   If Not(FEngineInitialized) then exit;
   If Not(FRendererInitialized) then exit;
-  If Not(FInputInitialized) then exit;
   GUIManager.LoadingScreen.InitLoadingScreen( aInput );
 end;
 
@@ -806,7 +734,6 @@ procedure gdGUILoadingScreenClear();
 begin
   If Not(FEngineInitialized) then exit;
   If Not(FRendererInitialized) then exit;
-  If Not(FInputInitialized) then exit;
   GUIManager.LoadingScreen.Clear();
 end;
 
@@ -818,7 +745,6 @@ procedure gdGUILoadingScreenSetup( aProcessName : String; aMax : Integer );
 begin
   If Not(FEngineInitialized) then exit;
   If Not(FRendererInitialized) then exit;
-  If Not(FInputInitialized) then exit;
   GUIManager.LoadingScreen.SetupForUse(String(aProcessName),aMax);
 end;
 
@@ -830,7 +756,6 @@ procedure gdGUILoadingScreenUpdate();
 begin
   If Not(FEngineInitialized) then exit;
   If Not(FRendererInitialized) then exit;
-  If Not(FInputInitialized) then exit;
   GUIManager.LoadingScreen.UpdateBar();
 end;
 
@@ -1062,7 +987,6 @@ procedure gdLoopMain();
 begin
   If Not(FEngineInitialized) then exit;
   If Not(FRendererInitialized) then exit;
-  If Not(FInputInitialized) then exit;
   If Not(FSoundInitialized) then exit;
   Main.Main();
 end;

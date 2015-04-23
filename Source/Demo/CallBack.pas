@@ -260,12 +260,12 @@ begin
   
   //input funtions
   gdInputSystemRegisterAction(IT_SINGLE,'ExitGame','ESCAPE',@ExitCallback, false );
-  gdInputSystemRegisterAction(IT_DIRECT,'Forward',PChar(ConfigurationForm.AForwards),@PlayerForward, true );
-  gdInputSystemRegisterAction(IT_DIRECT,'Backward',PChar(ConfigurationForm.ABackwards),@PlayerBackward, true );
-  gdInputSystemRegisterAction(IT_DIRECT,'Left',PChar(ConfigurationForm.ALeft),@PlayerLeft, true );
-  gdInputSystemRegisterAction(IT_DIRECT,'Right',PChar(ConfigurationForm.ARight),@PlayerRight, true );
-  gdInputSystemRegisterAction(IT_DOWN,'SetRun',PChar(ConfigurationForm.ARun),@SetRun, true );
-  gdInputSystemRegisterAction(IT_UP,'SetWalk',PChar(ConfigurationForm.ARun),@SetWalk, true );
+  gdInputSystemRegisterAction(IT_DIRECT,'Forward',ConfigurationForm.AForwards,@PlayerForward, true );
+  gdInputSystemRegisterAction(IT_DIRECT,'Backward',ConfigurationForm.ABackwards,@PlayerBackward, true );
+  gdInputSystemRegisterAction(IT_DIRECT,'Left',ConfigurationForm.ALeft,@PlayerLeft, true );
+  gdInputSystemRegisterAction(IT_DIRECT,'Right',ConfigurationForm.ARight,@PlayerRight, true );
+  gdInputSystemRegisterAction(IT_DOWN,'SetRun',ConfigurationForm.ARun,@SetRun, true );
+  gdInputSystemRegisterAction(IT_UP,'SetWalk',ConfigurationForm.ARun,@SetWalk, true );
   gdInputSystemRegisterAction(IT_SINGLE,'Toggle Stats','F1',@ToggleStats, true  );
   gdInputSystemRegisterAction(IT_SINGLE,'Toggle Wireframe','F2',@ToggleWireFrame, true  );
   gdInputSystemRegisterAction(IT_SINGLE,'Toggle Octree Nodes','F3',@ToggleOctreeNodes, true  );

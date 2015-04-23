@@ -192,20 +192,6 @@ begin
     Application.Terminate();
   end;
 
-  //initialize the input here so we can set keybindings
-  If Not(gdInputSystemInit()) then
-  begin
-    MessageBox(0, 'Error initializing input. See Log.txt for details.', 'Error', MB_OK or MB_ICONERROR);
-    Application.Terminate();
-  end;  
-
-  //check if the fmod library version is supported by the engine.
-  If Not(gdSoundSystemCheckVersion()) then
-  begin
-    MessageBox(0, 'Version of the FMOD soundlibrary is not supported! Sound will be disabled!', 'Error', MB_OK or MB_ICONERROR);
-    self.SoundTabSheet.Enabled := false;
-  end;
-
   //set some window vars.
   FSelectedRow := 1;
 
@@ -232,9 +218,6 @@ begin
   SettingsFromInterface();
   gdSettingsSave( Pchar(EXE_NAME + '.ini') );
   SaveConfig();
-
-  //shutdown input
-  gdInputSystemShutDown();
 
   //shutdown engine`s core
   gdEngineShutDown();
