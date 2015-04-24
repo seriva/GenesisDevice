@@ -40,25 +40,6 @@ uses
 type
 
 {******************************************************************************}
-{* performancetiming class                                                    *}
-{******************************************************************************}
-
-  TGDPerformanceTiming = class
-  private
-    FStart : Int64;
-    Fstop  : Int64;
-    FFreq  : Int64;
-  public
-    constructor Create();
-    destructor  Destroy(); override;
-
-    Procedure Start();
-    Procedure Stop();
-    Function  TimeInSeconds() : String;
-    Function  TimeInMilliSeconds() : String;
-  end;
-
-{******************************************************************************}
 {* timing class                                                               *}
 {******************************************************************************}
 
@@ -68,78 +49,27 @@ type
     FElapsedTime : Integer;
     FFrameTime   : Integer;
     FLastTime    : Integer;
+    FStart       : Integer;
+    FStop        : Integer;
   public
-    property DemoStart   : Integer read FDemoStart write FDemoStart;
     property ElapsedTime : Integer read FElapsedTime write FElapsedTime;
     property FrameTime   : Integer read FFrameTime write FFrameTime;
-    property LastTime    : Integer read FLastTime write FLastTime;
 
     constructor Create();
     destructor  Destroy(); override;
 
-    procedure InitTiming();
     procedure CalculateFrameTime();
+
+    Procedure Start();
+    Procedure Stop();
+    Function  TimeInSeconds() : String;
+    Function  TimeInMilliSeconds() : String;
   end;
   
 var
-  Timer  : TGDPerformanceTiming;
   Timing : TGDTiming;
 
 implementation
-
-{******************************************************************************}
-{* Create performancetiming class                                             *}
-{******************************************************************************}
-
-constructor TGDPerformanceTiming.Create();
-begin
-  QueryPerformanceFrequency(FFreq);
-end;
-
-{******************************************************************************}
-{* Destroy performancetiming class                                            *}
-{******************************************************************************}
-
-destructor  TGDPerformanceTiming.Destroy();
-begin
-  inherited;
-end;
-
-{******************************************************************************}
-{* Start performancetiming                                                    *}
-{******************************************************************************}
-
-Procedure TGDPerformanceTiming.Start();
-begin
-  QueryPerformanceCounter(FStart);
-end;
-
-{******************************************************************************}
-{* Stop performancetiming                                                     *}
-{******************************************************************************}
-
-Procedure TGDPerformanceTiming.Stop();
-begin
-  QueryPerformanceCounter(Fstop);
-end;
-
-{******************************************************************************}
-{* Returns the time in seconds                                                *}
-{******************************************************************************}
-
-Function TGDPerformanceTiming.TimeInSeconds() : String;
-begin
-  result := FormatFloat('0.###' ,(Fstop - FStart) / FFreq);
-end;
-
-{******************************************************************************}
-{* Returns the time in miliseconds                                            *}
-{******************************************************************************}
-
-Function TGDPerformanceTiming.TimeInMilliSeconds() : String;
-begin
-  result := FormatFloat('0.###',(1000 * (Fstop - FStart) / FFreq));
-end;
 
 {******************************************************************************}
 {* Create timing class                                                        *}
@@ -148,6 +78,12 @@ end;
 constructor TGDTiming.Create();
 begin
   inherited;
+  FDemoStart   := GetTickCount();
+  FElapsedTime := 0;
+  FLastTime    := 0;
+  FFrameTime   := 0;
+  FStart       := 0;
+  FStop        := 0;
 end;
 
 {******************************************************************************}
@@ -157,18 +93,6 @@ end;
 destructor TGDTiming.Destroy(); 
 begin
   inherited;
-end;
-
-{******************************************************************************}
-{* Init timing class                                                          *}
-{******************************************************************************}
-
-procedure TGDTiming.InitTiming();
-begin
-  FDemoStart   := GetTickCount();
-  FElapsedTime := 0;
-  FLastTime    := 0;
-  FFrameTime   := 0;
 end;
 
 {******************************************************************************}
@@ -182,5 +106,42 @@ begin
   FElapsedTime := (FLastTime + FElapsedTime) div 2;
   FFrameTime   := FELapsedTime - FLastTime;
 end;
+
+{******************************************************************************}
+{* Start timing                                                               *}
+{******************************************************************************}
+
+Procedure TGDTiming.Start();
+begin
+  FStart := GetTickCount();
+end;
+
+{******************************************************************************}
+{* Stop timing                                                                *}
+{******************************************************************************}
+
+Procedure TGDTiming.Stop();
+begin
+  FStop := GetTickCount();
+end;
+
+{******************************************************************************}
+{* Returns the time in seconds                                                *}
+{******************************************************************************}
+
+Function TGDTiming.TimeInSeconds() : String;
+begin
+  result := FormatFloat('0.###' ,(Fstop - FStart)/1000);
+end;
+
+{******************************************************************************}
+{* Returns the time in miliseconds                                            *}
+{******************************************************************************}
+
+Function TGDTiming.TimeInMilliSeconds() : String;
+begin
+  result := FormatFloat('0.###',((Fstop - FStart)));
+end;
+
 
 end.

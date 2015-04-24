@@ -52,14 +52,14 @@ type
 
   TGDConsole = class
   private
-    FShow              : Boolean;
-    FInputString       : String;
-    FRow               : integer;
-    FInputRow          : integer;
-    FInputStringList   : TStringList;
-    FExecuteCommand    : Boolean;
-    FCursorUpdate      : boolean;
-    FUpdateTimer  : Integer;
+    FShow            : Boolean;
+    FInputString     : String;
+    FRow             : integer;
+    FInputRow        : integer;
+    FInputStringList : TStringList;
+    FExecuteCommand  : Boolean;
+    FCursorUpdate    : boolean;
+    FUpdateTimer     : Integer;
   public
     property Show : Boolean read FShow write FShow;
     property CommandString : String read FInputString write FInputString;

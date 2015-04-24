@@ -32,7 +32,6 @@ unit Player;
 interface
 
 uses
-  IniFiles,
   GDInterface,
   GDTypes,
   SysUtils;
@@ -60,9 +59,6 @@ type
     Constructor Create();
     Destructor  Destroy(); override;
 
-    procedure InitializePlayer( aIniPath : String );
-    procedure ClearPlayer();
-
     procedure MoveForward();
     procedure MoveBackWard();
     procedure MoveLeft();
@@ -88,6 +84,8 @@ uses
 Constructor TPlayer.Create();
 begin
   inherited;
+  FMovementMultiplier := 400;
+  FSinkMultiplier     := 50;
 end;
 
 {******************************************************************************}
@@ -97,30 +95,6 @@ end;
 Destructor TPlayer.Destroy();
 begin
   inherited;
-end;
-
-{******************************************************************************}
-{* Init the player                                                            *}
-{******************************************************************************}
-
-procedure TPlayer.InitializePlayer( aIniPath : String );
-var
-  iIniFile : TIniFile;
-begin
-  iIniFile := TIniFile.Create( aIniPath );
-  FMovementMultiplier := 400;
-  FSinkMultiplier     := 50;
-  FreeAndNil( iIniFile );
-end;
-
-{******************************************************************************}
-{* Clear the player                                                           *}
-{******************************************************************************}
-
-procedure TPlayer.ClearPlayer();
-begin
-  FMovementMultiplier := 400;
-  FSinkMultiplier     := 50;
 end;
 
 {******************************************************************************}
@@ -202,7 +176,7 @@ var
   aV : TGDVectorRecord;
 begin
   aV := gdCameraGetPosition();
-  if aV.Y < gdWaterHeight() + 100 then
+  if aV.Y < gdMapWaterHeight() + 100 then
     result := true
   else
     result := false;
@@ -217,7 +191,7 @@ var
   aV : TGDVectorRecord;
 begin
   aV := gdCameraGetPosition();
-  if aV.Y < gdWaterHeight() then
+  if aV.Y < gdMapWaterHeight() then
     result := true
   else
     result := false;
@@ -232,8 +206,8 @@ var
   iTerrainHeight : Double;
   aV : TGDVectorRecord;
 begin
-  FMovementSpeed := FMovementMultiplier * gdRenderSystemGetFrameTime() / 1000;
-  FSinkSpeed     := FSinkMultiplier * gdRenderSystemGetFrameTime() / 1000;
+  FMovementSpeed := FMovementMultiplier * gdRendererFrameTime() / 1000;
+  FSinkSpeed     := FSinkMultiplier * gdRendererFrameTime() / 1000;
 
   If Not(Clip) then exit;
 
@@ -245,9 +219,9 @@ begin
   end;
 
   aV := gdCameraGetPosition();
-  iTerrainHeight := gdTerrainHeight( aV.X, aV.Z  );
+  iTerrainHeight := gdMapTerrainHeight( aV.X, aV.Z  );
 
-  if iTerrainHeight > gdWaterHeight() then
+  if iTerrainHeight > gdMapWaterHeight() then
   begin
     aV.Y := iTerrainHeight + 256;
     gdCameraSetPosition( aV.X, aV.Y, aV.z );
@@ -255,7 +229,7 @@ begin
   end
   else
   begin
-    if iTerrainHeight + 170 > gdWaterHeight() then
+    if iTerrainHeight + 170 > gdMapWaterHeight() then
     begin
       aV.Y := iTerrainHeight + 256;
       gdCameraSetPosition( aV.X, aV.Y, aV.z );
@@ -268,9 +242,9 @@ begin
       gdCameraSetPosition( aV.X, aV.Y, aV.z );
     end
     else
-      if aV.Y > gdWaterHeight()+96 then
+      if aV.Y > gdMapWaterHeight()+96 then
       begin
-        aV.Y := gdWaterHeight()+96;
+        aV.Y := gdMapWaterHeight()+96;
         gdCameraSetPosition( aV.X, aV.Y, aV.z );
       end;
   end;

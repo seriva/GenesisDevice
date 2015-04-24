@@ -214,21 +214,24 @@ end;
 procedure TGDSkyDome.Render();
 begin
   If not(Modes.RenderSky) then exit;
-  Case Modes.RenderMode of
-    RM_NORMAL    : begin
-                     Renderer.SkyShader.Enable();
-                     Renderer.SkyShader.SetInt('T_SKYTEX', 0);
-                     Renderer.SkyShader.SetFloat('F_MIN_VIEW_DISTANCE', FogManager.FogShader.MinDistance);
-                     Renderer.SkyShader.SetFloat('F_MAX_VIEW_DISTANCE', FogManager.FogShader.MaxDistance);
-                     Renderer.SkyShader.SetFloat4('V_FOG_COLOR', FogManager.FogShader.Color.R,
-                                             FogManager.FogShader.Color.G, FogManager.FogShader.Color.B,
-                                             FogManager.FogShader.Color.A);
-                       If Water.UnderWater() then
-                         Renderer.SkyShader.SetInt('I_UNDER_WATER', 1)
-                       else
-                         Renderer.SkyShader.SetInt('I_UNDER_WATER', 0);                                             
-                   end;
-    RM_WIREFRAME : glColor4f(0.2,0.2,0.8,1);
+
+  if Modes.RenderWireframe then
+  begin
+    glColor4f(0.2,0.2,0.8,1);
+  end
+  else
+  begin
+    Renderer.SkyShader.Enable();
+    Renderer.SkyShader.SetInt('T_SKYTEX', 0);
+    Renderer.SkyShader.SetFloat('F_MIN_VIEW_DISTANCE', FogManager.FogShader.MinDistance);
+    Renderer.SkyShader.SetFloat('F_MAX_VIEW_DISTANCE', FogManager.FogShader.MaxDistance);
+    Renderer.SkyShader.SetFloat4('V_FOG_COLOR', FogManager.FogShader.Color.R,
+                           FogManager.FogShader.Color.G, FogManager.FogShader.Color.B,
+                           FogManager.FogShader.Color.A);
+    If Water.UnderWater() then
+     Renderer.SkyShader.SetInt('I_UNDER_WATER', 1)
+    else
+     Renderer.SkyShader.SetInt('I_UNDER_WATER', 0);
   end;
 
   glPushMatrix();

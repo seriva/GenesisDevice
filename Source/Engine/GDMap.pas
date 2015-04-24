@@ -119,7 +119,6 @@ var
   iI : Integer;
   iString : String;
   iError   : String;
-  iTimer : TGDPerformanceTiming;
 
   //terrain
   iTerrainInput : TGDTerrainInput;
@@ -147,8 +146,7 @@ var
   //directional light
   iDirectionalLightInput : TGDDirectionalLightInput;
 begin
-  iTimer := TGDPerformanceTiming.Create();
-  iTimer.Start();
+  Timing.Start();
   iIniFile := TIniFile.Create(aFileName);
   Clear();
   Log.Write('......Loading map');
@@ -359,10 +357,9 @@ begin
     end;
     GUIManager.LoadingScreen.UpdateBar();
   end;
-  iTimer.Stop();
+  Timing.Stop();
   FreeAndNil(iIniFile);
-  Log.Write('......Done loading map (' + iTimer.TimeInSeconds + ' Sec)');
-  FreeAndNil(iTimer)
+  Log.Write('......Done loading map (' + Timing.TimeInSeconds + ' Sec)');
 end;
 
 {******************************************************************************}

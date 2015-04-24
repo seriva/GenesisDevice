@@ -100,7 +100,7 @@ begin
   FRenderIntroText := true;
   //FFontId          := gdFontsLoad( Pchar( iIniFile.ReadString('Intro', 'Font', '')) );
   FPaperTexId      := gdTexturesLoad( PChar( iIniFile.ReadString('Intro', 'Paper', '')) );
-  gdInputSystemUseMouseLook(False);
+  gdInputUseMouseLook(False);
   gdGUIMouseCursorShow(true);
 
   FreeAndNil( iIniFile );
@@ -127,12 +127,12 @@ begin
   FRenderIntroText := not(FRenderIntroText);
   if FRenderIntroText then
   begin
-    gdInputSystemUseMouseLook(false);
+    gdInputUseMouseLook(false);
     gdGUIMouseCursorShow(true);
   end
   else
   begin
-    gdInputSystemUseMouseLook(true);
+    gdInputUseMouseLook(true);
     gdGUIMouseCursorShow(false);
   end;
 end;
@@ -156,7 +156,7 @@ end;
 begin
   if Not(FRenderIntroText) then Exit;
 
-  gdRenderSystemSetState(RS_TEXTURE);
+  gdRendererState(RS_TEXTURE);
   gdTexturesBind( FPaperTexId, GL_TEXTURE0 );
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   glEnable(GL_BLEND);
@@ -164,32 +164,31 @@ begin
   RenderQuad(300,200,1000,800);
   glDisable(GL_BLEND);
 
-  gdRenderSystemSetState(RS_TEXTS);
-  gdTextColor(0,0,0);
-  gdTextRender( 400, 845, 0.45, 'Welcome to the Genesis Device Engine Demo');
-  gdTextRender( 400, 815, 0.45, 'This demo shows the following capabilities:');
-  gdTextRender( 430, 785, 0.45, '- Terrain');
-  gdTextRender( 430, 755, 0.45, '- Sky');
-  gdTextRender( 430, 725, 0.45, '- Water with reflections, distortion and waves');
-  gdTextRender( 430, 695, 0.45, '- Meshes');
-  gdTextRender( 430, 665, 0.45, '- Foliage');
-  gdTextRender( 430, 635, 0.45, '- Bloom and post processing effects');
-  gdTextRender( 430, 605, 0.45, 'Some tips:');
-  gdTextRender( 430, 575, 0.45, '- WASD keys (default) for movement');
-  gdTextRender( 430, 545, 0.45, '- Mouse to look arround');
-  gdTextRender( 430, 515, 0.45, '- Tilde for console, type help for commands');
-  gdTextRender( 430, 455, 0.45, '- F1 to F5 toggle some debug functions');
-  gdTextRender( 430, 485, 0.45, '- F6 to create a screenshot');
-  gdTextRender( 430, 425, 0.45, 'Contact information:');
-  gdTextRender( 430, 395, 0.45, 'www.luukvanvenrooij.nl');
-  gdTextRender( 430, 365, 0.45, 'luukvanvenrooij84@gmail.com');
+  gdRendererState(RS_TEXTS);
+  gdGUITextColor(0,0,0);
+  gdGUITextRender( 400, 845-50, 0.45, 'Welcome to the Genesis Device Engine Demo');
+  gdGUITextRender( 400, 815-50, 0.45, 'This demo shows the following capabilities:');
+  gdGUITextRender( 430, 785-50, 0.45, '- Terrain');
+  gdGUITextRender( 430, 755-50, 0.45, '- Sky');
+  gdGUITextRender( 430, 725-50, 0.45, '- Water with reflections, distortion and waves');
+  gdGUITextRender( 430, 695-50, 0.45, '- Meshes');
+  gdGUITextRender( 430, 665-50, 0.45, '- Foliage');
+  gdGUITextRender( 430, 635-50, 0.45, '- Bloom and post processing effects');
+  gdGUITextRender( 430, 605-50, 0.45, 'Some tips:');
+  gdGUITextRender( 430, 575-50, 0.45, '- WASD keys (default) for movement');
+  gdGUITextRender( 430, 545-50, 0.45, '- Mouse to look arround');
+  gdGUITextRender( 430, 515-50, 0.45, '- Tilde for console, type help for commands');
+  gdGUITextRender( 430, 485-50, 0.45, '- F1 to F5 toggle some debug functions');
+  gdGUITextRender( 430, 455-50, 0.45, 'Contact information:');
+  gdGUITextRender( 430, 425-50, 0.45, 'www.luukvanvenrooij.nl');
+  gdGUITextRender( 430, 395-50, 0.45, 'luukvanvenrooij84@gmail.com');
 
   if CheckInsideButton() then
-    gdTextColor(1,1,1)
+    gdGUITextColor(1,1,1)
   else
-    gdTextColor(0,0,0);
+    gdGUITextColor(0,0,0);
 
-  gdTextRender( 1150, 250, 0.6, 'Hide');
+  gdGUITextRender( 1150, 250, 0.6, 'Hide');
 end;
 
 {******************************************************************************}

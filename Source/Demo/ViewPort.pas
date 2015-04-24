@@ -83,22 +83,20 @@ var
   iSettings         : TSettings;
   iDMScreenSettings : DEVMODE;
 begin
-  Application.Title := 'Genesis Device Engine - (Build : ' +
-                       gdEngineBuildNumber() + ' - Date : ' + gdEngineBuildDate() + ')';
-  self.Caption := 'Genesis Device Engine - (Build : '+
-                   gdEngineBuildNumber() + ' - Date : ' + gdEngineBuildDate() + ')';
+  Application.Title := 'Genesis Device Engine - (Build : ' + gdEngineBuildInfo() + ')';
+  self.Caption := 'Genesis Device Engine - (Build : ' + gdEngineBuildInfo() + ')';
 
   //initialize the soundsystem with the current settings
-  If Not(gdSoundSystemInit()) then
+  If Not(gdSoundInitDriver()) then
   begin
     MessageBox(0, 'Error initializing sound driver. See Log.txt for details.', 'Error', MB_OK or MB_ICONERROR);
     Application.Terminate();
   end;
 
   //initialize the renderer with the current settings
-  If Not(gdRenderSystemInit( self.Handle )) then
+  If Not(gdRendererInitViewPort( self.Handle )) then
   begin
-    MessageBox(0, 'Error initializing renderer. See Log.txt for details.', 'Error', MB_OK or MB_ICONERROR);
+    MessageBox(0, 'Error initializing viewport. See Log.txt for details.', 'Error', MB_OK or MB_ICONERROR);
     Application.Terminate();
   end;
 
@@ -142,7 +140,7 @@ begin
   end;
 
   //get the engine settings and set the right windowsettings
-  gdRenderSystemResize(self.Top, self.Left, self.Width, self.Height);
+  gdRendererResizeViewPort(self.Top, self.Left, self.Width, self.Height);
 
   //show the form
   self.Show();
@@ -169,10 +167,10 @@ begin
   ClearGame();
 
   //shutdown the renderer
-  gdRenderSystemShutDown();  
+  gdRendererShutDownViewPort();
 
   //shutdown the sound engine
-  gdSoundSystemShutDown();
+  gdSoundShutDownDriver();
 
   //back to configuration
   ConfigurationForm.Visible := true;
@@ -186,7 +184,7 @@ end;
 procedure TViewPortForm.FormResize(Sender: TObject);
 begin
   //resize the window and render the window
-  gdRenderSystemResize(self.Top, self.Left, self.Width, self.Height);
+  gdRendererResizeViewPort(self.Top, self.Left, self.Width, self.Height);
 end;
 
 {******************************************************************************}
@@ -196,7 +194,7 @@ end;
 procedure TViewPortForm.WMMove(var Message: TMessage);
 begin
   //resize the window and render the window
-  gdRenderSystemResize(self.Top, self.Left, self.Width, self.Height);
+  gdRendererResizeViewPort(self.Top, self.Left, self.Width, self.Height);
 end;
 
 {******************************************************************************}
@@ -221,7 +219,7 @@ procedure TViewPortForm.FormKeyPress(Sender: TObject; var Key : Char);
 begin
   //pas chars to the engine using the WM_CHAR message
   //we use this instead of direct input because it is better in timing and detecting
-  gdInputSystemHandleChar( Key );
+  gdInputHandleChar( Key );
 end;
 
 {******************************************************************************}

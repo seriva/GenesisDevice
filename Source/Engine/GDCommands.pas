@@ -52,7 +52,6 @@ type
   TGDCommands  = Class
   published
     procedure Help( aParams : String );
-    procedure ScreenShot( aParams : String );
 
     procedure RVSync( aParams : String );
     procedure RGamma( aParams : String );
@@ -144,7 +143,6 @@ begin
   FHelp.Clear();
   FHelp.Add( '' );
   FHelp.Add( '---Help---' );
-  FHelp.Add( 'ScreenShot <filename> : take a screenshot (can be found in the base screenshot directory)' );
   FHelp.Add( 'RVSync 0,1 : Enable or disable vertical sync' );
   FHelp.Add( 'RGamma 0.0 to 3.0 : Set the gamma value' );
   FHelp.Add( 'RWireframe 0,1 : Enable or disable wireframe' );
@@ -368,13 +366,8 @@ end;
 
 procedure TGDCommands.RWireframe( aParams : String );
 begin
-  If aParams = '0' then
-    Modes.RenderMode := RM_NORMAL
-  else
-    If aParams = '1' then
-      Modes.RenderMode := RM_WIREFRAME
-    else
-      UnknownParameter();
+  if CheckBoolean(aParams) then
+    Modes.RenderWireframe := SetBoolean(aParams);
 end;
 
 {******************************************************************************}
@@ -391,29 +384,12 @@ begin
      exit;
   end;
 
-  Log.Save := false;
   for iI := 0 to FHelp.Count - 1 do
   begin
     Log.Write( FHelp[iI]  );
   end;
-  Log.Save := true;
 
   Console.Row :=  Console.Row + FHelp.Count;
-end;
-
-
-{******************************************************************************}
-{* Create a screenshot                                                        *}
-{******************************************************************************}
-
-procedure TGDCommands.ScreenShot( aParams : String );
-begin
-  If aParams = '' then
-  begin
-     UnknownParameter();
-     exit;
-  end;
-  Renderer.MakeScreenShot( aParams );
 end;
 
 {******************************************************************************}

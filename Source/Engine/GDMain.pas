@@ -44,6 +44,7 @@ uses
   GDFont,
   GDRenderer,
   GDConsole,
+  GDTiming,
   GDConstants,
   GDFog,
   GDWater,
@@ -55,7 +56,6 @@ uses
   GDFrustum,
   GDSound,
   GDOctree,
-  GDTiming,
   GDCellManager,
   GDModes,
   GDCommands,
@@ -116,7 +116,7 @@ var
   iLoadingInput : TGDLoadingInput;
 
 begin
-  Timer.Start();
+  Timing.Start();
   Log.Write('......Initializing base recources');
   iPathString := Settings.ApplicationFilePath + FP_INITS + ENGINE_INI;
   iIniFile := TIniFile.Create( iPathString );
@@ -156,12 +156,11 @@ begin
   Camera.InitCamera(0, 8192, 32768);
 
   //init and timing
-  Timing.InitTiming();
   Statistics.InitStatistics();
   Modes.InitModes();
 
-  Timer.Stop();
-  Log.Write('......Done initializing base resources (' + Timer.TimeInSeconds + ' Sec)');
+  Timing.Stop();
+  Log.Write('......Done initializing base resources (' + Timing.TimeInSeconds + ' Sec)');
 end;
 
 {******************************************************************************}
@@ -233,7 +232,7 @@ end;
 
 procedure RenderWaterReflection();
 begin
-  If (Modes.RenderMode = RM_NORMAL) and Water.Visible() then
+  If (Modes.RenderWireframe = false) and Water.Visible() then
   begin
     //render reflection texture
     Renderer.StartFrame();
@@ -258,21 +257,11 @@ var
 begin
   //rendering 2d stuff (console,stats,interfaces, menus enz)
   Renderer.SwitchToOrtho();
-    If Modes.RenderMode = RM_NORMAL then Water.RenderUnderWater();
+    If Modes.RenderWireframe = false then Water.RenderUnderWater();
     CallBack.RenderInterface();
     If Modes.RenderStats then Statistics.Render();
     Console.Render();
     GUIManager.MouseCursor.Render();
-    If Modes.TakingScreenShot then
-    begin
-       iString := 'Genesis Device Engine - ';
-       iDateTime := Date();
-       iString := iString + DateToStr(iDateTime) + ' - ';
-       iDateTime := Time();
-       iString := iString + TimeToStr(iDateTime);
-       Renderer.RenderState( RS_TEXTS );
-       Font.Render(10,50,1, iString );
-    end;
   Renderer.SwitchToPerspective();
 end;
 
@@ -345,38 +334,36 @@ begin
   CellManager.DetectVisibleCells();
 
   //set the current rendermode
-  Case Modes.RenderMode of
-    RM_NORMAL    :
+  if not(Modes.RenderWireframe) then
+  begin
+    FogManager.FogShader.ApplyFog();
+
+    //check if where underwater
+    if Water.UnderWater() then
     begin
-      FogManager.FogShader.ApplyFog();
-
-      //check if where underwater
-      if Water.UnderWater() then
-      begin
-        //render the underwater source image
-        RenderUnderWaterSourceImage();
-      end
-      else
-      begin
-        //render the source image
-        RenderSourceImage();
-
-        //render bloom image and apply bloom shader
-        If Settings.UseBloom then RenderBloomImage();
-      end;
-
-      //render the final image
-      Renderer.StartFrame();
-      Renderer.RenderFinal();
-    end;
-    RM_WIREFRAME :
+      //render the underwater source image
+      RenderUnderWaterSourceImage();
+    end
+    else
     begin
-      Renderer.RenderState( RS_WIREFRAME );
-      Renderer.StartFrame();
-      Camera.Translate();
-      SkyDome.Render();
-      CellManager.RenderVisibleCells( RA_NORMAL, RF_NORMAL );
+      //render the source image
+      RenderSourceImage();
+
+      //render bloom image and apply bloom shader
+      If Settings.UseBloom then RenderBloomImage();
     end;
+
+    //render the final image
+    Renderer.StartFrame();
+    Renderer.RenderFinal();
+  end
+  else
+  begin
+    Renderer.RenderState( RS_WIREFRAME );
+    Renderer.StartFrame();
+    Camera.Translate();
+    SkyDome.Render();
+    CellManager.RenderVisibleCells( RA_NORMAL, RF_NORMAL );
   end;
 
   //render debug and ortho stuff

@@ -142,7 +142,6 @@ type
     procedure FillComboboxes();
     procedure FillDisplays();
     procedure FillDisplayModi();
-    procedure MaxSettingsToInterface();
   public
     FMonitorInfos      : array of TMonitorInfoEx;
     FAvailableModi     : array of TDisplayMode;
@@ -307,16 +306,16 @@ begin
     WaterReflectionComboBox.Items.Add(TWaterReflection[iI]);
 
   //fill sounddriver combobox
-  iSoundDriverCount := gdSoundSystemNumberOfDrivers();
+  iSoundDriverCount := gdSoundNumberOfDrivers();
   if (iSoundDriverCount <> -1) then
   begin
     for iI := 0 to iSoundDriverCount-1 do
-      SoundDriverComboBox.Items.Add(  String(gdSoundSystemGetDriverName(iI)) );
+      SoundDriverComboBox.Items.Add(  String(gdSoundGetDriverName(iI)) );
   end
   else
   begin
-    MessageBox(0, 'No valid sounddriver was detected! Sound will be disabled!', 'Error', MB_OK or MB_ICONERROR);
-    self.SoundTabSheet.Enabled := false;
+    MessageBox(0, 'No valid sounddriver was detected!', 'Error', MB_OK or MB_ICONERROR);
+    Application.Terminate();
   end;
 
   //detect maps
@@ -332,27 +331,6 @@ begin
       MapComboBox.Items.Add( iResult.Strings[iI] );
     end;
   end;
-
-  //determin engine max settings on the machine and set them on the interface
-  MaxSettingsToInterface();
-end;
-
-{******************************************************************************}
-{* Set the maximum settings for the engine on the configurationform interface *}
-{******************************************************************************}
-
-procedure TConfigurationForm.MaxSettingsToInterface();
-var
-  iMaxSettings : TMaximumSettings;
-begin
-  //get the max settings and set them to the various interface components
-  iMaxSettings := gdSettingsGetMaximum();
-
-  //texturefilter
-  if iMaxSettings.MaxAnisotropicFilter < 16 then TextureFilterComboBox.Items.Delete(5);
-  if iMaxSettings.MaxAnisotropicFilter < 8 then TextureFilterComboBox.Items.Delete(4);
-  if iMaxSettings.MaxAnisotropicFilter < 4 then TextureFilterComboBox.Items.Delete(3);
-  if iMaxSettings.MaxAnisotropicFilter < 2 then TextureFilterComboBox.Items.Delete(2);
 end;
 
 {******************************************************************************}
@@ -506,23 +484,23 @@ begin
   //detect key on the selected actions
   case FSelectedRow of
       0 : Begin
-            FForwards := gdInputSystemDetectCurrentKeyString();
+            FForwards := gdInputDetectCurrentKeyString();
             ControlValueListEditor.Strings.Strings[0] := 'Forward=' + FForwards;
           end;
       1 : Begin
-            FBackWards := gdInputSystemDetectCurrentKeyString();
+            FBackWards := gdInputDetectCurrentKeyString();
             ControlValueListEditor.Strings.Strings[1] := 'Backward=' + FBackWards;
           end;
       2 : Begin
-            FLeft := gdInputSystemDetectCurrentKeyString();
+            FLeft := gdInputDetectCurrentKeyString();
             ControlValueListEditor.Strings.Strings[2] := 'Left=' + FLeft;
           end;
       3 : Begin
-            FRight := gdInputSystemDetectCurrentKeyString();
+            FRight := gdInputDetectCurrentKeyString();
             ControlValueListEditor.Strings.Strings[3] := 'Right=' + FRight;
           end;
       4 : Begin
-            FRun := gdInputSystemDetectCurrentKeyString();
+            FRun := gdInputDetectCurrentKeyString();
             ControlValueListEditor.Strings.Strings[4] := 'Run=' + FRun;
           end;
 

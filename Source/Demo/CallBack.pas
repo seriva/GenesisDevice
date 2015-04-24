@@ -124,20 +124,6 @@ begin
 end;
 
 {******************************************************************************}
-{* Create a screenshot                                                        *}
-{******************************************************************************}
-
-procedure ScreenShot(); stdcall;
-var
-  iI : Integer;
-begin
-  iI := 0;
-  while FileExistsUTF8(ExtractFilePath(Application.ExeName) + 'Screenshots\' + IntTOStr( iI ) + '.bmp') { *Converted from FileExists* } do
-    Inc(iI);
-  gdRenderSystemScreenShot( PChar(IntTOStr( iI ) ) );
-end;
-
-{******************************************************************************}
 {* Bool to string                                                             *}
 {******************************************************************************}
 
@@ -156,7 +142,7 @@ end;
 procedure ToggleStats(); stdcall;
 begin
   Stats := not(Stats);
-  gdCommandExecute('RStats ' + BoolToStr(Stats));
+  gdConsoleCommand('RStats ' + BoolToStr(Stats));
 end;
 
 {******************************************************************************}
@@ -166,7 +152,7 @@ end;
 procedure ToggleWireFrame(); stdcall;
 begin
   WireFrame := not(WireFrame);
-  gdCommandExecute('RWireframe ' + BoolToStr(WireFrame));
+  gdConsoleCommand('RWireframe ' + BoolToStr(WireFrame));
 end;
 
 {******************************************************************************}
@@ -176,7 +162,7 @@ end;
 procedure ToggleOctreeNodes(); stdcall;
 begin
   TreeNodes := not(TreeNodes);
-  gdCommandExecute('RTreeNodes ' + BoolToStr(TreeNodes));
+  gdConsoleCommand('RTreeNodes ' + BoolToStr(TreeNodes));
 end;
 
 {******************************************************************************}
@@ -186,7 +172,7 @@ end;
 procedure ToggleOBJBoxes(); stdcall;
 begin
   ObjBoxes := not(ObjBoxes);
-  gdCommandExecute('ROBJBoxes ' + BoolToStr(ObjBoxes));
+  gdConsoleCommand('ROBJBoxes ' + BoolToStr(ObjBoxes));
 end;
 
 {******************************************************************************}
@@ -220,18 +206,18 @@ begin
   //this way we can move the mouse if needed and the scene will still refresh
   If (ViewPortForm.Focused = False) or (ViewPortForm.WindowState = wsMinimized) then
   begin
-    gdInputSystemUseMouseLook(false);
+    gdInputUseMouseLook(false);
     gdGUIMouseCursorShow(true);
-    gdInputSystemEnable(false);
+    gdInputEnable(false);
     Sleep(10)
   end
   else
   begin
     if Not(Intro.FRenderIntroText) then
     begin
-      gdInputSystemUseMouseLook(true);
+      gdInputUseMouseLook(true);
       gdGUIMouseCursorShow(false);
-      gdInputSystemEnable(true);
+      gdInputEnable(true);
     end;
   end;
 
@@ -259,19 +245,18 @@ begin
   gdCallBackSetBeforeRender( @BeforeRender );
   
   //input funtions
-  gdInputSystemRegisterAction(IT_SINGLE,'ExitGame','ESCAPE',@ExitCallback, false );
-  gdInputSystemRegisterAction(IT_DIRECT,'Forward',ConfigurationForm.AForwards,@PlayerForward, true );
-  gdInputSystemRegisterAction(IT_DIRECT,'Backward',ConfigurationForm.ABackwards,@PlayerBackward, true );
-  gdInputSystemRegisterAction(IT_DIRECT,'Left',ConfigurationForm.ALeft,@PlayerLeft, true );
-  gdInputSystemRegisterAction(IT_DIRECT,'Right',ConfigurationForm.ARight,@PlayerRight, true );
-  gdInputSystemRegisterAction(IT_DOWN,'SetRun',ConfigurationForm.ARun,@SetRun, true );
-  gdInputSystemRegisterAction(IT_UP,'SetWalk',ConfigurationForm.ARun,@SetWalk, true );
-  gdInputSystemRegisterAction(IT_SINGLE,'Toggle Stats','F1',@ToggleStats, true  );
-  gdInputSystemRegisterAction(IT_SINGLE,'Toggle Wireframe','F2',@ToggleWireFrame, true  );
-  gdInputSystemRegisterAction(IT_SINGLE,'Toggle Octree Nodes','F3',@ToggleOctreeNodes, true  );
-  gdInputSystemRegisterAction(IT_SINGLE,'Toggle Object Bounding Boxes','F4',@ToggleOBJBoxes, true  );
-  gdInputSystemRegisterAction(IT_SINGLE,'Toggle Collision','F5',@ToggleClipping, true  );
-  gdInputSystemRegisterAction(IT_SINGLE,'Make Screenshot','F6',@ScreenShot, true  );
+  gdInputRegisterAction(IT_SINGLE,'ESCAPE',@ExitCallback, false );
+  gdInputRegisterAction(IT_DIRECT,ConfigurationForm.AForwards,@PlayerForward, true );
+  gdInputRegisterAction(IT_DIRECT,ConfigurationForm.ABackwards,@PlayerBackward, true );
+  gdInputRegisterAction(IT_DIRECT,ConfigurationForm.ALeft,@PlayerLeft, true );
+  gdInputRegisterAction(IT_DIRECT,ConfigurationForm.ARight,@PlayerRight, true );
+  gdInputRegisterAction(IT_DOWN,ConfigurationForm.ARun,@SetRun, true );
+  gdInputRegisterAction(IT_UP,ConfigurationForm.ARun,@SetWalk, true );
+  gdInputRegisterAction(IT_SINGLE,'F1',@ToggleStats, true  );
+  gdInputRegisterAction(IT_SINGLE,'F2',@ToggleWireFrame, true  );
+  gdInputRegisterAction(IT_SINGLE,'F3',@ToggleOctreeNodes, true  );
+  gdInputRegisterAction(IT_SINGLE,'F4',@ToggleOBJBoxes, true  );
+  gdInputRegisterAction(IT_SINGLE,'F5',@ToggleClipping, true  );
 end;
 
 {******************************************************************************}

@@ -52,7 +52,6 @@ type
 
   TGDStatistics = class(TObject)
   private
-    FFrameTiming      : TGDPerformanceTiming;
     FUpdateTimer      : Integer;
     FFrameCount       : integer;
     FFpsCount         : Integer;
@@ -91,7 +90,6 @@ implementation
 
 constructor TGDStatistics.Create();
 begin
-  FFrameTiming   := TGDPerformanceTiming.Create();
   FUpdateTimer   := TimeSetEvent(S_UPDATE_TIME, 0, @UpdateStatisticsCallBack, 0, TIME_PERIODIC);
   InitStatistics();
 end;
@@ -103,7 +101,6 @@ end;
 destructor  TGDStatistics.Destroy();
 begin
   TimeKillEvent(FUpdateTimer);
-  FreeAndNil(FFrameTiming);
 end;
 
 {******************************************************************************}
@@ -125,13 +122,13 @@ end;
 
 procedure TGDStatistics.FrameStart();
 begin
-  FFrameTiming.Start();
+  Timing.Start();
 end;
 
 procedure TGDStatistics.FrameStop();
 begin
-  FFrameTiming.Stop();
-  FFrameTimeSlice := FFrameTiming.TimeInMilliSeconds();
+  Timing.Stop();
+  FFrameTimeSlice := Timing.TimeInMilliSeconds();
 end;
 
 

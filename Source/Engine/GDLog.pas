@@ -52,7 +52,6 @@ type
   public
     property Text : TStringList read FText;
     property Use : Boolean read FUse write FUse;
-    property Save : Boolean read FSave write FSave;
 
     constructor Create(aFileName : String);
     destructor  Destroy(); override;
@@ -76,11 +75,8 @@ begin
   FUse  := true;
   FSave := true;
   FFileName := aFileName;
-
   Write('Log started at ' + DateToStr(Date()) + ', ' + TimeToStr(Time()));
-  Write('');
-  Write('Engine Build: ' + ENGINE_BUILD + ', ' + 'Build Date: ' + ENGINE_BUILDDATE);
-  Write('');
+  Write('Build: ' + ENGINE_INFO);
 end;
 
 {******************************************************************************}

@@ -75,9 +75,9 @@ begin
   OCPlanes   := false;
 
   //initialize the gamerecources
-  gdTimerStart();
+  gdTimingStart();
   gdGUILoadingScreenSetup( 'Loading game...', 3);
-  gdLogWrite('......Initializing game resources');
+  gdConsoleLog('......Initializing game resources');
   //intro
   Intro   := TIntro.Create();
   Intro.InitializeIntro('Inits\Intro.ini');
@@ -88,15 +88,14 @@ begin
   gdGUILoadingScreenUpdate();
   //player
   Player  := TPlayer.Create();
-  Player.InitializePlayer('');
   gdGUILoadingScreenUpdate();
-  gdTimerStop();
-  gdLogWrite( PChar('......Done initializing game resources (' + gdTimerGetInSeconds() + ' Sec)') );
+  gdTimingStop();
+  gdConsoleLog( PChar('......Done initializing game resources (' + gdTimingInSeconds() + ' Sec)') );
 
   //load the gameworld
   gdMapLoad( PChar( 'Maps\' + ConfigurationForm.Map + '\map.ini') );
 
-  gdInputSystemEnable(true);
+  gdInputEnable(true);
 end;
 
 {******************************************************************************}

@@ -49,13 +49,15 @@ Type
 
   TGDSound = class
   private
-    FSoundSystem   : FMOD_SYSTEM;
+    FInitialized : boolean;
+    FSoundSystem : FMOD_SYSTEM;
   public
-    Property System : FMOD_SYSTEM read FSoundSystem;
+    property Initialized : boolean read FInitialized;
+    Property System      : FMOD_SYSTEM read FSoundSystem;
 
     constructor Create();
     destructor  Destroy(); override;
-    function    InitSound() : boolean;
+
     procedure   UpdateSound();
 
     function    GetNumberOfDrivers() : Integer;
@@ -98,21 +100,13 @@ implementation
 {******************************************************************************}
 
 constructor TGDSound.Create();
-begin
-  FSoundSystem  := nil;
-end;
-
-{******************************************************************************}
-{* Init the sound engine (FMOD)                                               *}
-{******************************************************************************}
-
-function TGDSound.InitSound() : boolean;
 var
   iError    : string;
   iVersion : Cardinal;
 begin
   Log.Write('Initializing sound...');
   try
+    FInitialized := true;
     If not(FMOD_System_Create( FSoundSystem ) = FMOD_OK) then
       Raise Exception.Create('Error initializing FMOD!');
 
@@ -125,11 +119,11 @@ begin
     on E: Exception do
     begin
       iError := E.Message;
-      result := false;
+      FInitialized := false;
     end;
   end;
 
-  Log.WriteOkFail(result, iError);
+  Log.WriteOkFail(FInitialized, iError);
 end;
 
 {******************************************************************************}

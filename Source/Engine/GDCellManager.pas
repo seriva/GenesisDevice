@@ -284,7 +284,6 @@ var
  iCellHasGrass : boolean;
  iStepX, iStepY : Integer;
  iGrassCell : TGDGrassCell;
- iTimer : TGDPerformanceTiming;
  iTreeType : TGDTreeType;
  iMeshCell  : TGDMeshCell;
  iMeshInput : TGDMeshCellInput;
@@ -293,8 +292,7 @@ var
 label
   RedoRandom;
 Begin
-  iTimer := TGDPerformanceTiming.Create();
-  iTimer.Start();
+  Timing.Start();
   iStepX := Round((Terrain.TerrainWidth-1) / Foliage.GrassCellCountX);
   iStepY := Round((Terrain.TerrainHeight-1) / Foliage.GrassCellCountY);
 
@@ -378,9 +376,8 @@ Begin
     end;
   end;
   FreeAndNil(iPos);
-  iTimer.Stop();
-  Log.Write('......Generated foliage (' + iTimer.TimeInSeconds + ' Sec)');
-  FreeAndNil(iTimer)
+  Timing.Stop();
+  Log.Write('......Generated foliage (' + Timing.TimeInSeconds + ' Sec)');
 End;
 
 {******************************************************************************}

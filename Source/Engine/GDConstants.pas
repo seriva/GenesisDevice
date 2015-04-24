@@ -34,7 +34,6 @@ interface
 type
   //render types
   TGDRenderState     = (RS_COLOR, RS_WIREFRAME, RS_TEXTS, RS_TEXTURE);
-  TGDRenderMode      = (RM_NORMAL, RM_WIREFRAME);
   TGDRenderAttribute = (RA_NORMAL, RA_FRUSTUM_BOXES, RA_NORMALS);
   TGDRenderFor       = (RF_NORMAL, RF_WATER, RF_BLOOM);
 
@@ -64,8 +63,7 @@ const
   TWaterReflection : array[1..2] of String  = ('Terrain Only', 'All');
 
   //engine constants
-  ENGINE_BUILDDATE = '24 Februari 2015';
-  ENGINE_BUILD     = '67';
+  ENGINE_INFO     = '67 - 24 April 2015';
 
   //renderer constants
   R_HUDWIDTH             = 1600;
@@ -81,7 +79,9 @@ const
   R_NORMAL_LENGTH        = 32;
 
   //minimum required settings constants
-  MRS_TEXTURE_UNITS = 4;
+  MRS_TEXTURE_UNITS = 8;
+  MRS_ANISOTROPIC_FILTERING = 16;
+  MRS_TEXTURE_SIZE = 4096;
 
   //filepaths constants
   FP_MAPS         = 'Maps\';

@@ -55,7 +55,6 @@ type
   public
     procedure CalculateFrustum();
     function  PointInFrustum(aPoint : TGDVector): Boolean;
-    function  SphereInFrustum(aSphere : TGDBoundingSphere): Boolean;
     function  BoxInFrustum(aBox : TGDBoundingBox): Boolean;
   end;
 
@@ -172,20 +171,6 @@ begin
   result := false;
   for iI := 0 to 5 do
     if FFrustum[iI][0] * aPoint.X + FFrustum[iI][1] * aPoint.Y + FFrustum[iI][2] * aPoint.Z + FFrustum[iI][3] <= 0 then
-      exit;
-  result := true;
-end;
-
-{******************************************************************************}
-{* Check if a BS is inside the frustum                                        *}
-{******************************************************************************}
-
-function TGDFrustum.SphereInFrustum(aSphere : TGDBoundingSphere): Boolean;
-var iI               : Integer;
-begin
-  result := false;
-  for iI := 0 to 5 do
-    if FFrustum[iI][0] * aSphere.Center.X + FFrustum[iI][1] * aSphere.Center.Y + FFrustum[iI][2] * aSphere.Center.Z + FFrustum[iI][3] <= -aSphere.Radius then
       exit;
   result := true;
 end;

@@ -25,11 +25,6 @@ unit GDBoundingVolumes;
 
 {$MODE Delphi}
 
-{******************************************************************************}
-{* This unit holds the various bounding volume classes, used for culling and  *}
-{* collision                                                                  *}
-{******************************************************************************}
-
 interface
 
 uses
@@ -67,30 +62,6 @@ type
     procedure CalculateCenter();
     function  BoxInsideBox( aBoundingBox : TGDBoundingBox ) : boolean;
     function  PointInsideBox( aV : TGDVector ) : boolean;
-  end;
-
-{******************************************************************************}
-{* Bounding sphere class                                                      *}
-{******************************************************************************}
-
-  TGDBoundingSphere = class(TObject)
-  private
-    FCenter : TGDVector;
-    FRadius : Double;
-    Procedure SetFCenter(aV : TGDVector);
-  public
-    Property Center : TGDVector read FCenter write SetFCenter;
-    Property Radius : Double read FRadius write FRadius;
-
-    constructor Create();
-    destructor  Destroy(); Override;
-
-    procedure RenderWireFrame();
-    procedure RenderSolid();
-
-    procedure Generate( aVertexList : TGDObjectList );
-    function  SphereInsideSphere( aBoundingBox : TGDBoundingSphere ) : boolean;
-    function  PointInsideSphere( aV : TGDVector ) : boolean;
   end;
 
 implementation
@@ -303,81 +274,6 @@ begin
  FCenter.Reset(Max);
  FCenter.Add(Min);
  FCenter.Devide(2);
-end;
-
-{******************************************************************************}
-{* Set the center point for the BS                                            *}
-{******************************************************************************}
-
-Procedure TGDBoundingSphere.SetFCenter(aV : TGDVector);
-begin
-  FCenter.x := aV.x;
-  FCenter.y := aV.y;
-  FCenter.z := aV.z;
-end;
-
-{******************************************************************************}
-{* Create the BS class                                                        *}
-{******************************************************************************}
-
-constructor TGDBoundingSphere.Create();
-begin
-  FCenter := TGDVector.Create(0,0,0);
-  FRadius := 0;
-end;
-
-{******************************************************************************}
-{* Destroy the BS class                                                       *}
-{******************************************************************************}
-
-destructor TGDBoundingSphere.Destroy();
-begin
-  FreeAndNil(FCenter);
-  inherited;
-end;
-
-{******************************************************************************}
-{* Render the BS wireframe                                                    *}
-{******************************************************************************}
-
-procedure TGDBoundingSphere.RenderWireFrame();
-begin
-  //
-end;
-
-{******************************************************************************}
-{* Render the BS solid                                                        *}
-{******************************************************************************}
-
-procedure TGDBoundingSphere.RenderSolid();
-begin
-  //
-end;
-
-{******************************************************************************}
-{* Calculate the sphere from a vertexlist                                     *}
-{******************************************************************************}
-
-procedure TGDBoundingSphere.Generate( aVertexList : TGDObjectList );
-begin
-end;
-
-{******************************************************************************}
-{* Check if a sphere is inside another sphere                                 *}
-{******************************************************************************}
-
-function TGDBoundingSphere.SphereInsideSphere( aBoundingBox : TGDBoundingSphere ) : boolean;
-begin
-  result := false;
-end;
-
-{******************************************************************************}
-{* Check if a point is inside the sphere                                       *}
-{******************************************************************************}
-
-function  TGDBoundingSphere.PointInsideSphere( aV : TGDVector ) : boolean;
-begin
-  result := false;
 end;
 
 end.

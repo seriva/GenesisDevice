@@ -47,7 +47,7 @@ type
   TGDModes  = Class
   private
     //modes
-    FRenderMode             : TGDRenderMode;
+    FRenderWireframe        : Boolean;
     FRenderNodeBoxes        : Boolean;
     FRenderObjectBoxes      : Boolean;
     FRenderNormals          : Boolean;
@@ -59,9 +59,8 @@ type
     FRenderMeshes           : Boolean;
     FRenderGrass            : Boolean;
     FRenderInterfaces       : Boolean;
-    FTakingScreenShot       : Boolean;
   public
-    property RenderMode : TGDRenderMode read FRenderMode write FRenderMode;
+    property RenderWireframe : boolean read FRenderWireframe write FRenderWireframe;
     property RenderNodeBoxes : boolean read FRenderNodeBoxes write FRenderNodeBoxes;
     property RenderObjectBoxes : boolean read FRenderObjectBoxes write FRenderObjectBoxes;
     property RenderNormals : boolean read FRenderNormals write FRenderNormals;
@@ -73,7 +72,6 @@ type
     property RenderWater : boolean read FRenderWater write FRenderWater;
     property RenderGrass : boolean read FRenderGrass write FRenderGrass;
     property RenderInterfaces : boolean read FRenderInterfaces write FRenderInterfaces;
-    property TakingScreenShot : boolean read FTakingScreenShot write FTakingScreenShot;
 
     constructor Create();
     destructor  Destroy(); override;
@@ -99,7 +97,7 @@ end;
 
 procedure TGDModes.InitModes();
 begin
-  FRenderMode        := RM_NORMAL;
+  RenderWireframe    := false;
   FRenderNodeBoxes   := false;
   FRenderObjectBoxes := false;
   FRenderNormals     := false;
@@ -111,7 +109,6 @@ begin
   FRenderGrass       := true;
   FRenderMeshes      := true;
   FRenderInterfaces  := true;
-  FTakingScreenShot  := false;
 end;
 
 end.

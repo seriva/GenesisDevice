@@ -34,7 +34,8 @@ interface
 
 uses
   Classes,
-  LCLIntf, LCLType,
+  LCLIntf,
+  LCLType,
   SysUtils,
   dglOpenGL,
   GDTypes,

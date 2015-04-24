@@ -539,59 +539,61 @@ procedure TGDTerrain.StartRendering( aRenderAttribute : TGDRenderAttribute; aRen
 begin
   if Not(aRenderAttribute = RA_NORMAL) then exit;
 
-  case Modes.RenderMode of
-    RM_NORMAL    : begin
-                     case aRenderFor of
-                       RF_NORMAL, RF_WATER : begin
-                                     Renderer.TerrainShader.Enable();
-                                     Renderer.TerrainShader.SetFloat3('V_LIGHT_DIR', DirectionalLight.Direction.X,
-                                                                                     DirectionalLight.Direction.Y,
-                                                                                     DirectionalLight.Direction.Z);
-                                     Renderer.TerrainShader.SetFloat4('V_LIGHT_AMB', DirectionalLight.Ambient.R,
-                                                                                     DirectionalLight.Ambient.G,
-                                                                                     DirectionalLight.Ambient.B,
-                                                                                     DirectionalLight.Ambient.A);
-                                     Renderer.TerrainShader.SetFloat4('V_LIGHT_DIFF', DirectionalLight.Diffuse.R,
-                                                                                      DirectionalLight.Diffuse.G,
-                                                                                      DirectionalLight.Diffuse.B,
-                                                                                      DirectionalLight.Diffuse.A);
-                                     Renderer.TerrainShader.SetFloat('F_MIN_VIEW_DISTANCE', FogManager.FogShader.MinDistance);
-                                     Renderer.TerrainShader.SetFloat('F_MAX_VIEW_DISTANCE', FogManager.FogShader.MaxDistance);
-                                     Renderer.TerrainShader.SetFloat4('V_FOG_COLOR', FogManager.FogShader.Color.R,
-                                                                       FogManager.FogShader.Color.G, FogManager.FogShader.Color.B,
-                                                                       FogManager.FogShader.Color.A);
-                                     Renderer.TerrainShader.SetInt('T_COLORTEX', 0);
-                                     Renderer.TerrainShader.SetInt('T_DETAILTEX1', 1);
-                                     Renderer.TerrainShader.SetInt('T_DETAILTEX2', 2);
-                                     Renderer.TerrainShader.SetInt('T_DETAILTEX3', 3);
-                                     Renderer.TerrainShader.SetInt('T_WEIGHT_LOOKUP', 4);
-                                     Renderer.TerrainShader.SetInt('T_CAUSTIC_TEX', 5);
+  if Modes.RenderWireframe then
+  begin
+    glColor4f(0.2,0.8,0.2,1);
+  end
+  else
+  begin
+    case aRenderFor of
+     RF_NORMAL, RF_WATER : begin
+                   Renderer.TerrainShader.Enable();
+                   Renderer.TerrainShader.SetFloat3('V_LIGHT_DIR', DirectionalLight.Direction.X,
+                                                                   DirectionalLight.Direction.Y,
+                                                                   DirectionalLight.Direction.Z);
+                   Renderer.TerrainShader.SetFloat4('V_LIGHT_AMB', DirectionalLight.Ambient.R,
+                                                                   DirectionalLight.Ambient.G,
+                                                                   DirectionalLight.Ambient.B,
+                                                                   DirectionalLight.Ambient.A);
+                   Renderer.TerrainShader.SetFloat4('V_LIGHT_DIFF', DirectionalLight.Diffuse.R,
+                                                                    DirectionalLight.Diffuse.G,
+                                                                    DirectionalLight.Diffuse.B,
+                                                                    DirectionalLight.Diffuse.A);
+                   Renderer.TerrainShader.SetFloat('F_MIN_VIEW_DISTANCE', FogManager.FogShader.MinDistance);
+                   Renderer.TerrainShader.SetFloat('F_MAX_VIEW_DISTANCE', FogManager.FogShader.MaxDistance);
+                   Renderer.TerrainShader.SetFloat4('V_FOG_COLOR', FogManager.FogShader.Color.R,
+                                                     FogManager.FogShader.Color.G, FogManager.FogShader.Color.B,
+                                                     FogManager.FogShader.Color.A);
+                   Renderer.TerrainShader.SetInt('T_COLORTEX', 0);
+                   Renderer.TerrainShader.SetInt('T_DETAILTEX1', 1);
+                   Renderer.TerrainShader.SetInt('T_DETAILTEX2', 2);
+                   Renderer.TerrainShader.SetInt('T_DETAILTEX3', 3);
+                   Renderer.TerrainShader.SetInt('T_WEIGHT_LOOKUP', 4);
+                   Renderer.TerrainShader.SetInt('T_CAUSTIC_TEX', 5);
 
-                                     FColorTexture.BindTexture(GL_TEXTURE0);
-                                     FDetailTexture1.BindTexture(GL_TEXTURE1);
-                                     FDetailTexture2.BindTexture(GL_TEXTURE2);
-                                     FDetailTexture3.BindTexture(GL_TEXTURE3);
-                                     FDetailLookup.BindTexture(GL_TEXTURE4);
-                                     Water.BindCausticTexture();
+                   FColorTexture.BindTexture(GL_TEXTURE0);
+                   FDetailTexture1.BindTexture(GL_TEXTURE1);
+                   FDetailTexture2.BindTexture(GL_TEXTURE2);
+                   FDetailTexture3.BindTexture(GL_TEXTURE3);
+                   FDetailLookup.BindTexture(GL_TEXTURE4);
+                   Water.BindCausticTexture();
 
-                                     If Water.WaterHeight > Camera.Position.Y then
-                                     begin
-                                       Renderer.TerrainShader.SetInt('I_UNDER_WATER', 1);
-                                     end
-                                     else
-                                     begin
-                                       Renderer.TerrainShader.SetInt('I_UNDER_WATER', 0);
-                                     end;
-                                     Renderer.TerrainShader.SetFloat('I_WATER_HEIGHT', Water.WaterHeight);
-                                   end;
-                        RF_BLOOM : begin
-                                     Renderer.RenderState( RS_COLOR );
-                                     glEnable(GL_DEPTH_TEST);
-                                     glColor4f(0,0,0,1)
-                                   end;
-                     end;
+                   If Water.WaterHeight > Camera.Position.Y then
+                   begin
+                     Renderer.TerrainShader.SetInt('I_UNDER_WATER', 1);
+                   end
+                   else
+                   begin
+                     Renderer.TerrainShader.SetInt('I_UNDER_WATER', 0);
                    end;
-    RM_WIREFRAME : glColor4f(0.2,0.8,0.2,1);
+                   Renderer.TerrainShader.SetFloat('I_WATER_HEIGHT', Water.WaterHeight);
+                 end;
+      RF_BLOOM : begin
+                   Renderer.RenderState( RS_COLOR );
+                   glEnable(GL_DEPTH_TEST);
+                   glColor4f(0,0,0,1)
+                 end;
+    end;
   end;
 end;
 

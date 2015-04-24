@@ -273,29 +273,32 @@ begin
                           for iI := 0 to Mesh.MaterialSegmentList.Count - 1 do
                           begin
                             iMS := TGDMaterialSegment(Mesh.MaterialSegmentList.GetObjectI(iI));
-                            case Modes.RenderMode of
-                              RM_NORMAL    : begin
-                                               iMS.Material.ApplyMaterial();
-                                               Renderer.MeshShader.SetInt('I_DO_BLOOM', 1);
 
-                                               if aRenderFor = RF_BLOOM then
-                                               begin
-                                                 if iMS.Material.DoBloom then
-                                                   Renderer.MeshShader.SetInt('I_DO_BLOOM', 1)
-                                                 else
-                                                   Renderer.MeshShader.SetInt('I_DO_BLOOM', 0);
-                                               end;
+                            if Modes.RenderWireframe then
+                            begin
+                              glColor4f(1.0,1.0,1.0,1.0);
+                            end
+                            else
+                            begin
+                              iMS.Material.ApplyMaterial();
+                              Renderer.MeshShader.SetInt('I_DO_BLOOM', 1);
 
-                                               If Water.WaterHeight > Camera.Position.Y then
-                                               begin
-                                                 Renderer.MeshShader.SetInt('I_UNDER_WATER', 1);
-                                               end
-                                               else
-                                               begin
-                                                 Renderer.MeshShader.SetInt('I_UNDER_WATER', 0);
-                                               end;
-                                             end;
-                              RM_WIREFRAME : glColor4f(1.0,1.0,1.0,1.0);
+                              if aRenderFor = RF_BLOOM then
+                              begin
+                               if iMS.Material.DoBloom then
+                                 Renderer.MeshShader.SetInt('I_DO_BLOOM', 1)
+                               else
+                                 Renderer.MeshShader.SetInt('I_DO_BLOOM', 0);
+                              end;
+
+                              If Water.WaterHeight > Camera.Position.Y then
+                              begin
+                               Renderer.MeshShader.SetInt('I_UNDER_WATER', 1);
+                              end
+                              else
+                              begin
+                               Renderer.MeshShader.SetInt('I_UNDER_WATER', 0);
+                              end;
                             end;
 
                             Renderer.MeshShader.SetInt('I_FLIP_NORMAL', 0);

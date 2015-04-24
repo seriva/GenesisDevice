@@ -36,7 +36,6 @@ uses
   Graphics,
   Windows,
   SysUtils,
-  Classes,
   dglOpenGL,
   GDConstants,
   GDSettings,
@@ -54,9 +53,15 @@ type
 
   TGDRenderer  = Class
   private
-    FWND  : HWND;
-    FDC   : HDC;
-    FRC   : HGLRC;
+    FInitialized        : boolean;
+
+    FResourceWND        : HWND;
+    FResourceDC         : HDC;
+    FResourceRC         : HGLRC;
+
+    FViewPortWND        : HWND;
+    FViewPortDC         : HDC;
+    FViewPortRC         : HGLRC;
     FCanResize          : boolean;
     FState              : TGDRenderState;
     
@@ -90,10 +95,7 @@ type
 
     procedure RenderQuad();
   public
-    property    WindowHandle  : HWND read FWND write FWND;
-    property    DeviceContext : HDC read FDC write FDC;
-    property    RenderContext : HGLRC read FRC write FRC;
-    property    State : TGDRenderState read FState write FState;
+    property    Initialized     : boolean read FInitialized;
 
     property    TerrainShader  : TGDGLShader read FTerrainShader;
     property    SkyShader      : TGDGLShader read FSkyShader;
@@ -112,10 +114,10 @@ type
     Constructor Create();
     Destructor  Destroy();override;
 
-    function    InitRenderer( aWnd  : HWND ): boolean;
-    function    ShutDownRenderer() : boolean;
-
+    function    InitViewPort( aWnd  : HWND ): boolean;
+    function    ShutDownViewPort() : boolean;
     procedure   ResizeViewPort();
+
     procedure   RenderState( aState : TGDRenderState );
     procedure   StartFrame();
     procedure   EndFrame();
@@ -123,8 +125,6 @@ type
     procedure   SwitchToOrtho();
     procedure   SwitchToPerspective();
     procedure   VerticalSync();
-    function    MakeScreenShot(aFileName : string): boolean;
-
     function    CheckUsePostProcessing(): boolean;
     procedure   StartRenderSource();
     procedure   EndRenderSource();
@@ -132,7 +132,6 @@ type
     procedure   EndRenderUnderWaterSource();
     procedure   StartRenderBloom();
     procedure   EndRenderBloom();
-
     procedure   ApplyBlurToImage( aSourceImage : TGDTexture; aBlurStrength : double );
     procedure   RenderFinal();
   end;
@@ -143,100 +142,109 @@ var
 implementation
 
 uses
-  GDConsole,
   GDMain,
-  GDWater,
-  GDLighting;
+  GDWater;
 
 {******************************************************************************}
 {* Create the renderer class                                                  *}
 {******************************************************************************}
 
 constructor TGDRenderer.Create();
+var
+  iError      : string;
+  iWndClass   : TWndClass;
+  iDWStyle    : DWORD;
+  iDWExStyle  : DWORD;
+  iInstance   : HINST;
+  iStr        : String;
+  iGLInt      : GLInt;
+  iGLFLoat    : GLFLoat;
+
+function WndProc(aWnd: HWND; aMsg: UINT;  aWParam: WPARAM;  aLParam: LPARAM): LRESULT; stdcall;
+begin
+  Result := 1;
+end;
+
 begin
   Inherited;
   FCanResize := false;
-end;
 
-{******************************************************************************}
-{* Destroy the renderer class                                                 *}
-{******************************************************************************}
-
-Destructor TGDRenderer.Destroy();
-begin
-  Inherited;
-end;
-
-{******************************************************************************}
-{* Init the renderer                                                          *}
-{******************************************************************************}
-
-function TGDRenderer.InitRenderer( aWnd  : HWND ): boolean;
-var
-  iPFD : TPIXELFORMATDESCRIPTOR;
-  iError    : string;
-  iPixelFormat : Integer;
-begin
   Log.Write('Initializing renderer...');
   try
-    Result := true;
+    FInitialized := true;
+    iInstance := GetModuleHandle(nil);
+    ZeroMemory(@iWndClass, SizeOf(wndClass));
 
-    FWND := aWnd;
-
-    FDC := GetDC(FWND);
-    if (FDC = 0) then
-      Raise Exception.Create('Unable to get a device context!');
-
-    fillchar(iPFD, Sizeof(iPFD), 0);
-    with iPFD do
+    with iWndClass do
     begin
-      nSize           := SizeOf(TPIXELFORMATDESCRIPTOR);
-      nVersion        := 1;
-      dwFlags         := PFD_DRAW_TO_WINDOW
-                      or PFD_SUPPORT_OPENGL
-                      or PFD_DOUBLEBUFFER;
-      iPixelType      := PFD_TYPE_RGBA;
-      cColorBits      := 32;
-      cRedBits := 0;                         
-      cRedShift := 0;
-      cGreenBits := 0;
-      cGreenShift := 0;
-      cBlueBits := 0;
-      cBlueShift := 0;
-      cAlphaBits := 0;                               
-      cAlphaShift := 0;
-      cAccumBits := 0;
-      cAccumRedBits := 0;
-      cAccumGreenBits := 0;
-      cAccumBlueBits := 0;
-      cAccumAlphaBits := 0;
-      cDepthBits := 24;
-      cStencilBits := 0;
-      cAuxBuffers := 0;
-      iLayerType := PFD_MAIN_PLANE;
-      bReserved := 0;
-      dwLayerMask := 0;
-      dwVisibleMask := 0;
-      dwDamageMask := 0;
+      style         := CS_HREDRAW or CS_VREDRAW or CS_OWNDC;
+      lpfnWndProc   := @WndProc;
+      hInstance     := iInstance;
+      hCursor       := LoadCursor(0, IDC_ARROW);
+      lpszClassName := 'OpenGL';
     end;
 
-    iPixelFormat := ChoosePixelFormat(FDC, @iPFD);
-    if (iPixelFormat = 0) then
-       Raise Exception.Create('Unable to find a suitable pixel format!');
+    if (RegisterClass(iWndClass) = 0) then
+      Raise Exception.Create('Failed to register reource windows class');
 
-    if (not SetPixelFormat(FDC, iPixelFormat, @iPFD)) then
-       Raise Exception.Create('Unable to set the pixel format!');
+    iDWStyle   := WS_OVERLAPPEDWINDOW or WS_CLIPCHILDREN or WS_CLIPSIBLINGS;
+    iDWExStyle := WS_EX_APPWINDOW or WS_EX_WINDOWEDGE;
+    FResourceWND := CreateWindowEx(iDWExStyle,
+                                      'OpenGL',
+                                      'Window',
+                                      iDWStyle,
+                                      0, 0,
+                                      50, 50,
+                                       0,
+                                      0,
+                                      iInstance,
+                                      nil);
 
-    FRC := wglCreateContext(FDC);
-    if (FRC = 0) then
-       Raise Exception.Create('Unable to create an OpenGL rendering context!');
+    if FResourceWND = 0 then
+      Raise Exception.Create('Failed to create resource window');
 
-    if (not wglMakeCurrent(FDC, FRC)) then
-       Raise Exception.Create('Unable to activate OpenGL rendering context!');
+    //Get the device context
+    FResourceDC := GetDC(FResourceWND);
+    if (FResourceDC = 0) then
+      Raise Exception.Create('Failed to get a device context');
 
+    //Create the OpenGL rendering context
+    FResourceRC := CreateRenderingContext(FResourceDC, [opDoubleBuffered, opStereo], 32, 32, 0, 0, 0, 0);;
+    if (FResourceRC = 0) then
+      Raise Exception.Create('Failed to create a rendering context');
+
+    //Activate the rendering context
+    ActivateRenderingContext(FResourceDC, FResourceRC);
+
+    //Read OpenGL properties and implementation
     ReadExtensions;
     ReadImplementationProperties;
 
+    //Check requirements.
+    glGetIntegerv(GL_MAX_TEXTURE_UNITS_ARB, @iGLInt);
+    if iGLInt < MRS_TEXTURE_UNITS then
+      Raise Exception.Create('Not ennough texture units!');
+
+    glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, @iGLFLoat);
+    if iGLFLoat < MRS_ANISOTROPIC_FILTERING then
+      Raise Exception.Create('To low anisotropic filtering!');
+
+    glGetFloatv(GL_MAX_TEXTURE_SIZE, @iGLFLoat);
+    if iGLFLoat < MRS_TEXTURE_SIZE then
+      Raise Exception.Create('To low texture size!');
+
+    iStr := glGetString(GL_EXTENSIONS);
+    If ((Pos('GL_ARB_shader_objects', iStr) <= 0) or
+       (Pos('GL_ARB_fragment_program', iStr) <= 0) or
+       (Pos('GL_ARB_fragment_shader', iStr) <= 0) or
+       (Pos('GL_ARB_vertex_program', iStr) <= 0) or
+       (Pos('GL_ARB_vertex_shader', iStr) <= 0)) then
+      Raise Exception.Create('Opengl Shading Language not supported!');
+
+    if Pos('GL_EXT_framebuffer_object', iStr) <= 0 then
+      Raise Exception.Create('Frame Buffer Objects not supported!');
+
+    //Set basic OpenGL settings.
     glClearColor(0.5, 0.5, 0.5, 1.0);
     glClearDepth(1.0);
     glEnable(GL_DEPTH_TEST);
@@ -262,6 +270,83 @@ begin
     glEnable(GL_NORMALIZE);
     glDisable(GL_FOG);
     glDisable(GL_LIGHTING);
+  except
+    on E: Exception do
+    begin
+      iError := E.Message;
+      FInitialized := false;
+    end;
+  end;
+
+  Log.WriteOkFail(FInitialized, iError);
+
+  If FInitialized then
+    InitShaders();
+end;
+
+{******************************************************************************}
+{* Destroy the renderer class                                                 *}
+{******************************************************************************}
+
+Destructor TGDRenderer.Destroy();
+var
+  iError  : string;
+  iResult : boolean;
+  iInstance   : HINST;
+begin
+  inherited;
+  Log.Write('Shutting down renderer...');
+  try
+    //Clear shaders.
+    ClearShaders();
+
+    //Destroy rendering context
+    DeactivateRenderingContext();
+    DestroyRenderingContext(FResourceRC);
+
+    //destroy the window
+    if ((FResourceWND <> 0) and (not DestroyWindow(FResourceWND))) then
+      Raise Exception.Create('Failed to destroy window');
+
+    iInstance := GetModuleHandle(nil);
+    if (not UnRegisterClass('OpenGL', iInstance)) then
+      Raise Exception.Create('Failed to unregister window class');
+  except
+    on E: Exception do
+    begin
+      iError := E.Message;
+      iResult := false;
+    end;
+  end;
+  Log.WriteOkFail(iResult, iError);
+end;
+
+{******************************************************************************}
+{* Init the viewport                                                          *}
+{******************************************************************************}
+
+function TGDRenderer.InitViewPort( aWnd  : HWND ): boolean;
+var
+  iError    : string;
+begin
+  Log.Write('Initializing viewport...');
+  try
+    Result := true;
+
+    //get the device context
+    FViewPortWND := aWnd;
+    FViewPortDC := GetDC(FViewPortWND);
+    if (FViewPortDC = 0) then
+      Raise Exception.Create('Failed to get a device context');
+
+    //Create the OpenGL rendering context
+    FViewPortRC := CreateRenderingContext(FViewPortDC, [opDoubleBuffered, opStereo], 32, 32, 0, 0, 0, 0);;
+    if (FViewPortRC = 0) then
+      Raise Exception.Create('Failed to create a rendering context');
+
+    //Activate and share the rendering context
+    ActivateRenderingContext(FViewPortDC, FViewPortRC);
+    wglShareLists(FResourceRC, FViewPortRC);
 
     ResizeViewPort();
     VerticalSync();
@@ -275,41 +360,35 @@ begin
       result := false;
     end;
   end;
-
   Log.WriteOkFail(result, iError);
 
-  If result then
-  begin
-    InitShaders();
+  if result then
     Main.InitBaseResources();
-    DirectionalLight.Clear();
-  end;
 end;
 
 {******************************************************************************}
 {* Shutdown the renderer                                                      *}
 {******************************************************************************}
 
-function TGDRenderer.ShutDownRenderer() : boolean;
+function TGDRenderer.ShutDownViewPort() : boolean;
 var
   iError    : string;
 begin
-  Log.Write('Shutting down renderer...');
+  Log.Write('Shutting down viewport...');
   try
     FCanResize := false;
     result := true;
-    ClearShaders();
-    ClearFrameBuffers();
     Main.ClearBaseResources();
+    ClearFrameBuffers();
     wglMakeCurrent(0, 0);
-    if (not wglDeleteContext(FRC)) then
+    if (not wglDeleteContext(FViewPortRC)) then
     begin
-      FRC := 0;
+      FViewPortRC := 0;
       Raise Exception.Create('Unable to activate OpenGL rendering context!');
     end;
-    if ((FDC > 1) and (ReleaseDC(FWND, FDC) = 0)) then
+    if ((FViewPortDC > 1) and (ReleaseDC(FViewPortWND, FViewPortDC) = 0)) then
     begin
-      FDC := 0;
+      FViewPortDC := 0;
       Raise Exception.Create('Release of device context failed!');
     end;
   except
@@ -383,7 +462,7 @@ end;
 
 procedure TGDRenderer.InitShaders();
 begin
-  Timer.Start();
+  Timing.Start();
   Log.Write('......Initializing shaders');
   FTerrainShader  := TGDGLShader.Create();
   FTerrainShader.InitShaders( SHADER_TERRAIN );
@@ -407,9 +486,8 @@ begin
   FColorShader.InitShaders( SHADER_COLOR );
   FTextureShader := TGDGLShader.Create();
   FTextureShader.InitShaders( SHADER_TEXTURE );
-
-  Timer.Stop();
-  Log.Write('......Done initializing shaders (' + Timer.TimeInSeconds + ' Sec)');
+  Timing.Stop();
+  Log.Write('......Done initializing shaders (' + Timing.TimeInSeconds + ' Sec)');
 end;
 
 {******************************************************************************}
@@ -498,7 +576,7 @@ end;
 
 procedure TGDRenderer.EndFrame();
 begin
-  SwapBuffers(FDC);
+  SwapBuffers(FViewPortDC);
 end;
 
 {******************************************************************************}
@@ -507,7 +585,7 @@ end;
 
 function TGDRenderer.MakeCurrent() : boolean;
 begin
-  Result := wglMakeCurrent(FDC, FRC);
+  Result := wglMakeCurrent(FViewPortDC, FViewPortRC);
 end;
 
 {******************************************************************************}
@@ -559,95 +637,6 @@ begin
         if iI<>0 then
           wglSwapIntervalEXT(0);
    end;
-end;
-
-{******************************************************************************}
-{* Create a screenshot                                                        *}
-{******************************************************************************}
-
-function TGDRenderer.MakeScreenShot(aFileName : string): boolean;
-
-type
-  TBMPheader = packed record
-    Magic          : word;
-    Headersize     : longword;
-    Reserved       : longword;
-    Dataofs        : longword;
-    Size           : longword;
-    Width          : longword;
-    Height         : longword;
-    Planes         : word;
-    BitCount       : word;
-    Compression    : longword;
-    SizeImage      : longword;
-    XPelsPerMeter  : longword;
-    YPelsPerMeter  : longword;
-    ClrUsed        : longword;
-    ClrImportant   : longword;
-  end;
-
-var
-  iError        : string;
-  iConsoleShow    : boolean;
-  iViewPort     : array[0..3] of integer;
-  iBuffer       : pchar;
-  iBufferLength : Integer;
-  iFile         : TMemoryStream;
-  BMPheader     : TBMPheader;
-begin
-  Log.Save := false;
-  Log.Write('Saving screenshot to file ' + aFileName + '...');
-  try
-    result := true;
-
-    Modes.TakingScreenShot := true;
-    iConsoleShow := Console.Show;
-    Console.Show := false;
-    glGetIntegerv(GL_VIEWPORT, @iViewPort);
-    Main.RenderMain();
-    Console.Show := iConsoleShow;
-    glFinish();
-    Modes.TakingScreenShot := false;
-
-    iBufferLength := (iViewPort[2] * iViewPort[3]) * 3;
-    getmem(iBuffer, iBufferLength);
-    glPixelStorei(GL_PACK_ALIGNMENT, 1);
-    glReadPixels(0, 0, iViewPort[2], iViewPort[3], GL_BGR_EXT, GL_UNSIGNED_BYTE, iBuffer);
-    fillchar(BMPheader, sizeof(BMPheader), 0);
-
-    BMPheader.magic               := 19778;
-    BMPheader.headersize          := 54;
-    BMPheader.reserved            := 0;
-    BMPheader.dataofs             := 54;
-    BMPheader.Size                := 40;
-    BMPheader.Width               := iViewPort[2];
-    BMPheader.Height              := iViewPort[3];
-    BMPheader.Planes              := 1;
-    BMPheader.BitCount            := 24;
-    BMPheader.SizeImage           := iBufferLength;
-    BMPheader.XPelsPerMeter       := 36100;
-    BMPheader.YPelsPerMeter       := 36100;
-    BMPheader.ClrUsed             := 0;
-    BMPheader.ClrImportant        := 0;
-
-    iFile := TMemoryStream.Create();
-    iFile.Write(BMPheader, sizeof(BMPheader));
-    iFile.Write(iBuffer^, iBufferLength);
-    iFile.SaveToFile( FP_SCREENSHOTS + aFileName + '.bmp' );
-    iFile.Free;
-
-    freemem(iBuffer);
-  except
-    on E: Exception do
-    begin
-      iError := E.Message;
-      result := false;
-    end;
-  end;
-
-  Log.WriteOkFail(result, iError);
-
-  Log.Save := true;
 end;
 
 {******************************************************************************}

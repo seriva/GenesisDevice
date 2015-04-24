@@ -419,54 +419,56 @@ procedure TGDWater.StartRendering( aRenderAttribute : TGDRenderAttribute; aRende
 begin
   if Not(aRenderAttribute = RA_NORMAL) then exit;
   
-  Case Modes.RenderMode of
-    RM_NORMAL    : begin
-                     case aRenderFor of
-                          RF_NORMAL, RF_WATER : begin
-                                     Renderer.WaterShader.Enable();
-                                     Renderer.WaterShader.SetFloat3('V_LIGHT_DIR', DirectionalLight.Direction.X,
-                                                                                     DirectionalLight.Direction.Y,
-                                                                                     DirectionalLight.Direction.Z);
-                                     Renderer.WaterShader.SetFloat4('V_LIGHT_AMB', DirectionalLight.Ambient.R,
-                                                                                     DirectionalLight.Ambient.G,
-                                                                                     DirectionalLight.Ambient.B,
-                                                                                     DirectionalLight.Ambient.A);
-                                     Renderer.WaterShader.SetFloat4('V_LIGHT_DIFF', DirectionalLight.Diffuse.R,
-                                                                                      DirectionalLight.Diffuse.G,
-                                                                                      DirectionalLight.Diffuse.B,
-                                                                                      DirectionalLight.Diffuse.A);
-                                     Renderer.WaterShader.SetFloat('F_WAVE_SPEED', Timing.ElapsedTime / FWaveSpeed);
-                                     Renderer.WaterShader.SetFloat('F_WAVE_STRENGHT', FWaveStrength);
-                                     Renderer.WaterShader.SetInt('T_REFLECTION', 0);
-                                     Renderer.WaterShader.SetInt('T_DUDVMAP', 1);
-                                     Renderer.WaterShader.SetInt('T_DEPTHMAP', 2);
-                                     Renderer.WaterShader.SetFloat('F_MIN_VIEW_DISTANCE', FogManager.FogShader.MinDistance);
-                                     Renderer.WaterShader.SetFloat('F_MAX_VIEW_DISTANCE', FogManager.FogShader.MaxDistance);
-                                     Renderer.WaterShader.SetFloat4('V_FOG_COLOR', FogManager.FogShader.Color.R,
-                                     FogManager.FogShader.Color.G, FogManager.FogShader.Color.B,FogManager.FogShader.Color.A);
-                                     Renderer.WaterShader.SetFloat4('V_WATER_COLOR_CORRECTION', FWaterColorCorrection.R,
-                                                                                                FWaterColorCorrection.G,
-                                                                                                FWaterColorCorrection.B,
-                                                                                                FWaterColorCorrection.A);
-                                     If Water.WaterHeight > Camera.Position.Y then
-                                       Renderer.WaterShader.SetInt('I_UNDER_WATER', 1)
-                                     else
-                                       Renderer.WaterShader.SetInt('I_UNDER_WATER', 0);
+  if Modes.RenderWireframe then
+  begin
+    glColor4f(0.3,0.3,1,1);
+  end
+  else
+  begin
+    case aRenderFor of
+        RF_NORMAL, RF_WATER : begin
+                   Renderer.WaterShader.Enable();
+                   Renderer.WaterShader.SetFloat3('V_LIGHT_DIR', DirectionalLight.Direction.X,
+                                                                   DirectionalLight.Direction.Y,
+                                                                   DirectionalLight.Direction.Z);
+                   Renderer.WaterShader.SetFloat4('V_LIGHT_AMB', DirectionalLight.Ambient.R,
+                                                                   DirectionalLight.Ambient.G,
+                                                                   DirectionalLight.Ambient.B,
+                                                                   DirectionalLight.Ambient.A);
+                   Renderer.WaterShader.SetFloat4('V_LIGHT_DIFF', DirectionalLight.Diffuse.R,
+                                                                    DirectionalLight.Diffuse.G,
+                                                                    DirectionalLight.Diffuse.B,
+                                                                    DirectionalLight.Diffuse.A);
+                   Renderer.WaterShader.SetFloat('F_WAVE_SPEED', Timing.ElapsedTime / FWaveSpeed);
+                   Renderer.WaterShader.SetFloat('F_WAVE_STRENGHT', FWaveStrength);
+                   Renderer.WaterShader.SetInt('T_REFLECTION', 0);
+                   Renderer.WaterShader.SetInt('T_DUDVMAP', 1);
+                   Renderer.WaterShader.SetInt('T_DEPTHMAP', 2);
+                   Renderer.WaterShader.SetFloat('F_MIN_VIEW_DISTANCE', FogManager.FogShader.MinDistance);
+                   Renderer.WaterShader.SetFloat('F_MAX_VIEW_DISTANCE', FogManager.FogShader.MaxDistance);
+                   Renderer.WaterShader.SetFloat4('V_FOG_COLOR', FogManager.FogShader.Color.R,
+                   FogManager.FogShader.Color.G, FogManager.FogShader.Color.B,FogManager.FogShader.Color.A);
+                   Renderer.WaterShader.SetFloat4('V_WATER_COLOR_CORRECTION', FWaterColorCorrection.R,
+                                                                              FWaterColorCorrection.G,
+                                                                              FWaterColorCorrection.B,
+                                                                              FWaterColorCorrection.A);
+                   If Water.WaterHeight > Camera.Position.Y then
+                     Renderer.WaterShader.SetInt('I_UNDER_WATER', 1)
+                   else
+                     Renderer.WaterShader.SetInt('I_UNDER_WATER', 0);
 
-                                     FReflection.BindTexture(GL_TEXTURE0);
-                                     BindWaterTexture();
-                                     FDepthMap.BindTexture(GL_TEXTURE2);
-                                     glEnable(GL_BLEND);
-                                     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-                          end;
-                          RF_BLOOM : begin
-                                   Renderer.RenderState( RS_COLOR );
-                                   glEnable(GL_DEPTH_TEST);
-                                   glColor4f(0,0,0,1)
-                          end;
-                     end;
-                   end;
-    RM_WIREFRAME : glColor4f(0.3,0.3,1,1);
+                   FReflection.BindTexture(GL_TEXTURE0);
+                   BindWaterTexture();
+                   FDepthMap.BindTexture(GL_TEXTURE2);
+                   glEnable(GL_BLEND);
+                   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        end;
+        RF_BLOOM : begin
+                 Renderer.RenderState( RS_COLOR );
+                 glEnable(GL_DEPTH_TEST);
+                 glColor4f(0,0,0,1)
+        end;
+    end;
   end;
   glDisable(GL_CULL_FACE);
 end;

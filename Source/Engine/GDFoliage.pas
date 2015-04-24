@@ -418,37 +418,37 @@ procedure TGDFoliage.StartRenderingGrass( aRenderAttribute : TGDRenderAttribute;
 begin
   if Not(aRenderAttribute = RA_NORMAL) then exit;
 
-  Case Modes.RenderMode of
-      RM_NORMAL    : begin
-                       glAlphaFunc(GL_GREATER, 0.75 + aAlphaFunction);
-                       glEnable(GL_ALPHA_TEST);
-                       glDisable(GL_CULL_FACE);
-                       Renderer.GrassShader.Enable();
-                       Renderer.GrassShader.SetFloat3('V_LIGHT_DIR', DirectionalLight.Direction.X,
-                                                                       DirectionalLight.Direction.Y,
-                                                                       DirectionalLight.Direction.Z);
-                       Renderer.GrassShader.SetFloat4('V_LIGHT_AMB', DirectionalLight.Ambient.R,
-                                                                       DirectionalLight.Ambient.G,
-                                                                       DirectionalLight.Ambient.B,
-                                                                       DirectionalLight.Ambient.A);
-                       Renderer.GrassShader.SetFloat4('V_LIGHT_DIFF', DirectionalLight.Diffuse.R,
-                                                                        DirectionalLight.Diffuse.G,
-                                                                        DirectionalLight.Diffuse.B,
-                                                                        DirectionalLight.Diffuse.A);
-                       Renderer.GrassShader.SetInt('T_GRASSTEX', 0);
-                       Renderer.GrassShader.SetFloat('F_WAVE_SPEED', Timing.ElapsedTime / FGrassWaveSpeed);
-                       Renderer.GrassShader.SetFloat('F_WAVE_STRENGHT', FGrassWaveStrength);                       
-                       Renderer.GrassShader.SetFloat('F_MIN_VIEW_DISTANCE', FogManager.FogShader.MinDistance);
-                       Renderer.GrassShader.SetFloat('F_MAX_VIEW_DISTANCE', FogManager.FogShader.MaxDistance);
-                       Renderer.GrassShader.SetFloat4('V_FOG_COLOR', FogManager.FogShader.Color.R,
-                                                      FogManager.FogShader.Color.G, FogManager.FogShader.Color.B,
-                                                      FogManager.FogShader.Color.A);
-                       glColor4f(0,0,0,1)
-                     end;
-      RM_WIREFRAME : begin
-                       glColor4f(0,0.25,0,1);
-                       glDisable(GL_CULL_FACE);
-                     end;
+  if Modes.RenderWireframe then
+  begin
+    glColor4f(0,0.25,0,1);
+    glDisable(GL_CULL_FACE);
+  end
+  else
+  begin
+    glAlphaFunc(GL_GREATER, 0.75 + aAlphaFunction);
+    glEnable(GL_ALPHA_TEST);
+    glDisable(GL_CULL_FACE);
+    Renderer.GrassShader.Enable();
+    Renderer.GrassShader.SetFloat3('V_LIGHT_DIR', DirectionalLight.Direction.X,
+                                                   DirectionalLight.Direction.Y,
+                                                   DirectionalLight.Direction.Z);
+    Renderer.GrassShader.SetFloat4('V_LIGHT_AMB', DirectionalLight.Ambient.R,
+                                                   DirectionalLight.Ambient.G,
+                                                   DirectionalLight.Ambient.B,
+                                                   DirectionalLight.Ambient.A);
+    Renderer.GrassShader.SetFloat4('V_LIGHT_DIFF', DirectionalLight.Diffuse.R,
+                                                    DirectionalLight.Diffuse.G,
+                                                    DirectionalLight.Diffuse.B,
+                                                    DirectionalLight.Diffuse.A);
+    Renderer.GrassShader.SetInt('T_GRASSTEX', 0);
+    Renderer.GrassShader.SetFloat('F_WAVE_SPEED', Timing.ElapsedTime / FGrassWaveSpeed);
+    Renderer.GrassShader.SetFloat('F_WAVE_STRENGHT', FGrassWaveStrength);
+    Renderer.GrassShader.SetFloat('F_MIN_VIEW_DISTANCE', FogManager.FogShader.MinDistance);
+    Renderer.GrassShader.SetFloat('F_MAX_VIEW_DISTANCE', FogManager.FogShader.MaxDistance);
+    Renderer.GrassShader.SetFloat4('V_FOG_COLOR', FogManager.FogShader.Color.R,
+                                  FogManager.FogShader.Color.G, FogManager.FogShader.Color.B,
+                                  FogManager.FogShader.Color.A);
+    glColor4f(0,0,0,1)
   end;
 end;
 
