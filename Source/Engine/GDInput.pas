@@ -45,12 +45,9 @@ interface
 uses
   LCLIntf,
   LCLType,
-  LMessages,
   SysUtils,
-  MMSystem,
   Classes,
   Windows,
-  Contnrs,
   DXInput,
   GDConstants,
   GDConsole,
@@ -61,44 +58,9 @@ uses
 
 type
 
-{******************************************************************************}
-{* Input class                                                                *}
-{******************************************************************************}
-
-  TGDInput = class
-  private
-    FDirectInput     : IDirectInput8 ;
-    FKeyBoard        : IDirectInputDevice8;
-    FMouse           : IDirectInputDevice8;
-    FKeyBuffer       : array[0..255] of Byte;
-    FDIMouseEvent    : THandle;
-    FDIKeyBoardEvent : THandle;
-    DIMButSwapped    : boolean;
-    FEnableInput     : Boolean;
-  public
-    property KeyBoardEvent : THandle read FDIKeyBoardEvent;
-    property MouseEvent    : THandle read FDIMouseEvent;
-    property EnableInput   : boolean read FEnableInput write FEnableInput;
-
-    Constructor Create();
-    Destructor  Destroy();override;
-    function InitInput(): Boolean;
-
-    function KeyboardControl( aAcquire: boolean ): boolean;
-    function KeyboardState(): Boolean;
-    function KeyDown(aKey: byte): boolean;
-    function StringToKey( aString : String ) : Byte;
-    function KeyToString(aKey : Byte) : String;
-    function DetectCurrentKey() : byte;
-    function DetectCurrentKeyString() : String;
-
-    function MouseControl(aAcquire: boolean): boolean;
-    function GetMousePosition(var aX, aY: LongInt) : boolean;
-  end;
-
-{******************************************************************************}
-{* Inputaction class                                                          *}
-{******************************************************************************}
+  {******************************************************************************}
+  {* Inputaction class                                                          *}
+  {******************************************************************************}
 
   TGDInputAction = class(TObject)
   private
@@ -121,56 +83,79 @@ type
     procedure Execute();
   end;
 
-{******************************************************************************}
-{* Inputcontrolthread class                                                   *}
-{******************************************************************************}
+  {******************************************************************************}
+  {* Inputcontrolthread class                                                   *}
+  {******************************************************************************}
 
   TGDInputControlThread = class(TThread)
   private
     FDone        : boolean;
-    FSingleInput : TGDObjectList;
-  public
-    procedure InitInputControlThread( aSingleInput : TGDObjectList );
-    procedure Clear();
   protected
     procedure Execute; override;
   end;
 
 {******************************************************************************}
-{* Inputmanager class                                                         *}
+{* Input class                                                                *}
 {******************************************************************************}
 
-  TGDInputManager = class
+  TGDInput = class
   private
-    FDirectInput   : TGDObjectList;
-    FSingleInput   : TGDObjectList;
-    FUpInput       : TGDObjectList;
-    FDownInput     : TGDObjectList;
-    FMouseLook     : boolean;
-    FMousePosStart : TPoint;
+    FDirectInput     : IDirectInput8 ;
+    FKeyBoard        : IDirectInputDevice8;
+    FMouse           : IDirectInputDevice8;
+    FKeyBuffer       : array[0..255] of Byte;
+    FDIMouseEvent    : THandle;
+    FDIKeyBoardEvent : THandle;
+    DIMButSwapped    : boolean;
+    FEnableInput     : Boolean;
+
+    FDirect          : TGDObjectList;
+    FSingle          : TGDObjectList;
+    FUp              : TGDObjectList;
+    FDown            : TGDObjectList;
+    FMouseLook       : boolean;
+    FMousePosStart   : TPoint;
     FMousePosCurrent : TPoint;
     FInputControlThread : TGDInputControlThread;
   public
-    property MouseLook   : boolean read FMouseLook write FMouseLook;
+    property KeyBoardEvent : THandle read FDIKeyBoardEvent;
+    property MouseEvent    : THandle read FDIMouseEvent;
+    property EnableInput   : boolean read FEnableInput write FEnableInput;
+
+    property MouseLook          : boolean read FMouseLook write FMouseLook;
     property InputControlThread : TGDInputControlThread read FInputControlThread;
     property MousePosCurrent    : TPoint read FMousePosCurrent write FMousePosCurrent;
+    property SingleInput        : TGDObjectList read FSingle;
 
-    constructor Create;
-    destructor Destroy;override;
+    Constructor Create();
+    Destructor  Destroy();override;
+    function InitInput(): Boolean;
 
-    procedure InitInputManager();
-    procedure Clear();
+    function KeyboardControl( aAcquire: boolean ): boolean;
+    function KeyboardState(): Boolean;
+    function KeyDown(aKey: byte): boolean;
+    function StringToKey( aString : String ) : Byte;
+    function KeyToString(aKey : Byte) : String;
+    function DetectCurrentKey() : byte;
+    function DetectCurrentKeyString() : String;
+
+    function MouseControl(aAcquire: boolean): boolean;
+    function GetMousePosition(var aX, aY: LongInt) : boolean;
+
 
     procedure ExecuteDirectInput();
     procedure ExecuteMouseMove();
     procedure ExecuteCharInput(aChar : Char);
     procedure CalculateMousePosStart();
+
+
+
     procedure RegisterInputAction(aType : TGDInputTypes; aName, aKeyString : String; aAction : TGDProcEngineCallback;  aConsoleDisabled : boolean );
+    procedure ClearInputActions();
   end;
 
 var
   Input          : TGDInput;
-  InputManager   : TGDInputManager;
 
 const
   DIMBufSize = 4;
@@ -203,6 +188,17 @@ begin
   FKeyBoard := nil;
   FMouse := nil;
   FEnableInput := false;
+
+  FMouseLook     := False;
+  FDirect := TGDObjectList.Create();
+  FSingle := TGDObjectList.Create();
+  FUp     := TGDObjectList.Create();
+  FDown   := TGDObjectList.Create();
+
+  FMouseLook     := False;
+  CalculateMousePosStart();
+  FInputControlThread := TGDInputControlThread.Create(True);
+  FInputControlThread.Start();
 end;
 
 {******************************************************************************}
@@ -218,6 +214,16 @@ begin
   Log.Write('Shutting down input...');
   try
     iResult := true;
+
+
+    FInputControlThread.FDone := true;
+    FInputControlThread.Terminate();
+    FreeAndNil(FInputControlThread);
+    FreeAndNil(FDirect);
+    FreeAndNil(FSingle);
+    FreeAndNil(FUp);
+    FreeAndNil(FDown);
+
     if Assigned(FDirectInput) then
     begin
       if Assigned(FKeyBoard) then
@@ -483,6 +489,140 @@ begin
 end;
 
 {******************************************************************************}
+{* Execute directinput events                                                 *}
+{******************************************************************************}
+
+procedure TGDInput.ExecuteDirectInput();
+var
+  iTempAction : TGDInputAction;
+  iI : Integer;
+begin
+  if Input.EnableInput = false then exit;
+
+  For iI := 0 to FDirect.Count-1 do
+  begin
+    iTempAction := TGDInputAction(FDirect.GetObjectI(iI));
+    if (iTempAction.FConsoleDisabled and Not(Console.Show)) or not(iTempAction.FConsoleDisabled) then
+      If Input.KeyDown( iTempAction.Key ) Then iTempAction.Execute();
+  end;
+
+  For iI := 0 to FDown.Count-1 do
+  begin
+    iTempAction := TGDInputAction(FDown.GetObjectI(iI));
+    if (iTempAction.FConsoleDisabled and Not(Console.Show)) or not(iTempAction.FConsoleDisabled) then
+      If Input.KeyDown( iTempAction.Key ) Then iTempAction.Execute();
+  end;
+
+  For iI := 0 to FUp.Count-1 do
+  begin
+    iTempAction := TGDInputAction(FUp.GetObjectI(iI));
+    if (iTempAction.FConsoleDisabled and Not(Console.Show)) or not(iTempAction.FConsoleDisabled) then
+      If Not(Input.KeyDown( iTempAction.Key )) Then iTempAction.Execute();
+  end;
+end;
+
+{******************************************************************************}
+{* Execute mouse move                                                         *}
+{******************************************************************************}
+
+procedure TGDInput.ExecuteMouseMove();
+begin
+  if Input.EnableInput = false then exit;
+  if Console.Show then exit;
+
+  if Input.GetMousePosition(FMousePosCurrent.X, FMousePosCurrent.Y) then
+  begin
+    if FMouseLook then
+    begin
+      begin
+        Camera.MouseLook(FMousePosStart.X, FMousePosStart.Y, FMousePosCurrent.X,
+                         FMousePosCurrent.Y,Settings.MouseSensitivity,
+                         Settings.InvertMouse);
+        SetCursorPos(FMousePosStart.X, FMousePosStart.Y);
+        FMousePosCurrent.X := FMousePosStart.x;
+        FMousePosCurrent.Y := FMousePosStart.Y;
+      end;
+    end;
+  end;
+end;
+
+{******************************************************************************}
+{* Execute char input                                                         *}
+{******************************************************************************}
+
+procedure TGDInput.ExecuteCharInput(aChar : Char);
+begin
+  if Input.EnableInput = false then exit;
+
+  if Console.Show then
+    Console.AddChar(aChar);
+  ;
+end;
+
+{******************************************************************************}
+{* Calculate the mousestart position                                          *}
+{******************************************************************************}
+
+procedure TGDInput.CalculateMousePosStart();
+begin
+  FMousePosStart.x := Round( Settings.Left + (Settings.Width / 2) );
+  FMousePosStart.Y := Round( Settings.Top + (Settings.Height / 2) );
+  FMousePosCurrent.X := FMousePosStart.x;
+  FMousePosCurrent.Y := FMousePosStart.Y;
+end;
+
+{******************************************************************************}
+{* Register an input action                                                   *}
+{******************************************************************************}
+
+procedure TGDInput.RegisterInputAction(aType : TGDInputTypes; aName, aKeyString : String; aAction : TGDProcEngineCallback; aConsoleDisabled : boolean );
+var
+  iTempAction : TGDInputAction;
+begin
+  iTempAction := TGDInputAction.Create();
+  iTempAction.InitInputAction(aName, aKeyString, Input.StringToKey(aKeyString),aAction, aConsoleDisabled );
+
+  case aType of
+     IT_DIRECT : FDirect.AddObjectP(iTempAction);
+     IT_SINGLE : FSingle.AddObjectP(iTempAction);
+     IT_DOWN   : FDown.AddObjectP(iTempAction);
+     IT_UP     : FUp.AddObjectP(iTempAction);
+  end;
+end;
+
+{******************************************************************************}
+{* Clear the inputmanager                                                     *}
+{******************************************************************************}
+
+procedure TGDInput.ClearInputActions();
+begin
+  FDirect.Clear();
+  FSingle.Clear();
+  FDown.Clear();
+  FUp.Clear();
+  CalculateMousePosStart();
+end;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{******************************************************************************}
 {* Create inputaction class                                                   *}
 {******************************************************************************}
 
@@ -538,25 +678,6 @@ begin
 end;
 
 {******************************************************************************}
-{* Init the inputcontrolthread                                                *}
-{******************************************************************************}
-
-procedure TGDInputControlThread.InitInputControlThread( aSingleInput : TGDObjectList);
-begin
-  FSingleInput := aSingleInput;
-end;
-
-{******************************************************************************}
-{* Clear the inputcontrolthread                                               *}
-{******************************************************************************}
-
-procedure TGDInputControlThread.Clear();
-begin
-  FSingleInput := nil;
-  FDone := true;
-end;
-
-{******************************************************************************}
 {* Execute the inputcontrolthread                                             *}
 {******************************************************************************}
 
@@ -568,9 +689,10 @@ var
 
 begin
  FDone := false;
- while Not(FDone) do
+ while Not(FDone) and (Input <> nil)  do
  begin
      iResult := WaitForSingleObject(Input.KeyBoardEvent, 50);
+     if Input = nil then continue;
      If Not(Input.EnableInput) then continue;
      case iResult of
        WAIT_OBJECT_0 : begin
@@ -595,9 +717,9 @@ begin
                              end;
                            end;
 
-                           For iI := 0 to FSingleInput.Count-1 do
+                           For iI := 0 to Input.SingleInput.Count-1 do
                            begin
-                             iTempAction := TGDInputAction(FSingleInput.GetObjectI(iI));
+                             iTempAction := TGDInputAction(Input.SingleInput.GetObjectI(iI));
                              if (iTempAction.FConsoleDisabled and Not(Console.Show)) or not(iTempAction.FConsoleDisabled) then
                              begin
                                If Input.KeyDown( iTempAction.Key ) Then iTempAction.Execute();
@@ -618,171 +740,6 @@ begin
                       End;
      end;
    end;
-end;
-
-{******************************************************************************}
-{* Create the inputmanager class                                              *}
-{******************************************************************************}
-
-constructor TGDInputManager.Create();
-begin
-  FMouseLook     := False;
-  FDirectInput := TGDObjectList.Create();
-  FSingleInput := TGDObjectList.Create();
-  FUpInput     := TGDObjectList.Create();
-  FDownInput   := TGDObjectList.Create();
-end;
-
-{******************************************************************************}
-{* Destroy the inputmanager class                                             *}
-{******************************************************************************}
-
-destructor TGDInputManager.Destroy;
-begin
-  Clear();
-  FreeAndNil(FDirectInput);
-  FreeAndNil(FSingleInput);
-  FreeAndNil(FUpInput);
-  FreeAndNil(FDownInput);
-end;
-
-{******************************************************************************}
-{* Init the inputmanager                                                      *}
-{******************************************************************************}
-
-procedure TGDInputManager.InitInputManager();
-begin
-  Clear();
-  FMouseLook     := False;
-  CalculateMousePosStart();
-  FInputControlThread := TGDInputControlThread.Create(True);
-  FInputControlThread.InitInputControlThread(FSingleInput);
-  FInputControlThread.Resume();
-end;
-
-{******************************************************************************}
-{* Clear the inputmanager                                                     *}
-{******************************************************************************}
-
-procedure TGDInputManager.Clear();
-begin
-  FDirectInput.Clear();
-  FSingleInput.Clear();
-  FDownInput.Clear();
-  FUpInput.Clear();
-  CalculateMousePosStart();
-  If FInputControlThread <> nil then
-  begin
-    FInputControlThread.FDone := true;
-    FInputControlThread.Suspend();
-    FInputControlThread.Clear();
-    FInputControlThread.Terminate();
-    FreeAndNil(FInputControlThread);
-  end;
-end;
-
-{******************************************************************************}
-{* Execute directinput events                                                 *}
-{******************************************************************************}
-
-procedure TGDInputManager.ExecuteDirectInput();
-var
-  iTempAction : TGDInputAction;
-  iI : Integer;
-begin
-  if Input.EnableInput = false then exit;
-
-  For iI := 0 to FDirectInput.Count-1 do
-  begin
-    iTempAction := TGDInputAction(FDirectInput.GetObjectI(iI));
-
-    if (iTempAction.FConsoleDisabled and Not(Console.Show)) or not(iTempAction.FConsoleDisabled) then
-      If Input.KeyDown( iTempAction.Key ) Then iTempAction.Execute();
-  end;
-
-  For iI := 0 to FDownInput.Count-1 do
-  begin
-    iTempAction := TGDInputAction(FDownInput.GetObjectI(iI));
-    if (iTempAction.FConsoleDisabled and Not(Console.Show)) or not(iTempAction.FConsoleDisabled) then
-      If Input.KeyDown( iTempAction.Key ) Then
-      iTempAction.Execute();
-  end;
-
-  For iI := 0 to FUpInput.Count-1 do
-  begin
-    iTempAction := TGDInputAction(FUpInput.GetObjectI(iI));
-    if (iTempAction.FConsoleDisabled and Not(Console.Show)) or not(iTempAction.FConsoleDisabled) then
-      If Not(Input.KeyDown( iTempAction.Key )) Then iTempAction.Execute();
-  end;
-end;
-
-{******************************************************************************}
-{* Execute mouse move                                                         *}
-{******************************************************************************}
-
-procedure TGDInputManager.ExecuteMouseMove();
-begin
-  if Input.EnableInput = false then exit;
-  if Console.Show then exit;
-
-  if Input.GetMousePosition(FMousePosCurrent.X, FMousePosCurrent.Y) then
-  begin
-    if FMouseLook then
-    begin
-      begin
-        Camera.MouseLook(FMousePosStart.X, FMousePosStart.Y, FMousePosCurrent.X,
-                         FMousePosCurrent.Y,Settings.MouseSensitivity,
-                         Settings.InvertMouse);
-        SetCursorPos(FMousePosStart.X, FMousePosStart.Y);
-        FMousePosCurrent.X := FMousePosStart.x;
-        FMousePosCurrent.Y := FMousePosStart.Y;
-      end;
-    end;
-  end;
-end;
-
-{******************************************************************************}
-{* Execute char input                                                         *}
-{******************************************************************************}
-
-procedure TGDInputManager.ExecuteCharInput(aChar : Char);
-begin
-  if Input.EnableInput = false then exit;
-
-  if Console.Show then
-    Console.AddChar(aChar);
-  ;
-end;
-
-{******************************************************************************}
-{* Calculate the mousestart position                                          *}
-{******************************************************************************}
-
-procedure TGDInputManager.CalculateMousePosStart();
-begin
-  FMousePosStart.x := Round( Settings.Left + (Settings.Width / 2) );
-  FMousePosStart.Y := Round( Settings.Top + (Settings.Height / 2) );
-  FMousePosCurrent.X := FMousePosStart.x;
-  FMousePosCurrent.Y := FMousePosStart.Y;
-end;
-
-{******************************************************************************}
-{* Register an input action                                                   *}
-{******************************************************************************}
-
-procedure TGDInputManager.RegisterInputAction(aType : TGDInputTypes; aName, aKeyString : String; aAction : TGDProcEngineCallback; aConsoleDisabled : boolean );
-var
-  iTempAction : TGDInputAction;
-begin
-  iTempAction := TGDInputAction.Create();
-  iTempAction.InitInputAction(aName, aKeyString, Input.StringToKey(aKeyString),aAction, aConsoleDisabled );
-
-  case aType of
-     IT_DIRECT : FDirectInput.AddObjectP(iTempAction);
-     IT_SINGLE : FSingleInput.AddObjectP(iTempAction);
-     IT_DOWN   : FDownInput.AddObjectP(iTempAction);
-     IT_UP     : FUpInput.AddObjectP(iTempAction);
-  end;
 end;
 
 end.

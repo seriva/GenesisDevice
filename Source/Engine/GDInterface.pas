@@ -259,7 +259,6 @@ begin
   Main             := TGDMain.Create();
   Renderer         := TGDRenderer.Create();
   Input            := TGDInput.Create();
-  InputManager     := TGDInputManager.Create();
   Sound            := TGDSound.Create();
   Console          := TGDConsole.Create();
   Camera           := TGDCamera.Create();
@@ -315,7 +314,6 @@ begin
   If Not(FEngineInitialized) then exit;
 
   //Clear engine classes
-  FreeAndNil(InputManager);
   FreeAndNil(Input);
   FreeAndNil(Console);
   FreeAndNil(Camera);
@@ -445,7 +443,7 @@ begin
   Settings.Left := aLeft;
   Settings.Width := aWidth;
   Settings.Height := aHeight;
-  InputManager.CalculateMousePosStart();
+  Input.CalculateMousePosStart();
   Renderer.ResizeViewPort();
 end;
 
@@ -609,7 +607,7 @@ procedure gdInputSystemRegisterAction(aType : TGDInputTypes; aName, aKeyString :
 begin
   If Not(FEngineInitialized) then exit;
   If Not(FRendererInitialized) then exit;
-  InputManager.RegisterInputAction(aType, String(aName), String(aKeyString), aAction, aConsoleDisabled );
+  Input.RegisterInputAction(aType, String(aName), String(aKeyString), aAction, aConsoleDisabled );
 end;
 
 {******************************************************************************}
@@ -620,7 +618,7 @@ procedure gdInputSystemHandleChar( aChar : Char );
 begin
   If Not(FEngineInitialized) then exit;
   If Not(FRendererInitialized) then exit;
-  InputManager.ExecuteCharInput( aChar );
+  Input.ExecuteCharInput( aChar );
 end;
 
 {******************************************************************************}
@@ -631,7 +629,7 @@ procedure gdInputSystemUseMouseLook( aUse : boolean );
 begin
   If Not(FEngineInitialized) then exit;
   If Not(FRendererInitialized) then exit;
-  InputManager.MouseLook := aUse;
+  Input.MouseLook := aUse;
 end;
 
 {******************************************************************************}
@@ -699,7 +697,7 @@ procedure gdGUIMouseCursorShow(aShow : boolean);
 begin
   If Not(FEngineInitialized) then exit;
   If Not(FRendererInitialized) then exit;
-  InputManager.CalculateMousePosStart();
+  Input.CalculateMousePosStart();
   GUIManager.MouseCursor.ShowMouse := aShow;
 end;
 

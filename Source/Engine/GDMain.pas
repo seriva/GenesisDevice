@@ -155,9 +155,6 @@ begin
   //init the camera
   Camera.InitCamera(0, 8192, 32768);
 
-  //init and start the consolecontrol
-  InputManager.InitInputManager();
-
   //init and timing
   Timing.InitTiming();
   Statistics.InitStatistics();
@@ -173,6 +170,7 @@ end;
 
 procedure TGDMain.ClearBaseResources();
 begin
+  Input.ClearInputActions();
   Font.Clear();
   Console.Clear();
   Octree.Clear();
@@ -399,8 +397,8 @@ end;
 
 procedure TGDMain.InputMain();
 begin
-  InputManager.ExecuteMouseMove();
-  InputManager.ExecuteDirectInput();
+  Input.ExecuteMouseMove();
+  Input.ExecuteDirectInput();
 end;
 
 {******************************************************************************}
