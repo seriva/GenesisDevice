@@ -45,7 +45,7 @@ uses
   GDTerrain,
   GDTerrainCell,
   GDTiming,
-  GDLog,
+  GDConsole,
   GDTypes,
   GDMeshCell,
   GDObjectList,
@@ -64,12 +64,10 @@ type
     FVisibleWaterCells   : TGDObjectList;
     FSortVisibleCells    : boolean;
     FTriangleCount       : Integer;
-    FOCBuffer            : Integer;
 
     procedure QuickSortCells( aCells : TGDObjectList; aLo, aHi: Integer);
   public
     property TriangleCount     : Integer read FTriangleCount write FTriangleCount;
-    property OCBuffer          : Integer read FOCBuffer write FOCBuffer;
     property Cells             : TGDObjectList read FCells write FCells;
     property VisibleCells      : TGDObjectList read FVisibleCells write FVisibleCells;
     property VisibleWaterCells : TGDObjectList read FVisibleWaterCells write FVisibleWaterCells;
@@ -140,8 +138,8 @@ begin
   FVisibleWaterCells   := TGDObjectList.Create();
   FVisibleCells.OwnsObjects        := false;
   FVisibleWaterCells.OwnsObjects   := false;
-  FOCBuffer         := 5;
   FSortVisibleCells := true;
+  Console.AddCommand('CellSort', '0,1 : Enable or disable object depth sorting', CT_BOOLEAN, @FSortVisibleCells);
 end;
 
 {******************************************************************************}
@@ -377,7 +375,7 @@ Begin
   end;
   FreeAndNil(iPos);
   Timing.Stop();
-  Log.Write('......Generated foliage (' + Timing.TimeInSeconds + ' Sec)');
+  Console.Write('......Generated foliage (' + Timing.TimeInSeconds + ' Sec)');
 End;
 
 {******************************************************************************}

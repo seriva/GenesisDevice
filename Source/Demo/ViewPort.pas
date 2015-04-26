@@ -89,14 +89,14 @@ begin
   //initialize the soundsystem with the current settings
   If Not(gdSoundInitDriver()) then
   begin
-    MessageBox(0, 'Error initializing sound driver. See Log.txt for details.', 'Error', MB_OK or MB_ICONERROR);
+    MessageBox(0, 'Error initializing sound driver. See Console.txt for details.', 'Error', MB_OK or MB_ICONERROR);
     Application.Terminate();
   end;
 
   //initialize the renderer with the current settings
   If Not(gdRendererInitViewPort( self.Handle )) then
   begin
-    MessageBox(0, 'Error initializing viewport. See Log.txt for details.', 'Error', MB_OK or MB_ICONERROR);
+    MessageBox(0, 'Error initializing viewport. See Console.txt for details.', 'Error', MB_OK or MB_ICONERROR);
     Application.Terminate();
   end;
 

@@ -37,7 +37,7 @@ uses
   dglOpenGL,
   GDTerrain,
   GDTypes,
-  GDLog,
+  GDConsole,
   GDGUI,
   GDFoliage,
   GDSettings,
@@ -149,8 +149,8 @@ begin
   Timing.Start();
   iIniFile := TIniFile.Create(aFileName);
   Clear();
-  Log.Write('......Loading map');
-  Log.Write('Loading mapsettings from file ' + aFileName + '...');
+  Console.Write('......Loading map');
+  Console.Write('Loading settings ' + aFileName + '...');
   try
     result := true;
 
@@ -257,7 +257,7 @@ begin
     end;
   end;
 
-  Log.WriteOkFail(result, iError);
+  Console.WriteOkFail(result, iError);
 
   If result then
   begin
@@ -359,7 +359,7 @@ begin
   end;
   Timing.Stop();
   FreeAndNil(iIniFile);
-  Log.Write('......Done loading map (' + Timing.TimeInSeconds + ' Sec)');
+  Console.Write('......Done loading map (' + Timing.TimeInSeconds + ' Sec)');
 end;
 
 {******************************************************************************}

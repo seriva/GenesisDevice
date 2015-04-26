@@ -53,7 +53,6 @@ uses
   GDConsole,
   GDSettings,
   GDCamera,
-  GDLog,
   GDObjectList;
 
 type
@@ -238,7 +237,7 @@ begin
                              begin
                                if Not(Console.CommandString = '') then
                                begin
-                                 Console.ExecuteCommand := true;
+                                 Console.ExecuteCommand();
                                end;
                              end;
                            end;
@@ -279,7 +278,7 @@ var
   iProp  : TDIPropDWord;
   tID    : LongWord;
 begin
-  Log.Write('Initializing input...');
+  Console.Write('Initializing input...');
   try
     FInitialized := true;
     FEnableInput := false;
@@ -350,7 +349,7 @@ begin
     end;
   end;
 
-  Log.WriteOkFail(FInitialized, iError);
+  Console.WriteOkFail(FInitialized, iError);
 end;
 
 {******************************************************************************}
@@ -363,7 +362,7 @@ var
   iResult : boolean;
 begin
   inherited;
-  Log.Write('Shutting down input...');
+  Console.Write('Shutting down input...');
   try
     iResult := true;
     FDone := true;
@@ -396,7 +395,7 @@ begin
       iResult := false;
     end;
   end;
-  Log.WriteOkFail(iResult, iError);
+  Console.WriteOkFail(iResult, iError);
 end;
 
 {******************************************************************************}

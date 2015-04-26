@@ -26,25 +26,49 @@ unit GDConsole;
 {$MODE Delphi}
 
 {******************************************************************************}
-{* Holds the console class                                                    *}
+{* Holds the console class for logging commands                               *}
 {******************************************************************************}
 
 interface
 
 uses
+  FGL,
   SysUtils,
   Classes,
   LCLIntf,
   LCLType,
   MMSystem,
   dglOpenGL,
-  GDLog,
   GDFont,
   GDTypes,
-  GDRenderer,
-  GDConstants;
+  GDConstants,
+  GDStringParsing;
 
 type
+
+{******************************************************************************}
+{* Console class                                                              *}
+{******************************************************************************}
+
+  TGDCommandType = (CT_BOOLEAN, CT_INTEGER, CT_FLOAT, CT_FUNCTION);
+
+  PBoolean  = ^Boolean;
+  PInteger  = ^Integer;
+  PFloat    = ^Single;
+  PFunction = procedure();
+
+  TGDCommand = record
+    Command     : String;
+    Help        : String;
+    CommandType : TGDCommandType;
+    Bool        : PBoolean;
+    Int         : PInteger;
+    Float       : PFloat;
+    Func        : PFunction;
+  end;
+
+  TGDCommandMap<TKey, TGDCommand> = class(TFPGMap<TKey, TGDCommand>)
+  end;
 
 {******************************************************************************}
 {* Console class                                                              *}
@@ -60,13 +84,22 @@ type
     FExecuteCommand  : Boolean;
     FCursorUpdate    : boolean;
     FUpdateTimer     : Integer;
+
+    FFileName : String;
+    FText : TStringList;
+    FUse  : Boolean;
+    FSave : Boolean;
+
+    FCommandMap : TGDCommandMap<String, TGDCommand>;
   public
     property Show : Boolean read FShow write FShow;
     property CommandString : String read FInputString write FInputString;
     property Row : Integer read FRow write FRow;
-    property ExecuteCommand : Boolean read FExecuteCommand write FExecuteCommand;
 
-    constructor Create();
+    property Text : TStringList read FText;
+    property Use : Boolean read FUse write FUse;
+
+    constructor Create(aLogName : String);
     destructor  Destroy(); override;
 
     procedure InitConsole();
@@ -81,6 +114,12 @@ type
     procedure RemoveChar();
     procedure AddLine();
     procedure Update();
+
+    procedure Write(aString : String; aNewLine : boolean = true);
+    procedure WriteOkFail(aResult : boolean; aError : String; aIncludeFailed : boolean = true);
+
+    procedure AddCommand(const aCommand, aHelp : String; const aType : TGDCommandType; const aPointer : Pointer );
+    procedure ExecuteCommand();
   end;
 
 var
@@ -90,16 +129,28 @@ var
 
 implementation
 
+uses
+  GDRenderer;
+
 {******************************************************************************}
 {* Create the console class                                                   *}
 {******************************************************************************}
 
-constructor TGDConsole.Create();
+constructor TGDConsole.Create(aLogName : String);
 begin
+  FText := TStringList.Create();
+  FUse  := true;
+  FSave := true;
+  FFileName := aLogName;
+  Write('Log started at ' + DateToStr(Date()) + ', ' + TimeToStr(Time()));
+  Write('Build: ' + ENGINE_INFO);
+
   FShow := False;
   FCursorUpdate := False;
   FInputStringList := TStringList.Create();
   FUpdateTimer  := TimeSetEvent(C_CURSOR_TIME, 0, @UpdateConsoleCallBack, 0, TIME_PERIODIC);
+
+  FCommandMap := TGDCommandMap<String, TGDCommand>.Create();
 end;
 
 {******************************************************************************}
@@ -110,6 +161,10 @@ destructor  TGDConsole.Destroy();
 begin
   TimeKillEvent(FUpdateTimer);
   FreeAndNil(FInputStringList);
+  FreeAndNil(FCommandMap);
+
+  Write('Log ended at ' + DateToStr(Date()) + ', ' + TimeToStr(Time()));
+  FreeAndNil(FText);
 end;
 
 {******************************************************************************}
@@ -119,7 +174,7 @@ end;
 procedure TGDConsole.InitConsole();
 begin
   Clear();
-  FRow := Log.Text.Count-1;
+  FRow := Console.Text.Count-1;
 end;
 
 {******************************************************************************}
@@ -141,7 +196,7 @@ var
 begin
   If Not(FShow) then
   begin
-    FRow := Log.Text.Count-1;
+    FRow := Console.Text.Count-1;
     exit;
   end;
 
@@ -170,11 +225,11 @@ begin
   begin
     If  ((iI) >= 0) then
     begin
-      If copy(Uppercase(Log.Text.Strings[iI]), 0, 5) = 'ERROR' then
+      If copy(Uppercase(Text.Strings[iI]), 0, 5) = 'ERROR' then
         Font.Color.Red
       else
        Font.Color.White;
-      Font.Render(0, (R_HUDHEIGHT/2)+28+(iJ*25), 0.40, Log.Text.Strings[iI] );
+      Font.Render(0, (R_HUDHEIGHT/2)+28+(iJ*25), 0.40, Text.Strings[iI] );
       iJ := iJ + 1;
     end
   end;
@@ -195,7 +250,7 @@ end;
 procedure TGDConsole.MoveUp();
 begin
   If Not(FShow) then Exit;
-  If Log.Text.Count = 0 then exit;
+  If Console.Text.Count = 0 then exit;
   FRow := FRow - 1;
   If FRow < 0 then FRow := 0;
 end;
@@ -207,9 +262,9 @@ end;
 procedure TGDConsole.MoveDown();
 begin
   If Not(FShow) then Exit;
-  If Log.Text.Count = 0 then exit;
+  If Console.Text.Count = 0 then exit;
   FRow := FRow + 1;
-  If FRow > Log.Text.Count-1 then FRow := Log.Text.Count-1;
+  If FRow > Console.Text.Count-1 then FRow := Console.Text.Count-1;
 end;
 
 {******************************************************************************}
@@ -244,7 +299,7 @@ var
   iBool : Bool;
 begin
   If Not(FShow) then Exit;
-  Log.Write(FInputString);
+  Console.Write(FInputString);
 
   iBool := false;
   For iI := 0 to FInputStringList.Count-1 do
@@ -256,7 +311,7 @@ begin
   If iBool = false then
     FInputStringList.Add(FInputString);
 
-  FRow := Log.Text.Count-1;
+  FRow := Console.Text.Count-1;
 end;
 
 {******************************************************************************}
@@ -309,6 +364,152 @@ end;
 procedure UpdateConsoleCallBack(TimerID, Msg: Uint; dwUser, dw1, dw2: DWORD); pascal;
 begin
   Console.Update();
+end;
+
+
+procedure TGDConsole.Write(aString : String; aNewLine : boolean = true);
+begin
+  If FUse = False then exit;
+  if aNewLine then
+    FText.Add(aString)
+  else
+    FText.Strings[FText.Count-1] := FText.Strings[FText.Count-1] + aString;
+  If FSave then FText.SaveToFile(FFileName);
+end;
+
+{******************************************************************************}
+{* Write Ok or fail to the log                                                *}
+{******************************************************************************}
+
+procedure TGDConsole.WriteOkFail(aResult : boolean; aError : String; aIncludeFailed : boolean = true);
+begin
+  If aResult then
+  begin
+    Console.Write('Ok', false);
+  end
+  else
+  begin
+    if aIncludeFailed then Console.Write('Failed', false);
+    Console.Write('Error: ' + aError);
+  end;
+end;
+
+{******************************************************************************}
+{* Add a command to the console.                                              *}
+{******************************************************************************}
+
+procedure TGDConsole.AddCommand(const aCommand, aHelp : String; const aType : TGDCommandType; const aPointer : Pointer );
+var
+  iCommand : TGDCommand;
+begin
+  iCommand.Command      := lowercase(aCommand);
+  iCommand.Help         := aHelp;
+  iCommand.CommandType  := aType;
+  case iCommand.CommandType of
+    CT_BOOLEAN        : iCommand.Bool  := aPointer;
+    CT_INTEGER        : iCommand.Int   := aPointer;
+    CT_FLOAT          : iCommand.Float := aPointer;
+    CT_FUNCTION       : iCommand.Func  := aPointer;
+  end;
+  FCommandMap.Add(iCommand.Command,iCommand);
+  FCommandMap.Sort;
+end;
+
+{******************************************************************************}
+{* Add a command to the console.                                              *}
+{******************************************************************************}
+
+procedure TGDConsole.ExecuteCommand();
+var
+  iIdx : Integer;
+  iI : Integer;
+  iCommand : TGDCommand;
+  iCommandStr  : String;
+  iCommandPara : String;
+  iStrPos : Integer;
+
+function GetNextCommand(const aStr : String): String;
+var
+  iC   : AnsiChar;
+begin
+  result := '';
+  while (iStrPos <= Length(aStr)) do
+  begin
+    iC := AnsiChar(aStr[iStrPos]);
+    if CharacterIsWhiteSpace(iC) then
+    begin
+      Inc(iStrPos);
+      Break;
+    end
+    else
+    begin
+      result := result + String(iC);
+      Inc(iStrPos);
+    end;
+  end;
+end;
+
+begin
+  //no command string so exit
+  if CommandString = '' then exit;
+
+  //add command string
+  Write(CommandString);
+  FInputStringList.Add(CommandString);
+
+  //get the command parameters
+  iStrPos := 1;
+  iCommandStr  := lowercase(GetNextCommand(CommandString));
+  iCommandPara := lowercase(GetNextCommand(CommandString));
+
+  //execute the commands
+  if FCommandMap.Find(iCommandStr, iIdx) then
+  begin
+    iCommand := FCommandMap.Data[iIdx];
+    if (iCommand.Bool = nil) and (iCommand.Int = nil) and
+       (iCommand.Float = nil) and not(assigned(iCommand.Func)) then
+      WriteOkFail(false, 'Command pointer nul!', false)
+    else
+    begin
+      case iCommand.CommandType of
+        CT_BOOLEAN   : begin
+                         if iCommandPara = '0' then
+                           iCommand.Bool^ := false
+                         else if iCommandPara = '1' then
+                           iCommand.Bool^ := true
+                         else
+                           WriteOkFail(false, 'Unknown Parameter!', false);
+                       end;
+        CT_INTEGER   : begin
+                         try
+                           iCommand.Int^ := StrToInt(iCommandPara);
+                         except
+                           WriteOkFail(false, 'Unknown Parameter!', false);
+                         end;
+                       end;
+        CT_FLOAT     : begin
+                         try
+                           iCommand.Float^ := StrToFloat(iCommandPara);
+                         except
+                           WriteOkFail(false, 'Unknown Parameter!', false);
+                         end;
+                       end;
+        CT_FUNCTION  : begin
+                         try
+                           iCommand.Func();
+                         except
+                           WriteOkFail(false, 'Unknown Parameter!' ,false);
+                         end;
+                       end;
+      end;
+    end;
+  end
+  else
+    WriteOkFail(false, 'Unknown Command!', false);
+
+  //reset some stuff
+  CommandString := '';
+  FRow := Text.Count-1;
 end;
 
 end.

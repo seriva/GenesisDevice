@@ -36,7 +36,7 @@ uses
   SysUtils,
   fmod,
   fmodtypes,
-  GDLog,
+  GDConsole,
   GDConstants,
   GDSettings,
   GDObjectList;
@@ -104,7 +104,7 @@ var
   iError    : string;
   iVersion : Cardinal;
 begin
-  Log.Write('Initializing sound...');
+  Console.Write('Initializing sound...');
   try
     FInitialized := true;
     If not(FMOD_System_Create( FSoundSystem ) = FMOD_OK) then
@@ -123,7 +123,7 @@ begin
     end;
   end;
 
-  Log.WriteOkFail(FInitialized, iError);
+  Console.WriteOkFail(FInitialized, iError);
 end;
 
 {******************************************************************************}
@@ -136,7 +136,7 @@ var
   iResult : boolean;
 begin
   inherited;
-  Log.Write('Shutting down sound...');
+  Console.Write('Shutting down sound...');
   try
     iResult := true;
     if not(FMOD_System_Release(FSoundSystem) = FMOD_OK) then
@@ -148,7 +148,7 @@ begin
       iResult := false;
     end;
   end;
-  Log.WriteOkFail(iResult, iError);
+  Console.WriteOkFail(iResult, iError);
 end;
 
 {******************************************************************************}
@@ -173,7 +173,7 @@ var
   iName  : array[0..256] of byte;
 begin
   result := 'NO_DRIVER';
-  if FMOD_System_getDriverName(FSoundSystem, aDriverNumber, @iName[0], 256 ) = FMOD_OK  then
+  if FMOD_System_getDriverName(FSoundSystem, aDriverNumber, @iName[0], 256) = FMOD_OK  then
     SetString(result, PAnsiChar(@iName[0]), 256);
 end;
 
@@ -185,7 +185,7 @@ function   TGDSound.InitSoundDriver() : boolean;
 var
   iError    : string;
 begin
-  Log.Write('Initializing sound driver...');
+  Console.Write('Initializing sound driver...');
   try
     Result := true;
 
@@ -203,7 +203,7 @@ begin
     end;
   end;
 
-  Log.WriteOkFail(result, iError);
+  Console.WriteOkFail(result, iError);
 end;
 
 {******************************************************************************}
@@ -214,7 +214,7 @@ function  TGDSound.ShutDownSoundDriver(): boolean;
 var
   iError    : string;
 begin
-  Log.Write('Shutting down sound driver...');
+  Console.Write('Shutting down sound driver...');
   try
     result := true;
 
@@ -229,7 +229,7 @@ begin
     end;
   end;
 
-  Log.WriteOkFail(result, iError);
+  Console.WriteOkFail(result, iError);
 end;
 
 {******************************************************************************}
@@ -267,9 +267,8 @@ end;
 function    TGDSoundFile.InitSoundFile( aFileName : String; aType : TGDSoundTypes ) : boolean;
 var
   iError : string;
-  iMode  : Cardinal;
 begin
-  Log.Write('Loading sound from file ' + aFileName + '...');
+  Console.Write('Loading sound ' + aFileName + '...');
   try
     Clear();
     result := true;
@@ -288,7 +287,7 @@ begin
     end;
   end;
 
-  Log.WriteOkFail(result, iError);
+  Console.WriteOkFail(result, iError);
 end;
 
 {******************************************************************************}

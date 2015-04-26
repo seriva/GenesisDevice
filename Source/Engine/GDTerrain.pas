@@ -39,7 +39,7 @@ uses
   dglOpenGL,
   GDTexture,
   GDTypes,
-  GDLog,
+  GDConsole,
   GDGUI,
   GDSettings,
   GDConstants,
@@ -224,8 +224,8 @@ var
 begin
   Clear();
 
-  Log.Write('Loading terrain...');
-  Log.Use := false;
+  Console.Write('Loading terrain...');
+  Console.Use := false;
   try
     result := true;
     FTerrainLoaded := true;
@@ -342,9 +342,9 @@ begin
     end;
   end;
 
-  Log.Use := true;
+  Console.Use := true;
 
-  Log.WriteOkFail(result, iError);
+  Console.WriteOkFail(result, iError);
 end;
 
 {******************************************************************************}

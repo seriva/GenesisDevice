@@ -206,8 +206,8 @@ var
   iTerrainHeight : Double;
   aV : TGDVectorRecord;
 begin
-  FMovementSpeed := FMovementMultiplier * gdRendererFrameTime() / 1000;
-  FSinkSpeed     := FSinkMultiplier * gdRendererFrameTime() / 1000;
+  FMovementSpeed := FMovementMultiplier * gdTimingFrameTime() / 1000;
+  FSinkSpeed     := FSinkMultiplier * gdTimingFrameTime() / 1000;
 
   If Not(Clip) then exit;
 

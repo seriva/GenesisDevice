@@ -40,9 +40,7 @@ uses
   GDConsole,
   GDSettings,
   GDTiming,
-  GDLog,
   GDTypes,
-  GDCommands,
   GDGUI,
   GDCamera,
   GDOctree,
@@ -84,13 +82,14 @@ procedure gdSettingsSetCurrent(aSettings : TSettings);
 //log functions
 procedure gdConsoleToggle();
 procedure gdConsoleLog(aText : String; aNewLine : boolean = true);
-procedure gdConsoleCommand( aString : String );
+procedure gdConsoleCommand( aCommand : String );
 
 //timing functions
 procedure gdTimingStart();
 procedure gdTimingStop();
 function  gdTimingInSeconds() : String;
 function  gdTimingInMilliSeconds() : String;
+function  gdTimingFrameTime() : Integer;
 
 //callback functions
 procedure gdCallBackSetInterfaceRenderer( aFunction : TGDProcEngineCallback );
@@ -105,7 +104,6 @@ function  gdRendererInitViewPort( aWnd  : HWND ) : boolean;
 function  gdRendererShutDownViewPort() : boolean;
 procedure gdRendererResizeViewPort(aTop, aLeft, aWidth, aHeight : integer);
 procedure gdRendererState(aState : TGDRenderState);
-function  gdRendererFrameTime() : Integer;
 
 //sound functions
 function  gdSoundNumberOfDrivers() : Integer;
@@ -191,13 +189,9 @@ begin
   end;
 
   //Init log and check settings and capabilities.
-  Log     := TGDLog.Create( aApplicationPath + aApplicationName + '.log' );
-  Timing  := TGDTiming.Create();
-  Console := TGDConsole.Create();
-
+  Timing   := TGDTiming.Create();
+  Console  := TGDConsole.Create(aApplicationPath + aApplicationName + '.log');
   Settings := TGDSettings.Create();
-  Settings.ApplicationFilePath := aApplicationPath;
-  Settings.ApplicationFileName := aApplicationName;
   DefaultFormatSettings.DecimalSeparator := '.';
 
   //Create main and subsystem class
@@ -217,7 +211,6 @@ begin
   Camera           := TGDCamera.Create();
   Frustum          := TGDFrustum.Create();
   Font             := TGDFont.Create();
-
   Map              := TGDMap.Create();
   Terrain          := TGDTerrain.Create();
   SkyDome          := TGDSkyDome.Create();
@@ -230,7 +223,6 @@ begin
   FogManager       := TGDFogManager.Create();
   CellManager      := TGDCellManager.Create();
   GUIManager       := TGDGUIManager.Create();
-  Commands         := TGDCommands.Create();
   DirectionalLight := TGDDirectionalLight.Create();
 
 
@@ -254,7 +246,6 @@ begin
 
   //Clear engine classes
   FreeAndNil(Input);
-  FreeAndNil(Console);
   FreeAndNil(Camera);
   FreeAndNil(Renderer);
   FreeAndNil(SoundList);
@@ -268,7 +259,6 @@ begin
   FreeAndNil(Foliage);
   FreeAndNil(SkyDome);
   FreeAndNil(Water);
-  FreeAndNil(Commands);
   FreeAndNil(FogManager);
   FreeAndNil(CellManager);
   FreeAndNil(MeshList);
@@ -277,11 +267,11 @@ begin
   FreeAndNil(Main);
   FreeAndNil(Settings);
   FreeAndNil(MaterialList);
-  FreeAndNil(Log);
   FreeAndNil(Statistics);
   FreeAndNil(CallBack);
   FreeAndNil(DirectionalLight);
   FreeAndNil(Modes);
+  FreeAndNil(Console);
 end;
 
 {******************************************************************************}
@@ -336,28 +326,6 @@ procedure gdRendererState(aState : TGDRenderState);
 begin
   If Not(FEngineInitialized) then exit;
   Renderer.RenderState(aState);
-end;
-
-{******************************************************************************}
-{* Main render loop of the engine                                             *}
-{******************************************************************************}
-
-function gdRendererFrameTime() : Integer;
-begin
-  result := 0;
-  If Not(FEngineInitialized) then exit;
-  result := Timing.FrameTime;
-end;
-
-{******************************************************************************}
-{* Save a screenshot to a file                                                *}
-{******************************************************************************}
-
-procedure gdRendererScreenShot( aFileName : String ) ;
-begin
-  If Not(FEngineInitialized) then exit;
-  Console.CommandString := 'ScreenShot ' + String(aFileName);
-  Console.ExecuteCommand := true;
 end;
 
 {******************************************************************************}
@@ -699,7 +667,6 @@ begin
   Settings.SetSettings(aSettings);
 end;
 
-
 {******************************************************************************}
 {* Toggle the console                                                         *}
 {******************************************************************************}
@@ -714,12 +681,11 @@ end;
 {* Excute console command                                                     *}
 {******************************************************************************}
 
-procedure gdConsoleCommand(aString : String );
+procedure gdConsoleCommand(aCommand : String );
 begin
   If Not(FEngineInitialized) then exit;
-  Console.CommandString := String(aString);
-  Console.ExecuteCommand := true;
-  Commands.ExecuteCommand();
+  Console.CommandString := String(aCommand);
+  Console.ExecuteCommand();
 end;
 
 {******************************************************************************}
@@ -730,7 +696,7 @@ procedure gdConsoleLog(aText : String; aNewLine : boolean = true);
 begin
   If Not(FEngineInitialized) then exit;
   If aText = '' then exit;
-  Log.Write(aText, aNewLine);
+  Console.Write(aText, aNewLine);
 end;
 
 {******************************************************************************}
@@ -771,6 +737,17 @@ function gdTimingInMilliSeconds() : String;
 begin
   If Not(FEngineInitialized) then exit;
   result := Timing.TimeInMilliSeconds();
+end;
+
+{******************************************************************************}
+{* Main render loop of the engine                                             *}
+{******************************************************************************}
+
+function gdTimingFrameTime() : Integer;
+begin
+  result := 0;
+  If Not(FEngineInitialized) then exit;
+  result := Timing.FrameTime;
 end;
 
 {******************************************************************************}

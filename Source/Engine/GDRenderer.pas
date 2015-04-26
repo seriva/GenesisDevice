@@ -41,7 +41,7 @@ uses
   GDSettings,
   GDTexture,
   GDGLObjects,
-  GDLog,
+  GDConsole,
   GDModes,
   GDTiming;
 
@@ -169,7 +169,7 @@ begin
   Inherited;
   FCanResize := false;
 
-  Log.Write('Initializing renderer...');
+  Console.Write('Initializing renderer...');
   try
     FInitialized := true;
     iInstance := GetModuleHandle(nil);
@@ -270,6 +270,9 @@ begin
     glEnable(GL_NORMALIZE);
     glDisable(GL_FOG);
     glDisable(GL_LIGHTING);
+
+    //commands
+    Console.AddCommand('RBloomMult', '0.0 to 1.0 : Set the bloom multiplier value', CT_FLOAT, @FBloomStrengh);
   except
     on E: Exception do
     begin
@@ -278,7 +281,7 @@ begin
     end;
   end;
 
-  Log.WriteOkFail(FInitialized, iError);
+  Console.WriteOkFail(FInitialized, iError);
 
   If FInitialized then
     InitShaders();
@@ -295,7 +298,7 @@ var
   iInstance   : HINST;
 begin
   inherited;
-  Log.Write('Shutting down renderer...');
+  Console.Write('Shutting down renderer...');
   try
     //Clear shaders.
     ClearShaders();
@@ -318,7 +321,7 @@ begin
       iResult := false;
     end;
   end;
-  Log.WriteOkFail(iResult, iError);
+  Console.WriteOkFail(iResult, iError);
 end;
 
 {******************************************************************************}
@@ -329,7 +332,7 @@ function TGDRenderer.InitViewPort( aWnd  : HWND ): boolean;
 var
   iError    : string;
 begin
-  Log.Write('Initializing viewport...');
+  Console.Write('Initializing viewport...');
   try
     Result := true;
 
@@ -360,7 +363,7 @@ begin
       result := false;
     end;
   end;
-  Log.WriteOkFail(result, iError);
+  Console.WriteOkFail(result, iError);
 
   if result then
     Main.InitBaseResources();
@@ -374,7 +377,7 @@ function TGDRenderer.ShutDownViewPort() : boolean;
 var
   iError    : string;
 begin
-  Log.Write('Shutting down viewport...');
+  Console.Write('Shutting down viewport...');
   try
     FCanResize := false;
     result := true;
@@ -399,7 +402,7 @@ begin
     end;
   end;
 
-  Log.WriteOkFail(result, iError);
+  Console.WriteOkFail(result, iError);
 end;
 
 {******************************************************************************}
@@ -463,7 +466,7 @@ end;
 procedure TGDRenderer.InitShaders();
 begin
   Timing.Start();
-  Log.Write('......Initializing shaders');
+  Console.Write('......Initializing shaders');
   FTerrainShader  := TGDGLShader.Create();
   FTerrainShader.InitShaders( SHADER_TERRAIN );
   FSkyShader      := TGDGLShader.Create();
@@ -487,7 +490,7 @@ begin
   FTextureShader := TGDGLShader.Create();
   FTextureShader.InitShaders( SHADER_TEXTURE );
   Timing.Stop();
-  Log.Write('......Done initializing shaders (' + Timing.TimeInSeconds + ' Sec)');
+  Console.Write('......Done initializing shaders (' + Timing.TimeInSeconds + ' Sec)');
 end;
 
 {******************************************************************************}

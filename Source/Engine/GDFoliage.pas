@@ -38,7 +38,7 @@ uses
   Graphics,
   GDTexture,
   GDTypes,
-  GDLog,
+  GDConsole,
   GDSettings,
   GDConstants,
   GDFog,
@@ -326,7 +326,7 @@ var
   iError : String;
 begin
   Clear();
-  Log.Write('Loading foliage...');
+  Console.Write('Loading foliage...');
   try
     result := true;
 
@@ -373,7 +373,7 @@ begin
     end;
   end;
 
-  Log.WriteOkFail(result, iError);
+  Console.WriteOkFail(result, iError);
 end;
 
 {******************************************************************************}

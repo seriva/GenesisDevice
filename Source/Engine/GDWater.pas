@@ -38,7 +38,7 @@ uses
   SysUtils,
   mmSystem,
   dglOpenGL,
-  GDLog,
+  GDConsole,
   GDTexture,
   GDTypes,
   GDFrustum,
@@ -227,8 +227,8 @@ var
   iFileName : String;
   iError : string;
 begin
-  Log.Write('Loading water...');
-  Log.Use := False;
+  Console.Write('Loading water...');
+  Console.Use := False;
   try
     result        := true;
     FWaterLoaded  := true;
@@ -284,9 +284,9 @@ begin
       FWaterLoaded := false;
     end;
   end;
-  Log.Use := True;
+  Console.Use := True;
 
-  Log.WriteOkFail(result, iError);
+  Console.WriteOkFail(result, iError);
 end;
 
 {******************************************************************************}

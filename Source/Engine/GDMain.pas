@@ -40,7 +40,6 @@ uses
   Windows,
   dglOpenGL,
   GDSettings,
-  GDLog,
   GDFont,
   GDRenderer,
   GDConsole,
@@ -58,7 +57,6 @@ uses
   GDOctree,
   GDCellManager,
   GDModes,
-  GDCommands,
   GDCallBack,
   GDStatistics;
 
@@ -117,8 +115,8 @@ var
 
 begin
   Timing.Start();
-  Log.Write('......Initializing base recources');
-  iPathString := Settings.ApplicationFilePath + FP_INITS + ENGINE_INI;
+  Console.Write('......Initializing base recources');
+  iPathString := FP_INITS + ENGINE_INI;
   iIniFile := TIniFile.Create( iPathString );
 
   //init system font
@@ -160,7 +158,7 @@ begin
   Modes.InitModes();
 
   Timing.Stop();
-  Log.Write('......Done initializing base resources (' + Timing.TimeInSeconds + ' Sec)');
+  Console.Write('......Done initializing base resources (' + Timing.TimeInSeconds + ' Sec)');
 end;
 
 {******************************************************************************}
@@ -198,9 +196,6 @@ begin
 
   //rendering
   RenderMain();
-
-  //execute command if present in the buffer
-  Commands.ExecuteCommand();
 
   //end timing
   Statistics.FrameStop();
@@ -251,9 +246,6 @@ end;
 {******************************************************************************}
 
 procedure RenderOrtho();
-var
-  iDateTime : TDateTime;
-  iString : String;
 begin
   //rendering 2d stuff (console,stats,interfaces, menus enz)
   Renderer.SwitchToOrtho();

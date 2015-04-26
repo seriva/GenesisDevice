@@ -36,7 +36,7 @@ Uses
   Classes,
   dglOpenGL,
   GDTypes,
-  GDLog,
+  GDConsole,
   GDCamera,
   GDGLObjects,
   GDConstants,
@@ -291,7 +291,7 @@ begin
 end;
 
 begin
-  Log.Write('Loading mesh ' + aFileName + '...');
+  Console.Write('Loading mesh ' + aFileName + '...');
   try
     result := true;
     If Not(FileExistsUTF8(aFileName) ) then
@@ -303,7 +303,7 @@ begin
     iFile.LoadFromFile(aFileName);
     //set the comment string
     CommentString := '#';
-    Log.Use:=false;
+    Console.Use:=false;
 
     while (iFile.Position < iFile.Size) do
     begin
@@ -373,8 +373,8 @@ begin
     end;
   end;
 
-  Log.Use:=true;
-  Log.WriteOkFail(result, iError);
+  Console.Use:=true;
+  Console.WriteOkFail(result, iError);
 
   CreateMaterialSegmentLists();
 end;

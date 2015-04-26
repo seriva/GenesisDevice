@@ -36,6 +36,7 @@ uses
   LCLType,
   SysUtils,
   dglOpenGL,
+  GDConsole,
   GDConstants;
 
 type
@@ -52,7 +53,6 @@ type
     FRenderObjectBoxes      : Boolean;
     FRenderNormals          : Boolean;
     FRenderStats            : Boolean;
-    FRenderGrid             : Boolean;
     FRenderTerrain          : Boolean;
     FRenderSky              : Boolean;
     FRenderWater            : Boolean;
@@ -65,7 +65,6 @@ type
     property RenderObjectBoxes : boolean read FRenderObjectBoxes write FRenderObjectBoxes;
     property RenderNormals : boolean read FRenderNormals write FRenderNormals;
     property RenderStats : boolean read FRenderStats write FRenderStats;
-    property RenderGrid : boolean read FRenderGrid write FRenderGrid;
     property RenderTerrain : boolean read FRenderTerrain write FRenderTerrain;
     property RenderSky : boolean read FRenderSky write FRenderSky;
     property RenderMeshes : boolean read FRenderMeshes write FRenderMeshes;
@@ -87,6 +86,19 @@ implementation
 constructor TGDModes.Create();
 begin
   InitModes();
+
+  Console.AddCommand('RWireframe', '0,1 : Enable or disable wireframe', CT_BOOLEAN, @FRenderWireframe);
+  Console.AddCommand('RNormals',  '0,1 : Show or hide normals', CT_BOOLEAN, @FRenderNormals);
+  Console.AddCommand('RTerrain', '0,1 : Show or hide terrain', CT_BOOLEAN, @FRenderTerrain);
+  Console.AddCommand('RSky', '0,1 : Show or hide sky', CT_BOOLEAN, @FRenderSky);
+  Console.AddCommand('RMeshes', '0,1 : Show or hide meshes', CT_BOOLEAN, @FRenderMeshes);
+  Console.AddCommand('RWater', '0,1 : Show or hide water', CT_BOOLEAN, @FRenderWater);
+  Console.AddCommand('RGrass', '0,1 : Show or hide grass', CT_BOOLEAN, @FRenderGrass);
+  Console.AddCommand('RTreeNodes', '0,1 : Show or hide treenodes', CT_BOOLEAN, @FRenderNodeBoxes);
+  Console.AddCommand('ROBJBoxes', '0,1 : Show or hide objectboxes', CT_BOOLEAN, @FRenderObjectBoxes);
+  Console.AddCommand('RStats', '0,1 : Show or hide stats', CT_BOOLEAN, @FRenderStats);
+  Console.AddCommand('RInterface', '0,1 : Show or hide interface', CT_BOOLEAN, @FRenderInterfaces);
+
   Inherited;
 end;
 
@@ -97,12 +109,11 @@ end;
 
 procedure TGDModes.InitModes();
 begin
-  RenderWireframe    := false;
+  FRenderWireframe   := false;
   FRenderNodeBoxes   := false;
   FRenderObjectBoxes := false;
   FRenderNormals     := false;
   FRenderStats       := false;
-  FRenderGrid        := false;
   FRenderTerrain     := true;
   FRenderSky         := true;
   FRenderWater       := true;

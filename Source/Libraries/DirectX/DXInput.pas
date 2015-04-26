@@ -3630,7 +3630,7 @@ function joyConfigChanged(dwFlags : LongWord) : MMRESULT; stdcall;
 // New for DX9 ->
 (*)
  * Invoke the joystick control panel directly, using the passed window handle
- * as the parent of the dialog.  This API is only supported for compatibility
+ * as the parent of the diaConsole.  This API is only supported for compatibility
  * purposes; new applications should use the RunControlPanel method of a
  * device interface for a game controller.
  * The API is called by using the function pointer returned by

@@ -1598,7 +1598,7 @@ type
 
     There are 2 different ways to change a parameter in this architecture.
     One is to use FMOD_DSP_SetParameter / FMOD_DSP_GetParameter.  This is platform independant and is dynamic, so new unknown plugins can have their parameters enumerated and used.
-    The other is to use FMOD_DSP_ShowConfigDialog.  This is platform specific and requires a GUI, and will display a dialog box to configure the plugin.
+    The other is to use FMOD_DSP_ShowConfigDiaConsole.  This is platform specific and requires a GUI, and will display a dialog box to configure the plugin.
 
     [PLATFORMS]
     Win32, Win64, Linux, Linux64, Macintosh, Xbox, Xbox360, PlayStation 2, GameCube, PlayStation Portable, PlayStation 3
@@ -1622,7 +1622,7 @@ type
     paramdesc: PFMOD_DSP_PARAMETERDESC;             (* [in] Variable number of parameter structures. *)
     setparameter: FMOD_DSP_SETPARAMCALLBACK;        (* [in] This is called when the user calls FMOD_DSP_SetParameter.  Can be null. *)
     getparameter: FMOD_DSP_GETPARAMCALLBACK;        (* [in] This is called when the user calls FMOD_DSP_GetParameter.  Can be null. *)
-    config: FMOD_DSP_DIALOGCALLBACK;                (* [in] This is called when the user calls FMOD_DSP_ShowConfigDialog.  Can be used to display a dialog to configure the filter.  Can be null. *)
+    config: FMOD_DSP_DIALOGCALLBACK;                (* [in] This is called when the user calls FMOD_DSP_ShowConfigDiaConsole.  Can be used to display a dialog to configure the filter.  Can be null. *)
     configwidth: Integer;                           (* [in] Width of config dialog graphic if there is one.  0 otherwise. *)
     configheight: Integer;                          (* [in] Height of config dialog graphic if there is one.  0 otherwise. *)
   end;

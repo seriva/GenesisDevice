@@ -40,7 +40,6 @@ Uses
  Graphics,
  SysUtils,
  dglOpenGL,
- GDLog,
  GDConstants,
  GDObjectList;
 
@@ -73,6 +72,9 @@ var
   TextureList : TGDObjectList;
 
 implementation
+
+uses
+  GDConsole;
 
 {******************************************************************************}
 {* Create the texture class                                                   *}
@@ -293,7 +295,7 @@ begin
 end;
 
 begin
-  Log.Write('Loading texture from file ' + aFileName + '...');
+  Console.Write('Loading texture ' + aFileName + '...');
   try
     Clear();
     Result := True;
@@ -336,7 +338,7 @@ begin
     end;
   end;
 
-  Log.WriteOkFail(result, iError);
+  Console.WriteOkFail(result, iError);
 end;
 
 end.

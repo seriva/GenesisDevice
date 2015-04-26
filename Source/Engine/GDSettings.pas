@@ -41,7 +41,7 @@ uses
   IniFiles,
   dglOpenGL,
   GDConstants,
-  GDLog,
+  GDConsole,
   FileUtil;
 
 type
@@ -86,9 +86,6 @@ type
 
   TGDSettings = class
   private
-    FApplicationFilePath : String;
-    FApplicationFileName : String;
-
     //viewport settings
     FTop              : Integer;
     FLeft             : Integer;
@@ -128,8 +125,7 @@ type
     procedure SetTextureFilter(aStr : String);
     function  GetTextureFilter() : String;
   public
-    property ApplicationFilePath : String read FApplicationFilePath write FApplicationFilePath;
-    property ApplicationFileName : String read FApplicationFileName write FApplicationFileName;
+    //property ApplicationFilePath : String read FApplicationFilePath write FApplicationFilePath;
 
     //viewport settings
     property Top : Integer read FTop write FTop;
@@ -181,9 +177,6 @@ implementation
 
 constructor TGDSettings.Create();
 begin
-  FApplicationFilePath := '';
-  FApplicationFileName := '';
-
   //viewport settings
   FWidth            := 800;
   FHeight           := 600;
@@ -215,6 +208,12 @@ begin
   FMuteSound   := false;
   FMusicVolume := 0.3;
   FSoundVolume := 0.7;
+
+  //console commands
+  Console.AddCommand('RBloom', '0,1 : Enable or disable bloom', CT_BOOLEAN, @FUseBloom);
+  Console.AddCommand('RFXAA', '0,1 : Enable or disable bloom', CT_BOOLEAN, @FUseFXAA);
+  Console.AddCommand('RVSync', '0,1 : Enable or disable vertical sync', CT_BOOLEAN, @FVerticalSync);
+  Console.AddCommand('RGamma', '0.0 to 3.0 : Set the gamma value', CT_FLOAT, @FGamma);
 end;
 
 {******************************************************************************}
@@ -235,7 +234,7 @@ var
   iIniFile : TIniFile;
   iStr : String;
 begin
-  iIniFile := TIniFile.Create( FApplicationFilePath + aIniFile );
+  iIniFile := TIniFile.Create( aIniFile );
 
   //viewport settings
   FWidth :=        iIniFile.ReadInteger('ViewPort', 'Width', 800);
@@ -280,7 +279,7 @@ procedure TGDSettings.SaveIniFile( aIniFile : String );
 var
   iIniFile : TIniFile;
 begin
-  iIniFile := TIniFile.Create( FApplicationFilePath + aIniFile);
+  iIniFile := TIniFile.Create(aIniFile);
 
   //viewport
   iIniFile.WriteInteger('ViewPort', 'Width', FWidth);

@@ -42,7 +42,7 @@ uses
   SysUtils,
   Classes,
   dglOpenGL,
-  GDLog,
+  GDConsole,
   GDConstants,
   GDTexture, FileUtil;
 
@@ -243,7 +243,7 @@ procedure TGDGLShader.InitShaders(aPath : string);
 var
   iVert, ifrag, iError : String;
 begin
-  Log.Write('Loading shader ' + ExtractFileName(aPath) + '...');
+  Console.Write('Loading shader ' + ExtractFileName(aPath) + '...');
   FLoadedOk := True;
 
   try
@@ -273,7 +273,7 @@ begin
     end;
   end;
 
-  Log.WriteOkFail(FLoadedOk, iError);
+  Console.WriteOkFail(FLoadedOk, iError);
 end;
 
 {******************************************************************************}
@@ -456,23 +456,23 @@ begin
     GL_FRAMEBUFFER_COMPLETE_EXT:
       Exit;
     GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT_EXT:
-      Log.Write('Error messages: FBO : Incomplete attachment');
+      Console.Write('Error messages: FBO : Incomplete attachment');
     GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT_EXT:
-      Log.Write('Error messages: FBO : Incomplete attachment');
+      Console.Write('Error messages: FBO : Incomplete attachment');
     GL_FRAMEBUFFER_INCOMPLETE_DUPLICATE_ATTACHMENT_EXT:
-      Log.Write('Error messages: FBO : Duplicate attachment');
+      Console.Write('Error messages: FBO : Duplicate attachment');
     GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT:
-      Log.Write('Error messages: FBO : Incomplete dimensions');
+      Console.Write('Error messages: FBO : Incomplete dimensions');
     GL_FRAMEBUFFER_INCOMPLETE_FORMATS_EXT:
-      Log.Write('Error messages: FBO : Incomplete formats');
+      Console.Write('Error messages: FBO : Incomplete formats');
     GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER_EXT:
-      Log.Write('Error messages: FBO : Incomplete draw buffer');
+      Console.Write('Error messages: FBO : Incomplete draw buffer');
     GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER_EXT:
-      Log.Write('Error messages: FBO : Incomplete read buffer');
+      Console.Write('Error messages: FBO : Incomplete read buffer');
     GL_FRAMEBUFFER_UNSUPPORTED_EXT:
-      Log.Write('Error messages: FBO : Framebuffer unsupported');
+      Console.Write('Error messages: FBO : Framebuffer unsupported');
     else
-      Log.Write('Error messages: FBO : Framebuffer unsupported');
+      Console.Write('Error messages: FBO : Framebuffer unsupported');
   end;
 end;
 
