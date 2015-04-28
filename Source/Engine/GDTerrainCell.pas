@@ -99,11 +99,11 @@ procedure SendTerrainPoint(aX,aY : integer);
 begin
   With Terrain do
   begin
-    glMultiTexCoord2dv(GL_TEXTURE0, TerrainPoints[aX,aY].FColorUVCoords.ArrayPointer );
-    glMultiTexCoord2dv(GL_TEXTURE1, TerrainPoints[aX,aY].FDetailUVCoords.ArrayPointer );
-    glMultiTexCoord2dv(GL_TEXTURE2, TerrainPoints[aX,aY].FCausticUVCoords.ArrayPointer );
-    glNormal3dv( TerrainPoints[aX,aY].FNormal.ArrayPointerDouble );
-    glVertex3dv( TerrainPoints[aX,aY].FVertex.ArrayPointerDouble );
+    glMultiTexCoord2fv(GL_TEXTURE0, TerrainPoints[aX,aY].FColorUVCoords.ArrayPointer );
+    glMultiTexCoord2fv(GL_TEXTURE1, TerrainPoints[aX,aY].FDetailUVCoords.ArrayPointer );
+    glMultiTexCoord2fv(GL_TEXTURE2, TerrainPoints[aX,aY].FCausticUVCoords.ArrayPointer );
+    glNormal3fv( TerrainPoints[aX,aY].FNormal.ArrayPointer );
+    glVertex3fv( TerrainPoints[aX,aY].FVertex.ArrayPointer );
   end;
 end;
 

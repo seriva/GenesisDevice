@@ -51,7 +51,7 @@ uses
   GDFog,
   GDLighting,
   GDTiming,
-  GDObjectList,
+  Contnrs,
   GDModes;
 
 type
@@ -112,9 +112,9 @@ type
     FWaterLoaded     : Boolean;
     FUnderWaterColor : TGDColor;
     FWaterColorCorrection : TGDColor;
-    FCausticTextures : TGDObjectList;
+    FCausticTextures : TObjectList;
     FCausticCounter  : Integer;
-    FWaterTextures   : TGDObjectList;
+    FWaterTextures   : TObjectList;
     FWaterCounter    : Integer;
     FUpdateTimer     : Integer;
 
@@ -134,7 +134,7 @@ type
     property WaterLoaded : Boolean read FWaterLoaded;
     property WaterCounter : Integer read FWaterCounter;
     property UnderWaterColor : TGDColor read FUnderWaterColor;
-    property CausticTextures : TGDObjectList read FCausticTextures;
+    property CausticTextures : TObjectList read FCausticTextures;
     property CausticCounter : Integer read FCausticCounter;
 
     constructor Create();
@@ -183,8 +183,8 @@ begin
   FWaterCounter    := 0;
   FUnderWaterColor := TGDColor.Create();
   FWaterColorCorrection := TGDColor.Create();
-  FCausticTextures := TGDObjectList.Create();
-  FWaterTextures   := TGDObjectList.Create();
+  FCausticTextures := TObjectList.Create();
+  FWaterTextures   := TObjectList.Create();
   FUpdateTimer     := TimeSetEvent(50, 0, @UpdateWaterCallBack, 0, TIME_PERIODIC);
 end;
 
@@ -524,7 +524,7 @@ procedure TGDWater.BindCausticTexture();
 begin
   If FWaterLoaded then
   begin
-    TGDTexture(FCausticTextures.GetObjectI( FCausticCounter )).BindTexture(GL_TEXTURE5);
+    TGDTexture(FCausticTextures.Items[ FCausticCounter ]).BindTexture(GL_TEXTURE5);
   end;
 end;
 
@@ -536,7 +536,7 @@ procedure TGDWater.BindWaterTexture();
 begin
   If FWaterLoaded then
   begin
-    TGDTexture(FWaterTextures.GetObjectI(FWaterCounter)).BindTexture(GL_TEXTURE1);
+    TGDTexture(FWaterTextures.Items[FWaterCounter]).BindTexture(GL_TEXTURE1);
   end;
 end;
 

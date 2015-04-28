@@ -40,7 +40,7 @@ Uses
   GDConstants,
   GDSettings,
   GDFog,
-  GDObjectList,
+  Contnrs,
   GDLighting,
   FileUtil,
   GDStringParsing;
@@ -78,7 +78,7 @@ Type
 {* Materialmanager class                                                      *}
 {******************************************************************************}
 
-  TGDMaterialList = class (TGDObjectList)
+  TGDMaterialList = class (TObjectList)
   private
   public
     function LoadMaterials( aFileName : String ) : boolean;
@@ -210,7 +210,7 @@ begin
         iStr := GetNextToken(iFile);
         iMat := TGDMaterial.Create();
         iMat.Name := iStr;
-        self.AddObjectI(iMat);
+        self.Add(iMat);
         continue;
       end
       else if iStr = 'colormap' then //load the material texture
@@ -269,7 +269,7 @@ begin
   iI := 0;
   while ((iI < self.Count) and (result = nil )) do
   begin
-    iMat := TGDMaterial(self.GetObjectI(iI));
+    iMat := TGDMaterial(self.Items[iI]);
     If UpperCase(iMat.Name) = UpperCase(aName) then
       result := iMat;
 

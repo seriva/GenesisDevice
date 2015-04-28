@@ -128,8 +128,6 @@ begin
 
   //init the console
   Console.InitConsole();
-  Console.Show := false;
-  Console.CommandString := '';
 
   //init the loadingscreen
   iLoadingInput.X := 500;

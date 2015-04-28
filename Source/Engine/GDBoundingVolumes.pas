@@ -31,7 +31,7 @@ uses
   SysUtils,
   dglOpenGL,
   GDTypes,
-  GDObjectList;
+  Contnrs;
 
 type
 
@@ -58,7 +58,7 @@ type
     procedure RenderWireFrame();
     procedure RenderSolid();
 
-    procedure Generate( aVertexList : TGDObjectList );
+    procedure Generate( aVertexList : TObjectList );
     procedure CalculateCenter();
     function  BoxInsideBox( aBoundingBox : TGDBoundingBox ) : boolean;
     function  PointInsideBox( aV : TGDVector ) : boolean;
@@ -203,21 +203,21 @@ end;
 {* Calculate the boundingbox from a vertexlist                                *}
 {******************************************************************************}
 
-procedure TGDBoundingBox.Generate( aVertexList : TGDObjectList );
+procedure TGDBoundingBox.Generate( aVertexList : TObjectList );
 var
   iI : integer;
   iVector : TGDVector;
   iCenter : TGDVector;
 begin
   iCenter := TGDVector.Create();
-  for iI := 0 to aVertexList.Count-1 do iCenter.Add( TGDVector(aVertexList.GetObjectI(iI)) );
+  for iI := 0 to aVertexList.Count-1 do iCenter.Add( TGDVector(aVertexList.Items[iI]) );
   iCenter.Devide( aVertexList.Count );
   FMin.Reset(iCenter);
   FMax.Reset(iCenter);
 
   for iI := 0 to aVertexList.Count-1 do
   begin
-    iVector := TGDVector(aVertexList.GetObjectI(iI));
+    iVector := TGDVector(aVertexList.Items[iI]);
 
     If (iVector.X <= FMin.x) then
       FMin.x  := iVector.X

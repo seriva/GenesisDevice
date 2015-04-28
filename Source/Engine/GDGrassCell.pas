@@ -231,7 +231,7 @@ begin
   //create temp arrays
   SetLength( iParticalCount, Foliage.GrassTypes.Count);
   For iI := 0 to Length(iParticalCount)-1 do
-    iParticalCount[iI] :=  Round( (Settings.GrassDensity * TGDGrassType( Foliage.GrassTypes.GetObjectI(iI) ).CoverOfTotal) / 100 );
+    iParticalCount[iI] :=  Round( (Settings.GrassDensity * TGDGrassType( Foliage.GrassTypes.Items[iI] ).CoverOfTotal) / 100 );
 
   SetLength( iParticalLists, Foliage.GrassTypes.Count);
   for iY := (FStartPoint.Y-1) to FEndPoint.Y-2 do
@@ -243,7 +243,7 @@ begin
       begin
         for iI := 0 to Foliage.GrassTypes.Count-1 do
         begin
-          iTempGrassType := TGDGrassType(Foliage.GrassTypes.GetObjectI(iI));
+          iTempGrassType := TGDGrassType(Foliage.GrassTypes.Items[iI]);
           for iJ := 0 to iParticalCount[iI]-1 do
           begin
             //position
@@ -282,7 +282,7 @@ begin
   FDisplayList.StartList();
   For iI := 0 to Length(iParticalLists)-1 do
   begin
-    TGDGrassType(Foliage.GrassTypes.GetObjectI(iI)).Texture.BindTexture( GL_TEXTURE0 );
+    TGDGrassType(Foliage.GrassTypes.Items[iI]).Texture.BindTexture( GL_TEXTURE0 );
     for iJ := 0 to Length( iParticalLists[iI] )-1 do
       iParticalLists[iI,iJ].Render();
   end;

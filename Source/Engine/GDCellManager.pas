@@ -48,7 +48,7 @@ uses
   GDConsole,
   GDTypes,
   GDMeshCell,
-  GDObjectList,
+  Contnrs,
   GDModes;
 
 type
@@ -59,18 +59,18 @@ type
 
   TGDCellManager = class (TObject)
   private
-    FCells               : TGDObjectList;
-    FVisibleCells        : TGDObjectList;
-    FVisibleWaterCells   : TGDObjectList;
+    FCells               : TObjectList;
+    FVisibleCells        : TObjectList;
+    FVisibleWaterCells   : TObjectList;
     FSortVisibleCells    : boolean;
     FTriangleCount       : Integer;
 
-    procedure QuickSortCells( aCells : TGDObjectList; aLo, aHi: Integer);
+    procedure QuickSortCells( aCells : TObjectList; aLo, aHi: Integer);
   public
     property TriangleCount     : Integer read FTriangleCount write FTriangleCount;
-    property Cells             : TGDObjectList read FCells write FCells;
-    property VisibleCells      : TGDObjectList read FVisibleCells write FVisibleCells;
-    property VisibleWaterCells : TGDObjectList read FVisibleWaterCells write FVisibleWaterCells;
+    property Cells             : TObjectList read FCells write FCells;
+    property VisibleCells      : TObjectList read FVisibleCells write FVisibleCells;
+    property VisibleWaterCells : TObjectList read FVisibleWaterCells write FVisibleWaterCells;
     property SortVisibleCells  : boolean read FSortVisibleCells write FSortVisibleCells;
 
     constructor Create();
@@ -99,7 +99,7 @@ uses
 {* Quicksort a staticobject via distance                                      *}
 {******************************************************************************}
 
-procedure TGDCellManager.QuickSortCells( aCells : TGDObjectList; aLo, aHi: Integer);
+procedure TGDCellManager.QuickSortCells( aCells : TObjectList; aLo, aHi: Integer);
 var
   iLo, iHi : Integer;
   iMid : Double;
@@ -107,16 +107,16 @@ var
 begin
   iLo := aLo;
   iHi := aHi;
-  iMid :=  TGDBaseCell(aCells.GetObjectI( (iLo + iHi) div 2 )).Distance;
+  iMid :=  TGDBaseCell(aCells.Items[ (iLo + iHi) div 2 ]).Distance;
   repeat
-    while TGDBaseCell( aCells.GetObjectI( iLo ) ).Distance < iMid do Inc(iLo);
-    while TGDBaseCell( aCells.GetObjectI( iHi ) ).Distance > iMid do Dec(iHi);
+    while TGDBaseCell( aCells.Items[ iLo ] ).Distance < iMid do Inc(iLo);
+    while TGDBaseCell( aCells.Items[ iHi ] ).Distance > iMid do Dec(iHi);
     if iLo <= iHi then
     begin
       iOC1 := nil;
       iOC2 := nil;
-      iOC1 := TGDBaseCell( aCells.GetObjectI( iLo ) );
-      iOC2 := TGDBaseCell( aCells.GetObjectI( iHi ) );
+      iOC1 := TGDBaseCell( aCells.Items[ iLo ] );
+      iOC2 := TGDBaseCell( aCells.Items[ iHi ] );
       aCells.Items[iLo] := iOC2;
       aCells.Items[iHi] := iOC1;
       Inc(iLo);
@@ -133,9 +133,9 @@ end;
 
 constructor TGDCellManager.Create();
 begin
-  FCells               := TGDObjectList.Create();
-  FVisibleCells        := TGDObjectList.Create();
-  FVisibleWaterCells   := TGDObjectList.Create();
+  FCells               := TObjectList.Create();
+  FVisibleCells        := TObjectList.Create();
+  FVisibleWaterCells   := TObjectList.Create();
   FVisibleCells.OwnsObjects        := false;
   FVisibleWaterCells.OwnsObjects   := false;
   FSortVisibleCells := true;
@@ -334,7 +334,7 @@ Begin
   iPos := TGDVector.Create();
   for iI := 0 to Foliage.TreeTypes.Count-1 do
   begin
-    iTreeType := Foliage.TreeTypes.GetObjectI(iI) as TGDTreeType;
+    iTreeType := Foliage.TreeTypes.Items[iI] as TGDTreeType;
     iTreeCount := Round(Foliage.TreeCount * iTreeType.CoverOfTotal) div 100;
     for iJ := 1 to iTreeCount do
     begin
@@ -401,8 +401,8 @@ Begin
   while (iI <  FCells.Count) do
   begin
 
-    If TGDBaseCell( FCells.GetObjectI( iI ) ).OjectType = aType then
-       FCells.RemoveObjectI( iI )
+    If TGDBaseCell( FCells.Items[ iI ]).OjectType = aType then
+       FCells.Delete( iI )
     else
       iI := iI + 1;
   end;
@@ -432,7 +432,7 @@ Begin
   end;
 
   //add the water cells to the main list
-  for iK := 0 to FVisibleWaterCells.Count - 1 do FVisibleCells.AddObjectP( FVisibleWaterCells.GetObjectI(iK) );
+  for iK := 0 to FVisibleWaterCells.Count - 1 do FVisibleCells.Add( FVisibleWaterCells.Items[iK] );
 End;
 
 {******************************************************************************}
@@ -452,7 +452,7 @@ var
 
 procedure RenderObject();
 begin
-  Case TGDBaseCell(FVisibleCells.GetObjectI( iI )).OjectType of
+  Case TGDBaseCell(FVisibleCells.Items[ iI ]).OjectType of
     SO_NONE :
     Begin
       //do nothing
@@ -463,7 +463,7 @@ begin
       if Modes.RenderTerrain then
       begin
         Terrain.StartRendering( aRenderAttribute, aRenderFor );
-        iTerrainCell := TGDBaseCell(FVisibleCells.GetObjectI( iI )) As TGDTerrainCell;
+        iTerrainCell := TGDBaseCell(FVisibleCells.Items[ iI ]) As TGDTerrainCell;
         iTerrainCell.RenderTerrainCell( aRenderAttribute );
         Terrain.EndRendering();
         TriangleCount := TriangleCount + TRISINCELL;
@@ -475,7 +475,7 @@ begin
       If (aRenderFor = RF_WATER) or (aRenderFor = RF_BLOOM) then exit;
       if Modes.RenderGrass then
       begin
-        iGrassCell := TGDBaseCell(FVisibleCells.GetObjectI( iI )) As TGDGrassCell;
+        iGrassCell := TGDBaseCell(FVisibleCells.Items[ iI ]) As TGDGrassCell;
         iDistance  := Settings.GrassDistance * R_GRASS_DISTANCE_STEP;
         if iGrassCell.Distance < iDistance then iAlphaFunction := 0.0 else
         if iGrassCell.Distance < (iDistance + (R_GRASS_DISTANCE_STEP * 1)) then iAlphaFunction := 0.05 else
@@ -500,7 +500,7 @@ begin
       If Not(aRenderFor = RF_WATER) then
       begin
         Water.StartRendering( aRenderAttribute, aRenderFor );
-        iWaterCell := TGDBaseCell(FVisibleCells.GetObjectI( iI )) As TGDWaterCell;
+        iWaterCell := TGDBaseCell(FVisibleCells.Items[ iI ]) As TGDWaterCell;
         iWaterCell.RenderWaterCell( aRenderAttribute );
         TriangleCount := TriangleCount + (Water.CellDivX * Water.CellDivY * 2);
         Water.EndRendering();
@@ -512,7 +512,7 @@ begin
       If (aRenderFor = RF_WATER) and (Settings.WaterReflection = WR_TERRAIN_ONLY) then exit;
       if Modes.RenderMeshes then
       begin
-        iMeshCell := TGDBaseCell(FVisibleCells.GetObjectI( iI )) As TGDMeshCell;
+        iMeshCell := TGDBaseCell(FVisibleCells.Items[ iI ]) As TGDMeshCell;
         iMeshCell.RenderMeshCell( aRenderAttribute, aRenderFor );
         TriangleCount := TriangleCount + iMeshCell.TriangleCount();
       end;

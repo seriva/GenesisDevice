@@ -42,7 +42,7 @@ Uses
   GDConstants,
   GDRenderer,
   GDMaterials,
-  GDObjectList,
+  Contnrs,
   GDModes,
   GDWater,
   FileUtil,
@@ -95,10 +95,10 @@ Type
   TGDMaterialSegment = class (TObject)
   private
     FMaterial   : TGDMaterial;
-    FPolygons   : TGDObjectList;
+    FPolygons   : TObjectList;
   public
     property Material    : TGDMaterial read FMaterial;
-    property Polygons : TGDObjectList read FPolygons;
+    property Polygons : TObjectList read FPolygons;
 
     constructor Create();
     destructor  Destroy();override;
@@ -111,20 +111,20 @@ Type
   TGDMesh = class
   private
     FFileName            : String;
-    FVertices            : TGDObjectList;
-    FNormals             : TGDObjectList;
-    FUV                  : TGDObjectList;
-    FPolygons            : TGDObjectList;
-    FMaterialSegmentList : TGDObjectList;
+    FVertices            : TObjectList;
+    FNormals             : TObjectList;
+    FUV                  : TObjectList;
+    FPolygons            : TObjectList;
+    FMaterialSegmentList : TObjectList;
 
     procedure CreateMaterialSegmentLists();
   public
     property FileName      : String read FFileName;
-    property Vertices      : TGDObjectList read FVertices;
-    property Normals       : TGDObjectList read FNormals;
-    property UV            : TGDObjectList read FUV;
-    property Polygons      : TGDObjectList read FPolygons;
-    property MaterialSegmentList : TGDObjectList read FMaterialSegmentList;
+    property Vertices      : TObjectList read FVertices;
+    property Normals       : TObjectList read FNormals;
+    property UV            : TObjectList read FUV;
+    property Polygons      : TObjectList read FPolygons;
+    property MaterialSegmentList : TObjectList read FMaterialSegmentList;
 
     constructor Create();
     destructor  Destroy();override;
@@ -137,7 +137,7 @@ Type
 {* Meshlist class                                                             *}
 {******************************************************************************}
 
-  TGDMeshList = class (TGDObjectList)
+  TGDMeshList = class (TObjectList)
   private
   public
     function  AddMesh( aFileName : String ) : TGDMesh;
@@ -202,7 +202,7 @@ end;
 constructor TGDMaterialSegment.Create();
 begin
   FMaterial := Nil;
-  FPolygons := TGDObjectList.Create();
+  FPolygons := TObjectList.Create();
   FPolygons.OwnsObjects := False;
   Inherited;
 end;
@@ -224,11 +224,11 @@ end;
 
 constructor TGDMesh.Create();
 begin
-  FVertices            := TGDObjectList.Create();
-  FNormals             := TGDObjectList.Create();
-  FUV                  := TGDObjectList.Create();
-  FPolygons            := TGDObjectList.Create();
-  FMaterialSegmentList := TGDObjectList.Create();
+  FVertices            := TObjectList.Create();
+  FNormals             := TObjectList.Create();
+  FUV                  := TObjectList.Create();
+  FPolygons            := TObjectList.Create();
+  FMaterialSegmentList := TObjectList.Create();
 end;
 
 {******************************************************************************}
@@ -321,7 +321,7 @@ begin
         iVec.x := StrToFloat(GetNextToken(iFile));
         iVec.y := StrToFloat(GetNextToken(iFile));
         iVec.z := StrToFloat(GetNextToken(iFile));
-        FVertices.AddObjectI(iVec);
+        FVertices.Add(iVec);
         continue;
       end
       else if iStr = 'vt' then //read a uv
@@ -329,7 +329,7 @@ begin
         iUV := TGDUVCoord.Create();
         iUV.U := StrToFloat(GetNextToken(iFile));
         iUV.V := -StrToFloat(GetNextToken(iFile));
-        FUV.AddObjectI(iUV);
+        FUV.Add(iUV);
         continue;
       end
       else if iStr = 'vn' then //read a normal
@@ -338,7 +338,7 @@ begin
         iNorm.x := StrToFloat(GetNextToken(iFile));
         iNorm.y := StrToFloat(GetNextToken(iFile));
         iNorm.z := StrToFloat(GetNextToken(iFile));
-        FNormals.AddObjectI(iNorm);
+        FNormals.Add(iNorm);
         continue;
       end
       else if iStr = 'usemtl' then //read the current material for the faces
@@ -421,7 +421,7 @@ begin
   iCount := Fpolygons.Count - 1;
   for iI := 0 to iCount do
   begin
-    iTempPolygon := TGDMeshPolygon(Fpolygons.GetObjectI(iI));
+    iTempPolygon := TGDMeshPolygon(Fpolygons.Items[iI]);
 
     If iMat <> iTempPolygon.Material then
     begin
@@ -458,7 +458,7 @@ begin
   iI := 0;
   while ((iI < self.Count) and (result = nil )) do
   begin
-    iMesh := TGDMesh(self.GetObjectI(iI));
+    iMesh := TGDMesh(self.Items[iI]);
     If UpperCase(iMesh.FileName) = UpperCase(aFileName) then
       result := iMesh;
 
@@ -469,7 +469,8 @@ begin
 
   iMesh := TGDMesh.Create();
   iMesh.LoadMesh( aFileName );
-  result := self.AddObjectP( iMesh );
+  self.Add( iMesh );
+  result := iMesh;
 end;
 
 end.

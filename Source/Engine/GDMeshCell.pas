@@ -44,7 +44,7 @@ uses
   GDGLObjects,
   GDRenderer,
   GDBaseCell,
-  GDObjectList;
+  Contnrs;
 
 type
 
@@ -75,7 +75,7 @@ type
     FPosition    : TGDVector;
     FRotation    : TGDVector;
     FScale       : TGDVector;
-    FDPLS        : TGDObjectList;
+    FDPLS        : TObjectList;
     FNormalDPL   : TGDGLDisplayList;
 
     procedure PrepareMeshCell();
@@ -104,7 +104,7 @@ begin
   FPosition   := TGDVector.Create();
   FRotation   := TGDVector.Create();
   FScale      := TGDVector.Create();
-  FDPLS       := TGDObjectList.Create();
+  FDPLS       := TObjectList.Create();
   FNormalDPL  := TGDGLDisplayList.Create();;
   OjectType   := SO_MESHCELL;
 end;
@@ -137,16 +137,16 @@ var
   iDPL : TGDGLDisplayList;
   iJ  : Integer;
   iPL : TGDMeshPolygon;
-  iVertices, iNormals : TGDObjectList;
+  iVertices, iNormals : TObjectList;
   iTempPolygon : TGDMeshPolygon;
 
 procedure RenderNormal(aP : TGDMeshPoint);
 begin
-  iVertex.Reset( (iNormals.GetObjectI(aP.NormalID) as TGDVector) );
+  iVertex.Reset( (iNormals.Items[aP.NormalID] as TGDVector) );
   iVertex.Multiply(R_NORMAL_LENGTH);
-  iVertex.Add( (iVertices.GetObjectI(aP.VertexID) as TGDVector) );
-  glVertex3dv( (iVertices.GetObjectI(aP.VertexID) as TGDVector).ArrayPointerDouble );
-  glVertex3dv( iVertex.ArrayPointerDouble );
+  iVertex.Add( (iVertices.Items[aP.VertexID] as TGDVector) );
+  glVertex3fv( (iVertices.Items[aP.VertexID] as TGDVector).ArrayPointer );
+  glVertex3fv( iVertex.ArrayPointer );
 end;
 
 begin
@@ -154,17 +154,17 @@ begin
   iMX := TGDMatrix.Create();
   iMY := TGDMatrix.Create();
   iMZ := TGDMatrix.Create();
-  iVertices := TGDObjectList.Create();
-  iNormals  := TGDObjectList.Create();
+  iVertices := TObjectList.Create();
+  iNormals  := TObjectList.Create();
 
   //Copy the vertex and normal list
   For iI := 0 to FMesh.Vertices.Count - 1 do
   begin
-    iVertices.Add( TGDVector( FMesh.Vertices.GetObjectI(iI) ).CopyToNewClass );
+    iVertices.Add( TGDVector( FMesh.Vertices.Items[iI] ).CopyToNewClass );
   end;
   For iI := 0 to FMesh.Normals.Count - 1 do
   begin
-    iNormals.Add( TGDVector( FMesh.Normals.GetObjectI(iI) ).CopyToNewClass );
+    iNormals.Add( TGDVector( FMesh.Normals.Items[iI] ).CopyToNewClass );
   end;
 
   //Rotate vertices and normals
@@ -173,7 +173,7 @@ begin
   iMX.CreateRotationX( -FRotation.X );
   For iI := 0 to iVertices.Count - 1 do
   begin
-    iVertex := TGDVector( iVertices.GetObjectI(iI) );
+    iVertex := TGDVector( iVertices.items[iI] );
     iVertex.Multiply(FScale);
     iVertex.Devide(100);
     iMY.ApplyToVector( iVertex );
@@ -183,7 +183,7 @@ begin
   end;
   For iI := 0 to iNormals.Count - 1 do
   begin
-    iNormal := TGDVector( iNormals.GetObjectI(iI) );
+    iNormal := TGDVector( iNormals.items[iI] );
     iMY.ApplyToVector( iNormal );
     iMZ.ApplyToVector( iNormal );
     iMX.ApplyToVector( iNormal );
@@ -195,7 +195,7 @@ begin
   //prepare the displaylists.
   for iI := 0 to Mesh.MaterialSegmentList.Count - 1 do
   begin
-    iMS := TGDMaterialSegment(Mesh.MaterialSegmentList.GetObjectI(iI));
+    iMS := TGDMaterialSegment(Mesh.MaterialSegmentList.Items[iI]);
     iDPL := TGDGLDisplayList.Create();
     iDPL.InitDisplayList();
     iDPL.StartList();
@@ -203,19 +203,19 @@ begin
     glBegin(GL_TRIANGLES);
     for iJ := 0 to iMS.Polygons.Count-1 do
     begin
-      iPL := TGDMeshPolygon(iMS.Polygons.GetObjectI(iJ));
+      iPL := TGDMeshPolygon(iMS.Polygons.Items[iJ]);
       //V1
-      glNormal3dv( TGDVector( iNormals.GetObjectI( iPL.P1.NormalID ) ).ArrayPointerDouble );
-      glTexCoord2dv( TGDUVCoord( FMesh.UV.GetObjectI( iPL.P1.UVID ) ).ArrayPointer );
-      glVertex3dv( TGDVector(  iVertices.GetObjectI( iPL.P1.VertexID ) ).ArrayPointerDouble );
+      glNormal3fv( TGDVector( iNormals.Items[ iPL.P1.NormalID ] ).ArrayPointer );
+      glTexCoord2fv( TGDUVCoord( FMesh.UV.Items[ iPL.P1.UVID ] ).ArrayPointer );
+      glVertex3fv( TGDVector(  iVertices.Items[ iPL.P1.VertexID ] ).ArrayPointer );
         //V2
-      glNormal3dv( TGDVector( iNormals.GetObjectI( iPL.P2.NormalID ) ).ArrayPointerDouble );
-      glTexCoord2dv( TGDUVCoord( FMesh.UV.GetObjectI( iPL.P2.UVID ) ).ArrayPointer );
-      glVertex3dv( TGDVector(  iVertices.GetObjectI( iPL.P2.VertexID ) ).ArrayPointerDouble );
+      glNormal3fv( TGDVector( iNormals.Items[ iPL.P2.NormalID ] ).ArrayPointer );
+      glTexCoord2fv( TGDUVCoord( FMesh.UV.Items[ iPL.P2.UVID ] ).ArrayPointer );
+      glVertex3fv( TGDVector(  iVertices.Items[ iPL.P2.VertexID ] ).ArrayPointer );
       //V3
-      glNormal3dv( TGDVector( iNormals.GetObjectI( iPL.P3.NormalID ) ).ArrayPointerDouble );
-      glTexCoord2dv( TGDUVCoord( FMesh.UV.GetObjectI( iPL.P3.UVID ) ).ArrayPointer );
-      glVertex3dv( TGDVector( iVertices.GetObjectI( iPL.P3.VertexID ) ).ArrayPointerDouble );
+      glNormal3fv( TGDVector( iNormals.Items[ iPL.P3.NormalID ] ).ArrayPointer );
+      glTexCoord2fv( TGDUVCoord( FMesh.UV.Items[ iPL.P3.UVID ] ).ArrayPointer );
+      glVertex3fv( TGDVector( iVertices.Items[ iPL.P3.VertexID ] ).ArrayPointer );
     end;
     glEnd();
 
@@ -229,7 +229,7 @@ begin
   glBegin(GL_LINES);
   for iI := 0 to FMesh.Polygons.Count - 1 do
   begin
-    iTempPolygon := TGDMeshPolygon(FMesh.Polygons.GetObjectI(iI));
+    iTempPolygon := TGDMeshPolygon(FMesh.Polygons.Items[iI]);
     RenderNormal(iTempPolygon.P1);
     RenderNormal(iTempPolygon.P2);
     RenderNormal(iTempPolygon.P3);
@@ -272,7 +272,7 @@ begin
     RA_NORMAL         : begin
                           for iI := 0 to Mesh.MaterialSegmentList.Count - 1 do
                           begin
-                            iMS := TGDMaterialSegment(Mesh.MaterialSegmentList.GetObjectI(iI));
+                            iMS := TGDMaterialSegment(Mesh.MaterialSegmentList.Items[iI]);
 
                             if Modes.RenderWireframe then
                             begin
@@ -304,7 +304,7 @@ begin
                             Renderer.MeshShader.SetInt('I_FLIP_NORMAL', 0);
                             iMS.Material.BindMaterialTextures();
 
-                            (FDPLS.GetObjectI(iI) as TGDGLDisplayList).CallList();
+                            (FDPLS.Items[iI] as TGDGLDisplayList).CallList();
 
                             //fix for lighting with alha based surfices
                             if iMS.Material.HasAlpha then
@@ -314,7 +314,7 @@ begin
                               else
                                 glCullFace(GL_FRONT);
                               Renderer.MeshShader.SetInt('I_FLIP_NORMAL', 1);
-                              (FDPLS.GetObjectI(iI) as TGDGLDisplayList).CallList();
+                              (FDPLS.Items[iI] as TGDGLDisplayList).CallList();
                               if (aRenderFor = RF_WATER) and Not(Water.UnderWater) then
                                 glCullFace(GL_FRONT)
                               else

@@ -43,7 +43,7 @@ uses
   GDFog,
   GDCamera,
   GDSettings,
-  GDObjectList,
+  Contnrs,
   GDWater,
   GDModes;
 
@@ -124,12 +124,12 @@ var
   iI, iJ, iX, iY : Integer;
   iUStep, iVStep: Double;
   iMatrix : TGDMatrix;
-  iVertices : TGDObjectList;
-  iUVCoords : TGDObjectList;
+  iVertices : TObjectList;
+  iUVCoords : TObjectList;
 begin
   iRotationStep := 360/COMPLEXITY;
-  iVertices := TGDObjectList.Create();
-  iUVCoords := TGDObjectList.Create();
+  iVertices := TObjectList.Create();
+  iUVCoords := TObjectList.Create();
   iStartPoint := TGDVector.Create( aSize, 0, 0 );
   iMatrix := TGDMatrix.Create();
   iUStep := 1 / (COMPLEXITY);
@@ -145,7 +145,7 @@ begin
       iMatrix.CreateRotationY(iRotationY);
       iMatrix.ApplyToVector(iTemp);
       iVertices.Add(TGDVector.Create(iTemp.X, iTemp.Y, iTemp.Z));
-      iUVCoords.AddObjectI( TGDUVCoord.Create(iJ * iUStep, iI* iVStep ));
+      iUVCoords.Add( TGDUVCoord.Create(iJ * iUStep, iI* iVStep ));
       iRotationY := iRotationY + iRotationStep;
        FreeAndNil(iTemp);
     end;
@@ -168,10 +168,10 @@ begin
     begin
       iX := iJ + (iI * (COMPLEXITY+1));
       iY := iJ + ((iI + 1) * (COMPLEXITY+1));
-      glTexCoord2dv( TGDUVCoord(iUVCoords.GetObjectI( iY )).ArrayPointer );
-      glVertex3dv( TGDVector( iVertices.GetObjectI( iY ) ).ArrayPointerDouble);
-      glTexCoord2dv( TGDUVCoord(iUVCoords.GetObjectI( iX )).ArrayPointer );
-      glVertex3dv( TGDVector( iVertices.GetObjectI( iX ) ).ArrayPointerDouble);
+      glTexCoord2fv( TGDUVCoord(iUVCoords.Items[ iY ]).ArrayPointer );
+      glVertex3fv( TGDVector( iVertices.Items[  iY ] ).ArrayPointer);
+      glTexCoord2fv( TGDUVCoord(iUVCoords.Items[  iX ]).ArrayPointer );
+      glVertex3fv( TGDVector( iVertices.Items[  iX ] ).ArrayPointer);
     end;
     glEnd;
   end;

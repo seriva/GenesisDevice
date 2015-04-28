@@ -41,7 +41,7 @@ Uses
  SysUtils,
  dglOpenGL,
  GDConstants,
- GDObjectList;
+ Contnrs;
 
 type
 
@@ -69,7 +69,7 @@ type
   end;
 
 var
-  TextureList : TGDObjectList;
+  TextureList : TObjectList;
 
 implementation
 

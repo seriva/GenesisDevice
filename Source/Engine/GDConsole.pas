@@ -40,7 +40,6 @@ uses
   MMSystem,
   dglOpenGL,
   GDFont,
-  GDTypes,
   GDConstants,
   GDStringParsing;
 
@@ -76,30 +75,22 @@ type
 
   TGDConsole = class
   private
-    FShow            : Boolean;
-    FInputString     : String;
-    FRow             : integer;
-    FInputRow        : integer;
-    FInputStringList : TStringList;
-    FExecuteCommand  : Boolean;
-    FCursorUpdate    : boolean;
-    FUpdateTimer     : Integer;
-
-    FFileName : String;
-    FText : TStringList;
-    FUse  : Boolean;
-    FSave : Boolean;
-
-    FCommandMap : TGDCommandMap<String, TGDCommand>;
+    FShow         : Boolean;
+    FUse          : Boolean;
+    FRow          : integer;
+    FCursorUpdate : boolean;
+    FUpdateTimer  : Integer;
+    FLogFile      : String;
+    FLogText      : TStringList;
+    FCommand      : String;
   public
+    CommandMap : TGDCommandMap<String, TGDCommand>;
+    property Use  : Boolean read FUse write FUse;
     property Show : Boolean read FShow write FShow;
-    property CommandString : String read FInputString write FInputString;
-    property Row : Integer read FRow write FRow;
+    property Command : String read FCommand write FCommand;
 
-    property Text : TStringList read FText;
-    property Use : Boolean read FUse write FUse;
 
-    constructor Create(aLogName : String);
+    constructor Create(aLogFile : String);
     destructor  Destroy(); override;
 
     procedure InitConsole();
@@ -108,11 +99,8 @@ type
     procedure Render();
     procedure MoveUp();
     procedure MoveDown();
-    procedure MoveInputUp();
-    procedure MoveInputDown();
     procedure AddChar( aChar : Char );
     procedure RemoveChar();
-    procedure AddLine();
     procedure Update();
 
     procedure Write(aString : String; aNewLine : boolean = true);
@@ -133,24 +121,41 @@ uses
   GDRenderer;
 
 {******************************************************************************}
+{* Show help                                                                  *}
+{******************************************************************************}
+
+procedure Help();
+var
+  iStr : String;
+  iI, iJ, iK : Integer;
+  iCommand : TGDCommand;
+  iList : TStringList;
+begin
+  Console.Write('');
+  for ik := 0 to Console.CommandMap.Count - 1 do
+  begin
+    iCommand := Console.CommandMap.Data[ik];
+    Console.Write(iCommand.Command + ' - ' + iCommand.Help);
+  end;
+  Console.Write('');
+end;
+
+{******************************************************************************}
 {* Create the console class                                                   *}
 {******************************************************************************}
 
-constructor TGDConsole.Create(aLogName : String);
+constructor TGDConsole.Create(aLogFile : String);
 begin
-  FText := TStringList.Create();
-  FUse  := true;
-  FSave := true;
-  FFileName := aLogName;
   Write('Log started at ' + DateToStr(Date()) + ', ' + TimeToStr(Time()));
   Write('Build: ' + ENGINE_INFO);
-
-  FShow := False;
+  FUse          := True;
+  FShow         := False;
+  FLogText      := TStringList.Create();
+  FLogFile      := aLogFile;
+  CommandMap    := TGDCommandMap<String, TGDCommand>.Create();
   FCursorUpdate := False;
-  FInputStringList := TStringList.Create();
+  AddCommand('Help', 'Show help', CT_FUNCTION, @Help);
   FUpdateTimer  := TimeSetEvent(C_CURSOR_TIME, 0, @UpdateConsoleCallBack, 0, TIME_PERIODIC);
-
-  FCommandMap := TGDCommandMap<String, TGDCommand>.Create();
 end;
 
 {******************************************************************************}
@@ -159,12 +164,10 @@ end;
 
 destructor  TGDConsole.Destroy();
 begin
-  TimeKillEvent(FUpdateTimer);
-  FreeAndNil(FInputStringList);
-  FreeAndNil(FCommandMap);
-
   Write('Log ended at ' + DateToStr(Date()) + ', ' + TimeToStr(Time()));
-  FreeAndNil(FText);
+  TimeKillEvent(FUpdateTimer);
+  FreeAndNil(CommandMap);
+  FreeAndNil(FLogText);
 end;
 
 {******************************************************************************}
@@ -174,7 +177,9 @@ end;
 procedure TGDConsole.InitConsole();
 begin
   Clear();
-  FRow := Console.Text.Count-1;
+  FRow := FLogText.Count-1;
+  FShow := false;
+  FCommand := '';
 end;
 
 {******************************************************************************}
@@ -183,7 +188,6 @@ end;
 
 procedure TGDConsole.Clear();
 begin
-  FExecuteCommand := false;
 end;
 
 {******************************************************************************}
@@ -196,7 +200,7 @@ var
 begin
   If Not(FShow) then
   begin
-    FRow := Console.Text.Count-1;
+    FRow := FLogText.Count-1;
     exit;
   end;
 
@@ -225,20 +229,20 @@ begin
   begin
     If  ((iI) >= 0) then
     begin
-      If copy(Uppercase(Text.Strings[iI]), 0, 5) = 'ERROR' then
+      If copy(Uppercase(FLogText.Strings[iI]), 0, 5) = 'ERROR' then
         Font.Color.Red
       else
        Font.Color.White;
-      Font.Render(0, (R_HUDHEIGHT/2)+28+(iJ*25), 0.40, Text.Strings[iI] );
+      Font.Render(0, (R_HUDHEIGHT/2)+28+(iJ*25), 0.40, FLogText.Strings[iI] );
       iJ := iJ + 1;
     end
   end;
 
   Font.Color.White;
   if FCursorUpdate then
-     Font.Render(0, (R_HUDHEIGHT/2)-3, 0.40, FInputString + '_' )
+     Font.Render(0, (R_HUDHEIGHT/2)-3, 0.40, FCommand + '_' )
   else
-     Font.Render(0, (R_HUDHEIGHT/2)-3, 0.40, FInputString );
+     Font.Render(0, (R_HUDHEIGHT/2)-3, 0.40, FCommand );
 
   glDisable(GL_BLEND);
 end;
@@ -250,7 +254,7 @@ end;
 procedure TGDConsole.MoveUp();
 begin
   If Not(FShow) then Exit;
-  If Console.Text.Count = 0 then exit;
+  If FLogText.Count = 0 then exit;
   FRow := FRow - 1;
   If FRow < 0 then FRow := 0;
 end;
@@ -262,9 +266,9 @@ end;
 procedure TGDConsole.MoveDown();
 begin
   If Not(FShow) then Exit;
-  If Console.Text.Count = 0 then exit;
+  If FLogText.Count = 0 then exit;
   FRow := FRow + 1;
-  If FRow > Console.Text.Count-1 then FRow := Console.Text.Count-1;
+  If FRow > FLogText.Count-1 then FRow := FLogText.Count-1;
 end;
 
 {******************************************************************************}
@@ -276,7 +280,7 @@ begin
   If Not(FShow) then Exit;
   If Not(((Ord(aChar) >= 32) and (Ord(aChar) <= 126))) then Exit;
   If aChar = '`' then Exit;
-  FInputString := FInputString + aChar;
+  FCommand := FCommand + aChar;
 end;
 
 {******************************************************************************}
@@ -286,67 +290,9 @@ end;
 procedure TGDConsole.RemoveChar();
 begin
    If Not(FShow) then Exit;
-   SetLength(FInputString, Length(FInputString)-1);
+   SetLength(FCommand, Length(FCommand)-1);
 end;
 
-{******************************************************************************}
-{* Add a line to the console                                                  *}
-{******************************************************************************}
-
-procedure TGDConsole.AddLine();
-var
-  iI : Integer;
-  iBool : Bool;
-begin
-  If Not(FShow) then Exit;
-  Console.Write(FInputString);
-
-  iBool := false;
-  For iI := 0 to FInputStringList.Count-1 do
-  begin
-    If FInputStringList.Strings[iI] = FInputString then
-      iBool := true;
-  end;
-
-  If iBool = false then
-    FInputStringList.Add(FInputString);
-
-  FRow := Console.Text.Count-1;
-end;
-
-{******************************************************************************}
-{* Select old command                                                         *}
-{******************************************************************************}
-
-procedure TGDConsole.MoveInputUp();
-begin
-  If Not(FShow) then Exit;
-  If FInputStringList.Count = 0 then exit;
-
-  FInputRow := FInputRow - 1;
-
-  If FInputRow < 0 then
-    FInputRow := FInputStringList.Count-1;
-
-  FInputString :=  FInputStringList.Strings[FInputRow]
-end;
-
-{******************************************************************************}
-{* Select old command                                                         *}
-{******************************************************************************}
-
-procedure TGDConsole.MoveInputDown();
-begin
-  If Not(FShow) then Exit;
-  If FInputStringList.Count = 0 then exit;
-
-  FInputRow := FInputRow + 1;
-
-  If FInputRow > FInputStringList.Count-1 then
-    FInputRow := 0;
-
-  FInputString :=  FInputStringList.Strings[FInputRow]
-end;
 
 {******************************************************************************}
 {* Update the console                                                         *}
@@ -358,7 +304,7 @@ begin
 end;
 
 {******************************************************************************}
-{* Update Console Callback                                                 *}
+{* Update Console Callback                                                    *}
 {******************************************************************************}
 
 procedure UpdateConsoleCallBack(TimerID, Msg: Uint; dwUser, dw1, dw2: DWORD); pascal;
@@ -371,10 +317,10 @@ procedure TGDConsole.Write(aString : String; aNewLine : boolean = true);
 begin
   If FUse = False then exit;
   if aNewLine then
-    FText.Add(aString)
+    FLogText.Add(aString)
   else
-    FText.Strings[FText.Count-1] := FText.Strings[FText.Count-1] + aString;
-  If FSave then FText.SaveToFile(FFileName);
+    FLogText.Strings[FLogText.Count-1] := FLogText.Strings[FLogText.Count-1] + aString;
+  FLogText.SaveToFile(FLogFile);
 end;
 
 {******************************************************************************}
@@ -385,12 +331,12 @@ procedure TGDConsole.WriteOkFail(aResult : boolean; aError : String; aIncludeFai
 begin
   If aResult then
   begin
-    Console.Write('Ok', false);
+    Write('Ok', false);
   end
   else
   begin
-    if aIncludeFailed then Console.Write('Failed', false);
-    Console.Write('Error: ' + aError);
+    if aIncludeFailed then Write('Failed', false);
+    Write('Error: ' + aError);
   end;
 end;
 
@@ -411,8 +357,8 @@ begin
     CT_FLOAT          : iCommand.Float := aPointer;
     CT_FUNCTION       : iCommand.Func  := aPointer;
   end;
-  FCommandMap.Add(iCommand.Command,iCommand);
-  FCommandMap.Sort;
+  CommandMap.Add(iCommand.Command,iCommand);
+  CommandMap.Sort;
 end;
 
 {******************************************************************************}
@@ -422,7 +368,6 @@ end;
 procedure TGDConsole.ExecuteCommand();
 var
   iIdx : Integer;
-  iI : Integer;
   iCommand : TGDCommand;
   iCommandStr  : String;
   iCommandPara : String;
@@ -451,21 +396,20 @@ end;
 
 begin
   //no command string so exit
-  if CommandString = '' then exit;
+  if FCommand = '' then exit;
 
   //add command string
-  Write(CommandString);
-  FInputStringList.Add(CommandString);
+  Write(FCommand);
 
   //get the command parameters
   iStrPos := 1;
-  iCommandStr  := lowercase(GetNextCommand(CommandString));
-  iCommandPara := lowercase(GetNextCommand(CommandString));
+  iCommandStr  := lowercase(GetNextCommand(FCommand));
+  iCommandPara := lowercase(GetNextCommand(FCommand));
 
   //execute the commands
-  if FCommandMap.Find(iCommandStr, iIdx) then
+  if CommandMap.Find(iCommandStr, iIdx) then
   begin
-    iCommand := FCommandMap.Data[iIdx];
+    iCommand := CommandMap.Data[iIdx];
     if (iCommand.Bool = nil) and (iCommand.Int = nil) and
        (iCommand.Float = nil) and not(assigned(iCommand.Func)) then
       WriteOkFail(false, 'Command pointer nul!', false)
@@ -508,8 +452,8 @@ begin
     WriteOkFail(false, 'Unknown Command!', false);
 
   //reset some stuff
-  CommandString := '';
-  FRow := Text.Count-1;
+  FCommand := '';
+  FRow := FLogText.Count-1;
 end;
 
 end.

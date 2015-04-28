@@ -53,7 +53,7 @@ uses
   GDConsole,
   GDSettings,
   GDCamera,
-  GDObjectList;
+  Contnrs;
 
 type
 
@@ -97,10 +97,10 @@ type
     FDIKeyBoardEvent : THandle;
     DIMButSwapped    : boolean;
     FEnableInput     : Boolean;
-    FDirect          : TGDObjectList;
-    FSingle          : TGDObjectList;
-    FUp              : TGDObjectList;
-    FDown            : TGDObjectList;
+    FDirect          : TObjectList;
+    FSingle          : TObjectList;
+    FUp              : TObjectList;
+    FDown            : TObjectList;
     FMouseLook       : boolean;
     FMousePosStart   : TPoint;
     FMousePosCurrent : TPoint;
@@ -114,7 +114,7 @@ type
     property EnableInput     : boolean read FEnableInput write FEnableInput;
     property MouseLook       : boolean read FMouseLook write FMouseLook;
     property MousePosCurrent : TPoint read FMousePosCurrent write FMousePosCurrent;
-    property SingleInput     : TGDObjectList read FSingle;
+    property SingleInput     : TObjectList read FSingle;
 
     Constructor Create();
     Destructor  Destroy();override;
@@ -230,12 +230,10 @@ begin
 
                            If Console.Show and (Console <> nil) then
                            begin
-                             If iInput.KeyDown(DIK_UP) then   Console.MoveInputUp();
-                             If iInput.KeyDown(DIK_DOWN) then Console.MoveInputDown();
                              If iInput.KeyDown(DIK_BACK) then Console.RemoveChar();
                              If iInput.KeyDown(DIK_RETURN) then
                              begin
-                               if Not(Console.CommandString = '') then
+                               if Not(Console.Command = '') then
                                begin
                                  Console.ExecuteCommand();
                                end;
@@ -244,7 +242,7 @@ begin
 
                            For iI := 0 to iInput.SingleInput.Count-1 do
                            begin
-                             iTempAction := TGDInputAction(iInput.SingleInput.GetObjectI(iI));
+                             iTempAction := TGDInputAction(iInput.SingleInput.Items[iI]);
                              if (iTempAction.FConsoleDisabled and Not(Console.Show)) or not(iTempAction.FConsoleDisabled) then
                              begin
                                If iInput.KeyDown( iTempAction.Key ) Then iTempAction.Execute();
@@ -327,10 +325,10 @@ begin
       Raise Exception.Create('Unable to get the mouse control!');
 
     FMouseLook := False;
-    FDirect := TGDObjectList.Create();
-    FSingle := TGDObjectList.Create();
-    FUp     := TGDObjectList.Create();
-    FDown   := TGDObjectList.Create();
+    FDirect := TObjectList.Create();
+    FSingle := TObjectList.Create();
+    FUp     := TObjectList.Create();
+    FDown   := TObjectList.Create();
     CalculateMousePosStart();
 
     FDone := false;
@@ -584,21 +582,21 @@ begin
 
   For iI := 0 to FDirect.Count-1 do
   begin
-    iTempAction := TGDInputAction(FDirect.GetObjectI(iI));
+    iTempAction := TGDInputAction(FDirect.Items[iI]);
     if (iTempAction.FConsoleDisabled and Not(Console.Show)) or not(iTempAction.FConsoleDisabled) then
       If Input.KeyDown( iTempAction.Key ) Then iTempAction.Execute();
   end;
 
   For iI := 0 to FDown.Count-1 do
   begin
-    iTempAction := TGDInputAction(FDown.GetObjectI(iI));
+    iTempAction := TGDInputAction(FDown.Items[iI]);
     if (iTempAction.FConsoleDisabled and Not(Console.Show)) or not(iTempAction.FConsoleDisabled) then
       If Input.KeyDown( iTempAction.Key ) Then iTempAction.Execute();
   end;
 
   For iI := 0 to FUp.Count-1 do
   begin
-    iTempAction := TGDInputAction(FUp.GetObjectI(iI));
+    iTempAction := TGDInputAction(FUp.Items[iI]);
     if (iTempAction.FConsoleDisabled and Not(Console.Show)) or not(iTempAction.FConsoleDisabled) then
       If Not(Input.KeyDown( iTempAction.Key )) Then iTempAction.Execute();
   end;
@@ -664,10 +662,10 @@ var
 begin
   iTempAction := TGDInputAction.Create(aKeyString, Input.StringToKey(aKeyString),aAction, aConsoleDisabled);
   case aType of
-     IT_DIRECT : FDirect.AddObjectP(iTempAction);
-     IT_SINGLE : FSingle.AddObjectP(iTempAction);
-     IT_DOWN   : FDown.AddObjectP(iTempAction);
-     IT_UP     : FUp.AddObjectP(iTempAction);
+     IT_DIRECT : FDirect.Add(iTempAction);
+     IT_SINGLE : FSingle.Add(iTempAction);
+     IT_DOWN   : FDown.Add(iTempAction);
+     IT_UP     : FUp.Add(iTempAction);
   end;
 end;
 

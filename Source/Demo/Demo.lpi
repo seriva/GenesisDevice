@@ -37,7 +37,7 @@
         <PackageName Value="LCL"/>
       </Item1>
     </RequiredPackages>
-    <Units Count="56">
+    <Units Count="55">
       <Unit0>
         <Filename Value="Demo.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -199,123 +199,118 @@
         <UnitName Value="GDModes"/>
       </Unit30>
       <Unit31>
-        <Filename Value="..\Engine\GDObjectList.pas"/>
-        <IsPartOfProject Value="True"/>
-        <UnitName Value="GDObjectList"/>
-      </Unit31>
-      <Unit32>
         <Filename Value="..\Engine\GDOctree.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="GDOctree"/>
-      </Unit32>
-      <Unit33>
+      </Unit31>
+      <Unit32>
         <Filename Value="..\Engine\GDRenderer.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="GDRenderer"/>
-      </Unit33>
-      <Unit34>
+      </Unit32>
+      <Unit33>
         <Filename Value="..\Engine\GDSettings.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="GDSettings"/>
-      </Unit34>
-      <Unit35>
+      </Unit33>
+      <Unit34>
         <Filename Value="..\Engine\GDSkyDome.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="GDSkyDome"/>
-      </Unit35>
-      <Unit36>
+      </Unit34>
+      <Unit35>
         <Filename Value="..\Engine\GDSound.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="GDSound"/>
-      </Unit36>
-      <Unit37>
+      </Unit35>
+      <Unit36>
         <Filename Value="..\Engine\GDStatistics.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="GDStatistics"/>
-      </Unit37>
-      <Unit38>
+      </Unit36>
+      <Unit37>
         <Filename Value="..\Engine\GDTerrain.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="GDTerrain"/>
-      </Unit38>
-      <Unit39>
+      </Unit37>
+      <Unit38>
         <Filename Value="..\Engine\GDTerrainCell.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="GDTerrainCell"/>
-      </Unit39>
-      <Unit40>
+      </Unit38>
+      <Unit39>
         <Filename Value="..\Engine\GDTexture.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="GDTexture"/>
-      </Unit40>
-      <Unit41>
+      </Unit39>
+      <Unit40>
         <Filename Value="..\Engine\GDTiming.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="GDTiming"/>
-      </Unit41>
-      <Unit42>
+      </Unit40>
+      <Unit41>
         <Filename Value="..\Engine\GDTypes.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="GDTypes"/>
-      </Unit42>
-      <Unit43>
+      </Unit41>
+      <Unit42>
         <Filename Value="..\Engine\GDWater.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="GDWater"/>
-      </Unit43>
-      <Unit44>
+      </Unit42>
+      <Unit43>
         <Filename Value="..\Engine\GDWaterCell.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="GDWaterCell"/>
-      </Unit44>
-      <Unit45>
+      </Unit43>
+      <Unit44>
         <Filename Value="..\Libraries\DirectX\DXInput.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="DXInput"/>
+      </Unit44>
+      <Unit45>
+        <Filename Value="..\Libraries\FMod\fmod.inc"/>
+        <IsPartOfProject Value="True"/>
       </Unit45>
       <Unit46>
-        <Filename Value="..\Libraries\FMod\fmod.inc"/>
+        <Filename Value="..\Libraries\FMod\fmod.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit46>
       <Unit47>
-        <Filename Value="..\Libraries\FMod\fmod.pas"/>
+        <Filename Value="..\Libraries\FMod\fmoderrors.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit47>
       <Unit48>
-        <Filename Value="..\Libraries\FMod\fmoderrors.pas"/>
+        <Filename Value="..\Libraries\FMod\fmodpresets.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit48>
       <Unit49>
-        <Filename Value="..\Libraries\FMod\fmodpresets.pas"/>
+        <Filename Value="..\Libraries\FMod\fmodtypes.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit49>
       <Unit50>
-        <Filename Value="..\Libraries\FMod\fmodtypes.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit50>
-      <Unit51>
         <Filename Value="..\Libraries\DirectX\DirectDraw.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="DirectDraw"/>
+      </Unit50>
+      <Unit51>
+        <Filename Value="..\Libraries\DirectX\DirectX.inc"/>
+        <IsPartOfProject Value="True"/>
       </Unit51>
       <Unit52>
-        <Filename Value="..\Libraries\DirectX\DirectX.inc"/>
+        <Filename Value="..\Libraries\DirectX\Jedi.inc"/>
         <IsPartOfProject Value="True"/>
       </Unit52>
       <Unit53>
-        <Filename Value="..\Libraries\DirectX\Jedi.inc"/>
-        <IsPartOfProject Value="True"/>
-      </Unit53>
-      <Unit54>
         <Filename Value="..\Engine\GDFoliage.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="GDFoliage"/>
-      </Unit54>
-      <Unit55>
+      </Unit53>
+      <Unit54>
         <Filename Value="..\Engine\GDStringParsing.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="GDStringParsing"/>
-      </Unit55>
+      </Unit54>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

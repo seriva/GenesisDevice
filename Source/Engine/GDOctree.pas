@@ -119,7 +119,7 @@ begin
   iI := 0;
   while(iI <= (length(FCellIndexes)-1)) do
   begin
-    If FSubNodes[iNode].FBoundingBox.BoxInsideBox( TGDBaseCell( CellManager.Cells.GetObjectI( FCellIndexes[iI] )).BoundingBox ) then
+    If FSubNodes[iNode].FBoundingBox.BoxInsideBox( TGDBaseCell( CellManager.Cells.Items[ FCellIndexes[iI] ]).BoundingBox ) then
     begin
       SetLength(iTempMeshIndexes,length(iTempMeshIndexes)+1);
       iTempMeshIndexes[length(iTempMeshIndexes)-1] := FCellIndexes[iI];
@@ -205,7 +205,7 @@ begin
   begin
     for iI := 0 to Cells.Count-1 do
     begin
-      iCell :=  TGDBaseCell( Cells.GetObjectI( iI ));
+      iCell :=  TGDBaseCell( Cells.Items[  iI ]);
 
       If (iCell.BoundingBox.Min.X < FBoundingBox.Min.x) then
         FBoundingBox.Min.x  := iCell.BoundingBox.Min.X;
@@ -267,25 +267,25 @@ begin
     iVertex := TGDVector.Create();
     for iI := 0 to length(FCellIndexes)-1 do
     begin
-      If Frustum.BoxInFrustum( TGDBaseCell( Cells.GetObjectI( FCellIndexes[iI] ) ).BoundingBox ) then
+      If Frustum.BoxInFrustum( TGDBaseCell( Cells.Items[  FCellIndexes[iI] ] ).BoundingBox ) then
       begin
-          iCell := TGDBaseCell( Cells.GetObjectI( FCellIndexes[iI] ) );
-          iVertex.Reset(   TGDBaseCell( Cells.GetObjectI( FCellIndexes[iI] ) ).BoundingBox.Center );
+          iCell := TGDBaseCell( Cells.Items[  FCellIndexes[iI] ] );
+          iVertex.Reset(   TGDBaseCell( Cells.Items[  FCellIndexes[iI] ] ).BoundingBox.Center );
           iVertex.Substract(Camera.Position);
           iCell.Distance := iVertex.Magnitude();
 
           If (iCell.OjectType = SO_WATERCELL) and Modes.RenderWater then
-            VisibleWaterCells.AddObjectP(iCell);
+            VisibleWaterCells.Add(iCell);
 
           If (iCell.OjectType = SO_GRASSCELL) and Modes.RenderGrass then
             If iCell .Distance < (Settings.GrassDistance * R_GRASS_DISTANCE_STEP + (R_GRASS_DISTANCE_STEP * 10)) then
-              VisibleCells.AddObjectP(iCell);
+              VisibleCells.Add(iCell);
 
           If (iCell.OjectType = SO_TERRAINCELL) and Modes.RenderTerrain then
-            VisibleCells.AddObjectP(iCell);
+            VisibleCells.Add(iCell);
 
           If (iCell.OjectType = SO_MESHCELL) and Modes.RenderMeshes then
-            VisibleCells.AddObjectP(iCell);
+            VisibleCells.Add(iCell);
      end;
     end;
   end;

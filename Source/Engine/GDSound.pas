@@ -39,7 +39,7 @@ uses
   GDConsole,
   GDConstants,
   GDSettings,
-  GDObjectList;
+  contnrs;
 
 Type
 
@@ -88,7 +88,7 @@ Type
 
 var
   Sound : TGDSound;
-  SoundList : TGDObjectList;
+  SoundList : TObjectList;
 
 const
   CHANNEL_COUNT = 128;

@@ -56,7 +56,7 @@ uses
   GDTexture,
   GDMesh,
   GDMaterials,
-  GDObjectList,
+  contnrs,
   GDLighting,
   GDStatistics,
   GDModes,
@@ -226,8 +226,8 @@ begin
   DirectionalLight := TGDDirectionalLight.Create();
 
 
-  SoundList        := TGDObjectList.Create();
-  TextureList      := TGDObjectList.Create();
+  SoundList        := TObjectList.Create();
+  TextureList      := TObjectList.Create();
   MaterialList     := TGDMaterialList.Create();
   MeshList         := TGDMeshList.Create();
 
@@ -684,7 +684,7 @@ end;
 procedure gdConsoleCommand(aCommand : String );
 begin
   If Not(FEngineInitialized) then exit;
-  Console.CommandString := String(aCommand);
+  Console.Command := aCommand;
   Console.ExecuteCommand();
 end;
 
@@ -877,7 +877,8 @@ begin
   iTempTexture := TGDTexture.Create();
   If Not(iTempTexture.InitTexture( aFileName, Settings.TextureDetail,
           Settings.TextureFilter)) then exit;
-  result := TextureList.AddObjectP( iTempTexture );
+  TextureList.Add( iTempTexture );
+  result := iTempTexture;
 end;
 
 {******************************************************************************}
@@ -885,14 +886,9 @@ end;
 {******************************************************************************}
 
 procedure gdTexturesBind(aPointer : pointer; aTextureUnit : GLEnum );
-var
-  iTempTexture : TGDTexture;
 begin
   If Not(FEngineInitialized) then exit;
-  iTempTexture := TGDTexture(TextureList.GetObjectP(aPointer));
-  If iTempTexture <> nil then
-    iTempTexture.BindTexture(aTextureUnit);
-  ;
+  TGDTexture(aPointer).BindTexture(aTextureUnit); ;
 end;
 
 {******************************************************************************}
@@ -902,7 +898,7 @@ end;
 procedure gdTexturesRemove( aPointer : pointer ); 
 begin
   If Not(FEngineInitialized) then exit;
-  TextureList.RemoveObjectP(aPointer);
+  TextureList.Remove(aPointer);
   aPointer := nil
 end;
 
@@ -928,7 +924,8 @@ begin
   If Not(FEngineInitialized) then exit;
   iTempSoundFile := TGDSoundFile.Create();
   If Not(iTempSoundFile.InitSoundFile( aFileName, aType )) then exit;
-  result := SoundList.AddObjectP( iTempSoundFile );
+  SoundList.Add( iTempSoundFile );
+  result := iTempSoundFile;
 end;
 
 {******************************************************************************}
@@ -948,7 +945,7 @@ end;
 procedure gdSoundFilesRemove( aPointer : pointer ); 
 begin
   If Not(FEngineInitialized) then exit;
-  SoundList.RemoveObjectP(aPointer);
+  SoundList.Remove(aPointer);
   aPointer := nil
 end;
 
@@ -961,7 +958,7 @@ var
   iTempSoundFile : TGDSoundFile;
 begin
   If Not(FEngineInitialized) then exit;
-  iTempSoundFile := TGDSoundFile(SoundList.GetObjectP(aPointer));
+  iTempSoundFile := TGDSoundFile(aPointer);
   If iTempSoundFile <> nil then
     iTempSoundFile.Play();
   ;
@@ -976,7 +973,7 @@ var
   iTempSoundFile : TGDSoundFile;
 begin
   If Not(FEngineInitialized) then exit;
-  iTempSoundFile := TGDSoundFile(SoundList.GetObjectP(aPointer));
+  iTempSoundFile := TGDSoundFile(aPointer);
   If iTempSoundFile <> nil then
     iTempSoundFile.Pause();
   ;
@@ -991,7 +988,7 @@ var
   iTempSoundFile : TGDSoundFile;
 begin
   If Not(FEngineInitialized) then exit;
-  iTempSoundFile := TGDSoundFile(SoundList.GetObjectP(aPointer));
+  iTempSoundFile := TGDSoundFile(aPointer);
   If iTempSoundFile <> nil then
     iTempSoundFile.Resume();
   ;

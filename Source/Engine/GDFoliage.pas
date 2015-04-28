@@ -45,7 +45,7 @@ uses
   GDRenderer,
   GDTiming,
   GDLighting,
-  GDObjectList,
+  Contnrs,
   GDModes;
 
 type
@@ -152,13 +152,13 @@ type
 
   TGDFoliage = class
   private
-    FGrassTypes           : TGDObjectList;
+    FGrassTypes           : TObjectList;
     FGrassCellCountX      : Integer;
     FGrassCellCountY      : Integer;
     FGrassWaveSpeed       : Double;
     FGrassWaveStrength    : Double;
 
-    FTreeTypes            : TGDObjectList;
+    FTreeTypes            : TObjectList;
     FTreeCount            : Integer;
     FTreeLowerLimit       : Integer;
     FTreeUpperLimit       : Integer;
@@ -166,13 +166,13 @@ type
     GrassMap : array of array of boolean;
     TreeMap : array of array of boolean;
 
-    property GrassTypes : TGDObjectList read FGrassTypes;
+    property GrassTypes : TObjectList read FGrassTypes;
     property GrassCellCountX : Integer read FGrassCellCountX;
     property GrassCellCountY : Integer read FGrassCellCountY;
     property GrassWaveSpeed    : Double read FGrassWaveSpeed;
     property GrassWaveStrength : Double read FGrassWaveStrength;
 
-    property TreeTypes : TGDObjectList read FTreeTypes;
+    property TreeTypes : TObjectList read FTreeTypes;
     property TreeCount : Integer read FTreeCount;
     property TreeLowerLimit : Integer read FTreeLowerLimit;
     property TreeUpperLimit : Integer read FTreeUpperLimit;
@@ -300,8 +300,8 @@ end;
 
 constructor TGDFoliage.Create();
 begin
-  FGrassTypes := TGDObjectList.Create();
-  FTreeTypes := TGDObjectList.Create();
+  FGrassTypes := TObjectList.Create();
+  FTreeTypes := TObjectList.Create();
 end;
 
 {******************************************************************************}
