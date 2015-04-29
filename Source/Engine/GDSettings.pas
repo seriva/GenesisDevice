@@ -88,7 +88,7 @@ type
     FHeight           : Integer;
     FFullScreen       : Boolean;
     FVerticalSync     : Boolean;
-    FGamma            : Double;
+    FGamma            : Single;
 
     //render settings
     FViewDistance     : Integer;
@@ -127,7 +127,7 @@ type
     property Height : Integer read FHeight write FHeight;
     property FullScreen : Boolean read FFullScreen write FFullScreen;
     property VerticalSync : Boolean read FVerticalSync write FVerticalSync;
-    property Gamma : double read FGamma write FGamma;
+    property Gamma : Single read FGamma write FGamma;
 
     //render settings
     property ViewDistance : Integer read FViewDistance write FViewDistance;
@@ -209,7 +209,7 @@ begin
   Console.AddCommand('RBloom', '0,1 : Enable or disable bloom', CT_BOOLEAN, @FUseBloom);
   Console.AddCommand('RFXAA', '0,1 : Enable or disable bloom', CT_BOOLEAN, @FUseFXAA);
   Console.AddCommand('RVSync', '0,1 : Enable or disable vertical sync', CT_BOOLEAN, @FVerticalSync);
-  Console.AddCommand('RGamma', '0.0 to 3.0 : Set the gamma value', CT_FLOAT, @FGamma);
+  Console.AddCommand('RGamma', '0.0 to 1.0 : Set the gamma value', CT_FLOAT, @FGamma);
 end;
 
 {******************************************************************************}

@@ -53,8 +53,6 @@ type
 
   TGDRenderer  = Class
   private
-    FInitialized        : boolean;
-
     FResourceWND        : HWND;
     FResourceDC         : HDC;
     FResourceRC         : HGLRC;
@@ -85,7 +83,7 @@ type
     FBloomImage          : TGDTexture;
     FHorizontalBlurImage : TGDTexture;
     FVerticalBlurImage   : TGDTexture;
-    FBloomStrengh        : Double;
+    FBloomStrengh        : Single;
 
     procedure InitShaders();
     procedure ClearShaders();
@@ -95,8 +93,6 @@ type
 
     procedure RenderQuad();
   public
-    property    Initialized     : boolean read FInitialized;
-
     property    TerrainShader  : TGDGLShader read FTerrainShader;
     property    SkyShader      : TGDGLShader read FSkyShader;
     property    WaterShader    : TGDGLShader read FWaterShader;
@@ -109,7 +105,7 @@ type
     property    ColorShader    : TGDGLShader read FColorShader;
     property    TextureShader  : TGDGLShader read FTextureShader;
 
-    property    BloomStrengh : Double read FBloomStrengh write FBloomStrengh;
+    property    BloomStrengh : Single read FBloomStrengh write FBloomStrengh;
 
     Constructor Create();
     Destructor  Destroy();override;
@@ -151,6 +147,7 @@ uses
 
 constructor TGDRenderer.Create();
 var
+  iResult     : boolean;
   iError      : string;
   iWndClass   : TWndClass;
   iDWStyle    : DWORD;
@@ -171,7 +168,7 @@ begin
 
   Console.Write('Initializing renderer...');
   try
-    FInitialized := true;
+    iResult := true;
     iInstance := GetModuleHandle(nil);
     ZeroMemory(@iWndClass, SizeOf(wndClass));
 
@@ -277,13 +274,13 @@ begin
     on E: Exception do
     begin
       iError := E.Message;
-      FInitialized := false;
+      iResult := false;
     end;
   end;
 
-  Console.WriteOkFail(FInitialized, iError);
+  Console.WriteOkFail(iResult, iError);
 
-  If FInitialized then
+  If iResult then
     InitShaders();
 end;
 
@@ -515,7 +512,6 @@ begin
   FBloomImage          := TGDTexture.Create();
   FHorizontalBlurImage := TGDTexture.Create();
   FVerticalBlurImage   := TGDTexture.Create();
-  FBloomStrengh        := 0.5;
   FFrameBuffer.InitFrameBuffer();
   FRenderBuffer1.InitRenderBuffer(Settings.Width, Settings.Height, GL_DEPTH_COMPONENT24);
   FRenderBuffer2.InitRenderBuffer(Settings.Width div 4, Settings.Height div 4, GL_DEPTH_COMPONENT24);

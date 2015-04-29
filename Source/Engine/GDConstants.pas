@@ -63,7 +63,7 @@ const
   TWaterReflection : array[1..2] of String  = ('Terrain Only', 'All');
 
   //engine constants
-  ENGINE_INFO     = '67 - 24 April 2015';
+  ENGINE_INFO     = '69 - 29 April 2015';
 
   //renderer constants
   R_HUDWIDTH             = 1600;
