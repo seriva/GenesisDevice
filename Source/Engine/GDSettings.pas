@@ -255,8 +255,8 @@ begin
   FUseFXAA          := iIniFile.ReadBool( 'Renderer', 'UseFXAA', False);
 
   //input settings
-  FInvertMouse      := iIniFile.ReadBool( 'Input', 'InvertMouse', False);
-  FMouseSensitivity := iIniFile.ReadInteger('Input', 'MouseSensitivity ', 5);
+  FInvertMouse      := iIniFile.ReadBool( 'Controls', 'InvertMouse', False);
+  FMouseSensitivity := iIniFile.ReadInteger('Controls', 'MouseSensitivity', 5);
 
   //sound settings
   FSoundDriver := iIniFile.ReadInteger( 'Sound', 'Driver', 0);
@@ -296,8 +296,8 @@ begin
   iIniFile.WriteBool( 'Renderer', 'UseFXAA', FUseFXAA );
 
   //input settings
-  iIniFile.WriteBool( 'Input', 'InvertMouse', FInvertMouse);
-  iIniFile.WriteInteger('Input', 'MouseSensitivity ', FMouseSensitivity);
+  iIniFile.WriteBool( 'Controls', 'InvertMouse', FInvertMouse);
+  iIniFile.WriteInteger('Controls', 'MouseSensitivity', FMouseSensitivity);
 
   //sound settings
   iIniFile.WriteInteger( 'Sound', 'Driver', FSoundDriver);

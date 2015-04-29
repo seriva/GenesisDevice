@@ -548,16 +548,18 @@ begin
 
   //controls
   ControlValueListEditor.Strings.Clear;
-  FForwards  := iIniFile.ReadString('Input', 'Forward', 'W');
+  FForwards  := iIniFile.ReadString('Controls', 'Forward', 'W');
   ControlValueListEditor.Strings.Add('Forward=' + FForwards);
-  FBackwards := iIniFile.ReadString('Input', 'Backward', 'S');
+  FBackwards := iIniFile.ReadString('Controls', 'Backward', 'S');
   ControlValueListEditor.Strings.Add('Backward=' + FBackWards);
-  FLeft      := iIniFile.ReadString('Input', 'Left', 'A');
+  FLeft      := iIniFile.ReadString('Controls', 'Left', 'A');
   ControlValueListEditor.Strings.Add('Left=' + FLeft);
-  FRight     := iIniFile.ReadString('Input', 'Right', 'D');
+  FRight     := iIniFile.ReadString('Controls', 'Right', 'D');
   ControlValueListEditor.Strings.Add('Right=' + FRight);
-  FRun     := iIniFile.ReadString('Input', 'Run', 'LEFTSHIFT');
+  FRun     := iIniFile.ReadString('Controls', 'Run', 'LEFTSHIFT');
   ControlValueListEditor.Strings.Add('Run=' + FRun);
+
+  //maps
   FMap         := iIniFile.ReadString('Demo', 'SelectedMap', '');
 
   FreeAndNil(iIniFile);
@@ -579,11 +581,13 @@ begin
   iIniFile.WriteInteger('Monitor', 'ResolutionId', ResolutionsComboBox.ItemIndex);
 
   //controls
-  iIniFile.WriteString('Input', 'Forward', FForwards);
-  iIniFile.WriteString('Input', 'Backward', FBackWards);
-  iIniFile.WriteString('Input', 'Left', FLeft);
-  iIniFile.WriteString('Input', 'Right', FRight);
-  iIniFile.WriteString('Input', 'Run', FRun);
+  iIniFile.WriteString('Controls', 'Forward', FForwards);
+  iIniFile.WriteString('Controls', 'Backward', FBackWards);
+  iIniFile.WriteString('Controls', 'Left', FLeft);
+  iIniFile.WriteString('Controls', 'Right', FRight);
+  iIniFile.WriteString('Controls', 'Run', FRun);
+
+  //map
   iIniFile.WriteString('Demo', 'SelectedMap', FMap);
 
   FreeAndNil(iIniFile);

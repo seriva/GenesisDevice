@@ -62,11 +62,9 @@ Type
     function LoadShader( aSrc: String; atype: GLenum): GLhandleARB;
     function GetInfoLog(aObject : GLhandleARB): String;
   public
-    constructor Create();
+    constructor Create(aPath : string);
     destructor  Destroy(); override;
 
-    procedure InitShaders(aPath : string);
-    procedure Clear();
     procedure Enable();
     procedure Disable();
     procedure SetInt(aVariable : String;  aV : integer);
@@ -138,11 +136,40 @@ implementation
 {* Create shader class                                                        *}
 {******************************************************************************}
 
-constructor TGDGLShader.Create();
+constructor TGDGLShader.Create(aPath : string);
+var
+  iVert, ifrag, iError : String;
 begin
-  FVertexShader   := 0;
-  FFragmentShader := 0;
-  FProgramObject  := 0;
+  Console.Write('Loading shader ' + ExtractFileName(aPath) + '...');
+  FLoadedOk := True;
+
+  try
+    iVert := aPath + SHADER_VERT_EXT;
+    ifrag := aPath + SHADER_FRAG_EXT;
+    FVertexShader := glCreateShaderObjectARB(GL_VERTEX_SHADER_ARB);
+    FFragmentShader := glCreateShaderObjectARB(GL_FRAGMENT_SHADER_ARB);
+
+    If FileExistsUTF8(iVert ) and FileExistsUTF8(ifrag ) then
+    begin
+      FVertexShader := LoadShaderFromFile(iVert, GL_VERTEX_SHADER_ARB);
+      FFragmentShader := LoadShaderFromFile(ifrag, GL_FRAGMENT_SHADER_ARB);
+    end
+    else
+      raise Exception.Create('Shader files not present');
+
+    FProgramObject := glCreateProgramObjectARB();
+    glAttachObjectARB(FProgramObject,FVertexShader);
+    glAttachObjectARB(FProgramObject,FFragmentShader);
+    glLinkProgramARB(FProgramObject);
+  except
+    on E: Exception do
+    begin
+      iError := E.Message;
+      FLoadedOk := False;
+    end;
+  end;
+
+  Console.WriteOkFail(FLoadedOk, iError);
 end;
 
 {******************************************************************************}
@@ -151,7 +178,25 @@ end;
 
 destructor  TGDGLShader.Destroy();
 begin
-   Clear();
+	if (FVertexShader > 0) then
+	begin
+		glDetachObjectARB(FProgramObject, FVertexShader);
+		glDeleteObjectARB(FVertexShader);
+		FVertexShader := 0;
+	end;
+
+	if (FFragmentShader > 0) then
+	begin
+		glDetachObjectARB(FProgramObject, FFragmentShader);
+		glDeleteObjectARB(FFragmentShader);
+		FFragmentShader := 0;
+	end;
+
+	if (FProgramObject > 0)  then
+	begin
+		glDeleteObjectARB(FProgramObject);
+		FProgramObject := 0;
+	end;
 end;
 
 {******************************************************************************}
@@ -224,77 +269,6 @@ begin
   end;
 
   iTXT.Free;
-end;
-
-{******************************************************************************}
-{* Init the shader                                                            *}
-{******************************************************************************}
-
-procedure TGDGLShader.InitShaders(aPath : string);
-var
-  iVert, ifrag, iError : String;
-begin
-  Console.Write('Loading shader ' + ExtractFileName(aPath) + '...');
-  FLoadedOk := True;
-
-  try
-    iVert := aPath + SHADER_VERT_EXT;
-    ifrag := aPath + SHADER_FRAG_EXT;
-    Clear();
-    FVertexShader := glCreateShaderObjectARB(GL_VERTEX_SHADER_ARB);
-    FFragmentShader := glCreateShaderObjectARB(GL_FRAGMENT_SHADER_ARB);
-
-    If FileExistsUTF8(iVert ) and FileExistsUTF8(ifrag ) then
-    begin
-      FVertexShader := LoadShaderFromFile(iVert, GL_VERTEX_SHADER_ARB);
-      FFragmentShader := LoadShaderFromFile(ifrag, GL_FRAGMENT_SHADER_ARB);
-    end
-    else
-      raise Exception.Create('Shader files not present');
-
-    FProgramObject := glCreateProgramObjectARB();
-    glAttachObjectARB(FProgramObject,FVertexShader);
-    glAttachObjectARB(FProgramObject,FFragmentShader);
-    glLinkProgramARB(FProgramObject);
-  except
-    on E: Exception do
-    begin
-      iError := E.Message;
-      FLoadedOk := False;
-    end;
-  end;
-
-  Console.WriteOkFail(FLoadedOk, iError);
-end;
-
-{******************************************************************************}
-{* Clear the shader                                                           *}
-{******************************************************************************}
-
-procedure TGDGLShader.Clear();
-begin
-	if (FVertexShader > 0) then
-	begin
-		glDetachObjectARB(FProgramObject, FVertexShader);
-		glDeleteObjectARB(FVertexShader);
-		FVertexShader := 0;
-	end;
-
-	if (FFragmentShader > 0) then
-	begin
-		glDetachObjectARB(FProgramObject, FFragmentShader);
-		glDeleteObjectARB(FFragmentShader);
-		FFragmentShader := 0;
-	end;
-
-	if (FProgramObject > 0)  then
-	begin
-		glDeleteObjectARB(FProgramObject);
-		FProgramObject := 0;
-	end;
-
-  FLoadedOk := true;
-  FMessage  := '';
 end;
 
 {******************************************************************************}
