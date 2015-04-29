@@ -92,8 +92,6 @@ end;
 procedure TGDTerrainCell.CreateDisplayList();
 var
   iX, iY: Integer;
-  iTempX1, iTempX2 : Double;
-  iTempY1, iTempY2 : Double;
 
 procedure SendTerrainPoint(aX,aY : integer);
 begin
@@ -110,12 +108,6 @@ end;
 begin
   FDisplayList.InitDisplayList();
   FDisplayList.StartList();
-
-  iTempX1 := ((FEndPoint.X-1)) / (Terrain.TerrainWidth-1);
-  iTempY1 := ( (((Terrain.TerrainHeight-1) + CELLSIZE ) - (FEndPoint.Y-1))) / (Terrain.TerrainHeight-1);
-  iTempX2 := Frac( iTempX1 );
-  iTempY2 := Frac( iTempY1 );
-
   for iY := (FStartPoint.Y-1) to FEndPoint.Y-2 do
   begin
     glBegin(GL_TRIANGLE_STRIP);

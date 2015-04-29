@@ -36,12 +36,11 @@ uses
   Main in 'Main.pas',
   Player in 'Player.pas',
   CallBack in 'CallBack.pas',
-  dglOpenGL in '..\Libraries\OpenGL\dglOpenGL.pas',
   Sounds in 'Sounds.pas';
 
 begin
   Application.Initialize;
-  Application.Title := 'DemoApplication';
+  Application.Title := 'Demo';
   Application.CreateForm(TConfigurationForm, ConfigurationForm);
   Application.Run;
 end.

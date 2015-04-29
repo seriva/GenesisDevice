@@ -34,13 +34,11 @@ unit GDMain;
 interface
 
 uses
-  LCLIntf, LCLType,
+  LCLIntf,
+  LCLType,
   SysUtils,
-  IniFiles,
-  Windows,
   dglOpenGL,
   GDSettings,
-  GDFont,
   GDRenderer,
   GDConsole,
   GDTiming,
@@ -108,55 +106,18 @@ end;
 {******************************************************************************}
 
 procedure TGDMain.InitBaseResources();
-var
-  iIniFile      : TIniFile;
-  iPathString   : String;
-  iLoadingInput : TGDLoadingInput;
-
 begin
   Timing.Start();
-  Console.Write('......Initializing base recources');
-  iPathString := FP_INITS + ENGINE_INI;
-  iIniFile := TIniFile.Create( iPathString );
+  Console.Write('......Initializing engine recources');
 
-  //init system font
-  Font.InitFont( iIniFile.ReadString('Base', 'SystemFont', 'console.fnt') );
-
-  //init the mouse
-  GUIManager.MouseCursor.InitMouse( iIniFile.ReadString('Base', 'MouseCursor', 'mouse.bmp'),40);
-  ShowCursor(false);
-
-  //init the console
-  Console.InitConsole();
-
-  //init the loadingscreen
-  iLoadingInput.X := 500;
-  iLoadingInput.Y := 575;
-  iLoadingInput.BarR := 0.0;
-  iLoadingInput.BarG := 0.0;
-  iLoadingInput.BarB := 0.7;
-  iLoadingInput.BarA := 1.0;
-  iLoadingInput.LineR := 1.0;
-  iLoadingInput.LineG := 1.0;
-  iLoadingInput.LineB := 1.0;
-  iLoadingInput.LineA := 1.0;
-  iLoadingInput.BackR := 0.3;
-  iLoadingInput.BackG := 0.3;
-  iLoadingInput.BackB := 0.3;
-  iLoadingInput.BackA := 1.0;
-  GUIManager.LoadingScreen.InitLoadingScreen( iLoadingInput );
-
-  FreeAndNil(iIniFile);
-
-  //init the camera
+  GUI.InitGUI();
   Camera.InitCamera(0, 8192, 32768);
-
-  //init and timing
   Statistics.InitStatistics();
   Modes.InitModes();
+  Console.InitConsole();
 
   Timing.Stop();
-  Console.Write('......Done initializing base resources (' + Timing.TimeInSeconds + ' Sec)');
+  Console.Write('......Done initializing engine resources (' + Timing.TimeInSeconds + ' Sec)');
 end;
 
 {******************************************************************************}
@@ -166,12 +127,10 @@ end;
 procedure TGDMain.ClearBaseResources();
 begin
   Input.ClearInputActions();
-  Font.Clear();
   Console.Clear();
   Octree.Clear();
-  ShowCursor(true);
   CellManager.Clear();
-  GUIManager.Clear();
+  GUI.Clear();
   Map.Clear();
   SoundList.Clear();
 end;
@@ -243,7 +202,7 @@ end;
 {* Render ortho                                                               *}
 {******************************************************************************}
 
-procedure RenderOrtho();
+procedure RenderGUI();
 begin
   //rendering 2d stuff (console,stats,interfaces, menus enz)
   Renderer.SwitchToOrtho();
@@ -251,7 +210,7 @@ begin
     CallBack.RenderInterface();
     If Modes.RenderStats then Statistics.Render();
     Console.Render();
-    GUIManager.MouseCursor.Render();
+    GUI.MouseCursor.Render();
   Renderer.SwitchToPerspective();
 end;
 
@@ -358,7 +317,7 @@ begin
 
   //render debug and ortho stuff
   RenderDebug();
-  RenderOrtho();
+  RenderGUI();
 
   //end the frame and increment the framecounter
   Renderer.EndFrame();

@@ -63,7 +63,6 @@ Type
   private
   public
     Direction : TGDVector;
-    MeshDirection : TGDVector;
     Ambient   : TGDColor;
     Diffuse   : TGDColor;
 
@@ -72,8 +71,6 @@ Type
 
     procedure   InitDirectionalLight( aInput : TGDDirectionalLightInput );
     procedure   Clear();
-
-    procedure   RotateDirection(aRot : TGDVector);
   end;
 
 var
@@ -88,7 +85,6 @@ implementation
 constructor TGDDirectionalLight.Create();
 begin
   Direction := TGDVector.Create(-1,-1,-1);
-  MeshDirection := TGDVector.Create();
   Ambient   := TGDColor.Create(1.0, 1.0, 1.0, 1.0);
   Diffuse   := TGDColor.Create(1.0, 1.0, 1.0, 1.0);
 end;
@@ -99,7 +95,6 @@ end;
 
 destructor TGDDirectionalLight.Destroy();
 begin
-  FreeAndNil(MeshDirection);
   FreeAndNil(Direction);
   FreeAndNil(Ambient);
   FreeAndNil(Diffuse);
@@ -126,31 +121,6 @@ begin
   Direction.Reset(-1,-1,-1);
   Ambient.Reset(1, 1, 1, 1);
   Diffuse.Reset(1, 1, 1, 1);
-end;
-
-{******************************************************************************}
-{* Rotate DirectionalLight                                                    *}
-{******************************************************************************}
-
-procedure   TGDDirectionalLight.RotateDirection(aRot : TGDVector);
-var
-  iM : TGDMatrix;
-begin
-  //Create resources
-  iM := TGDMatrix.Create();
-  MeshDirection := Direction.CopyToClass();
-
-   //Rotate light direction
-  iM.CreateRotationy( aRot.Y );
-  iM.ApplyToVector( MeshDirection );
-
-  iM.CreateRotationZ( aRot.Z );
-  iM.ApplyToVector( MeshDirection );
-
-  iM.CreateRotationX( aRot.X );
-  iM.ApplyToVector( MeshDirection );
-
-  FreeAndNil(iM);
 end;
 
 end.

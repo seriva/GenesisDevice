@@ -173,13 +173,14 @@ end;
 
 Function TPlayer.PlayerInWater() : boolean;
 var
-  aV : TGDVectorRecord;
+  aV : TGDVector;
 begin
   aV := gdCameraGetPosition();
   if aV.Y < gdMapWaterHeight() + 100 then
     result := true
   else
     result := false;
+  FreeAndNil(aV);
 end;
 
 {******************************************************************************}
@@ -188,13 +189,14 @@ end;
 
 Function TPlayer.PlayerUnderWater() : boolean;
 var
-  aV : TGDVectorRecord;
+  aV : TGDVector;
 begin
   aV := gdCameraGetPosition();
   if aV.Y < gdMapWaterHeight() then
     result := true
   else
     result := false;
+  FreeAndNil(aV);
 end;
 
 {******************************************************************************}
@@ -204,7 +206,7 @@ end;
 procedure TPlayer.DoPlayerCollisionAndPhysics();
 var
   iTerrainHeight : Double;
-  aV : TGDVectorRecord;
+  aV : TGDVector;
 begin
   FMovementSpeed := FMovementMultiplier * gdTimingFrameTime() / 1000;
   FSinkSpeed     := FSinkMultiplier * gdTimingFrameTime() / 1000;
@@ -216,6 +218,7 @@ begin
     aV := gdCameraGetPosition();
     aV.Y := aV.Y - FSinkSpeed;
     gdCameraSetPosition(aV.X, aV.Y, aV.Z);
+    FreeAndNil(aV);
   end;
 
   aV := gdCameraGetPosition();
@@ -225,6 +228,7 @@ begin
   begin
     aV.Y := iTerrainHeight + 256;
     gdCameraSetPosition( aV.X, aV.Y, aV.z );
+    FreeAndNil(aV);
     exit;
   end
   else
@@ -233,6 +237,7 @@ begin
     begin
       aV.Y := iTerrainHeight + 256;
       gdCameraSetPosition( aV.X, aV.Y, aV.z );
+      FreeAndNil(aV);
       exit;
     end;
 
@@ -240,14 +245,17 @@ begin
     begin
       aV.Y := iTerrainHeight+170;
       gdCameraSetPosition( aV.X, aV.Y, aV.z );
+      FreeAndNil(aV);
     end
     else
       if aV.Y > gdMapWaterHeight()+96 then
       begin
         aV.Y := gdMapWaterHeight()+96;
         gdCameraSetPosition( aV.X, aV.Y, aV.z );
+        FreeAndNil(aV);
       end;
   end;
+  FreeAndNil(aV);
 End;
 
 end.

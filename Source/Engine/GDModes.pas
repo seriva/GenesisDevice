@@ -49,16 +49,16 @@ type
   private
     //modes
     FRenderWireframe        : Boolean;
-    FRenderNodeBoxes        : Boolean;
-    FRenderObjectBoxes      : Boolean;
-    FRenderNormals          : Boolean;
-    FRenderStats            : Boolean;
-    FRenderTerrain          : Boolean;
-    FRenderSky              : Boolean;
-    FRenderWater            : Boolean;
-    FRenderMeshes           : Boolean;
-    FRenderGrass            : Boolean;
-    FRenderInterfaces       : Boolean;
+    FRenderNodeBoxes   : Boolean;
+    FRenderObjectBoxes : Boolean;
+    FRenderNormals     : Boolean;
+    FRenderStats       : Boolean;
+    FRenderTerrain     : Boolean;
+    FRenderSky         : Boolean;
+    FRenderWater       : Boolean;
+    FRenderMeshes      : Boolean;
+    FRenderGrass       : Boolean;
+    FRenderGUI         : Boolean;
   public
     property RenderWireframe : boolean read FRenderWireframe write FRenderWireframe;
     property RenderNodeBoxes : boolean read FRenderNodeBoxes write FRenderNodeBoxes;
@@ -70,7 +70,7 @@ type
     property RenderMeshes : boolean read FRenderMeshes write FRenderMeshes;
     property RenderWater : boolean read FRenderWater write FRenderWater;
     property RenderGrass : boolean read FRenderGrass write FRenderGrass;
-    property RenderInterfaces : boolean read FRenderInterfaces write FRenderInterfaces;
+    property RenderGUI : boolean read FRenderGUI write FRenderGUI;
 
     constructor Create();
     destructor  Destroy(); override;
@@ -97,7 +97,7 @@ begin
   Console.AddCommand('RTreeNodes', '0,1 : Show or hide treenodes', CT_BOOLEAN, @FRenderNodeBoxes);
   Console.AddCommand('ROBJBoxes', '0,1 : Show or hide objectboxes', CT_BOOLEAN, @FRenderObjectBoxes);
   Console.AddCommand('RStats', '0,1 : Show or hide stats', CT_BOOLEAN, @FRenderStats);
-  Console.AddCommand('RInterface', '0,1 : Show or hide interface', CT_BOOLEAN, @FRenderInterfaces);
+  Console.AddCommand('RGUI', '0,1 : Show or hide GUI', CT_BOOLEAN, @FRenderGUI);
 
   Inherited;
 end;
@@ -119,7 +119,7 @@ begin
   FRenderWater       := true;
   FRenderGrass       := true;
   FRenderMeshes      := true;
-  FRenderInterfaces  := true;
+  FRenderGUI         := true;
 end;
 
 end.

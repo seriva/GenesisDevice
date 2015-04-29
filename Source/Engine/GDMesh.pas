@@ -37,14 +37,9 @@ Uses
   dglOpenGL,
   GDTypes,
   GDConsole,
-  GDCamera,
-  GDGLObjects,
   GDConstants,
-  GDRenderer,
   GDMaterials,
   Contnrs,
-  GDModes,
-  GDWater,
   FileUtil,
   GDStringParsing;
 

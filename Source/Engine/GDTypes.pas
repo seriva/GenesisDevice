@@ -33,7 +33,6 @@ unit GDTypes;
 {* - Matrix                                                                   *}
 {* - Triangle                                                                 *}
 {* - Quad                                                                     *}
-{* - Line                                                                     *}
 {******************************************************************************}
 
 interface
@@ -48,10 +47,6 @@ type
 {******************************************************************************}
 {* Vector                                                                     *}
 {******************************************************************************}
-
-  TGDVectorRecord = record
-    X,Y,Z : Single;
-  end;
 
   TGDVector = class(TObject)
   private
@@ -68,27 +63,19 @@ type
     procedure   Reset(aX,aY,aZ: Single);overload;
     procedure   Reset(aD : Single);overload;
     procedure   Reset(aVector : TGDVector);overload;
-    procedure   Reset(aVector : TGDVectorRecord);overload;
     procedure   Add(aX,aY,aZ: Single);overload;
     procedure   Add(aD : Single);overload;
     procedure   Add(aVector    : TGDVector);overload;
-    procedure   Add(aVector    : TGDVectorRecord);overload;
     procedure   Substract(aX,aY,aZ: Single);overload;
     procedure   Substract(aD : Single);overload;
     procedure   Substract(aVector : TGDVector);overload;
-    procedure   Substract(aVector : TGDVectorRecord);overload;
     procedure   Multiply(aX,aY,aZ: Single);overload;
     procedure   Multiply(aD : Single);overload;
     procedure   Multiply(aVector : TGDVector);overload;
-    procedure   Multiply(aVector : TGDVectorRecord);overload;
     procedure   Devide(aX,aY,aZ: Single);overload;
     procedure   Devide(aD : Single);overload;
     procedure   Devide(aVector : TGDVector);overload;
-    procedure   Devide(aVector : TGDVectorRecord);overload;
-    function    CopyToNewClass(): TGDVector;
-    function    CopyToClass(): TGDVector;
-    procedure   CopyToSingle(var aX, aY, aZ : Single);
-    function    CopyToRecord(): TGDVectorRecord;
+    function    Copy(): TGDVector;
     procedure   Snap(aD : Single); overload;
     procedure   Invert();
 
@@ -105,10 +92,6 @@ type
 {* UV                                                                         *}
 {******************************************************************************}
 
-  TGDUVCoordRecord = record
-    U,V : Single;
-  end;
-
   TGDUVCoord = class(TObject)
   private
     FUVArray : array[0..1] of Single;
@@ -123,27 +106,19 @@ type
     procedure   Reset(aU,aV : Single);overload;
     procedure   Reset(aD : Single);overload;
     procedure   Reset(aUVCoord : TGDUVCoord);overload;
-    procedure   Reset(aUVCoord : TGDUVCoordRecord);overload;
     procedure   Add(aU,aV : Single);overload;
     procedure   Add(aD : Single);overload;
     procedure   Add(aUVCoord : TGDUVCoord);overload;
-    procedure   Add(aUVCoord : TGDUVCoordRecord);overload;
     procedure   Substract(aU,aV : Single);overload;
     procedure   Substract(aD : Single);overload;
     procedure   Substract(aUVCoord : TGDUVCoord);overload;
-    procedure   Substract(aUVCoord : TGDUVCoordRecord);overload;
     procedure   Multiply(aU,aV : Single);overload;
     procedure   Multiply(aD : Single);overload;
     procedure   Multiply(aUVCoord : TGDUVCoord);overload;
-    procedure   Multiply(aUVCoord : TGDUVCoordRecord);overload;
     procedure   Devide(aU,aV : Single);overload;
     procedure   Devide(aD : Single);overload;
     procedure   Devide(aUVCoord : TGDUVCoord);overload;
-    procedure   Devide(aUVCoord : TGDUVCoordRecord);overload;
-    function    CopyToNewClass(): TGDUVCoord;
-    function    CopyToClass(): TGDUVCoord;
-    procedure   CopyToSingle(var aU, aV : Single);
-    function    CopyToRecord(): TGDUVCoordRecord;
+    function    Copy(): TGDUVCoord;
     procedure   Snap(aD : Single);
     procedure   Invert();
 
@@ -153,10 +128,6 @@ type
 {******************************************************************************}
 {* Color                                                                      *}
 {******************************************************************************}
-
-  TGDColorRecord = record
-    R,G,B,A : Single;
-  end;
 
   TGDColor = class(TObject)
   private
@@ -174,11 +145,7 @@ type
     procedure   Reset(aR,aG,aB,aA : Single);overload;
     procedure   Reset(aD : Single);overload;
     procedure   Reset(aColor : TGDColor);overload;
-    procedure   Reset(aColor : TGDColorRecord);overload;
-    function    CopyToNewClass(): TGDColor;
-    function    CopyToClass(): TGDColor;
-    procedure   CopyToSingle(var aR,aG,aB,aA : Single);
-    function    CopyToRecord(): TGDColorRecord;
+    function    Copy(): TGDColor;
     procedure   Invert();
 
     procedure   Red();
@@ -194,10 +161,6 @@ type
 {* Matrix                                                                     *}
 {******************************************************************************}
 
-  TGDMatrixRecord = record
-    MatrixArray : array[0..3, 0..3] of Single;
-  end;
-
   TGDMatrix = class(TObject)
   private
     FMatrixArray : array[0..3, 0..3] of Single;
@@ -210,52 +173,20 @@ type
     procedure   IdentityMatrix();
     procedure   Invert();
 
+    procedure   CreateRotation( aV : TGDVector );
     procedure   CreateRotationX(aRX : Single);
     procedure   CreateRotationY(aRY : Single);
     procedure   CreateRotationZ(aRZ : Single);
-    procedure   CreateRotation( aV : TGDVector );overload;
-    procedure   CreateRotation( aV : TGDVectorRecord );overload;
     procedure   ApplyToVector( aV : TGDVector );overload;
-    procedure   ApplyToVector( aV : TGDVectorRecord );overload;
 
-    function    CopyToNewClass(): TGDMatrix;
-    function    CopyToClass(): TGDMatrix;
-    function    CopyToRecord(): TGDMatrixRecord;
+    function    Copy(): TGDMatrix;
 
     function    ArrayPointer() : PGLfloat;
-  end;
-
-
-{******************************************************************************}
-{* Line class                                                                 *}
-{******************************************************************************}
-
-  TGDLineRecord = record
-    V1, V2 : TGDVectorRecord;
-  end;
-
-  TGDLine = class(TObject)
-  private
-  public
-    Vertices : array[0..1] of TGDVector;
-    Property V1 : TGDVector read Vertices[0] write Vertices[0];
-    Property V2 : TGDVector read Vertices[1] write Vertices[1];
-
-    constructor Create();overload;
-    constructor Create(aX1,aY1,aZ1,aX2,aY2,aZ2 : Single);overload;
-    destructor  Destroy(); override;
-
-    procedure   Reset(aX1,aY1,aZ1,aX2,aY2,aZ2 : Single);overload;
-    procedure   Render();
   end;
 
 {******************************************************************************}
 {* Triangle class                                                             *}
 {******************************************************************************}
-
-  TGDTriangleRecord = record
-    V1, V2, V3 : TGDVectorRecord;
-  end;
 
   TGDTriangle = class(TObject)
   private
@@ -273,16 +204,10 @@ type
 
     procedure   Reset(aX1,aY1,aZ1,aX2,aY2,aZ2,aX3,aY3,aZ3 : Single);
     procedure   Move( aMove : TGDVector ); overload;
-    procedure   Move( aMove : TGDVectorRecord ); overload;
     procedure   Rotate(  aRotation : TGDVector ); overload;
-    procedure   Rotate(  aRotation : TGDVectorRecord ); overload;
     procedure   Scale(  aScale : TGDVector ); overload;
-    procedure   Scale(  aScale : TGDVectorRecord ); overload;
-    function    CopyToNewClass(): TGDTriangle;
-    function    CopyToClass(): TGDTriangle;
-    function    CopyToRecord(): TGDTriangleRecord;
+    function    Copy(): TGDTriangle;
     procedure   CalculateNormal();
-
     Function    PointInTraingle( aV : TGDVector ) : boolean;
 
     procedure   Render();
@@ -293,10 +218,6 @@ type
 {******************************************************************************}
 {* Quad class                                                                 *}
 {******************************************************************************}
-
-  TGDQuadRecord = record
-    V1, V2, V3, V4 : TGDVectorRecord;
-  end;
 
   TGDQuad = class(TObject)
   private
@@ -315,15 +236,10 @@ type
 
     procedure   Reset(aX1,aY1,aZ1,aX2,aY2,aZ2 : Single);overload;
     procedure   Move( aMove : TGDVector );overload;
-    procedure   Move( aMove : TGDVectorRecord );overload;
     procedure   Rotate(  aRotation : TGDVector );overload;
-    procedure   Rotate(  aRotation : TGDVectorRecord );overload;
     procedure   Scale(  aScale : TGDVector );overload;
-    procedure   Scale(  aScale : TGDVectorRecord );overload;
     procedure   CalculateNormal();
-
     Function    PointInQuad( aV : TGDVector ) : boolean;
-    function    LineThroughQuad( aLine : TGDLine ) : boolean;
 
     procedure   Render(aNormal : TGDVector);
     procedure   RenderSolid();
@@ -338,11 +254,11 @@ var
 begin
   iCP1 := TGDVector.Create();
   iCP2 := TGDVector.Create();
-  iBA := aB.CopyToNewClass();
+  iBA := aB.Copy();
   iBA.Substract( aA );
-  iP1A := aP1.CopyToNewClass();
+  iP1A := aP1.Copy();
   iP1A.Substract(aA);
-  iP2A := aP2.CopyToNewClass();
+  iP2A := aP2.Copy();
   iP2A.Substract(aA);
   iCP1.CrossProduct( iBA, iP1A );
   iCP2.CrossProduct( iBA, iP2A );
@@ -409,13 +325,6 @@ begin
   Z := aVector.Z;
 end;
 
-procedure TGDVector.Reset(aVector : TGDVectorRecord);
-begin
-  X := aVector.x;
-  Y := aVector.Y;
-  Z := aVector.Z;
-end;
-
 {******************************************************************************}
 {* Add a vector                                                               *}
 {******************************************************************************}
@@ -435,13 +344,6 @@ begin
 end;
 
 procedure TGDVector.Add(aVector : TGDVector);
-begin
-  X := X + aVector.X;
-  Y := Y + aVector.Y;
-  Z := Z + aVector.Z;
-end;
-
-procedure TGDVector.Add(aVector : TGDVectorRecord);
 begin
   X := X + aVector.X;
   Y := Y + aVector.Y;
@@ -473,13 +375,6 @@ begin
   Z := Z - aVector.Z;
 end;
 
-procedure TGDVector.Substract(aVector : TGDVectorRecord);
-begin
-  X := X - aVector.X;
-  Y := Y - aVector.Y;
-  Z := Z - aVector.Z;
-end;
-
 {******************************************************************************}
 {* Multiply the vector                                                        *}
 {******************************************************************************}
@@ -499,13 +394,6 @@ begin
 end;
 
 procedure TGDVector.Multiply(aVector : TGDVector);
-begin
-  X := X * aVector.X;
-  Y := Y * aVector.Y;
-  Z := Z * aVector.Z;
-end;
-
-procedure TGDVector.Multiply(aVector : TGDVectorRecord);
 begin
   X := X * aVector.X;
   Y := Y * aVector.Y;
@@ -537,41 +425,13 @@ begin
   Z := Z / aVector.Z;
 end;
 
-procedure TGDVector.Devide(aVector : TGDVectorRecord);
-begin
-  X := X / aVector.X;
-  Y := Y / aVector.Y;
-  Z := Z / aVector.Z;
-end;
-
 {******************************************************************************}
 {* Copy the vector                                                            *}
 {******************************************************************************}
 
-function TGDVector.CopyToNewClass(): TGDVector;
+function TGDVector.Copy(): TGDVector;
 begin
   result := TGDVector.Create(X,Y,Z);
-end;
-
-function    TGDVector.CopyToClass(): TGDVector;
-begin
-  result.X := self.X;
-  result.Y := self.Y;
-  result.Z := self.Z;
-end;
-
-procedure   TGDVector.CopyToSingle(var aX, aY, aZ : Single);
-begin
-  aX := self.X;
-  aY := self.Y;
-  aZ := self.Z;
-end;
-
-function TGDVector.CopyToRecord() : TGDVectorRecord;
-begin
-  result.X := self.X;
-  result.Y := self.Y;
-  result.Z := self.Z;
 end;
 
 {******************************************************************************}
@@ -716,12 +576,6 @@ begin
   V := aUVCoord.V;
 end;
 
-procedure TGDUVCoord.Reset(aUVCoord : TGDUVCoordRecord);
-begin
-  U := aUVCoord.U;
-  V := aUVCoord.V;
-end;
-
 {******************************************************************************}
 {* Add a UV                                                                   *}
 {******************************************************************************}
@@ -739,12 +593,6 @@ begin
 end;
 
 procedure TGDUVCoord.Add(aUVCoord : TGDUVCoord);
-begin
-  U := U + aUVCoord.U;
-  V := V + aUVCoord.V;
-end;
-
-procedure TGDUVCoord.Add(aUVCoord : TGDUVCoordRecord);
 begin
   U := U + aUVCoord.U;
   V := V + aUVCoord.V;
@@ -772,12 +620,6 @@ begin
   V := V - aUVCoord.V;
 end;
 
-procedure TGDUVCoord.Substract(aUVCoord : TGDUVCoordRecord);
-begin
-  U := U - aUVCoord.U;
-  V := V - aUVCoord.V;
-end;
-
 {******************************************************************************}
 {* Multiply the UV                                                            *}
 {******************************************************************************}
@@ -795,12 +637,6 @@ begin
 end;
 
 procedure TGDUVCoord.Multiply(aUVCoord : TGDUVCoord);
-begin
-  U := U * aUVCoord.U;
-  V := V * aUVCoord.V;
-end;
-
-procedure TGDUVCoord.Multiply(aUVCoord : TGDUVCoordRecord);
 begin
   U := U * aUVCoord.U;
   V := V * aUVCoord.V;
@@ -828,37 +664,13 @@ begin
   V := V / aUVCoord.V;
 end;
 
-procedure TGDUVCoord.Devide(aUVCoord : TGDUVCoordRecord);
-begin
-  U := U / aUVCoord.U;
-  V := V / aUVCoord.V;
-end;
-
 {******************************************************************************}
 {* Copy the UV                                                                *}
 {******************************************************************************}
 
-function TGDUVCoord.CopyToNewClass(): TGDUVCoord;
+function TGDUVCoord.Copy(): TGDUVCoord;
 begin
   result := TGDUVCoord.Create(U,V);
-end;
-
-function TGDUVCoord.CopyToClass(): TGDUVCoord;
-begin
-  result.U := self.U;
-  result.V := self.V;
-end;
-
-procedure TGDUVCoord.CopyToSingle(var aU, aV : Single);
-begin
-  aU := self.U;
-  aV := self.V;
-end;
-
-function TGDUVCoord.CopyToRecord() : TGDUVCoordRecord;
-begin
-  result.U := self.U;
-  result.V := self.V;
 end;
 
 {******************************************************************************}
@@ -947,45 +759,13 @@ begin
   FColorArray[3] := aColor.A;
 end;
 
-procedure TGDColor.Reset(aColor : TGDColorRecord);
-begin
-  FColorArray[0] := aColor.R;
-  FColorArray[1] := aColor.G;
-  FColorArray[2] := aColor.B;
-  FColorArray[3] := aColor.A;
-end;
-
 {******************************************************************************}
 {* Copy the color                                                             *}
 {******************************************************************************}
 
-function TGDColor.CopyToNewClass(): TGDColor;
+function TGDColor.Copy(): TGDColor;
 begin
   result := TGDColor.Create(R,G,B,A);
-end;
-
-function  TGDColor.CopyToClass(): TGDColor;
-begin
-  result.R := self.R;
-  result.G := self.G;
-  result.B := self.B;
-  result.A := self.A;
-end;
-
-procedure TGDColor.CopyToSingle(var aR,aG,aB,aA : Single);
-begin
-  aR := self.R;
-  aG := self.G;
-  aB := self.B;
-  aA := self.A;
-end;
-
-function TGDColor.CopyToRecord() : TGDColorRecord;
-begin
-  result.R := self.R;
-  result.G := self.G;
-  result.B := self.B;
-  result.A := self.A;
 end;
 
 {******************************************************************************}
@@ -1247,28 +1027,6 @@ begin
   FreeAndNil(iMZ);
 end;
 
-procedure TGDMatrix.CreateRotation( aV : TGDVectorRecord );
-var
-  iM, iMX, iMY, iMZ : TGDMatrix;
-begin
-  iM := TGDMatrix.Create();
-  iMX := TGDMatrix.Create();
-  iMY := TGDMatrix.Create();
-  iMZ := TGDMatrix.Create();
-
-  iMX.CreateRotationX(aV.x);
-  iMY.CreateRotationY(aV.y);
-  iMZ.CreateRotationZ(aV.z);
-
-  iM.Multiply(iMZ,iMY);
-  Multiply(iMX,iM);
-
-  FreeAndNil(iM);
-  FreeAndNil(iMX);
-  FreeAndNil(iMY);
-  FreeAndNil(iMZ);
-end;
-
 {******************************************************************************}
 {* Apply the matrix to a vector                                               *}
 {******************************************************************************}
@@ -1277,30 +1035,18 @@ procedure TGDMatrix.ApplyToVector( aV : TGDVector );
 var
   iV : TGDVector;
 begin
-  iV := aV.CopyToNewClass();
+  iV := aV.Copy();
   aV.x := iV.x * FMatrixArray[0,0] + iV.y * FMatrixArray[1,0] + iV.z * FMatrixArray[2,0] + FMatrixArray[3,0];
   aV.y := iV.x * FMatrixArray[0,1] + iV.y * FMatrixArray[1,1] + iV.z * FMatrixArray[2,1] + FMatrixArray[3,1];
   aV.z := iV.x * FMatrixArray[0,2] + iV.y * FMatrixArray[1,2] + iV.z * FMatrixArray[2,2] + FMatrixArray[3,2];
   FreeAndNil(iV)
 end;
 
-procedure TGDMatrix.ApplyToVector( aV : TGDVectorRecord );
-var
-  iV : TGDVectorRecord;
-begin
-  iV.x := aV.x;
-  iV.y := aV.y;
-  iV.z := aV.z;
-  aV.x := iV.x * FMatrixArray[0,0] + iV.y * FMatrixArray[1,0] + iV.z * FMatrixArray[2,0] + FMatrixArray[3,0];
-  aV.y := iV.x * FMatrixArray[0,1] + iV.y * FMatrixArray[1,1] + iV.z * FMatrixArray[2,1] + FMatrixArray[3,1];
-  aV.z := iV.x * FMatrixArray[0,2] + iV.y * FMatrixArray[1,2] + iV.z * FMatrixArray[2,2] + FMatrixArray[3,2];
-end;
-
 {******************************************************************************}
 {* Copy the matrix                                                            *}
 {******************************************************************************}
 
-function TGDMatrix.CopyToNewClass() : TGDMatrix;
+function TGDMatrix.Copy() : TGDMatrix;
 Var
   iR,iC: integer;
 begin
@@ -1310,24 +1056,6 @@ begin
       result.FMatrixArray[iC,iR] := FMatrixArray[iC,iR];
 end;
 
-function TGDMatrix.CopyToClass() : TGDMatrix;
-Var
-  iR,iC: integer;
-begin
-  for iC := 0 to 3 do
-    for iR := 0 to 3 do
-      result.FMatrixArray[iC,iR] := FMatrixArray[iC,iR];
-end;
-
-function TGDMatrix.CopyToRecord() : TGDMatrixRecord;
-var
- iI, iJ : Integer;
-begin
-  For iI := 0 to 3 do
-    For iJ := 0 to 3 do
-       result.MatrixArray[iI][iJ] := self.FMatrixArray[iI][iJ];
-end;
-
 {******************************************************************************}
 {* Get the matrix array pointer                                               *}
 {******************************************************************************}
@@ -1335,61 +1063,6 @@ end;
 function TGDMatrix.ArrayPointer() : PGLfloat;
 begin
   result := @FMatrixArray;
-end;
-
-
-{******************************************************************************}
-{* Create the line class                                                      *}
-{******************************************************************************}
-
-constructor TGDLine.Create();
-begin
-  Vertices[0] := TGDVector.Create();
-  Vertices[1] := TGDVector.Create();
-end;
-
-{******************************************************************************}
-{* Create the line class                                                      *}
-{******************************************************************************}
-
-constructor TGDLine.Create(aX1,aY1,aZ1,aX2,aY2,aZ2 : Single);
-begin
-  Vertices[0] := TGDVector.Create(aX1,aY1,aZ1);
-  Vertices[1] := TGDVector.Create(aX2,aY2,aZ2);
-end;
-
-{******************************************************************************}
-{* Destroy the line class                                                     *}
-{******************************************************************************}
-
-destructor  TGDLine.Destroy();
-begin
-  inherited;
-  FreeAndNil(Vertices[1]);
-  FreeAndNil(Vertices[0]);
-end;
-
-{******************************************************************************}
-{* Reset the line                                                             *}
-{******************************************************************************}
-
-procedure   TGDLine.Reset(aX1,aY1,aZ1,aX2,aY2,aZ2 : Single);
-begin
-  Vertices[0].Reset(aX1,aY1,aZ1);
-  Vertices[1].Reset(aX2,aY2,aZ2);
-end;
-
-{******************************************************************************}
-{* Render the line                                                            *}
-{******************************************************************************}
-
-procedure TGDLine.Render();
-begin
-  glColor4f(1, 0, 1, 1);
-  glBegin(GL_LINES);
-    glVertex3fv(Vertices[0].ArrayPointer);
-    glVertex3fv(Vertices[1].ArrayPointer);
-  glEnd();
 end;
 
 {******************************************************************************}
@@ -1447,13 +1120,6 @@ begin
   Vertices[2].Add( aMove );
 end;
 
-procedure TGDTriangle.Move( aMove : TGDVectorRecord );
-begin
-  Vertices[0].Add( aMove );
-  Vertices[1].Add( aMove );
-  Vertices[2].Add( aMove );
-end;
-
 {******************************************************************************}
 {* Rotate the triangle                                                        *}
 {******************************************************************************}
@@ -1470,33 +1136,11 @@ begin
   FreeAndNil(iM);
 end;
 
-procedure TGDTriangle.Rotate( aRotation : TGDVectorRecord );
-var
-  iM : TGDMatrix;
-begin
-  iM := TGDMatrix.Create();
-  iM.CreateRotation( aRotation );
-  iM.ApplyToVector( Vertices[0] );
-  iM.ApplyToVector( Vertices[1] );
-  iM.ApplyToVector( Vertices[2] );
-  FreeAndNil(iM);
-end;
-
 {******************************************************************************}
 {* Scale the triangle                                                         *}
 {******************************************************************************}
 
 procedure   TGDTriangle.Scale( aScale : TGDVector );
-begin
-  Vertices[0].Multiply(aScale);
-  Vertices[0].Devide(100);
-  Vertices[1].Multiply(aScale);
-  Vertices[1].Devide(100);
-  Vertices[2].Multiply(aScale);
-  Vertices[2].Devide(100);
-end;
-
-procedure   TGDTriangle.Scale( aScale : TGDVectorRecord );
 begin
   Vertices[0].Multiply(aScale);
   Vertices[0].Devide(100);
@@ -1533,29 +1177,9 @@ end;
 {* Copy the triangle                                                          *}
 {******************************************************************************}
 
-function TGDTriangle.CopyToNewClass(): TGDTriangle;
+function TGDTriangle.Copy(): TGDTriangle;
 begin
   result := TGDTriangle.Create( V1.X, V1.Y, V1.Z, V2.X, V2.Y, V2.Z, V3.X, V3.Y, V3.Z );
-end;
-
-function TGDTriangle.CopyToClass(): TGDTriangle;
-begin
-  result.Reset( V1.X, V1.Y, V1.Z, V2.X, V2.Y, V2.Z, V3.X, V3.Y, V3.Z );
-end;
-
-function TGDTriangle.CopyToRecord() : TGDTriangleRecord;
-begin
-  result.V1.X := Self.Vertices[0].X;
-  result.V1.Y := Self.Vertices[0].Y;
-  result.V1.Z := Self.Vertices[0].Z;
-
-  result.V2.X := Self.Vertices[1].X;
-  result.V2.Y := Self.Vertices[1].Y;
-  result.V2.Z := Self.Vertices[1].Z;
-  
-  result.V3.X := Self.Vertices[2].X;
-  result.V3.Y := Self.Vertices[2].Y;
-  result.V3.Z := Self.Vertices[2].Z;
 end;
 
 {******************************************************************************}
@@ -1663,14 +1287,6 @@ begin
   Vertices[3].Add( aMove );
 end;
 
-procedure TGDQuad.Move( aMove : TGDVectorRecord );
-begin
-  Vertices[0].Add( aMove );
-  Vertices[1].Add( aMove );
-  Vertices[2].Add( aMove );
-  Vertices[3].Add( aMove );
-end;
-
 {******************************************************************************}
 {* Rotate the quad                                                            *}
 {******************************************************************************}
@@ -1688,36 +1304,11 @@ begin
   FreeAndNil(iM);
 end;
 
-procedure TGDQuad.Rotate( aRotation : TGDVectorRecord );
-var
-  iM : TGDMatrix;
-begin
-  iM := TGDMatrix.Create();
-  iM.CreateRotation( aRotation );
-  iM.ApplyToVector( Vertices[0] );
-  iM.ApplyToVector( Vertices[1] );
-  iM.ApplyToVector( Vertices[2] );
-  iM.ApplyToVector( Vertices[3] );
-  FreeAndNil(iM);
-end;
-
 {******************************************************************************}
 {* Scale the quad                                                             *}
 {******************************************************************************}
 
 procedure TGDQuad.Scale( aScale : TGDVector );
-begin
-  Vertices[0].Multiply(aScale);
-  Vertices[0].Devide(100);
-  Vertices[1].Multiply(aScale);
-  Vertices[1].Devide(100);
-  Vertices[2].Multiply(aScale);
-  Vertices[2].Devide(100);
-  Vertices[3].Multiply(aScale);
-  Vertices[3].Devide(100);
-end;
-
-procedure TGDQuad.Scale( aScale : TGDVectorRecord );
 begin
   Vertices[0].Multiply(aScale);
   Vertices[0].Devide(100);
@@ -1750,79 +1341,6 @@ begin
 
   FreeAndNil(iVVector1);
   FreeAndNil(iVVector2);
-end;
-
-{******************************************************************************}
-{* Check if a line passes though a quad                                       *}
-{******************************************************************************}
-
-function TGDQuad.LineThroughQuad( aLine : TGDLine ) : boolean;
-var
-  iVIntersection, iVB     : TGDVector;
-  iVPoint, iVLineDir, iVA : TGDVector;
-  iOriginDistance, iDistance1, iDistance2, iNumerator     : Extended;
-  iDist, iDenominator : Extended;
-
-procedure ClearVectors();
-begin
-  FreeAndNil(iVIntersection);
-  FreeAndNil(iVPoint);
-  FreeAndNil(iVLineDir);
-  FreeAndNil(iVA);
-  FreeAndNil(iVB);
-end;  
-
-begin
-  iVIntersection := TGDVector.Create();
-  iVPoint        := TGDVector.Create();
-  iVLineDir      := TGDVector.Create();
-  iVA            := TGDVector.Create();
-  iVB            := TGDVector.Create();
-
-  iOriginDistance := 0;
-  iDistance1 := 0;
-  iDistance2 := 0;
-  iNumerator := 0.0;
-  iDenominator := 0.0;
-  iDist := 0.0;
-
-  iOriginDistance := -1 * Normal.DotProduct( V1 );
-  iDistance1 := Normal.DotProduct( aLine.V1 ) + iOriginDistance;
-  iDistance2 := Normal.DotProduct( aLine.V2 ) + iOriginDistance;
-
-  if(iDistance1 * iDistance2 >= 0) then
-  begin
-	  result := false;
-    ClearVectors();
-    exit;
-  end;
-
-  iVLineDir.Reset( aLine.V2.x, aLine.V2.Y, aLine.V2.Z );
-  iVLineDir.Substract( aLine.V1 );
-  iVLineDir.Normalize();
-  iNumerator := -1 * ( Normal.DotProduct( aLine.V1 ) + iOriginDistance );
-  iDenominator := Normal.DotProduct( iVLineDir );
-
-  if( iDenominator = 0.0) then
-    iVIntersection.Reset( aLine.V1.x, aLine.V1.y, aLine.V1.z )
-  else
-  begin
-  	iDist := iNumerator / iDenominator;
-    iVPoint.Reset( aLine.V1.x, aLine.V1.y, aLine.V1.z );
-    iVLineDir.Multiply(iDist);
-    iVPoint.Add( iVLineDir );
-    iVIntersection.Reset( iVPoint.X, iVPoint.Y, iVPoint.Z );
-  end;
-
-  if self.PointInQuad( iVIntersection ) then
-  begin
-    result := TRUE;
-    ClearVectors();
-    exit;
-  end;
-
-  result := false;
-  ClearVectors();
 end;
 
 {******************************************************************************}

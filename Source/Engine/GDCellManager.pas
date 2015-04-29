@@ -294,7 +294,7 @@ Begin
   iStepX := Round((Terrain.TerrainWidth-1) / Foliage.GrassCellCountX);
   iStepY := Round((Terrain.TerrainHeight-1) / Foliage.GrassCellCountY);
 
-  GUIManager.LoadingScreen.SetupForUse('Generating foliage...', Round(Terrain.TerrainWidth/iStepX) + Foliage.TreeCount );
+  GUI.LoadingScreen.SetupForUse('Generating foliage...', Round(Terrain.TerrainWidth/iStepX) + Foliage.TreeCount );
 
   //create grasscells
   iI := 1;
@@ -327,7 +327,7 @@ Begin
       iJ := iJ + iStepY;
     end;
     iI := iI + iStepX;
-    GUIManager.LoadingScreen.UpdateBar();
+    GUI.LoadingScreen.UpdateBar();
   end;
 
   //create treecells
@@ -370,7 +370,7 @@ Begin
       else
         goto RedoRandom;
 
-      GUIManager.LoadingScreen.UpdateBar();
+      GUI.LoadingScreen.UpdateBar();
     end;
   end;
   FreeAndNil(iPos);

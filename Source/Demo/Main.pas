@@ -45,7 +45,6 @@ var
   TreeNodes  : boolean;
   ObjBoxes   : boolean;
   Clip       : boolean;
-  OCPlanes   : boolean;
 
   //main classes
   Intro      : TIntro;
@@ -72,7 +71,6 @@ begin
   TreeNodes  := false;
   ObjBoxes   := false;
   Clip       := true;
-  OCPlanes   := false;
 
   //initialize the gamerecources
   gdTimingStart();
@@ -80,11 +78,11 @@ begin
   gdConsoleLog('......Initializing game resources');
   //intro
   Intro   := TIntro.Create();
-  Intro.InitializeIntro('Inits\Intro.ini');
+  Intro.InitializeIntro('Ini\Intro.ini');
   gdGUILoadingScreenUpdate();
   //sounds
   Sounds  := TSounds.Create();
-  Sounds.InitializeSounds( 'Inits\Sounds.ini' );
+  Sounds.InitializeSounds( 'Ini\Sounds.ini' );
   gdGUILoadingScreenUpdate();
   //player
   Player  := TPlayer.Create();

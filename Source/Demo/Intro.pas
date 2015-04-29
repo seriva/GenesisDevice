@@ -98,7 +98,6 @@ begin
   iIniFile := TIniFile.Create( aIniPath );
 
   FRenderIntroText := true;
-  //FFontId          := gdFontsLoad( Pchar( iIniFile.ReadString('Intro', 'Font', '')) );
   FPaperTexId      := gdTexturesLoad( PChar( iIniFile.ReadString('Intro', 'Paper', '')) );
   gdInputUseMouseLook(False);
   gdGUIMouseCursorShow(true);
@@ -112,7 +111,6 @@ end;
 
 procedure TIntro.ClearIntro();
 begin
-  //gdFontsRemove(FFontId);
   gdTexturesRemove(FPaperTexId);
   FFontId     := nil;
   FPaperTexId := nil;
@@ -142,17 +140,6 @@ end;
 {******************************************************************************}
 
 procedure TIntro.Render();
-
-procedure RenderQuad(aX, aY, aWidth, aHeight : Integer);
-begin
-  glBegin(GL_QUADS);
-    glTexCoord2f(1.0, 1.0); glVertex2f(aX, aY);
-    glTexCoord2f(0.0, 1.0); glVertex2f(aX+aWidth, aY);
-    glTexCoord2f(0.0, 0.0); glVertex2f(aX+aWidth, aY+aHeight);
-    glTexCoord2f(1.0, 0.0); glVertex2f(aX,  aY+aHeight);
-  glEnd;
-end;
-
 begin
   if Not(FRenderIntroText) then Exit;
 
@@ -161,7 +148,12 @@ begin
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   glEnable(GL_BLEND);
   glColor4f(1,1,1,1);
-  RenderQuad(300,200,1000,800);
+  glBegin(GL_QUADS);
+    glTexCoord2f(1.0, 1.0); glVertex2f(300, 200);
+    glTexCoord2f(0.0, 1.0); glVertex2f(1300, 200);
+    glTexCoord2f(0.0, 0.0); glVertex2f(1300, 1000);
+    glTexCoord2f(1.0, 0.0); glVertex2f(300,  1000);
+  glEnd;
   glDisable(GL_BLEND);
 
   gdRendererState(RS_TEXTS);

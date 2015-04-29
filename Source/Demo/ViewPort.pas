@@ -101,7 +101,7 @@ begin
   end;
 
   //if fullscreen remove the border
-  gdSettingsLoad( Pchar(EXE_NAME + '.ini'));
+  gdSettingsLoad();
   iSettings := gdSettingsGetCurrent();
   If iSettings.FullScreen then
   begin

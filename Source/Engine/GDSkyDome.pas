@@ -140,7 +140,7 @@ begin
     iRotationY := 0;
     For iJ := 0 to COMPLEXITY do
     begin
-      iTemp := iStartPoint.CopyToNewClass();
+      iTemp := iStartPoint.Copy();
       iMatrix.EmptyMatrix();
       iMatrix.CreateRotationY(iRotationY);
       iMatrix.ApplyToVector(iTemp);

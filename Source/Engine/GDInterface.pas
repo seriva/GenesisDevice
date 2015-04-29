@@ -45,7 +45,6 @@ uses
   GDCamera,
   GDOctree,
   GDFrustum,
-  GDFont,
   GDMap,
   GDTerrain,
   GDSkyDome,
@@ -69,13 +68,13 @@ Var
 function CheckEngineInitialized(): boolean;
 
 //Engine Functions
-function  gdEngineInit(aApplicationPath, aApplicationName : String) : Boolean; 
+function  gdEngineInit() : Boolean;
 procedure gdEngineShutDown(); 
 function  gdEngineBuildInfo() : String;
 
 //settings functions
-procedure gdSettingsLoad( aIniFile : String );
-procedure gdSettingsSave( aIniFile : String );
+procedure gdSettingsLoad();
+procedure gdSettingsSave();
 function  gdSettingsGetCurrent() : TSettings; 
 procedure gdSettingsSetCurrent(aSettings : TSettings);
 
@@ -122,12 +121,8 @@ procedure gdInputUseMouseLook( aUse : boolean );
 procedure gdInputEnable( aEnable : boolean );
 
 //gui functions
-procedure gdGUIMouseCursorInit( aFileName : String; aSize : integer ); 
-procedure gdGUIMouseCursorClear(); 
 procedure gdGUIMouseCursorShow(aShow : boolean); 
-function  gdGUIMouseCursorGetPosition() : TPoint; 
-procedure gdGUILoadingScreenInit( aInput : TGDLoadingInput ); 
-procedure gdGUILoadingScreenClear(); 
+function  gdGUIMouseCursorGetPosition() : TPoint;
 procedure gdGUILoadingScreenSetup( aProcessName : String; aMax : Integer ); 
 procedure gdGUILoadingScreenUpdate();
 procedure gdGUITextColor(aR,aG,aB : Double);
@@ -136,9 +131,9 @@ procedure gdGUITextRender(aX,aY,aScale : Double; aText : String);
 //camera functions
 procedure gdCameraInit(aX,aY,aZ : double); 
 procedure gdCameraSetPosition(aX,aY,aZ : double); 
-function  gdCameraGetPosition() : TGDVectorRecord; 
+function  gdCameraGetPosition() : TGDVector;
 procedure gdCameraSetDirection(aX,aY,aZ : double); 
-function  gdCameraGetDirection() : TGDVectorRecord; 
+function  gdCameraGetDirection() : TGDVector;
 procedure gdCameraMove(aStep : double); 
 procedure gdCameraStrafe(aStep : double);
 
@@ -146,7 +141,7 @@ procedure gdCameraStrafe(aStep : double);
 function  gdMapLoad( aFileName : String ) : boolean; 
 procedure gdMapClear();
 function  gdMapTerrainHeight(aX, aZ : Double) : Double; 
-function  gdMapTerrainRotation(aX, aZ : Double) : TGDVectorRecord;
+function  gdMapTerrainRotation(aX, aZ : Double) : TGDVector;
 function  gdMapWaterHeight(): Double;
 
 //texture functions
@@ -179,7 +174,7 @@ end;
 {* Initialize the engine`s core                                               *}
 {******************************************************************************}
 
-function gdEngineInit(aApplicationPath, aApplicationName : String) : Boolean; 
+function gdEngineInit() : Boolean;
 begin
   If FEngineInitialized then
   begin
@@ -187,14 +182,14 @@ begin
      result := false;
      exit;
   end;
-
-  //Init log and check settings and capabilities.
-  Timing   := TGDTiming.Create();
-  Console  := TGDConsole.Create(aApplicationPath + aApplicationName + '.log');
-  Settings := TGDSettings.Create();
   DefaultFormatSettings.DecimalSeparator := '.';
 
-  //Create main and subsystem class
+  //Init engine base systems.
+  Timing   := TGDTiming.Create();
+  Console  := TGDConsole.Create();
+  Settings := TGDSettings.Create();
+
+  //Create engine main and subsystem classes
   Main             := TGDMain.Create();
   Input            := TGDInput.Create();
   Sound            := TGDSound.Create();
@@ -210,7 +205,6 @@ begin
   //Create engine classes
   Camera           := TGDCamera.Create();
   Frustum          := TGDFrustum.Create();
-  Font             := TGDFont.Create();
   Map              := TGDMap.Create();
   Terrain          := TGDTerrain.Create();
   SkyDome          := TGDSkyDome.Create();
@@ -222,7 +216,7 @@ begin
   CallBack         := TGDCallBack.Create();
   FogManager       := TGDFogManager.Create();
   CellManager      := TGDCellManager.Create();
-  GUIManager       := TGDGUIManager.Create();
+  GUI              := TGDGUI.Create();
   DirectionalLight := TGDDirectionalLight.Create();
 
 
@@ -250,9 +244,8 @@ begin
   FreeAndNil(Renderer);
   FreeAndNil(SoundList);
   FreeAndNil(Sound);
-  FreeAndNil(GUIManager);
+  FreeAndNil(GUI);
   FreeAndNil(Frustum);
-  FreeAndNil(Font);
   FreeAndNil(Map);
   FreeAndNil(Terrain);
   FreeAndNil(Timing);
@@ -290,7 +283,7 @@ end;
 function gdRendererInitViewPort( aWnd  : HWND ) : boolean;
 begin
   If Not(FEngineInitialized) then exit;
-  If Renderer.InitViewPort( aWnd ) then
+  result := Renderer.InitViewPort( aWnd );
 end;
 
 {******************************************************************************}
@@ -447,26 +440,6 @@ begin
 end;
 
 {******************************************************************************}
-{* Initialize the mouse cursor                                                *}
-{******************************************************************************}
-
-procedure gdGUIMouseCursorInit( aFileName : String; aSize : integer ); 
-begin
-  If Not(FEngineInitialized) then exit;
-  GUIManager.MouseCursor.InitMouse( String(aFileName) , aSize );
-end;
-
-{******************************************************************************}
-{* Clear the mouse cursor                                                     *}
-{******************************************************************************}
-
-procedure gdGUIMouseCursorClear(); 
-begin
-  If Not(FEngineInitialized) then exit;
-  GUIManager.MouseCursor.Clear();
-end;
-
-{******************************************************************************}
 {* Show or hide the mouse cursor                                              *}
 {******************************************************************************}
 
@@ -474,7 +447,7 @@ procedure gdGUIMouseCursorShow(aShow : boolean);
 begin
   If Not(FEngineInitialized) then exit;
   Input.CalculateMousePosStart();
-  GUIManager.MouseCursor.ShowMouse := aShow;
+  GUI.MouseCursor.ShowMouse := aShow;
 end;
 
 {******************************************************************************}
@@ -484,28 +457,8 @@ end;
 function gdGUIMouseCursorGetPosition() : TPoint; 
 begin
   If Not(FEngineInitialized) then exit;
-  result.X := GUIManager.MouseCursor.Position.X;
-  result.Y := GUIManager.MouseCursor.Position.Y;
-end;
-
-{******************************************************************************}
-{* Initialize the loadingscreen                                               *}
-{******************************************************************************}
-
-procedure gdGUILoadingScreenInit( aInput : TGDLoadingInput ); 
-begin
-  If Not(FEngineInitialized) then exit;
-  GUIManager.LoadingScreen.InitLoadingScreen( aInput );
-end;
-
-{******************************************************************************}
-{* Clear the loadingscreen                                                    *}
-{******************************************************************************}
-
-procedure gdGUILoadingScreenClear(); 
-begin
-  If Not(FEngineInitialized) then exit;
-  GUIManager.LoadingScreen.Clear();
+  result.X := GUI.MouseCursor.Position.X;
+  result.Y := GUI.MouseCursor.Position.Y;
 end;
 
 {******************************************************************************}
@@ -515,7 +468,7 @@ end;
 procedure gdGUILoadingScreenSetup( aProcessName : String; aMax : Integer ); 
 begin
   If Not(FEngineInitialized) then exit;
-  GUIManager.LoadingScreen.SetupForUse(String(aProcessName),aMax);
+  GUI.LoadingScreen.SetupForUse(String(aProcessName),aMax);
 end;
 
 {******************************************************************************}
@@ -525,7 +478,7 @@ end;
 procedure gdGUILoadingScreenUpdate(); 
 begin
   If Not(FEngineInitialized) then exit;
-  GUIManager.LoadingScreen.UpdateBar();
+  GUI.LoadingScreen.UpdateBar();
 end;
 
 {******************************************************************************}
@@ -535,7 +488,7 @@ end;
 procedure gdGUITextColor(aR,aG,aB : Double);
 begin
   If Not(FEngineInitialized) then exit;
-  Font.Color.Reset(aR,aG,aB, 1);
+  GUI.Font.Color.Reset(aR,aG,aB, 1);
 end;
 
 {******************************************************************************}
@@ -545,7 +498,7 @@ end;
 procedure gdGUITextRender(aX,aY,aScale : Double; aText : String);
 begin
   If Not(FEngineInitialized) then exit;
-  Font.Render(aX,aY,aScale,aText);
+  GUI.Font.Render(aX,aY,aScale,aText);
 end;
 
 {******************************************************************************}
@@ -574,12 +527,10 @@ end;
 {* Get the camera position                                                     *}
 {******************************************************************************}
 
-function gdCameraGetPosition() : TGDVectorRecord; 
+function gdCameraGetPosition() : TGDVector;
 begin
   If Not(FEngineInitialized) then exit;
-  result.x := Camera.Position.X;
-  result.y := Camera.Position.Y;
-  result.z := Camera.Position.Z;
+  result := Camera.Position.Copy();
 end;
 
 {******************************************************************************}
@@ -589,21 +540,17 @@ end;
 procedure gdCameraSetDirection(aX,aY,aZ : double); 
 begin
   If Not(FEngineInitialized) then exit;
-  Camera.Direction.X := aX;
-  Camera.Direction.Y := aY;
-  Camera.Direction.Z := aZ;
+  Camera.Direction.Reset(aX, aY, aZ);
 end;
 
 {******************************************************************************}
 {* Get the camera direction                                                   *}
 {******************************************************************************}
 
-function gdCameraGetDirection() : TGDVectorRecord; 
+function gdCameraGetDirection() : TGDVector;
 begin
   If Not(FEngineInitialized) then exit;
-  result.x := Camera.Direction.X;
-  result.y := Camera.Direction.Y;
-  result.z := Camera.Direction.Z;
+  result := Camera.Direction.Copy();
 end;
 
 {******************************************************************************}
@@ -631,20 +578,20 @@ end;
 {* Load settings out an ini-file                                              *}
 {******************************************************************************}
 
-procedure gdSettingsLoad( aIniFile : String );
+procedure gdSettingsLoad();
 begin
   If Not(FEngineInitialized) then exit;
-  Settings.LoadIniFile(aIniFile);
+  Settings.LoadIniFile();
 end;
 
 {******************************************************************************}
 {* Save settings to an ini-file                                               *}
 {******************************************************************************}
 
-procedure gdSettingsSave( aIniFile : String ); 
+procedure gdSettingsSave();
 begin
   If Not(FEngineInitialized) then exit;
-  Settings.SaveIniFile( aIniFile );
+  Settings.SaveIniFile();
 end;
 
 {******************************************************************************}
@@ -800,7 +747,7 @@ begin
   If Not(FEngineInitialized) then exit;
   Octree.Clear();
   CellManager.Cells.Clear();
-  result := Map.InitMap( String(aFileName) );
+  result := Map.InitMap( aFileName );
   CellManager.GenerateAllCells();
   Octree.InitOcTree();
   Camera.InitCamera(Map.PlayerStart.X,Map.PlayerStart.Y,Map.PlayerStart.Z);
@@ -840,17 +787,14 @@ end;
 {* Return the rotation of the terrain at a point                              *}
 {******************************************************************************}
 
-function  gdMapTerrainRotation(aX, aZ : Double) : TGDVectorRecord; 
+function  gdMapTerrainRotation(aX, aZ : Double) : TGDVector;
 var
   iRotation : TGDVector;
 begin
   iRotation := TGDVector.Create();
   If Not(FEngineInitialized) then exit;
   Terrain.GetRotation( aX, aZ, iRotation );
-  result.x := iRotation.x;
-  result.y := iRotation.y;
-  result.z := iRotation.z;
-  FreeAndNil(iRotation);
+  result := iRotation;
 end;
 
 {******************************************************************************}

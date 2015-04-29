@@ -60,7 +60,7 @@ type
     FQuad3 : TGDQuad;
   public
     constructor Create();
-    destructor  Destroy();
+    destructor  Destroy(); override;
 
     procedure InitGrassPartical(  aMove, aScale, aRotate : TGDVector  );
     procedure Clear();
@@ -111,6 +111,7 @@ end;
 
 destructor  TGDGrassPartical.Destroy();
 begin
+  inherited;
   FreeAndNil(FNormal);
   FreeAndNil(FQuad1);
   FreeAndNil(FQuad2);

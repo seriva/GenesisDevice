@@ -160,11 +160,11 @@ begin
   //Copy the vertex and normal list
   For iI := 0 to FMesh.Vertices.Count - 1 do
   begin
-    iVertices.Add( TGDVector( FMesh.Vertices.Items[iI] ).CopyToNewClass );
+    iVertices.Add( TGDVector( FMesh.Vertices.Items[iI] ).Copy );
   end;
   For iI := 0 to FMesh.Normals.Count - 1 do
   begin
-    iNormals.Add( TGDVector( FMesh.Normals.Items[iI] ).CopyToNewClass );
+    iNormals.Add( TGDVector( FMesh.Normals.Items[iI] ).Copy );
   end;
 
   //Rotate vertices and normals
@@ -306,7 +306,7 @@ begin
 
                             (FDPLS.Items[iI] as TGDGLDisplayList).CallList();
 
-                            //fix for lighting with alha based surfices
+                            //fix for lighting with alha based surfaces
                             if iMS.Material.HasAlpha then
                             begin
                               if (aRenderFor = RF_WATER) and Not(Water.UnderWater) then

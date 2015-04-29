@@ -33,15 +33,10 @@ unit GDSettings;
 interface
 
 uses
-  Dialogs,
-  Windows,
-  Forms,
-  Classes,
   SysUtils,
   IniFiles,
   dglOpenGL,
   GDConstants,
-  GDConsole,
   FileUtil;
 
 type
@@ -125,8 +120,6 @@ type
     procedure SetTextureFilter(aStr : String);
     function  GetTextureFilter() : String;
   public
-    //property ApplicationFilePath : String read FApplicationFilePath write FApplicationFilePath;
-
     //viewport settings
     property Top : Integer read FTop write FTop;
     property Left : Integer read FLeft write FLeft;
@@ -160,8 +153,8 @@ type
     constructor Create();
     destructor  Destroy(); override;
 
-    procedure LoadIniFile( aIniFile : String );
-    procedure SaveIniFile( aIniFile : String );
+    procedure LoadIniFile();
+    procedure SaveIniFile();
     function  GetSettings() : TSettings;
     procedure SetSettings(aSettings : TSettings);
   end;
@@ -170,6 +163,9 @@ var
   Settings : TGDSettings;
 
 implementation
+
+uses
+  GDConsole;
 
 {******************************************************************************}
 {* Create the settings class                                                  *}
@@ -229,12 +225,12 @@ end;
 {* Load the settings from an ini-file                                         *}
 {******************************************************************************}
 
-procedure TGDSettings.LoadIniFile( aIniFile : String );
+procedure TGDSettings.LoadIniFile();
 var
   iIniFile : TIniFile;
   iStr : String;
 begin
-  iIniFile := TIniFile.Create( aIniFile );
+  iIniFile := TIniFile.Create( FP_INITS + ENGINE_INI );
 
   //viewport settings
   FWidth :=        iIniFile.ReadInteger('ViewPort', 'Width', 800);
@@ -275,11 +271,11 @@ end;
 {* Saves the settings to an ini-files                                         *}
 {******************************************************************************}
 
-procedure TGDSettings.SaveIniFile( aIniFile : String );
+procedure TGDSettings.SaveIniFile();
 var
   iIniFile : TIniFile;
 begin
-  iIniFile := TIniFile.Create(aIniFile);
+  iIniFile := TIniFile.Create(FP_INITS + ENGINE_INI);
 
   //viewport
   iIniFile.WriteInteger('ViewPort', 'Width', FWidth);

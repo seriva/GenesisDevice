@@ -247,8 +247,8 @@ begin
     iDirectionalLightInput.DifG := iIniFile.ReadFloat('DirectionalLight', 'DiffuseB', 1.0);
     iDirectionalLightInput.DifB := iIniFile.ReadFloat('DirectionalLight', 'DiffuseG', 1.0);
     
-    GUIManager.LoadingScreen.SetupForUse('Loading ' + FName + '...',12 );
-    GUIManager.LoadingScreen.UpdateBar();
+    GUI.LoadingScreen.SetupForUse('Loading ' + FName + '...',12 );
+    GUI.LoadingScreen.UpdateBar();
   except
     on E: Exception do
     begin
@@ -271,20 +271,20 @@ begin
 
     //init sky
     Skydome.InitSkyDome(iSkyDomeTexture,(Settings.ViewDistance * R_VIEW_DISTANCE_STEP));
-    GUIManager.LoadingScreen.UpdateBar();
+    GUI.LoadingScreen.UpdateBar();
 
     //init water
     Water.InitWater( iWaterInput );
     FogManager.InitWaterFog( iWaterInput.UnderWaterColorR,iWaterInput.UnderWaterColorG,iWaterInput.UnderWaterColorB,iWaterInput.UnderWaterColorA, iWaterInput.Visibility );
-    GUIManager.LoadingScreen.UpdateBar();
+    GUI.LoadingScreen.UpdateBar();
 
     //foliage
     Foliage.InitFoliage( iFoliageInput );
-    GUIManager.LoadingScreen.UpdateBar();
+    GUI.LoadingScreen.UpdateBar();
 
     //ambientmainlight
     DirectionalLight.InitDirectionalLight( iDirectionalLightInput );
-    GUIManager.LoadingScreen.UpdateBar();
+    GUI.LoadingScreen.UpdateBar();
 
     //grass types
     iI := 1;
@@ -307,7 +307,7 @@ begin
 
       iI := iI + 1;
     end;
-    GUIManager.LoadingScreen.UpdateBar();
+    GUI.LoadingScreen.UpdateBar();
 
     //tree types
     iI := 1;
@@ -330,7 +330,7 @@ begin
 
       iI := iI + 1;
     end;
-    GUIManager.LoadingScreen.UpdateBar();
+    GUI.LoadingScreen.UpdateBar();
 
     //mesh entities
     iI := 1;
@@ -355,7 +355,7 @@ begin
 
       iI := iI + 1;
     end;
-    GUIManager.LoadingScreen.UpdateBar();
+    GUI.LoadingScreen.UpdateBar();
   end;
   Timing.Stop();
   FreeAndNil(iIniFile);

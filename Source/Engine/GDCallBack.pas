@@ -38,8 +38,6 @@ interface
 uses
   LCLIntf, LCLType, LMessages,
   SysUtils,
-  IniFiles,
-  Math,
   dglOpenGL,
   GDConstants,
   GDModes;
@@ -97,7 +95,7 @@ end;
 
 procedure TGDCallBack.RenderInterface();
 begin
-  if (Assigned(RenderInterfaceCallBack) and Modes.RenderInterfaces) then
+  if (Assigned(RenderInterfaceCallBack) and Modes.RenderGUI) then
       RenderInterfaceCallBack();
 end;
 

@@ -160,9 +160,6 @@ type
   end;
 
 var
-  EXE_NAME : Pchar = 'Demo';
-
-var
   ConfigurationForm: TConfigurationForm;
   ViewPortForm : TViewPortForm;
 
@@ -185,7 +182,7 @@ begin
   self.Caption := 'Configuration';
 
   //initialize the engine`s core systems
-  If Not( gdEngineInit( Pchar(ExtractFilePath(Application.ExeName)), EXE_NAME )) then
+  If Not( gdEngineInit()) then
   begin
     MessageBox(0, 'Error starting engine! See log for details.', 'Error', MB_OK);
     Application.Terminate();
@@ -198,7 +195,7 @@ begin
   FillComboboxes();
 
   //load the settings and update interface
-  gdSettingsLoad( Pchar(EXE_NAME + '.ini'));
+  gdSettingsLoad();
   LoadConfig();
   SettingsToInterface();
 
@@ -215,7 +212,7 @@ procedure TConfigurationForm.FormDestroy(Sender: TObject);
 begin
   //save settings
   SettingsFromInterface();
-  gdSettingsSave( Pchar(EXE_NAME + '.ini') );
+  gdSettingsSave();
   SaveConfig();
 
   //shutdown engine`s core
@@ -448,7 +445,7 @@ end;
 procedure TConfigurationForm.RunButtonClick(Sender: TObject);
 begin
   SettingsFromInterface();
-  gdSettingsSave( Pchar(EXE_NAME + '.ini'));
+  gdSettingsSave();
   SaveConfig();
   if FMap = '' then
   begin
@@ -543,7 +540,7 @@ procedure TConfigurationForm.LoadConfig();
 var
   iIniFile : TIniFile;
 begin
-  iIniFile := TIniFile.Create( ExtractFilePath(Application.ExeName) + Pchar(EXE_NAME + '.ini') );
+  iIniFile := TIniFile.Create( ExtractFilePath(Application.ExeName) + 'Ini\Game.ini' );
 
   //monitor
   MonitorComboBox.ItemIndex     := iIniFile.ReadInteger('Monitor', 'MonitorId', 0);
@@ -575,7 +572,7 @@ procedure TConfigurationForm.SaveConfig();
 var
   iIniFile : TIniFile;
 begin
-  iIniFile := TIniFile.Create( ExtractFilePath(Application.ExeName) + Pchar(EXE_NAME + '.ini') );
+  iIniFile := TIniFile.Create( ExtractFilePath(Application.ExeName) + 'Ini\Game.ini');
 
    //monitor
   iIniFile.WriteInteger('Monitor', 'MonitorId', MonitorComboBox.ItemIndex);

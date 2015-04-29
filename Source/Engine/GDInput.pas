@@ -50,7 +50,6 @@ uses
   Windows,
   DXInput,
   GDConstants,
-  GDConsole,
   GDSettings,
   GDCamera,
   Contnrs;
@@ -162,6 +161,9 @@ var
    '','','','','','','','','','','','','','','','');
 
 implementation
+
+uses
+  GDConsole;
 
 {******************************************************************************}
 {* Create inputaction class                                                   *}

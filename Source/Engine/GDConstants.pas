@@ -90,10 +90,12 @@ const
   FP_SOUNDS       = 'Sounds\';
   FP_MESHES       = 'Meshes\';
   FP_TEXTURES     = 'Textures\';
-  FP_INITS        = 'Inits\';
+  FP_INITS        = 'Ini\';
 
   //file constants
-  ENGINE_INI       = 'Base.ini';
+  ENGINE_INI = 'Engine.ini';
+  ENGINE_LOG = 'Engine.log';
+  GUI_INI    = 'GUI.ini';
 
   //setting strings
   TGDTextureDetailStrings   : array[1..3] of String  = ('Low', 'Medium','High');

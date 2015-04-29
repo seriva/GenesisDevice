@@ -184,7 +184,7 @@ begin
   iV := TGDVector.Create();
   iV2 := TGDVector.Create();
 
-  iV1 := FRotation.CopyToNewClass();
+  iV1 := FRotation.Copy();
 
   iV1.X := 0;
   iV1.Y := iV1.Y + 90;

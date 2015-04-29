@@ -39,7 +39,7 @@ uses
   LCLType,
   MMSystem,
   dglOpenGL,
-  GDFont,
+  GDGUI,
   GDConstants,
   GDStringParsing;
 
@@ -80,7 +80,6 @@ type
     FRow          : integer;
     FCursorUpdate : boolean;
     FUpdateTimer  : Integer;
-    FLogFile      : String;
     FLogText      : TStringList;
     FCommand      : String;
   public
@@ -90,7 +89,7 @@ type
     property Command : String read FCommand write FCommand;
 
 
-    constructor Create(aLogFile : String);
+    constructor Create();
     destructor  Destroy(); override;
 
     procedure InitConsole();
@@ -126,10 +125,8 @@ uses
 
 procedure Help();
 var
-  iStr : String;
-  iI, iJ, iK : Integer;
+  iK : Integer;
   iCommand : TGDCommand;
-  iList : TStringList;
 begin
   Console.Write('');
   for ik := 0 to Console.CommandMap.Count - 1 do
@@ -144,14 +141,13 @@ end;
 {* Create the console class                                                   *}
 {******************************************************************************}
 
-constructor TGDConsole.Create(aLogFile : String);
+constructor TGDConsole.Create();
 begin
   Write('Log started at ' + DateToStr(Date()) + ', ' + TimeToStr(Time()));
   Write('Build: ' + ENGINE_INFO);
   FUse          := True;
   FShow         := False;
   FLogText      := TStringList.Create();
-  FLogFile      := aLogFile;
   CommandMap    := TGDCommandMap<String, TGDCommand>.Create();
   FCursorUpdate := False;
   AddCommand('Help', 'Show help', CT_FUNCTION, @Help);
@@ -205,17 +201,17 @@ begin
   end;
 
   Renderer.RenderState( RS_COLOR );
-  glColor4f(0.4,0.4,0.4,0.7);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   glEnable(GL_BLEND);
+
+  glColor4fv(GUI.FillColor.ArrayPointer());
   glBegin(GL_QUADS);
     glVertex2f(0, (R_HUDHEIGHT/2)-7);
     glVertex2f(R_HUDWIDTH, (R_HUDHEIGHT/2)-7);
     glVertex2f(R_HUDWIDTH, R_HUDHEIGHT);
     glVertex2f(0, R_HUDHEIGHT);
   glEnd;
-  glDisable(GL_BLEND);
-  glColor4f(1,1,1,1);
+  glColor4fv(GUI.OutlineColor.ArrayPointer());
   glBegin(GL_LINES);
     glVertex2f(0,          (R_HUDHEIGHT/2)-7);
     glVertex2f(R_HUDWIDTH, (R_HUDHEIGHT/2)-7);
@@ -230,19 +226,19 @@ begin
     If  ((iI) >= 0) then
     begin
       If copy(Uppercase(FLogText.Strings[iI]), 0, 5) = 'ERROR' then
-        Font.Color.Red
+        GUI.Font.Color.Red
       else
-       Font.Color.White;
-      Font.Render(0, (R_HUDHEIGHT/2)+28+(iJ*25), 0.40, FLogText.Strings[iI] );
+        GUI.Font.Color.Reset(GUI.FontColor);
+      GUI.Font.Render(0, (R_HUDHEIGHT/2)+28+(iJ*25), 0.40, FLogText.Strings[iI] );
       iJ := iJ + 1;
     end
   end;
 
-  Font.Color.White;
+  GUI.Font.Color.Reset(GUI.FontColor);
   if FCursorUpdate then
-     Font.Render(0, (R_HUDHEIGHT/2)-3, 0.40, FCommand + '_' )
+     GUI.Font.Render(0, (R_HUDHEIGHT/2)-3, 0.40, FCommand + '_' )
   else
-     Font.Render(0, (R_HUDHEIGHT/2)-3, 0.40, FCommand );
+     GUI.Font.Render(0, (R_HUDHEIGHT/2)-3, 0.40, FCommand );
 
   glDisable(GL_BLEND);
 end;
@@ -320,7 +316,7 @@ begin
     FLogText.Add(aString)
   else
     FLogText.Strings[FLogText.Count-1] := FLogText.Strings[FLogText.Count-1] + aString;
-  FLogText.SaveToFile(FLogFile);
+  FLogText.SaveToFile(ENGINE_LOG);
 end;
 
 {******************************************************************************}

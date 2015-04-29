@@ -317,11 +317,11 @@ begin
     FreeAndNil(iM);
     FreeAndNil(iR);
 
-    GUIManager.LoadingScreen.UpdateBar();
+    GUI.LoadingScreen.UpdateBar();
 
     if Not( FColorTexture.InitTexture(aInput.ColorMap ,Settings.TextureDetail,Settings.TextureFilter)) then
        Raise Exception.Create('Failed to load color texture!');
-    GUIManager.LoadingScreen.UpdateBar();
+    GUI.LoadingScreen.UpdateBar();
     if Not( FDetailTexture1.InitTexture(aInput.Detail1 ,Settings.TextureDetail,Settings.TextureFilter)) then
        Raise Exception.Create('Failed to load detail textures!');
     if Not( FDetailTexture2.InitTexture(aInput.Detail2 ,Settings.TextureDetail,Settings.TextureFilter)) then
@@ -332,7 +332,7 @@ begin
        Raise Exception.Create('Failed to load detail textures!');
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    GUIManager.LoadingScreen.UpdateBar();
+    GUI.LoadingScreen.UpdateBar();
   except
     on E: Exception do
     begin
@@ -481,19 +481,19 @@ begin
   begin
     if Not(iSecTris) then
     begin
-      iForward := iTriangle.V2.CopyToNewClass();
+      iForward := iTriangle.V2.Copy();
       iForward.Substract( iTriangle.V1 );
       iForward.Normalize();
-      iRight := iTriangle.V3.CopyToNewClass();
+      iRight := iTriangle.V3.Copy();
       iRight.Substract( iTriangle.V1 );
       iRight.Normalize();
     end
     else
     begin
-      iForward := iTriangle.V1.CopyToNewClass();
+      iForward := iTriangle.V1.Copy();
       iForward.Substract( iTriangle.V2 );
       iForward.Normalize();
-      iRight := iTriangle.V1.CopyToNewClass();
+      iRight := iTriangle.V1.Copy();
       iRight.Substract( iTriangle.V3 );
       iRight.Normalize();
     end;

@@ -42,6 +42,7 @@ Network Trash Folder
 Temporary Items
 .apdisk
 Build/
-Bin/Demo.ini
-Bin/Demo.log
+Bin/Ini/Engine.ini
+Bin/Ini/Game.ini
+Bin/Engine.log
 *.bak

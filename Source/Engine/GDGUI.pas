@@ -28,44 +28,142 @@ unit GDGUI;
 interface
 
 {******************************************************************************}
-{* This is the main GUI class for ingame/inengine forms. For now there are:   *}
+{* This contains the main GUI class for ingame/inengine UI:                   *}
 {* - Loadingscreen                                                            *}
 {* - Mousecursor                                                              *}
-{* In feature releases this will be extended to contain:                      *}
-{* - Forms                                                                    *}
-{* - Buttons                                                                  *}
-{* - Labels                                                                   *}
-{* - Editboxes                                                                *}
-{* - Comboboxes                                                               *}
-{* - Sliders                                                                  *}
-{* - And more form components                                                 *}
+{* - Font                                                                     *}
 {******************************************************************************}
 
 uses
-  LCLIntf, LCLType, LMessages,
+  LCLIntf,
+  LCLType,
+  Windows,
   Classes,
+  IniFiles,
   SysUtils,
   dglOpenGL,
   GDTexture,
-  GDRenderer,
   GDConstants,
-  GDSettings,
-  GDTypes,
-  GDFont,
-  GDInput;
+  GDTypes;
+
+const
+  FONT_TEXHEIGHT = 512;
+  FONT_HEIGHT    = 64;
+  FONT_CHARCOORDS : array[0..93,0..3] of Word = (
+      (0,0,25,64),        //!
+      (25,0,54,64),       //"
+      (54,0,107,64),      //#
+      (107,0,148,64),     //$
+      (148,0,217,64),     //%
+      (217,0,263,64),     //&
+      (263,0,280,64),     //'
+      (280,0,309,64),     //(
+      (309,0,338,64),     //)
+      (338,0,379,64),     //*
+      (379,0,432,64),     //+
+      (432,0,455,64),     //,
+      (455,0,484,64),     //-
+      (0,64,21,128),      //.
+      (23,64,52,128),     ///
+      (52,64,93,128),     //0
+      (93,64,133,128),    //1
+      (133,64,174,128),   //2
+      (174,64,215,128),   //3
+      (215,64,256,128),   //4
+      (256,64,296,128),   //5
+      (296,64,337,128),   //6
+      (337,64,378,128),   //7
+      (378,64,419,128),   //8
+      (419,64,459,128),   //9
+      (459,64,488,128),   //:
+      (0,128,29,192),     //;
+      (29,128,81,192),    //<
+      (81,128,134,192),   //=
+      (134,128,186,192),  //>
+      (186,128,221,192),  //?
+      (221,128,285,192),  //@
+      (285,128,329,192),  //A
+      (329,128,373,192),  //B
+      (373,128,418,192),  //C
+      (418,128,467,192),  //D
+      (0,192,40,256),     //E
+      (40,192,77,256),    //F
+      (77,192,127,256),   //G
+      (127,192,175,256),  //H
+      (175,192,202,256),  //I
+      (202,192,231,256),  //J
+      (231,192,275,256),  //K
+      (275,192,311,256),  //L
+      (311,192,365,256),  //M
+      (365,192,413,256),  //N
+      (413,192,463,256),  //O
+      (1,256,38,320),     //P
+      (38,256,89,320),    //Q
+      (89,256,133,320),   //R
+      (133,256,176,320),  //S
+      (177,256,216,320),  //T
+      (217,256,263,320),  //U
+      (263,256,307,320),  //V
+      (307,256,370,320),  //W
+      (370,256,414,320),  //X
+      (414,256,453,320),  //Y
+      (453,256,497,320),  //Z
+      (0,320,29,384),     //[
+      (29,320,58,384),    //"\"
+      (59,320,87,384),    //]
+      (87,320,139,384),   //^
+      (139,320,180,384),  //_
+      (180,320,221,384),  //`
+      (221,320,259,384),  //a
+      (259,320,299,384),  //b
+      (299,320,332,384),  //c
+      (332,320,372,384),  //d
+      (372,320,411,384),  //e
+      (411,320,433,384),  //f
+      (435,320,473,384),  //g
+      (0,384,40,448),     //h
+      (40,384,56,448),    //i
+      (58,384,80,448),    //j
+      (80,384,118,448),   //k
+      (118,384,135,448),  //l
+      (135,384,197,448),  //m
+      (197,384,238,448),  //n
+      (238,384,277,448),  //o
+      (277,384,317,448),  //p
+      (317,384,356,448),  //q
+      (357,384,384,448),  //r
+      (385,384,417,448),  //s
+      (417,384,442,448),  //t
+      (443,384,483,448),  //u
+      (0,448,38,512),     //v
+      (38,448,90,512),    //w
+      (90,448,128,512),   //x
+      (128,448,166,512),  //y
+      (166,448,200,512),  //z
+      (200,448,241,512),  //{
+      (241,448,270,512),  //|
+      (270,448,310,512),  //}
+      (310,448,363,512)   //~
+  );
 
 type
 
 {******************************************************************************}
-{* Loadingscreen input record                                                 *}
+{* Font class                                                                 *}
 {******************************************************************************}
 
-  TGDLoadingInput = record
-    X : integer;
-    Y : integer;
-    BarR,  BarG, BarB, BarA    : Double;
-    LineR, LineG, LineB, LineA : Double;
-    BackR, BackG, BackB, BackA : Double;
+  TGDFont = class
+  private
+    FTexture : TGDTexture;
+    FColor   : TGDColor;
+  public
+    property Color : TGDColor read FColor write FColor;
+
+    constructor Create();
+    destructor  Destroy(); override;
+    function    InitFont( aTexture : string) : boolean;
+    procedure   Clear();
+    procedure   Render( aLeft, aTop, aScale : Double; aString : string);
   end;
 
 {******************************************************************************}
@@ -92,6 +190,17 @@ type
   end;
 
 {******************************************************************************}
+{* Loadingscreen input record                                                 *}
+{******************************************************************************}
+
+  TGDLoadingInput = record
+    X : integer;
+    Y : integer;
+    BarR, BarG, BarB, BarA : Double;
+    BackGroundR, BackGroundG, BackGroundB, BackGroundA : Double;
+  end;
+
+{******************************************************************************}
 {* Loadingscreen class                                                        *}
 {******************************************************************************}
 
@@ -102,8 +211,7 @@ type
     FMax             : integer;
     FPosition        : integer;
     FBarColor        : TGDColor;
-    FLineColor       : TGDColor;
-    FBackGroundColor : TGDColor;
+    FBackgroundColor : TGDColor;
     FProcesName      : String;
     FBarOnly         : boolean;
 
@@ -126,24 +234,125 @@ type
 {* Main GUIManager class                                                      *}
 {******************************************************************************}
 
-  TGDGUIManager = class
+  TGDGUI = class
   private
-    FMouseCursor : TGDMouseCursor;
+    FFont          : TGDFont;
+    FMouseCursor   : TGDMouseCursor;
     FLoadingScreen : TGDLoadingScreen;
+
+    FFontColor     : TGDColor;
+    FOutlineColor  : TGDColor;
+    FFillColor     : TGDColor;
   public
-    property MouseCursor : TGDMouseCursor read FMouseCursor write FMouseCursor;
-    property LoadingScreen : TGDLoadingScreen read FLoadingScreen write FLoadingScreen;
+    property Font : TGDFont read FFont;
+    property MouseCursor : TGDMouseCursor read FMouseCursor;
+    property LoadingScreen : TGDLoadingScreen read FLoadingScreen;
+
+    property FontColor : TGDColor read FFontColor;
+    property OutlineColor : TGDColor read FOutlineColor;
+    property FillColor : TGDColor read FFillColor;
 
     constructor Create();
     destructor  Destroy(); override;
 
+    procedure InitGUI();
     procedure Clear();
   end;
 
 var
-  GUIManager : TGDGUIManager;
+  GUI : TGDGUI;
 
 implementation
+
+uses
+  GDRenderer,
+  GDSettings;
+
+{******************************************************************************}
+{* Create the font class                                                      *}
+{******************************************************************************}
+
+constructor TGDFont.Create();
+begin
+  FColor   := TGDColor.Create();
+  FColor.White();
+  FTexture := TGDTexture.Create();
+end;
+
+{******************************************************************************}
+{* Destroy the font class                                                     *}
+{******************************************************************************}
+
+destructor TGDFont.Destroy();
+begin
+  Clear();
+  FreeAndNil(FColor);
+  FreeAndNil(FTexture);
+  inherited;
+end;
+
+
+{******************************************************************************}
+{* Init the font                                                              *}
+{******************************************************************************}
+
+function TGDFont.InitFont( aTexture : string) : boolean;
+begin
+  result := FTexture.InitTexture(aTexture, TD_HIGH, TF_TRILINEAR);
+end;
+
+{******************************************************************************}
+{* Clear the font                                                             *}
+{******************************************************************************}
+
+Procedure TGDFont.Clear();
+begin
+  FTexture.Clear();
+end;
+
+{******************************************************************************}
+{* Render a string                                                            *}
+{******************************************************************************}
+
+Procedure TGDFont.Render( aLeft, aTop, aScale : Double; aString : string);
+var
+  i, x, y, c, inwidth, inheight : integer;
+  inleft, intop, inright, inbottom : Single;
+
+procedure RenderTexturedQuad(x,y,width,height: Single;
+                               u1 : Single=0; v1 : Single=0;
+                               u2 : Single=1; v2 : Single=0;
+                               u3 : Single=1; v3 : Single=1;
+                               u4 : Single=0; v4 : Single=1);
+begin
+  glBegin(GL_QUADS);
+    glTexCoord2f(u1, v1); glVertex2f( x,       y);
+    glTexCoord2f(u2, v2); glVertex2f( x+width, y);
+    glTexCoord2f(u3, v3); glVertex2f( x+width, y+height);
+    glTexCoord2f(u4, v4); glVertex2f( x,       y+height);
+  glEnd();
+end;
+
+begin
+  FTexture.BindTexture(GL_TEXTURE0);
+  glColor4fv(FColor.ArrayPointer());
+  x := Round(aLeft);
+  y := Round(aTop);
+  for i := 1 to length(aString) do
+  begin
+    if(aString[i] = ' ') then begin x := x + round((FONT_HEIGHT/2) * aScale); continue; end;
+    c := Ord(aString[i])-33;
+    if(c < 0) or (c >= 95) then continue;
+    inleft   := FONT_CHARCOORDS[c][0]   / FONT_TEXHEIGHT;
+    intop    := ((FONT_CHARCOORDS[c][1+2]) / FONT_TEXHEIGHT);
+    inright  := FONT_CHARCOORDS[c][2]   / FONT_TEXHEIGHT;
+    inbottom := ((FONT_CHARCOORDS[c][3-2]) / FONT_TEXHEIGHT);
+    inwidth  := Round((FONT_CHARCOORDS[c][2] - FONT_CHARCOORDS[c][0]) * aScale);
+    inheight := Round((FONT_CHARCOORDS[c][3] - FONT_CHARCOORDS[c][1]) * aScale);
+    RenderTexturedQuad(x,y,inwidth,inheight,inleft,intop,inright,intop,inright,inbottom,inleft,inbottom);
+    x := x + inwidth + 1;
+  end;
+end;
 
 {******************************************************************************}
 {* Create the mousecursor class                                               *}
@@ -258,8 +467,7 @@ begin
   FX := 0;
   FY := 0;
   FBarColor        := TGDColor.Create();
-  FLineColor       := TGDColor.Create();
-  FBackGroundColor := TGDColor.Create();
+  FBackgroundColor := TGDColor.Create();
 end;
 
 {******************************************************************************}
@@ -270,8 +478,7 @@ destructor TGDLoadingScreen.Destroy();
 begin
   inherited;
   FreeAndNil(FBarColor);
-  FreeAndNil(FLineColor);
-  FreeAndNil(FBackGroundColor);
+  FreeAndNil(FBackgroundColor);
 end;
 
 {******************************************************************************}
@@ -285,8 +492,7 @@ begin
   FY := aInput.Y;
   FBarOnly := false;
   FBarColor.Reset( aInput.BarR,  aInput.BarG,  aInput.BarB,  aInput.BarA);
-  FLineColor.Reset( aInput.LineR, aInput.LineG, aInput.LineB, aInput.LineA);
-  FBackGroundColor.Reset( aInput.BackR, aInput.BackG, aInput.BackB, aInput.BackA);
+  FBackgroundColor.Reset( aInput.BackGroundR,  aInput.BackGroundG, aInput.BackGroundB, aInput.BackGroundA);
 end;
 
 {******************************************************************************}
@@ -296,8 +502,7 @@ end;
 procedure TGDLoadingScreen.Clear();
 begin
   FBarColor.Reset(1,1,1,1);
-  FLineColor.Reset(1,1,1,1);
-  FBackGroundColor.Reset(1,1,1,1);
+  FBackgroundColor.Reset(1,1,1,1);
   FUse := true;
   FBarOnly := false;
   FMax  := 100;
@@ -344,7 +549,10 @@ begin
   Renderer.SwitchToOrtho();
 
   Renderer.RenderState( RS_COLOR );
-  glColor4f(0.2, 0.2, 0.2, 1);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  glEnable(GL_BLEND);
+
+  glColor4fv( FBackgroundColor.ArrayPointer() );
   glBegin(GL_QUADS);
     glVertex2f(0, 0);
     glVertex2f(R_HUDWIDTH, 0);
@@ -357,16 +565,13 @@ begin
 
   If Not(FBarOnly) then
   begin
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glEnable(GL_BLEND);
-    glColor4fv( FBackGroundColor.ArrayPointer );
+    glColor4fv( GUI.FillColor.ArrayPointer );
     glBegin(GL_QUADS);
       glVertex2f( 600 ,0  );
       glVertex2f( 600 ,100 );
       glVertex2f( 0   ,100 );
       glVertex2f( 0   ,0  );
     glEnd;
-    glDisable(GL_BLEND);
   end;
 
   iProgress := 580/FMax;
@@ -379,7 +584,7 @@ begin
     glVertex2f(10 ,10 );
   glEnd;
 
-  glColor4fv( FLineColor.ArrayPointer );
+  glColor4fv( GUI.OutLineColor.ArrayPointer );
   If Not(FBarOnly) then
   begin
     glBegin(GL_LINE_LOOP);
@@ -402,40 +607,101 @@ begin
   If Not(FBarOnly) then
   begin
     Renderer.RenderState( RS_TEXTS );
-    Font.Render(7+FX,65+FY,0.5,FProcesName);
-    Font.Render(270+FX,16+FY,0.5,IntToStr(round(iPercent)) + '%');
+    GUI.Font.Color.Reset(GUI.FontColor);
+    GUI.Font.Render(7+FX,65+FY,0.5,FProcesName);
+    GUI.Font.Render(270+FX,16+FY,0.5,IntToStr(round(iPercent)) + '%');
   end;
+  glDisable(GL_BLEND);
 
   Renderer.SwitchToPerspective();
   Renderer.EndFrame();
 end;
 
 {******************************************************************************}
-{* Create the fontmanager class                                               *}
+{* Create the GUI class                                                       *}
 {******************************************************************************}
 
-constructor TGDGUIManager.Create();
+constructor TGDGUI.Create();
 begin
-  FMouseCursor := TGDMouseCursor.Create();
+  FFont          := TGDFont.Create();
+  FMouseCursor   := TGDMouseCursor.Create();
   FLoadingScreen := TGDLoadingScreen.Create();
+  FFontColor     := TGDColor.Create();
+  FOutLineColor  := TGDColor.Create();
+  FFillColor     := TGDColor.Create();
 end;
 
 {******************************************************************************}
-{* Destroy the fontmanager class                                              *}
+{* Destroy the GUI class                                                      *}
 {******************************************************************************}
 
-destructor  TGDGUIManager.Destroy();
+destructor  TGDGUI.Destroy();
 begin
+  FreeAndNil(FFont);
   FreeAndNil(FMouseCursor);
   FreeAndNil(FLoadingScreen);
+  FreeAndNil(FFontColor);
+  FreeAndNil(FOutLineColor);
+  FreeAndNil(FFillColor);
 end;
 
 {******************************************************************************}
-{* Clear the fontmanager                                                      *}
+{* Clear the GUI class                                                        *}
 {******************************************************************************}
 
-procedure TGDGUIManager.Clear();
+procedure TGDGUI.InitGUI();
+var
+  iIniFile      : TIniFile;
+  iLoadingInput : TGDLoadingInput;
 begin
+  ShowCursor(false);
+  iIniFile := TIniFile.Create( FP_INITS + GUI_INI );
+
+  //Default colors
+  FFontColor.R := iIniFile.ReadFloat('DefaultColors', 'FontR', 1);
+  FFontColor.G := iIniFile.ReadFloat('DefaultColors', 'FontG', 1);
+  FFontColor.B := iIniFile.ReadFloat('DefaultColors', 'FontB', 1);
+  FFontColor.A := iIniFile.ReadFloat('DefaultColors', 'FontA', 1);
+  FOutlineColor.R := iIniFile.ReadFloat('DefaultColors', 'OutlineR', 1);
+  FOutlineColor.G := iIniFile.ReadFloat('DefaultColors', 'OutlineG', 1);
+  FOutlineColor.B := iIniFile.ReadFloat('DefaultColors', 'OutlineB', 1);
+  FOutlineColor.A := iIniFile.ReadFloat('DefaultColors', 'OutlineA', 1);
+  FFillColor.R := iIniFile.ReadFloat('DefaultColors', 'FillR', 1);
+  FFillColor.G := iIniFile.ReadFloat('DefaultColors', 'FillG', 1);
+  FFillColor.B := iIniFile.ReadFloat('DefaultColors', 'FillB', 1);
+  FFillColor.A := iIniFile.ReadFloat('DefaultColors', 'FillA', 1);
+
+  //Font
+  Font.InitFont( iIniFile.ReadString('Font', 'Texture', 'console.fnt') );
+
+  //Mouse
+  GUI.MouseCursor.InitMouse( iIniFile.ReadString('Mouse', 'Texture', 'mouse.dds'),
+                             iIniFile.ReadInteger('Mouse', 'Size', 40) );
+
+  //Loading
+  iLoadingInput.X := iIniFile.ReadInteger('Loading', 'X', 1); ;
+  iLoadingInput.Y := iIniFile.ReadInteger('Loading', 'Y', 1); ;
+  iLoadingInput.BarR := iIniFile.ReadFloat('Loading', 'BarR', 1);
+  iLoadingInput.BarG := iIniFile.ReadFloat('Loading', 'BarG', 1);
+  iLoadingInput.BarB := iIniFile.ReadFloat('Loading', 'BarB', 1);
+  iLoadingInput.BarA := iIniFile.ReadFloat('Loading', 'BarA', 1);
+  iLoadingInput.BackGroundR := iIniFile.ReadFloat('Loading', 'BackGroundR', 1);
+  iLoadingInput.BackGroundG := iIniFile.ReadFloat('Loading', 'BackGroundG', 1);
+  iLoadingInput.BackGroundB := iIniFile.ReadFloat('Loading', 'BackGroundB', 1);
+  iLoadingInput.BackGroundA := iIniFile.ReadFloat('Loading', 'BackGroundA', 1);
+  GUI.LoadingScreen.InitLoadingScreen( iLoadingInput );
+
+  FreeAndNil(iIniFile);
+end;
+
+{******************************************************************************}
+{* Clear the GUI class                                                        *}
+{******************************************************************************}
+
+procedure TGDGUI.Clear();
+begin
+  ShowCursor(true);
+  FFont.Clear();
   FMouseCursor.Clear();
   FLoadingScreen.Clear();
 end;

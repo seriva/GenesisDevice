@@ -33,18 +33,16 @@ interface
 {* - Fragment and vertex Shaders (GLSL)                                       *}
 {* - Frame buffers and Render buffers                                         *}
 {* - Displaylists                                                             *}
-{* Still todo are:                                                            *}
-{* - Vertex arrays                                                            *}
-{* - Vertex buffer objects  (VBO)                                             *}
 {******************************************************************************}
 
 uses
   SysUtils,
   Classes,
+  FileUtil,
   dglOpenGL,
   GDConsole,
   GDConstants,
-  GDTexture, FileUtil;
+  GDTexture;
 
 Type
 
@@ -64,10 +62,6 @@ Type
     function LoadShader( aSrc: String; atype: GLenum): GLhandleARB;
     function GetInfoLog(aObject : GLhandleARB): String;
   public
-    property VertexShader : GLhandleARB read FVertexShader;
-    property FragmentShader : GLhandleARB read FFragmentShader;
-    property ProgramObject : GLhandleARB read FProgramObject;
-
     constructor Create();
     destructor  Destroy(); override;
 
@@ -108,10 +102,9 @@ Type
   private
     FFrameBufferObject : GLuint;
   public
-    property FrameBufferObject : GLuint read FFrameBufferObject;
-
     constructor Create();
     destructor  Destroy(); override;
+
     procedure InitFrameBuffer();
     procedure Clear();
     procedure Bind();
@@ -129,10 +122,9 @@ Type
   private
     FDisplayList : GLuint;
   public
-    property DisplayList : GLuint read FDisplayList;
-
     constructor Create();
     destructor  Destroy(); override;
+
     procedure InitDisplayList();
     procedure Clear();
     procedure StartList();
@@ -207,7 +199,6 @@ begin
     FLoadedOk        :=   false;;
     FMessage         :=   iLog;
   end;
-
 end;
 
 {******************************************************************************}
