@@ -56,7 +56,7 @@ type
     FRenderTerrain     : Boolean;
     FRenderSky         : Boolean;
     FRenderWater       : Boolean;
-    FRenderMeshes      : Boolean;
+    FRenderModels      : Boolean;
     FRenderGrass       : Boolean;
     FRenderGUI         : Boolean;
   public
@@ -67,7 +67,7 @@ type
     property RenderStats : boolean read FRenderStats write FRenderStats;
     property RenderTerrain : boolean read FRenderTerrain write FRenderTerrain;
     property RenderSky : boolean read FRenderSky write FRenderSky;
-    property RenderMeshes : boolean read FRenderMeshes write FRenderMeshes;
+    property RenderModels : boolean read FRenderModels write FRenderModels;
     property RenderWater : boolean read FRenderWater write FRenderWater;
     property RenderGrass : boolean read FRenderGrass write FRenderGrass;
     property RenderGUI : boolean read FRenderGUI write FRenderGUI;
@@ -91,7 +91,7 @@ begin
   Console.AddCommand('RNormals',  '0,1 : Show or hide normals', CT_BOOLEAN, @FRenderNormals);
   Console.AddCommand('RTerrain', '0,1 : Show or hide terrain', CT_BOOLEAN, @FRenderTerrain);
   Console.AddCommand('RSky', '0,1 : Show or hide sky', CT_BOOLEAN, @FRenderSky);
-  Console.AddCommand('RMeshes', '0,1 : Show or hide meshes', CT_BOOLEAN, @FRenderMeshes);
+  Console.AddCommand('RModels', '0,1 : Show or hide models', CT_BOOLEAN, @FRenderModels);
   Console.AddCommand('RWater', '0,1 : Show or hide water', CT_BOOLEAN, @FRenderWater);
   Console.AddCommand('RGrass', '0,1 : Show or hide grass', CT_BOOLEAN, @FRenderGrass);
   Console.AddCommand('RTreeNodes', '0,1 : Show or hide treenodes', CT_BOOLEAN, @FRenderNodeBoxes);
@@ -118,7 +118,7 @@ begin
   FRenderSky         := true;
   FRenderWater       := true;
   FRenderGrass       := true;
-  FRenderMeshes      := true;
+  FRenderModels      := true;
   FRenderGUI         := true;
 end;
 

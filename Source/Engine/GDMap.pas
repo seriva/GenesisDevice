@@ -161,12 +161,12 @@ begin
     FDescription := iIniFile.ReadString( 'Map', 'Description', '' );
 
     //spawnpoint
-    FPlayerStart.x     := iIniFile.ReadFloat(  'SpawnPoint', 'PLayerPosX', 0 );
-    FPlayerStart.y     := iIniFile.ReadFloat(  'SpawnPoint', 'PLayerPosY', 0 );
-    FPlayerStart.z     := iIniFile.ReadFloat(  'SpawnPoint', 'PlayerPosZ', 0 );
-    FPlayerViewAngle.x := iIniFile.ReadFloat(  'SpawnPoint', 'PLayerViewAngleX', 0 );
-    FPlayerViewAngle.Y := iIniFile.ReadFloat(  'SpawnPoint', 'PLayerViewAngleY', 0 );
-    FPlayerViewAngle.z := iIniFile.ReadFloat(  'SpawnPoint', 'PLayerViewAngleZ', 0 );
+    FPlayerStart.x     := iIniFile.ReadFloat(  'SpawnPoint', 'PosX', 0 );
+    FPlayerStart.y     := iIniFile.ReadFloat(  'SpawnPoint', 'PosY', 0 );
+    FPlayerStart.z     := iIniFile.ReadFloat(  'SpawnPoint', 'PosZ', 0 );
+    FPlayerViewAngle.x := iIniFile.ReadFloat(  'SpawnPoint', 'ViewAngleX', 0 );
+    FPlayerViewAngle.Y := iIniFile.ReadFloat(  'SpawnPoint', 'ViewAngleY', 0 );
+    FPlayerViewAngle.z := iIniFile.ReadFloat(  'SpawnPoint', 'ViewAngleZ', 0 );
 
     //terrain
     iTerrainInput.HeightMap      := iIniFile.ReadString( 'Terrain', 'HeightMap', 'heightmap.bmp' );
@@ -292,7 +292,7 @@ begin
     begin
       iString := 'GrassType' + IntToStr(iI);
 
-      iGrassTypeInput.FileName     := iIniFile.ReadString( iString, 'GrassTexture', '');
+      iGrassTypeInput.Texture      := iIniFile.ReadString( iString, 'Texture', '');
       iGrassTypeInput.ScaleX       := iIniFile.ReadFloat( iString, 'ScaleX', 100 );
       iGrassTypeInput.ScaleY       := iIniFile.ReadFloat( iString, 'ScaleY', 100 );
       iGrassTypeInput.ScaleZ       := iIniFile.ReadFloat( iString, 'ScaleZ', 100 );
@@ -315,7 +315,7 @@ begin
     begin
       iString := 'TreeType' + IntToStr(iI);
 
-      iTreeTypeInput.MeshName        := iIniFile.ReadString( iString, 'MeshName', '');
+      iTreeTypeInput.Model        := iIniFile.ReadString( iString, 'Model', '');
       iTreeTypeInput.StartScale      := iIniFile.ReadFloat( iString, 'StartScale', 100 );
       iTreeTypeInput.StartRotationX  := iIniFile.ReadFloat( iString, 'StartRotationX', 0 );
       iTreeTypeInput.StartRotationY  := iIniFile.ReadFloat( iString, 'StartRotationY', 0 );
@@ -334,11 +334,11 @@ begin
 
     //mesh entities
     iI := 1;
-    while (iIniFile.SectionExists('Mesh' + IntToStr(iI))) do
+    while (iIniFile.SectionExists('Model' + IntToStr(iI))) do
     begin
-      iString := 'Mesh' + IntToStr(iI);
+      iString := 'Model' + IntToStr(iI);
 
-      iMeshInput.MeshName := iIniFile.ReadString( iString, 'MeshName', '' );
+      iMeshInput.MeshName := iIniFile.ReadString( iString, 'Model', '' );
       iMeshInput.PosX     := iIniFile.ReadFloat( iString, 'PositionX', 0);
       iMeshInput.PosY     := iIniFile.ReadFloat( iString, 'PositionY', 0);
       iMeshInput.PosZ     := iIniFile.ReadFloat( iString, 'PositionZ', 0);

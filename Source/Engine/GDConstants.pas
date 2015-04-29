@@ -85,10 +85,9 @@ const
 
   //filepaths constants
   FP_MAPS         = 'Maps\';
-  FP_SCREENSHOTS  = 'Screenshots\';
   FP_SHADERS      = 'Shaders\';
   FP_SOUNDS       = 'Sounds\';
-  FP_MESHES       = 'Meshes\';
+  FP_MODELS       = 'Models\';
   FP_TEXTURES     = 'Textures\';
   FP_INITS        = 'Ini\';
 

@@ -352,7 +352,7 @@ Begin
         if not((iHeight > Foliage.TreeLowerLimit) and (iHeight < Foliage.TreeUpperLimit)) then
            goto RedoRandom;
 
-        iMeshInput.MeshName := iTreeType.MeshName;
+        iMeshInput.MeshName := iTreeType.Model;
         iMeshInput.PosX     := iPos.X;
         iMeshInput.PosY     := iHeight;
         iMeshInput.PosZ     := iPos.Z;
@@ -510,7 +510,7 @@ begin
     SO_MESHCELL :
     Begin
       If (aRenderFor = RF_WATER) and (Settings.WaterReflection = WR_TERRAIN_ONLY) then exit;
-      if Modes.RenderMeshes then
+      if Modes.RenderModels then
       begin
         iMeshCell := TGDBaseCell(FVisibleCells.Items[ iI ]) As TGDMeshCell;
         iMeshCell.RenderMeshCell( aRenderAttribute, aRenderFor );

@@ -284,7 +284,7 @@ begin
           If (iCell.OjectType = SO_TERRAINCELL) and Modes.RenderTerrain then
             VisibleCells.Add(iCell);
 
-          If (iCell.OjectType = SO_MESHCELL) and Modes.RenderMeshes then
+          If (iCell.OjectType = SO_MESHCELL) and Modes.RenderModels then
             VisibleCells.Add(iCell);
      end;
     end;

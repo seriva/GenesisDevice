@@ -55,7 +55,7 @@ type
 {******************************************************************************}
 
   TGDGrassTypesInput = record
-    FileName      : String;
+    Texture       : String;
     ScaleX        : Double;
     ScaleY        : Double;
     ScaleZ        : Double;
@@ -70,7 +70,7 @@ type
 {******************************************************************************}
 
   TGDTreeTypesInput = record
-    MeshName         : String;
+    Model            : String;
     StartScale       : Double;
     StartRotationX   : Double;
     StartRotationY   : Double;
@@ -109,14 +109,14 @@ type
 
   TGDTreeType = class(TObject)
   private
-    FMeshName        : String;
+    FModel        : String;
     FStartRotation   : TGDVector;
     FStartScale      : Double;
     FRandomScale     : Double;
     FRandomRotationY : Double;
     FCoverOfTotal    : Double;
   public
-    property MeshName : String read FMeshName;
+    property Model : String read FModel;
     property StartRotation : TGDVector read FStartRotation;
     property StartScale : Double read FStartScale;
     property RandomScale : Double read FRandomScale;
@@ -225,7 +225,7 @@ end;
 
 procedure TGDGrassType.InitGrassType( aInput : TGDGrassTypesInput );
 begin
-  FTexture.InitTexture( aInput.FileName, TD_HIGH, Settings.TextureFilter );
+  FTexture.InitTexture( aInput.Texture, TD_HIGH, Settings.TextureFilter );
   FScale.Reset(aInput.ScaleX, aInput.ScaleY, aInput.ScaleZ);
   FRandomScale.Reset(aInput.RandomScaleX, aInput.RandomScaleY, aInput.RandomScaleZ);
   FCoverOfTotal := aInput.CoverOfTotal;
@@ -249,7 +249,7 @@ end;
 
 constructor TGDTreeType.Create();
 begin
-  FMeshName      := '';
+  FModel         := '';
   FStartRotation := TGDVector.Create(0,0,0);
   FStartScale    := 100;
   FRandomScale   := 0;
@@ -272,7 +272,7 @@ end;
 
 procedure TGDTreeType.InitTreeType( aInput : TGDTreeTypesInput );
 begin
-  FMeshName := aInput.MeshName;
+  FModel := aInput.Model;
   FStartRotation.Reset(aInput.StartRotationX, aInput.StartRotationY, aInput.StartRotationZ);
   FStartScale := aInput.StartScale;
   FRandomScale := aInput.RandomScale;
@@ -286,7 +286,7 @@ end;
 
 procedure TGDTreeType.Clear();
 begin
-  FMeshName := '';
+  FModel := '';
   FStartRotation.Reset(0,0,0);
   FStartScale    := 100;
   FRandomScale   := 0;
