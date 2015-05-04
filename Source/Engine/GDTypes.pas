@@ -53,6 +53,7 @@ type
     procedure   SetX(aX : Single);
     procedure   SetY(aY : Single);
     procedure   SetZ(aZ : Single);
+    function    Copy(): TGDVector;
 
     procedure   Add(aX,aY,aZ: Single);overload;
     procedure   Add(aD : Single);overload;
@@ -66,9 +67,6 @@ type
     procedure   Devide(aX,aY,aZ: Single);overload;
     procedure   Devide(aD : Single);overload;
     procedure   Devide(const aVector : TGDVector);overload;
-    function    Copy(): TGDVector;
-    procedure   Snap(aD : Single); overload;
-    procedure   Invert();
 
     function    DotProduct(const aVector : TGDVector) : Single; overload;
     procedure   CrossProduct(const aVector1, aVector2: TGDVector);overload;
@@ -133,7 +131,7 @@ type
     procedure   Invert();
     procedure   Multiply(aM1, aM2: TGDMatrix);
 
-    procedure   CreateRotation( aV : TGDVector );
+    procedure   CreateRotation(const aV : TGDVector );
     procedure   CreateRotationX(aRX : Single);
     procedure   CreateRotationY(aRY : Single);
     procedure   CreateRotationZ(aRZ : Single);
@@ -148,19 +146,8 @@ type
 {* Triangle class                                                             *}
 {******************************************************************************}
 
-  TGDTriangle = class
-  private
-    FNormal   : TGDVector;
-  public
-    Vertices : array[0..2] of TGDVector;
-    Property V1 : TGDVector read Vertices[0] write Vertices[0];
-    Property V2 : TGDVector read Vertices[1] write Vertices[1];
-    Property V3 : TGDVector read Vertices[2] write Vertices[2];
-    Property Normal : TGDVector read FNormal write FNormal;
-
-    constructor Create();overload;
-    constructor Create(aX1,aY1,aZ1,aX2,aY2,aZ2,aX3,aY3,aZ3 : Single);overload;
-    destructor  Destroy(); override;
+  TGDTriangle = record
+    Normal   : TGDVector;
 
     procedure   Reset(aX1,aY1,aZ1,aX2,aY2,aZ2,aX3,aY3,aZ3 : Single);
     procedure   Move( aMove : TGDVector ); overload;
@@ -170,14 +157,15 @@ type
     procedure   CalculateNormal();
     Function    PointInTraingle( aV : TGDVector ) : boolean;
 
-    procedure   Render();
-    procedure   RenderSolid();
-    procedure   RenderWireFrame();
+    case Boolean of
+      TRUE: ( V1, V2, V3 : TGDVector; );
+      FALSE: ( Vertices: array [0..2] of TGDVector; );
   end;
 
 {******************************************************************************}
 {* Quad class                                                                 *}
 {******************************************************************************}
+
 
   TGDQuad = class(TObject)
   private
@@ -191,7 +179,6 @@ type
     Property Normal : TGDVector read FNormal write FNormal;
 
     constructor Create();overload;
-    constructor Create(aX1,aY1,aZ1,aX2,aY2,aZ2 : Single);overload;
     destructor  Destroy(); override;
 
     procedure   Reset(aX1,aY1,aZ1,aX2,aY2,aZ2 : Single);overload;
@@ -201,11 +188,26 @@ type
     procedure   CalculateNormal();
     Function    PointInQuad( aV : TGDVector ) : boolean;
 
-    procedure   Render(aNormal : TGDVector; aRenderNormal : boolean);
-    procedure   RenderSolid();
-    procedure   RenderWireFrame();
+    procedure   Render();
   end;
+ {
+  TGDQuad = record
+    Normal   : TGDVector;
 
+    procedure   Reset(aX1,aY1,aZ1,aX2,aY2,aZ2 : Single);overload;
+    procedure   Move( aMove : TGDVector );overload;
+    procedure   Rotate(  aRotation : TGDVector );overload;
+    procedure   Scale(  aScale : TGDVector );overload;
+    procedure   CalculateNormal();
+    Function    PointInQuad( aV : TGDVector ) : boolean;
+
+    procedure   Render();
+
+    case Boolean of
+      TRUE: ( V1, V2, V3, V4 : TGDVector; );
+      FALSE: ( Vertices: array [0..3] of TGDVector; );
+  end;
+ }
 implementation
 
 function SameSide( aP1, aP2, aA, aB : TGDVector) : boolean;
@@ -365,28 +367,6 @@ begin
   result.x := x;
   result.y := y;
   result.z := z;
-end;
-
-{******************************************************************************}
-{* Snap the vector                                                            *}
-{******************************************************************************}
-
-procedure TGDVector.Snap(aD : Single);
-begin
-  X := round( X / aD ) * aD;
-  Y := round( Y / aD ) * aD;
-  Z := round( Z / aD ) * aD;
-end;
-
-{******************************************************************************}
-{* Invert the vector                                                          *}
-{******************************************************************************}
-
-procedure TGDVector.Invert();
-begin
-  X := -X;
-  Y := -Y;
-  Z := -Z;
 end;
 
 {******************************************************************************}
@@ -737,7 +717,7 @@ end;
 {* Create a rotation matrix                                                   *}
 {******************************************************************************}
 
-procedure TGDMatrix.CreateRotation( aV : TGDVector );
+procedure TGDMatrix.CreateRotation(const aV : TGDVector );
 var
   iM, iMX, iMY, iMZ : TGDMatrix;
 begin
@@ -785,29 +765,6 @@ end;
 function TGDMatrix.ArrayPointer() : PGLfloat;
 begin
   result := @Data;
-end;
-
-{******************************************************************************}
-{* Create the triangle class                                                  *}
-{******************************************************************************}
-
-constructor TGDTriangle.Create();
-begin
-  inherited;
-end;
-
-constructor TGDTriangle.Create(aX1,aY1,aZ1,aX2,aY2,aZ2,aX3,aY3,aZ3 : Single);
-begin
-  Reset(aX1,aY1,aZ1,aX2,aY2,aZ2,aX3,aY3,aZ3);
-end;
-
-{******************************************************************************}
-{* Destroy the triangle class                                                 *}
-{******************************************************************************}
-
-destructor  TGDTriangle.Destroy();
-begin
-  inherited;
 end;
 
 {******************************************************************************}
@@ -861,7 +818,7 @@ begin
 end;
 
 {******************************************************************************}
-{* Calculate the normal of the triangle                                           *}
+{* Calculate the normal of the triangle                                       *}
 {******************************************************************************}
 
 procedure TGDTriangle.CalculateNormal();
@@ -873,8 +830,8 @@ begin
   iVVector1.Substract( V1 );
   iVVector2.Reset(V2.x, V2.Y, V2.Z);
   iVVector2.Substract( V1 );
-  FNormal.CrossProduct( iVVector1, iVVector2 );
-  FNormal.Normalize();
+  Normal.CrossProduct( iVVector1, iVVector2 );
+  Normal.Normalize();
 end;
 
 {******************************************************************************}
@@ -883,7 +840,10 @@ end;
 
 function TGDTriangle.Copy(): TGDTriangle;
 begin
-  result := TGDTriangle.Create( V1.X, V1.Y, V1.Z, V2.X, V2.Y, V2.Z, V3.X, V3.Y, V3.Z );
+  result.Normal := Normal.Copy();
+  result.V1 := V1.Copy();
+  result.V2 := V2.Copy();
+  result.V3 := V3.Copy();
 end;
 
 {******************************************************************************}
@@ -901,48 +861,11 @@ begin
 end;
 
 {******************************************************************************}
-{* Render the triangle                                                        *}
-{******************************************************************************}
-
-procedure TGDTriangle.Render();
-begin
-  glBegin(GL_TRIANGLES);
-    glVertex3fv(Vertices[0].ArrayPointer);
-    glVertex3fv(Vertices[1].ArrayPointer);
-    glVertex3fv(Vertices[2].ArrayPointer);
-  glEnd();
-end;
-
-procedure TGDTriangle.RenderSolid();
-begin
-  glBegin(GL_TRIANGLES);
-    glVertex3fv(Vertices[0].ArrayPointer);
-    glVertex3fv(Vertices[1].ArrayPointer);
-    glVertex3fv(Vertices[2].ArrayPointer);
-  glEnd();
-end;
-
-procedure TGDTriangle.RenderWireFrame();
-begin
-  glBegin(GL_LINES);
-    glVertex3fv(Vertices[0].ArrayPointer);
-    glVertex3fv(Vertices[1].ArrayPointer);
-    glVertex3fv(Vertices[2].ArrayPointer);
-  glEnd();
-end;
-
-{******************************************************************************}
 {* Create the quad class                                                      *}
 {******************************************************************************}
 
 constructor TGDQuad.Create();
 begin
-  inherited;
-end;
-
-constructor TGDQuad.Create(aX1,aY1,aZ1,aX2,aY2,aZ2 : Single);
-begin
-  Reset(aX1,aY1,aZ1,aX2,aY2,aZ2);
 end;
 
 {******************************************************************************}
@@ -1043,11 +966,10 @@ end;
 {* Render the quad                                                            *}
 {******************************************************************************}
 
-procedure TGDQuad.Render(aNormal : TGDVector; aRenderNormal : boolean);
+procedure TGDQuad.Render();
 begin
   glBegin(GL_TRIANGLE_STRIP);
-    if aRenderNormal then
-      glNormal3fv(aNormal.ArrayPointer);
+    glNormal3fv(FNormal.ArrayPointer);
     glMultiTexCoord2f(GL_TEXTURE0, 0.99, 0.99);
     glVertex3fv(Vertices[0].ArrayPointer);
     glMultiTexCoord2f(GL_TEXTURE0, 0.99, 0.00);
@@ -1055,26 +977,6 @@ begin
     glMultiTexCoord2f(GL_TEXTURE0, 0.0, 0.99);
     glVertex3fv(Vertices[3].ArrayPointer);
     glMultiTexCoord2f(GL_TEXTURE0, 0.0, 0.0);
-    glVertex3fv(Vertices[2].ArrayPointer);
-  glEnd();
-end;
-
-procedure   TGDQuad.RenderSolid();
-begin
-  glBegin(GL_TRIANGLE_STRIP);
-    glVertex3fv(Vertices[0].ArrayPointer);
-    glVertex3fv(Vertices[1].ArrayPointer);
-    glVertex3fv(Vertices[3].ArrayPointer);
-    glVertex3fv(Vertices[2].ArrayPointer);
-  glEnd();
-end;
-
-procedure TGDQuad.RenderWireFrame();
-begin
-  glBegin(GL_LINE_LOOP);
-    glVertex3fv(Vertices[1].ArrayPointer);
-    glVertex3fv(Vertices[0].ArrayPointer);
-    glVertex3fv(Vertices[3].ArrayPointer);
     glVertex3fv(Vertices[2].ArrayPointer);
   glEnd();
 end;

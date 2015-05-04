@@ -60,10 +60,6 @@ type
 
   TGDMap = class
   private
-    FName        : String;
-    FAuthor      : String;
-    FDate        : String;
-    FDescription : String;
     FPlayerStart       : TGDVector;
     FPlayerViewAngle   : TGDVector;
   public
@@ -91,10 +87,7 @@ uses
 
 constructor TGDMap.Create();
 begin
-  FName            := 'None';
-  FAuthor          := 'None';
-  FDate            := 'None';
-  FDescription     := 'None';
+  inherited;
 end;
 
 {******************************************************************************}
@@ -150,12 +143,6 @@ begin
   Console.Write('Loading settings ' + aFileName + '...');
   try
     result := true;
-
-    //map information
-    FName        := iIniFile.ReadString( 'Map', 'Name', '' );
-    FAuthor      := iIniFile.ReadString( 'Map', 'Author', '' );
-    FDate        := iIniFile.ReadString( 'Map', 'Date', '' );
-    FDescription := iIniFile.ReadString( 'Map', 'Description', '' );
 
     //spawnpoint
     FPlayerStart.x     := iIniFile.ReadFloat(  'SpawnPoint', 'PosX', 0 );
@@ -244,7 +231,7 @@ begin
     iDirectionalLightInput.DifG := iIniFile.ReadFloat('DirectionalLight', 'DiffuseB', 1.0);
     iDirectionalLightInput.DifB := iIniFile.ReadFloat('DirectionalLight', 'DiffuseG', 1.0);
     
-    GUI.LoadingScreen.SetupForUse('Loading ' + FName + '...',12 );
+    GUI.LoadingScreen.SetupForUse('Loading ' + StringReplace( ExtractFileName(aFileName) , ExtractFileExt(aFileName), '',  [rfReplaceAll] ) + '...',12 );
     GUI.LoadingScreen.UpdateBar();
   except
     on E: Exception do

@@ -31,8 +31,7 @@ uses
   SysUtils,
   dglOpenGL,
   GDTypes,
-  GDGenerics,
-  Contnrs;
+  GDGenerics;
 
 type
 
@@ -40,7 +39,7 @@ type
 {* Axis aligned bounding box class                                            *}
 {******************************************************************************}
 
-  TGDBoundingBox = class(TObject)
+  TGDBoundingBox = class
   private
     FMin : TGDVector;
     FMax : TGDVector;

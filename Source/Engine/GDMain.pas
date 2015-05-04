@@ -111,7 +111,6 @@ begin
   Console.Write('......Initializing engine recources');
 
   GUI.InitGUI();
-  Camera.InitCamera(0, 8192, 32768);
   Statistics.InitStatistics();
   Modes.InitModes();
   Console.InitConsole();

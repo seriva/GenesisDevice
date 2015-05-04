@@ -448,7 +448,6 @@ begin
   iD := TerrainPoints[iRX+1 ,iRZ+1].FVertex.Y;
   iPos.Y := (iA + (iB - iA) * iFX) + ((iC + (iD - iC) * iFX) - (iA + (iB - iA) * iFX)) * iFZ;
 
-  iTriangle := TGDTriangle.Create();
   iTriangle.V1 := TerrainPoints[iRX, iRZ].FVertex.Copy();
   iTriangle.V2 := TerrainPoints[iRX+1, iRZ].FVertex.Copy();
   iTriangle.V3 := TerrainPoints[iRX, iRZ+1].FVertex.Copy();
@@ -460,7 +459,8 @@ begin
     iTriangle.V2 := TerrainPoints[iRX, iRZ+1].FVertex.Copy();
     iTriangle.V3 := TerrainPoints[iRX+1, iRZ].FVertex.Copy();
     iSecTris := true;
-    If Not(iTriangle.PointInTraingle( iPos )) then iFound := false;
+    If Not(iTriangle.PointInTraingle( iPos )) then
+      iFound := false;
   end;
 
   if iFound then
@@ -508,8 +508,6 @@ begin
       end;
     result := true;
   end;
-  
-  FreeAndNil(iTriangle);
 end;
 
 {******************************************************************************}

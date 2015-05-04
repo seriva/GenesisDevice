@@ -193,13 +193,13 @@ begin
   //do soms sound stuff
   if Player.PlayerUnderWater() then
   begin
-    gdSoundFilesResume( Sounds.FUnderWaterID );
-    gdSoundFilesPause(Sounds.FAmbientId);
+    gdSoundResume( Sounds.FUnderWaterID );
+    gdSoundPause(Sounds.FAmbientId);
   end
   else
   begin
-    gdSoundFilesPause(Sounds.FUnderWaterID);
-    gdSoundFilesResume(Sounds.FAmbientID);
+    gdSoundPause(Sounds.FUnderWaterID);
+    gdSoundResume(Sounds.FAmbientID);
   end;
 
   //if the window is not selected sleep for a bit and only render the scene

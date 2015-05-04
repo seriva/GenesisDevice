@@ -20,7 +20,7 @@
 *  You should have received a copy of the GNU General Public License           *
 *  along with Genesis Device.  If not, see <http://www.gnu.org/licenses/>.     *
 *                                                                              *
-*******************************************************************************}   
+*******************************************************************************}
 unit GDGrassCell;
 
 {$MODE Delphi}
@@ -63,7 +63,6 @@ type
     destructor  Destroy(); override;
 
     procedure InitGrassPartical(  aMove, aScale, aRotate : TGDVector  );
-    procedure Clear();
     procedure Render();
   end;
 
@@ -99,10 +98,10 @@ implementation
 
 constructor TGDGrassPartical.Create();
 begin
-  FNormal.Reset(0,1,0);
-  FQuad1 := TGDQuad.Create(-50, -50, 0, 50, 50, 0 );
-  FQuad2 := TGDQuad.Create(-25,-50,-43.30127,25,50,43.30127);
-  FQuad3 := TGDQuad.Create(-25,-50,43.30127,25,50,-43.30127);
+  FNormal.reset(0,1,0);
+  FQuad1 := TGDQuad.Create();
+  FQuad2 := TGDQuad.Create();
+  FQuad3 := TGDQuad.Create();
 end;
 
 {******************************************************************************}
@@ -126,43 +125,27 @@ var
   iRandomRotation : TGDVector;
   iM : TGDMatrix;
 
-procedure ApplyRotationToQuad(aQuad : TGDQuad);
-var
-  iI : integer;
+procedure ApplyRQuad(aQuad : TGDQuad);
 begin
-  for iI := 0 to length(aQuad.Vertices)-1do
-    iM.ApplyToVector(aQuad.Vertices[iI]);
+  aQuad.Rotate(iRandomRotation);
+  aQuad.Rotate(aRotate);
+  aQuad.Scale( aScale );
+  aQuad.Move( aMove );
+  aQuad.Normal := FNormal.Copy();
 end;
 
-begin
-  iRandomRotation.Reset(0,Random(360),0);
-  iM.CreateRotation( iRandomRotation );
-  ApplyRotationToQuad(FQuad1);
-  ApplyRotationToQuad(FQuad2);
-  ApplyRotationToQuad(FQuad3);
-  iM.EmptyMatrix();
-  iM.CreateRotation( aRotate );
-  ApplyRotationToQuad(FQuad1);
-  ApplyRotationToQuad(FQuad2);
-  ApplyRotationToQuad(FQuad3);
-  iM.ApplyToVector(FNormal);
-  FQuad1.Scale( aScale );
-  FQuad2.Scale( aScale );
-  FQuad3.Scale( aScale );
-  FQuad1.Move( aMove );
-  FQuad2.Move( aMove );
-  FQuad3.Move( aMove );
-end;
-
-{******************************************************************************}
-{* Clear the grasspartical                                                    *}
-{******************************************************************************}
-
-procedure TGDGrassPartical.Clear();
 begin
   FQuad1.Reset(-50, -50, 0, 50, 50, 0 );
   FQuad2.Reset(-25,-50,-43.30127,25,50,43.30127);
   FQuad3.Reset(-25,-50,43.30127,25,50,-43.30127);
+
+  iRandomRotation.reset(0,Random(360),0);
+  iM.CreateRotation( aRotate );
+  iM.ApplyToVector(FNormal);
+
+  ApplyRQuad(FQuad1);
+  ApplyRQuad(FQuad2);
+  ApplyRQuad(FQuad3);
 end;
 
 {******************************************************************************}
@@ -171,9 +154,9 @@ end;
 
 procedure TGDGrassPartical.Render();
 begin
-  FQuad1.Render(FNormal, true);
-  FQuad2.Render(FNormal, true);
-  FQuad3.Render(FNormal, true);
+  FQuad1.Render();
+  FQuad2.Render();
+  FQuad3.Render();
 end;
 
 {******************************************************************************}

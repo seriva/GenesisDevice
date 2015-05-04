@@ -109,6 +109,12 @@ function  gdSoundNumberOfDrivers() : Integer;
 function  gdSoundGetDriverName( aDriverNumber : Integer ) : String;
 function  gdSoundInitDriver() : boolean;
 function  gdSoundShutDownDriver() : boolean;
+function  gdSoundLoad( aFileName : String; aType : TGDSoundTypes ) : pointer;
+procedure gdSoundRemove( aPointer : pointer );
+procedure gdSoundClear();
+procedure gdSoundPlay( aPointer : pointer );
+procedure gdSoundPause( aPointer : pointer );
+procedure gdSoundResume( aPointer  : pointer );
 
 //input functions
 function  gdInputStringToKey( aName : String ) : Integer ;
@@ -149,14 +155,6 @@ function  gdTexturesLoad( aFileName : String ) : pointer;
 procedure gdTexturesBind( aPointer : pointer; aTextureUnit : GLEnum );
 procedure gdTexturesClear(); 
 procedure gdTexturesRemove( aPointer : pointer );
-
-//sound functions
-function  gdSoundFilesLoad( aFileName : String; aType : TGDSoundTypes ) : pointer; 
-procedure gdSoundFilesRemove( aPointer : pointer ); 
-procedure gdSoundFilesClear(); 
-procedure gdSoundFilesPlay( aPointer : pointer ); 
-procedure gdSoundFilesPause( aPointer : pointer ); 
-procedure gdSoundFilesResume( aPointer  : pointer ); 
 
 implementation
 
@@ -357,6 +355,74 @@ end;
 function gdSoundShutDownDriver() : boolean;
 begin
   result := Sound.ShutDownSoundDriver();
+end;
+
+{******************************************************************************}
+{* Init a soundfile                                                           *}
+{******************************************************************************}
+
+function  gdSoundLoad( aFileName : String;  aType : TGDSoundTypes  ) : pointer;
+var
+  iTempSoundFile : TGDSoundFile;
+begin
+  result := nil;
+  If Not(FEngineInitialized) then exit;
+  iTempSoundFile := TGDSoundFile.Create();
+  If Not(iTempSoundFile.InitSoundFile( aFileName, aType )) then exit;
+  SoundList.Add( iTempSoundFile );
+  result := iTempSoundFile;
+end;
+
+{******************************************************************************}
+{* Clear all soundfiles                                                       *}
+{******************************************************************************}
+
+procedure gdSoundClear();
+begin
+  If Not(FEngineInitialized) then exit;
+  SoundList.Clear();
+end;
+
+{******************************************************************************}
+{* Remove soundfile                                                           *}
+{******************************************************************************}
+
+procedure gdSoundRemove( aPointer : pointer );
+begin
+  If Not(FEngineInitialized) then exit;
+  SoundList.Remove(aPointer);
+  aPointer := nil
+end;
+
+{******************************************************************************}
+{* Play a soundfile                                                           *}
+{******************************************************************************}
+
+procedure gdSoundPlay( aPointer  : pointer );
+begin
+  If Not(FEngineInitialized) then exit;
+  TGDSoundFile(aPointer).Play();
+end;
+
+{******************************************************************************}
+{* Pause a soundfile                                                          *}
+{******************************************************************************}
+
+procedure gdSoundPause( aPointer  : pointer );
+
+begin
+  If Not(FEngineInitialized) then exit;
+  TGDSoundFile(aPointer).Pause();
+end;
+
+{******************************************************************************}
+{* Resume playing of a soundfile                                              *}
+{******************************************************************************}
+
+procedure gdSoundResume( aPointer  : pointer );
+begin
+  If Not(FEngineInitialized) then exit;
+  TGDSoundFile(aPointer).Resume();
 end;
 
 {******************************************************************************}
@@ -849,88 +915,6 @@ procedure gdTexturesClear();
 begin
   If Not(FEngineInitialized) then exit;
   TextureList.Clear();
-end;
-
-{******************************************************************************}
-{* Init a soundfile                                                           *}
-{******************************************************************************}
-
-function  gdSoundFilesLoad( aFileName : String;  aType : TGDSoundTypes  ) : pointer; 
-var
-  iTempSoundFile : TGDSoundFile;
-begin
-  result := nil;
-  If Not(FEngineInitialized) then exit;
-  iTempSoundFile := TGDSoundFile.Create();
-  If Not(iTempSoundFile.InitSoundFile( aFileName, aType )) then exit;
-  SoundList.Add( iTempSoundFile );
-  result := iTempSoundFile;
-end;
-
-{******************************************************************************}
-{* Clear all soundfiles                                                       *}
-{******************************************************************************}
-
-procedure gdSoundFilesClear(); 
-begin
-  If Not(FEngineInitialized) then exit;
-  SoundList.Clear();
-end;
-
-{******************************************************************************}
-{* Remove soundfile                                                           *}
-{******************************************************************************}
-
-procedure gdSoundFilesRemove( aPointer : pointer ); 
-begin
-  If Not(FEngineInitialized) then exit;
-  SoundList.Remove(aPointer);
-  aPointer := nil
-end;
-
-{******************************************************************************}
-{* Play a soundfile                                                           *}
-{******************************************************************************}
-
-procedure gdSoundFilesPlay( aPointer  : pointer ); 
-var
-  iTempSoundFile : TGDSoundFile;
-begin
-  If Not(FEngineInitialized) then exit;
-  iTempSoundFile := TGDSoundFile(aPointer);
-  If iTempSoundFile <> nil then
-    iTempSoundFile.Play();
-  ;
-end;
-
-{******************************************************************************}
-{* Pause a soundfile                                                          *}
-{******************************************************************************}
-
-procedure gdSoundFilesPause( aPointer  : pointer ); 
-var
-  iTempSoundFile : TGDSoundFile;
-begin
-  If Not(FEngineInitialized) then exit;
-  iTempSoundFile := TGDSoundFile(aPointer);
-  If iTempSoundFile <> nil then
-    iTempSoundFile.Pause();
-  ;
-end;
-
-{******************************************************************************}
-{* Resume playing of a soundfile                                              *}
-{******************************************************************************}
-
-procedure gdSoundFilesResume( aPointer  : pointer ); 
-var
-  iTempSoundFile : TGDSoundFile;
-begin
-  If Not(FEngineInitialized) then exit;
-  iTempSoundFile := TGDSoundFile(aPointer);
-  If iTempSoundFile <> nil then
-    iTempSoundFile.Resume();
-  ;
 end;
 
 end.
