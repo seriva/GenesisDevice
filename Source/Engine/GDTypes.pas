@@ -148,6 +148,7 @@ type
 
   TGDTriangle = record
     Normal   : TGDVector;
+    V1, V2, V3 : TGDVector;
 
     procedure   Reset(aX1,aY1,aZ1,aX2,aY2,aZ2,aX3,aY3,aZ3 : Single);
     procedure   Move( aMove : TGDVector ); overload;
@@ -156,58 +157,26 @@ type
     function    Copy(): TGDTriangle;
     procedure   CalculateNormal();
     Function    PointInTraingle( aV : TGDVector ) : boolean;
-
-    case Boolean of
-      TRUE: ( V1, V2, V3 : TGDVector; );
-      FALSE: ( Vertices: array [0..2] of TGDVector; );
   end;
 
 {******************************************************************************}
 {* Quad class                                                                 *}
 {******************************************************************************}
 
-
-  TGDQuad = class(TObject)
-  private
-    FNormal   : TGDVector;
-  public
-    Vertices : array[0..3] of TGDVector;
-    Property V1 : TGDVector read Vertices[0] write Vertices[0];
-    Property V2 : TGDVector read Vertices[1] write Vertices[1];
-    Property V3 : TGDVector read Vertices[2] write Vertices[2];
-    Property V4 : TGDVector read Vertices[3] write Vertices[3];
-    Property Normal : TGDVector read FNormal write FNormal;
-
-    constructor Create();overload;
-    destructor  Destroy(); override;
-
-    procedure   Reset(aX1,aY1,aZ1,aX2,aY2,aZ2 : Single);overload;
-    procedure   Move( aMove : TGDVector );overload;
-    procedure   Rotate(  aRotation : TGDVector );overload;
-    procedure   Scale(  aScale : TGDVector );overload;
-    procedure   CalculateNormal();
-    Function    PointInQuad( aV : TGDVector ) : boolean;
-
-    procedure   Render();
-  end;
- {
   TGDQuad = record
     Normal   : TGDVector;
+    V1, V2, V3, V4 : TGDVector;
 
-    procedure   Reset(aX1,aY1,aZ1,aX2,aY2,aZ2 : Single);overload;
-    procedure   Move( aMove : TGDVector );overload;
-    procedure   Rotate(  aRotation : TGDVector );overload;
-    procedure   Scale(  aScale : TGDVector );overload;
+    procedure   Reset(aX1,aY1,aZ1,aX2,aY2,aZ2 : Single);
+    procedure   Move( aMove : TGDVector );
+    procedure   Rotate( aM : TGDMatrix );
+    procedure   Scale(  aScale : TGDVector );
     procedure   CalculateNormal();
     Function    PointInQuad( aV : TGDVector ) : boolean;
 
     procedure   Render();
-
-    case Boolean of
-      TRUE: ( V1, V2, V3, V4 : TGDVector; );
-      FALSE: ( Vertices: array [0..3] of TGDVector; );
   end;
- }
+
 implementation
 
 function SameSide( aP1, aP2, aA, aB : TGDVector) : boolean;
@@ -773,9 +742,9 @@ end;
 
 procedure TGDTriangle.Reset(aX1,aY1,aZ1,aX2,aY2,aZ2,aX3,aY3,aZ3 : Single);
 begin
-  Vertices[0].Reset(aX1,aY1,aZ1);
-  Vertices[1].Reset(aX2,aY2,aZ2);
-  Vertices[2].Reset(aX3,aY3,aZ3);
+  V1.Reset(aX1,aY1,aZ1);
+  V2.Reset(aX2,aY2,aZ2);
+  V3.Reset(aX3,aY3,aZ3);
 end;
 
 {******************************************************************************}
@@ -784,9 +753,9 @@ end;
 
 procedure TGDTriangle.Move( aMove : TGDVector );
 begin
-  Vertices[0].Add( aMove );
-  Vertices[1].Add( aMove );
-  Vertices[2].Add( aMove );
+  V1.Add( aMove );
+  V2.Add( aMove );
+  V3.Add( aMove );
 end;
 
 {******************************************************************************}
@@ -798,9 +767,9 @@ var
   iM : TGDMatrix;
 begin
   iM.CreateRotation( aRotation );
-  iM.ApplyToVector( Vertices[0] );
-  iM.ApplyToVector( Vertices[1] );
-  iM.ApplyToVector( Vertices[2] );
+  iM.ApplyToVector( V1 );
+  iM.ApplyToVector( V2 );
+  iM.ApplyToVector( V3 );
 end;
 
 {******************************************************************************}
@@ -809,12 +778,12 @@ end;
 
 procedure   TGDTriangle.Scale( aScale : TGDVector );
 begin
-  Vertices[0].Multiply(aScale);
-  Vertices[0].Devide(100);
-  Vertices[1].Multiply(aScale);
-  Vertices[1].Devide(100);
-  Vertices[2].Multiply(aScale);
-  Vertices[2].Devide(100);
+  V1.Multiply(aScale);
+  V1.Devide(100);
+  V2.Multiply(aScale);
+  V2.Devide(100);
+  V3.Multiply(aScale);
+  V3.Devide(100);
 end;
 
 {******************************************************************************}
@@ -852,29 +821,12 @@ end;
 
 Function TGDTriangle.PointInTraingle( aV : TGDVector ) : boolean;
 begin
-  if SameSide(aV,Vertices[0],Vertices[1],Vertices[2]) and
-     SameSide(aV,Vertices[1],Vertices[0],Vertices[2]) and
-     SameSide(aV,Vertices[2],Vertices[0],Vertices[1]) then
+  if SameSide(aV,V1,V2,V3) and
+     SameSide(aV,V2,V1,V3) and
+     SameSide(aV,V3,V1,V2) then
     result := true
   else
     result := false;
-end;
-
-{******************************************************************************}
-{* Create the quad class                                                      *}
-{******************************************************************************}
-
-constructor TGDQuad.Create();
-begin
-end;
-
-{******************************************************************************}
-{* Destroy the quad class                                                     *}
-{******************************************************************************}
-
-destructor  TGDQuad.Destroy();
-begin
-  inherited;
 end;
 
 {******************************************************************************}
@@ -883,10 +835,10 @@ end;
 
 procedure   TGDQuad.Reset(aX1,aY1,aZ1,aX2,aY2,aZ2 : Single);
 begin
-  Vertices[0].Reset(aX1,aY1,aZ1);
-  Vertices[1].Reset(aX1,aY2,aZ1);
-  Vertices[2].Reset(aX2,aY2,aZ2);
-  Vertices[3].Reset(aX2,aY1,aZ2);
+  V1.Reset(aX1,aY1,aZ1);
+  V2.Reset(aX1,aY2,aZ1);
+  V3.Reset(aX2,aY2,aZ2);
+  V4.Reset(aX2,aY1,aZ2);
 end;
 
 {******************************************************************************}
@@ -895,25 +847,22 @@ end;
 
 procedure TGDQuad.Move( aMove : TGDVector );
 begin
-  Vertices[0].Add( aMove );
-  Vertices[1].Add( aMove );
-  Vertices[2].Add( aMove );
-  Vertices[3].Add( aMove );
+  V1.Add( aMove );
+  V2.Add( aMove );
+  V3.Add( aMove );
+  V4.Add( aMove );
 end;
 
 {******************************************************************************}
 {* Rotate the quad                                                            *}
 {******************************************************************************}
 
-procedure TGDQuad.Rotate( aRotation : TGDVector );
-var
-  iM : TGDMatrix;
+procedure TGDQuad.Rotate( aM : TGDMatrix );
 begin
-  iM.CreateRotation( aRotation );
-  iM.ApplyToVector( Vertices[0] );
-  iM.ApplyToVector( Vertices[1] );
-  iM.ApplyToVector( Vertices[2] );
-  iM.ApplyToVector( Vertices[3] );
+  aM.ApplyToVector( V1 );
+  aM.ApplyToVector( V2 );
+  aM.ApplyToVector( V3 );
+  aM.ApplyToVector( V4 );
 end;
 
 {******************************************************************************}
@@ -922,14 +871,14 @@ end;
 
 procedure TGDQuad.Scale( aScale : TGDVector );
 begin
-  Vertices[0].Multiply(aScale);
-  Vertices[0].Devide(100);
-  Vertices[1].Multiply(aScale);
-  Vertices[1].Devide(100);
-  Vertices[2].Multiply(aScale);
-  Vertices[2].Devide(100);
-  Vertices[3].Multiply(aScale);
-  Vertices[3].Devide(100);
+  V1.Multiply(aScale);
+  V1.Devide(100);
+  V2.Multiply(aScale);
+  V2.Devide(100);
+  V3.Multiply(aScale);
+  V3.Devide(100);
+  V4.Multiply(aScale);
+  V4.Devide(100);
 end;
 
 {******************************************************************************}
@@ -969,15 +918,15 @@ end;
 procedure TGDQuad.Render();
 begin
   glBegin(GL_TRIANGLE_STRIP);
-    glNormal3fv(FNormal.ArrayPointer);
+    glNormal3fv(Normal.ArrayPointer);
     glMultiTexCoord2f(GL_TEXTURE0, 0.99, 0.99);
-    glVertex3fv(Vertices[0].ArrayPointer);
+    glVertex3fv(V1.ArrayPointer);
     glMultiTexCoord2f(GL_TEXTURE0, 0.99, 0.00);
-    glVertex3fv(Vertices[1].ArrayPointer);
+    glVertex3fv(V2.ArrayPointer);
     glMultiTexCoord2f(GL_TEXTURE0, 0.0, 0.99);
-    glVertex3fv(Vertices[3].ArrayPointer);
+    glVertex3fv(V4.ArrayPointer);
     glMultiTexCoord2f(GL_TEXTURE0, 0.0, 0.0);
-    glVertex3fv(Vertices[2].ArrayPointer);
+    glVertex3fv(V3.ArrayPointer);
   glEnd();
 end;
 

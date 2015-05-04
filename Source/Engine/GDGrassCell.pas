@@ -52,15 +52,11 @@ type
 {* Grasspartical class                                                        *}
 {******************************************************************************}
 
-  TGDGrassPartical = class
-  private
-    FNormal : TGDVector;
-    FQuad1 : TGDQuad;
-    FQuad2 : TGDQuad;
-    FQuad3 : TGDQuad;
-  public
-    constructor Create();
-    destructor  Destroy(); override;
+  TGDGrassPartical = record
+    Normal : TGDVector;
+    Quad1 : TGDQuad;
+    Quad2 : TGDQuad;
+    Quad3 : TGDQuad;
 
     procedure InitGrassPartical(  aMove, aScale, aRotate : TGDVector  );
     procedure Render();
@@ -93,59 +89,37 @@ type
 implementation
 
 {******************************************************************************}
-{* Create the grasspartical class                                             *}
-{******************************************************************************}
-
-constructor TGDGrassPartical.Create();
-begin
-  FNormal.reset(0,1,0);
-  FQuad1 := TGDQuad.Create();
-  FQuad2 := TGDQuad.Create();
-  FQuad3 := TGDQuad.Create();
-end;
-
-{******************************************************************************}
-{* Destroy the grasspartical class                                            *}
-{******************************************************************************}
-
-destructor  TGDGrassPartical.Destroy();
-begin
-  inherited;
-  FreeAndNil(FQuad1);
-  FreeAndNil(FQuad2);
-  FreeAndNil(FQuad3);
-end;
-
-{******************************************************************************}
 {* Init the grasspartical                                                     *}
 {******************************************************************************}
 
 procedure TGDGrassPartical.InitGrassPartical( aMove, aScale, aRotate : TGDVector );
 var
   iRandomRotation : TGDVector;
-  iM : TGDMatrix;
+  iM1, iM2  : TGDMatrix;
 
-procedure ApplyRQuad(aQuad : TGDQuad);
+procedure ApplyRQuad(var aQuad : TGDQuad);
 begin
-  aQuad.Rotate(iRandomRotation);
-  aQuad.Rotate(aRotate);
+  aQuad.Rotate(iM1);
+  aQuad.Rotate(iM2);
   aQuad.Scale( aScale );
   aQuad.Move( aMove );
-  aQuad.Normal := FNormal.Copy();
+  aQuad.Normal := Normal.Copy();
 end;
 
 begin
-  FQuad1.Reset(-50, -50, 0, 50, 50, 0 );
-  FQuad2.Reset(-25,-50,-43.30127,25,50,43.30127);
-  FQuad3.Reset(-25,-50,43.30127,25,50,-43.30127);
+  Normal.reset(0,1,0);
+  Quad1.Reset(-50, -50, 0, 50, 50, 0 );
+  Quad2.Reset(-25,-50,-43.30127,25,50,43.30127);
+  Quad3.Reset(-25,-50,43.30127,25,50,-43.30127);
 
   iRandomRotation.reset(0,Random(360),0);
-  iM.CreateRotation( aRotate );
-  iM.ApplyToVector(FNormal);
+  iM1.CreateRotation( iRandomRotation );
+  iM2.CreateRotation( aRotate );
+  iM2.ApplyToVector(Normal);
 
-  ApplyRQuad(FQuad1);
-  ApplyRQuad(FQuad2);
-  ApplyRQuad(FQuad3);
+  ApplyRQuad(Quad1);
+  ApplyRQuad(Quad2);
+  ApplyRQuad(Quad3);
 end;
 
 {******************************************************************************}
@@ -154,9 +128,9 @@ end;
 
 procedure TGDGrassPartical.Render();
 begin
-  FQuad1.Render();
-  FQuad2.Render();
-  FQuad3.Render();
+  Quad1.Render();
+  Quad2.Render();
+  Quad3.Render();
 end;
 
 {******************************************************************************}
@@ -242,7 +216,6 @@ begin
             If iHeight > Water.WaterHeight then
             begin
               SetLength(iParticalLists[iI], Length(iParticalLists[iI]) + 1 );
-              iParticalLists[iI,Length(iParticalLists[iI])-1] := TGDGrassPartical.Create();
               iParticalLists[iI,Length(iParticalLists[iI])-1].InitGrassPartical( iPos, iScale, iRot );
             end;
 
@@ -266,13 +239,7 @@ begin
 
   //delete temp arrays
   For iI := 0 to Length(iParticalLists)-1 do
-  begin
-    for iJ := 0 to Length( iParticalLists[iI] )-1 do
-    begin
-      iParticalLists[iI,iJ].Destroy();
-    end;
     SetLength( iParticalLists[iI], 0);
-  end;
   SetLength( iParticalLists, 0);
   SetLength( iParticalCount, 0);
 end;
