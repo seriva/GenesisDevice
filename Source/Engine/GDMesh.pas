@@ -107,8 +107,8 @@ Type
   TGDMesh = class
   private
     FFileName            : String;
-    FVertices            : TObjectList;
-    FNormals             : TObjectList;
+    FVertices            : TGDVectorList;
+    FNormals             : TGDVectorList;
     FUV                  : TGDUVCoordList;
     FPolygons            : TObjectList;
     FMaterialSegmentList : TObjectList;
@@ -116,8 +116,8 @@ Type
     procedure CreateMaterialSegmentLists();
   public
     property FileName      : String read FFileName;
-    property Vertices      : TObjectList read FVertices;
-    property Normals       : TObjectList read FNormals;
+    property Vertices      : TGDVectorList read FVertices;
+    property Normals       : TGDVectorList read FNormals;
     property UV            : TGDUVCoordList read FUV;
     property Polygons      : TObjectList read FPolygons;
     property MaterialSegmentList : TObjectList read FMaterialSegmentList;
@@ -220,8 +220,8 @@ end;
 
 constructor TGDMesh.Create();
 begin
-  FVertices            := TObjectList.Create();
-  FNormals             := TObjectList.Create();
+  FVertices            := TGDVectorList.Create();
+  FNormals             := TGDVectorList.Create();
   FUV                  := TGDUVCoordList.Create();
   FPolygons            := TObjectList.Create();
   FMaterialSegmentList := TObjectList.Create();
@@ -313,7 +313,6 @@ begin
       end
       else if iStr = 'v' then //read a vertex
       begin
-        iVec := TGDVector.Create();
         iVec.x := StrToFloat(GetNextToken(iFile));
         iVec.y := StrToFloat(GetNextToken(iFile));
         iVec.z := StrToFloat(GetNextToken(iFile));
@@ -329,7 +328,6 @@ begin
       end
       else if iStr = 'vn' then //read a normal
       begin
-        iNorm := TGDVector.Create();
         iNorm.x := StrToFloat(GetNextToken(iFile));
         iNorm.y := StrToFloat(GetNextToken(iFile));
         iNorm.z := StrToFloat(GetNextToken(iFile));

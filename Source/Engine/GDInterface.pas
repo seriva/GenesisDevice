@@ -518,9 +518,7 @@ end;
 procedure gdCameraSetPosition(aX,aY,aZ : double); 
 begin
   If Not(FEngineInitialized) then exit;
-  Camera.Position.X := aX;
-  Camera.Position.Y := aY;
-  Camera.Position.Z := aZ;
+  Camera.Position.Reset(aX,aY,aZ);
 end;
 
 {******************************************************************************}
@@ -751,9 +749,7 @@ begin
   CellManager.GenerateAllCells();
   Octree.InitOcTree();
   Camera.InitCamera(Map.PlayerStart.X,Map.PlayerStart.Y,Map.PlayerStart.Z);
-  Camera.Rotation.x := Map.PlayerViewAngle.X;
-  Camera.Rotation.y := Map.PlayerViewAngle.y;
-  Camera.Rotation.z := Map.PlayerViewAngle.z;
+  Camera.Rotation := Map.PlayerViewAngle.Copy();
   Camera.MouseLook(0,0,1,1,0,False);
 end;
 
@@ -791,7 +787,6 @@ function  gdMapTerrainRotation(aX, aZ : Double) : TGDVector;
 var
   iRotation : TGDVector;
 begin
-  iRotation := TGDVector.Create();
   If Not(FEngineInitialized) then exit;
   Terrain.GetRotation( aX, aZ, iRotation );
   result := iRotation;

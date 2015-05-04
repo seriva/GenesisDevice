@@ -148,12 +148,8 @@ end;
 procedure TGDWaterCell.InitWaterCell(aStartX, aStartY, aEndX, aEndY, aStartU1, aStartV1, aStepU1, aStepV1,
                        aStartU2, aStartV2, aStepU2, aStepV2 : Double );
 begin
-  BoundingBox.Min.X := aStartX;
-  BoundingBox.Min.Y := Water.WaterHeight;
-  BoundingBox.Min.Z := aStartY;
-  BoundingBox.Max.X := aEndX;
-  BoundingBox.Max.Y := Water.WaterHeight;
-  BoundingBox.Max.Z := aEndY;
+  BoundingBox.Min.Reset(aStartX, Water.WaterHeight, aStartY);
+  BoundingBox.Max.Reset(aEndX, Water.WaterHeight, aEndY);
   CreateDisplayList( aStartU1, aStartV1, aStepU1, aStepV1, aStartU2, aStartV2, aStepU2, aStepV2 );
 end;
 

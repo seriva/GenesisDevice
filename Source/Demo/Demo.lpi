@@ -309,7 +309,7 @@
         <UnitName Value="GDStringParsing"/>
       </Unit53>
       <Unit54>
-        <Filename Value="..\Engine\gdgenerics.pas"/>
+        <Filename Value="..\Engine\GDGenerics.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="GDGenerics"/>
       </Unit54>

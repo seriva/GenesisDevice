@@ -48,44 +48,40 @@ type
 {* Vector                                                                     *}
 {******************************************************************************}
 
-  TGDVector = class(TObject)
-  private
-    FArray : array[0..2] of Single;
-  public
-    Property X : Single read FArray[0] write FArray[0];
-    Property Y : Single read FArray[1] write FArray[1];
-    Property Z : Single read FArray[2] write FArray[2];
+  TGDVector = record
+    procedure   Reset(aX,aY,aZ: Single);
+    procedure   SetX(aX : Single);
+    procedure   SetY(aY : Single);
+    procedure   SetZ(aZ : Single);
 
-    constructor Create();overload;
-    constructor Create(aX,aY,aZ: Single);overload;
-    destructor  Destroy();override;
-
-    procedure   Reset(aX,aY,aZ: Single);overload;
-    procedure   Reset(aD : Single);overload;
-    procedure   Reset(aVector : TGDVector);overload;
     procedure   Add(aX,aY,aZ: Single);overload;
     procedure   Add(aD : Single);overload;
-    procedure   Add(aVector    : TGDVector);overload;
+    procedure   Add(const aVector : TGDVector);overload;
     procedure   Substract(aX,aY,aZ: Single);overload;
     procedure   Substract(aD : Single);overload;
-    procedure   Substract(aVector : TGDVector);overload;
+    procedure   Substract(const aVector : TGDVector);overload;
     procedure   Multiply(aX,aY,aZ: Single);overload;
     procedure   Multiply(aD : Single);overload;
-    procedure   Multiply(aVector : TGDVector);overload;
+    procedure   Multiply(const aVector : TGDVector);overload;
     procedure   Devide(aX,aY,aZ: Single);overload;
     procedure   Devide(aD : Single);overload;
-    procedure   Devide(aVector : TGDVector);overload;
+    procedure   Devide(const aVector : TGDVector);overload;
     function    Copy(): TGDVector;
     procedure   Snap(aD : Single); overload;
     procedure   Invert();
 
-    function    DotProduct(aVector : TGDVector) : Single; overload;
-    procedure   CrossProduct(aVector1, aVector2: TGDVector);overload;
-    function    Angle( aVector : TGDVector ) : Single;
+    function    DotProduct(const aVector : TGDVector) : Single; overload;
+    procedure   CrossProduct(const aVector1, aVector2: TGDVector);overload;
+    function    Angle(const aVector : TGDVector ) : Single;
     procedure   Normalize();
     function    Magnitude(): Single;
 
     function    ArrayPointer() : PGLfloat;
+    class operator Equal (v1, v2: TGDVector) B: Boolean;
+
+    case Boolean of
+      TRUE: ( x, y, z : Single; );
+      FALSE: ( xyz: array [0..1] of Single; );
   end;
 
 {******************************************************************************}
@@ -95,15 +91,6 @@ type
   TGDUVCoord  = record
     procedure   Reset(aU,aV : Single);overload;
     function    Copy(): TGDUVCoord;
-
-    procedure   Add(aU,aV : Single);overload;
-    procedure   Add(aUVCoord : TGDUVCoord);overload;
-    procedure   Substract(aU,aV : Single);overload;
-    procedure   Substract(aUVCoord : TGDUVCoord);overload;
-    procedure   Multiply(aU,aV : Single);overload;
-    procedure   Multiply(aUVCoord : TGDUVCoord);overload;
-    procedure   Devide(aU,aV : Single);overload;
-    procedure   Devide(aUVCoord : TGDUVCoord);overload;
 
     function    ArrayPointer() : PGLfloat;
     class operator Equal (uv1, uv2: TGDUVCoord) B: Boolean;
@@ -150,7 +137,7 @@ type
     procedure   CreateRotationX(aRX : Single);
     procedure   CreateRotationY(aRY : Single);
     procedure   CreateRotationZ(aRZ : Single);
-    procedure   ApplyToVector( aV : TGDVector );overload;
+    procedure   ApplyToVector(var aV : TGDVector );overload;
 
     function    Copy(): TGDMatrix;
 
@@ -214,7 +201,7 @@ type
     procedure   CalculateNormal();
     Function    PointInQuad( aV : TGDVector ) : boolean;
 
-    procedure   Render(aNormal : TGDVector);
+    procedure   Render(aNormal : TGDVector; aRenderNormal : boolean);
     procedure   RenderSolid();
     procedure   RenderWireFrame();
   end;
@@ -225,8 +212,6 @@ function SameSide( aP1, aP2, aA, aB : TGDVector) : boolean;
 var
   iCP1, iCP2, iBA, iP1A, iP2A : TGDVector;
 begin
-  iCP1 := TGDVector.Create();
-  iCP2 := TGDVector.Create();
   iBA := aB.Copy();
   iBA.Substract( aA );
   iP1A := aP1.Copy();
@@ -239,38 +224,6 @@ begin
     result := true
   else
     result := false;
-  FreeAndNil(iCP1);
-  FreeAndNil(iCP2);
-  FreeAndNil(iBA);
-  FreeAndNil(iP1A);
-  FreeAndNil(iP2A);
-end;
-
-{******************************************************************************}
-{* Create the vector class                                                    *}
-{******************************************************************************}
-
-constructor TGDVector.Create();
-begin
-  X := 0;
-  Y := 0;
-  Z := 0;
-end;
-
-constructor TGDVector.Create(aX,aY,aZ: Single);
-begin
-  X := aX;
-  Y := aY;
-  Z := aZ;
-end;
-
-{******************************************************************************}
-{* Destroy the vector class                                                   *}
-{******************************************************************************}
-
-destructor TGDVector.Destroy();
-begin
-  inherited;
 end;
 
 {******************************************************************************}
@@ -284,18 +237,23 @@ begin
   Z := aZ;
 end;
 
-procedure TGDVector.Reset(aD : Single);
+{******************************************************************************}
+{* set the vector element                                                     *}
+{******************************************************************************}
+
+procedure   TGDVector.SetX(aX : Single);
 begin
-  X := aD;
-  Y := aD;
-  Z := aD;
+  X := aX;
 end;
 
-procedure TGDVector.Reset(aVector : TGDVector);
+procedure   TGDVector.SetY(aY : Single);
 begin
-  X := aVector.x;
-  Y := aVector.Y;
-  Z := aVector.Z;
+  Y := aY;
+end;
+
+procedure   TGDVector.SetZ(aZ : Single);
+begin
+  Z := aZ;
 end;
 
 {******************************************************************************}
@@ -316,7 +274,7 @@ begin
   Z := Z + aD;
 end;
 
-procedure TGDVector.Add(aVector : TGDVector);
+procedure TGDVector.Add(const aVector : TGDVector);
 begin
   X := X + aVector.X;
   Y := Y + aVector.Y;
@@ -334,14 +292,14 @@ begin
   Z := Z - aZ;
 end;
 
-procedure TGDVector.Substract(aD : Single);
+procedure TGDVector.Substract( aD : Single);
 begin
   X := X - aD;
   Y := Y - aD;
   Z := Z - aD;
 end;
 
-procedure TGDVector.Substract(aVector : TGDVector);
+procedure TGDVector.Substract(const aVector : TGDVector);
 begin
   X := X - aVector.X;
   Y := Y - aVector.Y;
@@ -366,7 +324,7 @@ begin
   Z := Z * aD;
 end;
 
-procedure TGDVector.Multiply(aVector : TGDVector);
+procedure TGDVector.Multiply(const aVector : TGDVector);
 begin
   X := X * aVector.X;
   Y := Y * aVector.Y;
@@ -391,7 +349,7 @@ begin
   Z := Z / aD;
 end;
 
-procedure TGDVector.Devide(aVector : TGDVector);
+procedure TGDVector.Devide(const aVector : TGDVector);
 begin
   X := X / aVector.X;
   Y := Y / aVector.Y;
@@ -404,7 +362,9 @@ end;
 
 function TGDVector.Copy(): TGDVector;
 begin
-  result := TGDVector.Create(X,Y,Z);
+  result.x := x;
+  result.y := y;
+  result.z := z;
 end;
 
 {******************************************************************************}
@@ -456,7 +416,7 @@ end;
 {* Dotproduct of the vector                                                   *}
 {******************************************************************************}
 
-function TGDVector.DotProduct(aVector : TGDVector) : Single;
+function TGDVector.DotProduct( const aVector : TGDVector) : Single;
 begin
   Result :=  ( (X * aVector.x) + (Y * aVector.y) + (Z * aVector.z) );
 end;
@@ -465,7 +425,7 @@ end;
 {* Crossproduct of the vector                                                 *}
 {******************************************************************************}
 
-procedure TGDVector.CrossProduct(aVector1, aVector2: TGDVector);
+procedure TGDVector.CrossProduct(const aVector1, aVector2: TGDVector);
 begin
 	X := ((aVector1.y * aVector2.z) - (aVector1.z * aVector2.y));
 	Y := ((aVector1.z * aVector2.x) - (aVector1.x * aVector2.z));
@@ -476,7 +436,7 @@ end;
 {* Angle between 2 vectors                                                    *}
 {******************************************************************************}
 
-function TGDVector.Angle( aVector : TGDVector ) : Single;
+function TGDVector.Angle(const aVector : TGDVector ) : Single;
 var
   iDotProduct : Single;
   iVectorsMagnitude : Single;
@@ -494,12 +454,21 @@ begin
 end;
 
 {******************************************************************************}
+{* Vector equals                                                              *}
+{******************************************************************************}
+
+class operator TGDVector.Equal (v1, v2: TGDVector) B: Boolean;
+begin
+  B:=(v1.x=v2.x) and (v1.y=v2.y) and (v1.z=v2.z);
+end;
+
+{******************************************************************************}
 {* Get the array pointer                                                      *}
 {******************************************************************************}
 
 function TGDVector.ArrayPointer() : PGLfloat;
 begin
-  result := @FArray;
+  result := @xyz;
 end;
 
 
@@ -514,70 +483,6 @@ begin
 end;
 
 {******************************************************************************}
-{* Add a UV                                                                   *}
-{******************************************************************************}
-
-procedure TGDUVCoord.Add(aU,aV : Single);
-begin
-  U := U + aU;
-  V := V + aV;
-end;
-
-procedure TGDUVCoord.Add(aUVCoord : TGDUVCoord);
-begin
-  U := U + aUVCoord.U;
-  V := V + aUVCoord.V;
-end;
-
-{******************************************************************************}
-{* Substract a UV                                                             *}
-{******************************************************************************}
-
-procedure TGDUVCoord.Substract(aU,aV : Single);
-begin
-  U := U - aU;
-  V := V - aV;
-end;
-
-procedure TGDUVCoord.Substract(aUVCoord : TGDUVCoord);
-begin
-  U := U - aUVCoord.U;
-  V := V - aUVCoord.V;
-end;
-
-{******************************************************************************}
-{* Multiply the UV                                                            *}
-{******************************************************************************}
-
-procedure TGDUVCoord.Multiply(aU,aV : Single);
-begin
-  U := U * aU;
-  V := V * aV;
-end;
-
-procedure TGDUVCoord.Multiply(aUVCoord : TGDUVCoord);
-begin
-  U := U * aUVCoord.U;
-  V := V * aUVCoord.V;
-end;
-
-{******************************************************************************}
-{* Devide the UV                                                              *}
-{******************************************************************************}
-
-procedure TGDUVCoord.Devide(aU,aV : Single);
-begin
-  U := U / aU;
-  V := V / aV;
-end;
-
-procedure TGDUVCoord.Devide(aUVCoord : TGDUVCoord);
-begin
-  U := U / aUVCoord.U;
-  V := V / aUVCoord.V;
-end;
-
-{******************************************************************************}
 {* Copy the UV                                                                *}
 {******************************************************************************}
 
@@ -586,6 +491,10 @@ begin
   result.u := u;
   result.v := v;
 end;
+
+{******************************************************************************}
+{* UV equals                                                                  *}
+{******************************************************************************}
 
 class operator TGDUVCoord.Equal (uv1, uv2: TGDUVCoord)B: Boolean;
 begin
@@ -846,7 +755,7 @@ end;
 {* Apply the matrix to a vector                                               *}
 {******************************************************************************}
 
-procedure TGDMatrix.ApplyToVector( aV : TGDVector );
+procedure TGDMatrix.ApplyToVector(var aV : TGDVector );
 var
   iV : TGDVector;
 begin
@@ -854,7 +763,6 @@ begin
   aV.x := iV.x * Data[0,0] + iV.y * Data[1,0] + iV.z * Data[2,0] + Data[3,0];
   aV.y := iV.x * Data[0,1] + iV.y * Data[1,1] + iV.z * Data[2,1] + Data[3,1];
   aV.z := iV.x * Data[0,2] + iV.y * Data[1,2] + iV.z * Data[2,2] + Data[3,2];
-  FreeAndNil(iV)
 end;
 
 {******************************************************************************}
@@ -885,18 +793,12 @@ end;
 
 constructor TGDTriangle.Create();
 begin
-  Vertices[0] := TGDVector.Create();
-  Vertices[1] := TGDVector.Create();
-  Vertices[2] := TGDVector.Create();
-  FNormal     := TGDVector.Create();
+  inherited;
 end;
 
 constructor TGDTriangle.Create(aX1,aY1,aZ1,aX2,aY2,aZ2,aX3,aY3,aZ3 : Single);
 begin
-  Vertices[0] := TGDVector.Create(aX1,aY1,aZ1);
-  Vertices[1] := TGDVector.Create(aX2,aY2,aZ2);
-  Vertices[2] := TGDVector.Create(aX3,aY3,aZ3);
-  FNormal     := TGDVector.Create();
+  Reset(aX1,aY1,aZ1,aX2,aY2,aZ2,aX3,aY3,aZ3);
 end;
 
 {******************************************************************************}
@@ -906,10 +808,6 @@ end;
 destructor  TGDTriangle.Destroy();
 begin
   inherited;
-  FreeAndNil(Vertices[0]);
-  FreeAndNil(Vertices[1]);
-  FreeAndNil(Vertices[2]);
-  FreeAndNil(FNormal);
 end;
 
 {******************************************************************************}
@@ -971,18 +869,12 @@ var
   iVVector1 : TGDVector;
   iVVector2 : TGDVector;
 begin
-  iVVector1 := TGDVector.Create();
-  iVVector2 := TGDVector.Create();
-
   iVVector1.Reset( V3.x, V3.Y, V3.Z);
   iVVector1.Substract( V1 );
   iVVector2.Reset(V2.x, V2.Y, V2.Z);
   iVVector2.Substract( V1 );
   FNormal.CrossProduct( iVVector1, iVVector2 );
   FNormal.Normalize();
-
-  FreeAndNil(iVVector1);
-  FreeAndNil(iVVector2);
 end;
 
 {******************************************************************************}
@@ -1045,20 +937,12 @@ end;
 
 constructor TGDQuad.Create();
 begin
-  Vertices[0] := TGDVector.Create();
-  Vertices[1] := TGDVector.Create();
-  Vertices[2] := TGDVector.Create();
-  Vertices[3] := TGDVector.Create();
-  Normal      := TGDVector.Create();
+  inherited;
 end;
 
 constructor TGDQuad.Create(aX1,aY1,aZ1,aX2,aY2,aZ2 : Single);
 begin
-  Vertices[0] := TGDVector.Create(aX1,aY1,aZ1);
-  Vertices[1] := TGDVector.Create(aX1,aY2,aZ1);
-  Vertices[2] := TGDVector.Create(aX2,aY2,aZ2);
-  Vertices[3] := TGDVector.Create(aX2,aY1,aZ2);
-  FNormal     := TGDVector.Create();
+  Reset(aX1,aY1,aZ1,aX2,aY2,aZ2);
 end;
 
 {******************************************************************************}
@@ -1068,11 +952,6 @@ end;
 destructor  TGDQuad.Destroy();
 begin
   inherited;
-  FreeAndNil(Vertices[0]);
-  FreeAndNil(Vertices[1]);
-  FreeAndNil(Vertices[2]);
-  FreeAndNil(Vertices[3]);
-  FreeAndNil(FNormal);
 end;
 
 {******************************************************************************}
@@ -1139,18 +1018,12 @@ var
   iVVector1 : TGDVector;
   iVVector2 : TGDVector;
 begin
-  iVVector1 := TGDVector.Create();
-  iVVector2 := TGDVector.Create();
-
   iVVector1.Reset( V3.x, V3.Y, V3.Z);
   iVVector1.Substract( V1 );
   iVVector2.Reset(V2.x, V2.Y, V2.Z);
   iVVector2.Substract( V1 );
   Normal.CrossProduct( iVVector1, iVVector2 );
   Normal.Normalize();
-
-  FreeAndNil(iVVector1);
-  FreeAndNil(iVVector2);
 end;
 
 {******************************************************************************}
@@ -1170,11 +1043,11 @@ end;
 {* Render the quad                                                            *}
 {******************************************************************************}
 
-procedure TGDQuad.Render(aNormal : TGDVector);
+procedure TGDQuad.Render(aNormal : TGDVector; aRenderNormal : boolean);
 begin
   glBegin(GL_TRIANGLE_STRIP);
-    if aNormal <> nil then
-       glNormal3fv(aNormal.ArrayPointer);
+    if aRenderNormal then
+      glNormal3fv(aNormal.ArrayPointer);
     glMultiTexCoord2f(GL_TEXTURE0, 0.99, 0.99);
     glVertex3fv(Vertices[0].ArrayPointer);
     glMultiTexCoord2f(GL_TEXTURE0, 0.99, 0.00);

@@ -134,13 +134,13 @@ procedure TGDTerrainCell.CalculateBoundingBox();
 var
   iX,iY : Integer;
 begin
-  BoundingBox.Min.X :=  Terrain.TerrainPoints[ FStartPoint.X-1, FStartPoint.Y-1 ].FVertex.X;
-  BoundingBox.Min.Z :=  Terrain.TerrainPoints[ FStartPoint.X-1, FStartPoint.Y-1 ].FVertex.Z;
-  BoundingBox.Max.X :=  Terrain.TerrainPoints[ FEndPoint.X-1, FEndPoint.Y-1 ].FVertex.X;
-  BoundingBox.Max.Z :=  Terrain.TerrainPoints[ FEndPoint.X-1, FEndPoint.Y-1 ].FVertex.Z;
+  BoundingBox.Min.Reset(  Terrain.TerrainPoints[ FStartPoint.X-1, FStartPoint.Y-1 ].FVertex.X,
+                         999999999999999,
+                         Terrain.TerrainPoints[ FStartPoint.X-1, FStartPoint.Y-1 ].FVertex.Z);
+  BoundingBox.Max.Reset( Terrain.TerrainPoints[ FEndPoint.X-1, FEndPoint.Y-1 ].FVertex.X,
+                         -999999999999999,
+                         Terrain.TerrainPoints[ FEndPoint.X-1, FEndPoint.Y-1 ].FVertex.Z);
 
-  BoundingBox.Min.Y := 999999999999999;
-  BoundingBox.Max.Y := -999999999999999;
 
   for iY := (FStartPoint.Y-1) to FEndPoint.Y-1 do
   begin
@@ -148,9 +148,9 @@ begin
     for iX := (FStartPoint.X-1) to FEndPoint.X-1 do
     begin
       If Terrain.TerrainPoints[ iX,iY  ].FVertex.Y > BoundingBox.Max.Y then
-        BoundingBox.Max.Y := Terrain.TerrainPoints[ iX,iY  ].FVertex.Y;
+        BoundingBox.Max.setY(Terrain.TerrainPoints[ iX,iY  ].FVertex.Y);
       If Terrain.TerrainPoints[ iX,iY  ].FVertex.Y < BoundingBox.Min.Y then
-        BoundingBox.Min.Y := Terrain.TerrainPoints[ iX,iY  ].FVertex.Y;
+        BoundingBox.Min.setY(Terrain.TerrainPoints[ iX,iY  ].FVertex.Y);
     end;
   end;
   BoundingBox.CalculateCenter();

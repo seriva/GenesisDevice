@@ -95,8 +95,6 @@ begin
   FAuthor          := 'None';
   FDate            := 'None';
   FDescription     := 'None';
-  FPlayerStart     := TGDVector.Create();
-  FPlayerViewAngle := TGDVector.Create();
 end;
 
 {******************************************************************************}
@@ -105,8 +103,7 @@ end;
 
 destructor  TGDMap.Destroy();
 begin
-  FreeAndNil(FPlayerStart);
-  FreeAndNil(FPlayerViewAngle);
+  inherited;
 end;
 
 {******************************************************************************}

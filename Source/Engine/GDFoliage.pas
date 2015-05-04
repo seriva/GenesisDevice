@@ -202,8 +202,7 @@ implementation
 constructor TGDGrassType.Create();
 begin
   FTexture := TGDTexture.Create();
-  FScale   := TGDVector.Create(100,100,100);
-  FRandomScale := TGDVector.Create();
+  FScale.Reset(100,100,100);
   FCoverOfTotal := 100;
 end;
 
@@ -214,8 +213,6 @@ end;
 destructor  TGDGrassType.Destroy();
 begin
   FreeAndNil(FTexture);
-  FreeAndNil(FScale);
-  FreeAndNil(FRandomScale);
   inherited
 end;
 
@@ -250,7 +247,7 @@ end;
 constructor TGDTreeType.Create();
 begin
   FModel         := '';
-  FStartRotation := TGDVector.Create(0,0,0);
+  FStartRotation.Reset(0,0,0);
   FStartScale    := 100;
   FRandomScale   := 0;
   FCoverOfTotal  := 100;
@@ -262,7 +259,6 @@ end;
 
 destructor  TGDTreeType.Destroy();
 begin
-  FreeAndNil(FStartRotation);
   inherited
 end;
 

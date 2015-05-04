@@ -244,7 +244,6 @@ end;
 
 procedure TConfigurationForm.FillComboboxes();
 var
- iModes: array of TDisplayMode;
  iI: LongInt;
  iSoundDriverCount : Integer;
  iStr: string;

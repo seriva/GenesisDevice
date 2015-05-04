@@ -126,13 +126,13 @@ var
   iI, iJ, iX, iY : Integer;
   iUStep, iVStep: Double;
   iMatrix : TGDMatrix;
-  iVertices : TObjectList;
+  iVertices : TGDVectorList;
   iUVCoords : TGDUVCoordList;
 begin
   iRotationStep := 360/COMPLEXITY;
-  iVertices := TObjectList.Create();
+  iVertices := TGDVectorList.Create();
   iUVCoords := TGDUVCoordList.Create();
-  iStartPoint := TGDVector.Create( aSize, 0, 0 );
+  iStartPoint.Reset(aSize, 0, 0 );
   iUStep := 1 / (COMPLEXITY);
   iVStep := 1 / (COMPLEXITY div 4);
   iRotationZ := 0;
@@ -145,13 +145,10 @@ begin
       iMatrix.EmptyMatrix();
       iMatrix.CreateRotationY(iRotationY);
       iMatrix.ApplyToVector(iTemp);
-      iVertices.Add(TGDVector.Create(iTemp.X, iTemp.Y, iTemp.Z));
-
+      iVertices.Add(iTemp);
       iUV.Reset(iJ * iUStep, iI* iVStep );
       iUVCoords.Add( iUV );
-
       iRotationY := iRotationY + iRotationStep;
-      FreeAndNil(iTemp);
     end;
     iStartPoint.Reset( aSize, 0, 0 );
     iRotationZ := iRotationZ - iRotationStep;
@@ -159,7 +156,6 @@ begin
     iMatrix.CreateRotationZ(iRotationZ);
     iMatrix.ApplyToVector(iStartPoint);
   end;
-  FreeAndNil(iStartPoint);
 
   FDisplayList.InitDisplayList();
   FDisplayList.StartList();
@@ -181,7 +177,6 @@ begin
   FDisplayList.EndList();
 
   FTriangleCount := (COMPLEXITY * (COMPLEXITY div 4)) * 2;
-  iVertices.Clear();
   FreeAndNil(iVertices);
   FreeAndNil(iUVCoords);
 end;

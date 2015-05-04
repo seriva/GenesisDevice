@@ -331,7 +331,6 @@ Begin
   end;
 
   //create treecells
-  iPos := TGDVector.Create();
   for iI := 0 to Foliage.TreeTypes.Count-1 do
   begin
     iTreeType := Foliage.TreeTypes.Items[iI] as TGDTreeType;
@@ -373,7 +372,6 @@ Begin
       GUI.LoadingScreen.UpdateBar();
     end;
   end;
-  FreeAndNil(iPos);
   Timing.Stop();
   Console.Write('......Generated foliage (' + Timing.TimeInSeconds + ' Sec)');
 End;

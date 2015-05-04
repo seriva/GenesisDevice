@@ -31,6 +31,7 @@ uses
   SysUtils,
   dglOpenGL,
   GDTypes,
+  GDGenerics,
   Contnrs;
 
 type
@@ -58,7 +59,7 @@ type
     procedure RenderWireFrame();
     procedure RenderSolid();
 
-    procedure Generate( aVertexList : TObjectList );
+    procedure Generate( aVertexList : TGDVectorList );
     procedure CalculateCenter();
     function  BoxInsideBox( aBoundingBox : TGDBoundingBox ) : boolean;
     function  PointInsideBox( aV : TGDVector ) : boolean;
@@ -105,9 +106,7 @@ end;
 
 constructor TGDBoundingBox.Create();
 begin
-  FMin := TGDVector.Create(0,0,0);
-  FMax := TGDVector.Create(0,0,0);
-  FCenter := TGDVector.Create(0,0,0);
+  inherited;
 end;
 
 {******************************************************************************}
@@ -116,9 +115,6 @@ end;
 
 destructor  TGDBoundingBox.Destroy();
 begin
-  FreeAndNil(FMin);
-  FreeAndNil(FMax);
-  FreeAndNil(FCenter);
   inherited;
 end;
 
@@ -203,17 +199,16 @@ end;
 {* Calculate the boundingbox from a vertexlist                                *}
 {******************************************************************************}
 
-procedure TGDBoundingBox.Generate( aVertexList : TObjectList );
+procedure TGDBoundingBox.Generate( aVertexList : TGDVectorList );
 var
   iI : integer;
   iVector : TGDVector;
   iCenter : TGDVector;
 begin
-  iCenter := TGDVector.Create();
-  for iI := 0 to aVertexList.Count-1 do iCenter.Add( TGDVector(aVertexList.Items[iI]) );
+  for iI := 0 to aVertexList.Count-1 do iCenter.Add( aVertexList.Items[iI] );
   iCenter.Devide( aVertexList.Count );
-  FMin.Reset(iCenter);
-  FMax.Reset(iCenter);
+  FMin := iCenter.Copy();
+  FMax := iCenter.Copy();
 
   for iI := 0 to aVertexList.Count-1 do
   begin
@@ -236,7 +231,6 @@ begin
   end;
 
   CalculateCenter();
-  FreeAndNil(iCenter);
 end;
 
 {******************************************************************************}
@@ -271,7 +265,7 @@ end;
 
 procedure TGDBoundingBox.CalculateCenter();
 begin
- FCenter.Reset(Max);
+ FCenter := Max.Copy;
  FCenter.Add(Min);
  FCenter.Devide(2);
 end;

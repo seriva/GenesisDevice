@@ -180,7 +180,6 @@ begin
     result := true
   else
     result := false;
-  FreeAndNil(aV);
 end;
 
 {******************************************************************************}
@@ -196,7 +195,6 @@ begin
     result := true
   else
     result := false;
-  FreeAndNil(aV);
 end;
 
 {******************************************************************************}
@@ -218,7 +216,6 @@ begin
     aV := gdCameraGetPosition();
     aV.Y := aV.Y - FSinkSpeed;
     gdCameraSetPosition(aV.X, aV.Y, aV.Z);
-    FreeAndNil(aV);
   end;
 
   aV := gdCameraGetPosition();
@@ -228,7 +225,6 @@ begin
   begin
     aV.Y := iTerrainHeight + 256;
     gdCameraSetPosition( aV.X, aV.Y, aV.z );
-    FreeAndNil(aV);
     exit;
   end
   else
@@ -237,7 +233,6 @@ begin
     begin
       aV.Y := iTerrainHeight + 256;
       gdCameraSetPosition( aV.X, aV.Y, aV.z );
-      FreeAndNil(aV);
       exit;
     end;
 
@@ -245,17 +240,14 @@ begin
     begin
       aV.Y := iTerrainHeight+170;
       gdCameraSetPosition( aV.X, aV.Y, aV.z );
-      FreeAndNil(aV);
     end
     else
       if aV.Y > gdMapWaterHeight()+96 then
       begin
         aV.Y := gdMapWaterHeight()+96;
         gdCameraSetPosition( aV.X, aV.Y, aV.z );
-        FreeAndNil(aV);
       end;
   end;
-  FreeAndNil(aV);
 End;
 
 end.

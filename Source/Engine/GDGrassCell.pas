@@ -99,7 +99,7 @@ implementation
 
 constructor TGDGrassPartical.Create();
 begin
-  FNormal := TGDVector.Create(0,1,0);
+  FNormal.Reset(0,1,0);
   FQuad1 := TGDQuad.Create(-50, -50, 0, 50, 50, 0 );
   FQuad2 := TGDQuad.Create(-25,-50,-43.30127,25,50,43.30127);
   FQuad3 := TGDQuad.Create(-25,-50,43.30127,25,50,-43.30127);
@@ -112,7 +112,6 @@ end;
 destructor  TGDGrassPartical.Destroy();
 begin
   inherited;
-  FreeAndNil(FNormal);
   FreeAndNil(FQuad1);
   FreeAndNil(FQuad2);
   FreeAndNil(FQuad3);
@@ -136,7 +135,7 @@ begin
 end;
 
 begin
-  iRandomRotation := TGDVector.Create(0,Random(360),0);
+  iRandomRotation.Reset(0,Random(360),0);
   iM.CreateRotation( iRandomRotation );
   ApplyRotationToQuad(FQuad1);
   ApplyRotationToQuad(FQuad2);
@@ -147,7 +146,6 @@ begin
   ApplyRotationToQuad(FQuad2);
   ApplyRotationToQuad(FQuad3);
   iM.ApplyToVector(FNormal);
-  FreeAndNil(iRandomRotation);
   FQuad1.Scale( aScale );
   FQuad2.Scale( aScale );
   FQuad3.Scale( aScale );
@@ -173,9 +171,9 @@ end;
 
 procedure TGDGrassPartical.Render();
 begin
-  FQuad1.Render(FNormal);
-  FQuad2.Render(FNormal);
-  FQuad3.Render(FNormal);
+  FQuad1.Render(FNormal, true);
+  FQuad2.Render(FNormal, true);
+  FQuad3.Render(FNormal, true);
 end;
 
 {******************************************************************************}
@@ -215,10 +213,6 @@ var
   iTempGrassType : TGDGrassType;
 begin
   randomize();
-
-  iPos   := TGDVector.Create();
-  iScale := TGDVector.Create();
-  iRot   := TGDVector.Create();
 
   //set the boundingbox
   FStartPoint.X := aStartX;
@@ -298,10 +292,6 @@ begin
   end;
   SetLength( iParticalLists, 0);
   SetLength( iParticalCount, 0);
-
-  FreeAndNil(iPos);
-  FreeAndNil(iScale);
-  FreeAndNil(iRot);
 end;
 
 {******************************************************************************}
@@ -312,13 +302,13 @@ procedure TGDGrassCell.CalculateBoundingBox();
 var
   iX,iY : Integer;
 begin
-  BoundingBox.Min.X :=  Terrain.TerrainPoints[ FStartPoint.X-1, FStartPoint.Y-1 ].FVertex.X;
-  BoundingBox.Min.Z :=  Terrain.TerrainPoints[ FStartPoint.X-1, FStartPoint.Y-1 ].FVertex.Z;
-  BoundingBox.Max.X :=  Terrain.TerrainPoints[ FEndPoint.X-1, FEndPoint.Y-1 ].FVertex.X;
-  BoundingBox.Max.Z :=  Terrain.TerrainPoints[ FEndPoint.X-1, FEndPoint.Y-1 ].FVertex.Z;
+  BoundingBox.Min.Reset( Terrain.TerrainPoints[ FStartPoint.X-1, FStartPoint.Y-1 ].FVertex.X,
+                         999999999999999,
+                         Terrain.TerrainPoints[ FStartPoint.X-1, FStartPoint.Y-1 ].FVertex.Z);
 
-  BoundingBox.Min.Y := 999999999999999;
-  BoundingBox.Max.Y := -999999999999999;
+  BoundingBox.Max.Reset( Terrain.TerrainPoints[ FEndPoint.X-1, FEndPoint.Y-1 ].FVertex.X,
+                         -999999999999999,
+                         Terrain.TerrainPoints[ FEndPoint.X-1, FEndPoint.Y-1 ].FVertex.Z);
 
   for iY := (FStartPoint.Y-1) to FEndPoint.Y-1 do
   begin
@@ -326,12 +316,12 @@ begin
     for iX := (FStartPoint.X-1) to FEndPoint.X-1 do
     begin
       If Terrain.TerrainPoints[ iX,iY  ].FVertex.Y > BoundingBox.Max.Y then
-        BoundingBox.Max.Y := Terrain.TerrainPoints[ iX,iY  ].FVertex.Y;
+        BoundingBox.Max.setY( Terrain.TerrainPoints[ iX,iY  ].FVertex.Y);
       If Terrain.TerrainPoints[ iX,iY  ].FVertex.Y < BoundingBox.Min.Y then
-        BoundingBox.Min.Y := Terrain.TerrainPoints[ iX,iY  ].FVertex.Y;
+        BoundingBox.Min.setY( Terrain.TerrainPoints[ iX,iY  ].FVertex.Y);
     end;
   end;
-  BoundingBox.Max.Y := BoundingBox.Max.Y + 150;
+  BoundingBox.Max.SetY( BoundingBox.Max.Y+150 );
   BoundingBox.CalculateCenter();
 end;
 

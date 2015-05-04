@@ -44,6 +44,7 @@ uses
   GDGLObjects,
   GDRenderer,
   GDBaseCell,
+  GDGenerics,
   Contnrs;
 
 type
@@ -101,9 +102,6 @@ constructor TGDMeshCell.Create();
 begin
   Inherited;
   FMesh := nil;
-  FPosition   := TGDVector.Create();
-  FRotation   := TGDVector.Create();
-  FScale      := TGDVector.Create();
   FDPLS       := TObjectList.Create();
   FNormalDPL  := TGDGLDisplayList.Create();;
   OjectType   := SO_MESHCELL;
@@ -116,9 +114,6 @@ end;
 destructor  TGDMeshCell.Destroy();
 begin
   FMesh := nil;
-  FreeAndNil(FPosition);
-  FreeAndNil(FRotation);
-  FreeAndNil(FScale);
   FreeAndNil(FDPLS);
   FreeAndNil(FNormalDPL);
   Inherited;
@@ -137,53 +132,45 @@ var
   iDPL : TGDGLDisplayList;
   iJ  : Integer;
   iPL : TGDMeshPolygon;
-  iVertices, iNormals : TObjectList;
+  iVertices, iNormals : TGDVectorList;
   iTempPolygon : TGDMeshPolygon;
 
 procedure RenderNormal(aP : TGDMeshPoint);
 begin
-  iVertex.Reset( (iNormals.Items[aP.NormalID] as TGDVector) );
+  iVertex := iNormals.Items[aP.NormalID].Copy();
   iVertex.Multiply(R_NORMAL_LENGTH);
-  iVertex.Add( (iVertices.Items[aP.VertexID] as TGDVector) );
-  glVertex3fv( (iVertices.Items[aP.VertexID] as TGDVector).ArrayPointer );
+  iVertex.Add( iVertices.Items[aP.VertexID] );
+  glVertex3fv( iVertices.Items[aP.VertexID].ArrayPointer );
   glVertex3fv( iVertex.ArrayPointer );
 end;
 
 begin
   //Create resources
-  iVertices := TObjectList.Create();
-  iNormals  := TObjectList.Create();
-
-  //Copy the vertex and normal list
-  For iI := 0 to FMesh.Vertices.Count - 1 do
-  begin
-    iVertices.Add( TGDVector( FMesh.Vertices.Items[iI] ).Copy );
-  end;
-  For iI := 0 to FMesh.Normals.Count - 1 do
-  begin
-    iNormals.Add( TGDVector( FMesh.Normals.Items[iI] ).Copy );
-  end;
+  iVertices := TGDVectorList.Create();
+  iNormals  := TGDVectorList.Create();
 
   //Rotate vertices and normals
   iMY.CreateRotationY( FRotation.Y );
   iMZ.CreateRotationZ( FRotation.Z );
   iMX.CreateRotationX( -FRotation.X );
-  For iI := 0 to iVertices.Count - 1 do
+  For iI := 0 to FMesh.Vertices.Count - 1 do
   begin
-    iVertex := TGDVector( iVertices.items[iI] );
+    iVertex := FMesh.Vertices.Items[iI].Copy();
     iVertex.Multiply(FScale);
     iVertex.Devide(100);
     iMY.ApplyToVector( iVertex );
     iMZ.ApplyToVector( iVertex );
     iMX.ApplyToVector( iVertex );
     iVertex.Add( FPosition );
+    iVertices.Add(iVertex)
   end;
-  For iI := 0 to iNormals.Count - 1 do
+  For iI := 0 to FMesh.Normals.Count - 1 do
   begin
-    iNormal := TGDVector( iNormals.items[iI] );
+    iNormal := FMesh.Normals.Items[iI].Copy();
     iMY.ApplyToVector( iNormal );
     iMZ.ApplyToVector( iNormal );
     iMX.ApplyToVector( iNormal );
+    iNormals.Add( iNormal );
   end;
 
   //Calculate boundingbox
@@ -202,17 +189,17 @@ begin
     begin
       iPL := TGDMeshPolygon(iMS.Polygons.Items[iJ]);
       //V1
-      glNormal3fv( TGDVector( iNormals.Items[ iPL.P1.NormalID ] ).ArrayPointer );
-      glTexCoord2fv( TGDUVCoord( FMesh.UV.Items[ iPL.P1.UVID ] ).ArrayPointer );
-      glVertex3fv( TGDVector(  iVertices.Items[ iPL.P1.VertexID ] ).ArrayPointer );
+      glNormal3fv( iNormals.Items[ iPL.P1.NormalID ].ArrayPointer );
+      glTexCoord2fv( FMesh.UV.Items[ iPL.P1.UVID ].ArrayPointer );
+      glVertex3fv( iVertices.Items[ iPL.P1.VertexID ].ArrayPointer );
       //V2
-      glNormal3fv( TGDVector( iNormals.Items[ iPL.P2.NormalID ] ).ArrayPointer );
-      glTexCoord2fv( TGDUVCoord( FMesh.UV.Items[ iPL.P2.UVID ] ).ArrayPointer );
-      glVertex3fv( TGDVector(  iVertices.Items[ iPL.P2.VertexID ] ).ArrayPointer );
+      glNormal3fv( iNormals.Items[ iPL.P2.NormalID ].ArrayPointer );
+      glTexCoord2fv( FMesh.UV.Items[ iPL.P2.UVID ].ArrayPointer );
+      glVertex3fv( iVertices.Items[ iPL.P2.VertexID ].ArrayPointer );
       //V3
-      glNormal3fv( TGDVector( iNormals.Items[ iPL.P3.NormalID ] ).ArrayPointer );
-      glTexCoord2fv( TGDUVCoord( FMesh.UV.Items[ iPL.P3.UVID ] ).ArrayPointer );
-      glVertex3fv( TGDVector( iVertices.Items[ iPL.P3.VertexID ] ).ArrayPointer );
+      glNormal3fv( iNormals.Items[ iPL.P3.NormalID ].ArrayPointer );
+      glTexCoord2fv( FMesh.UV.Items[ iPL.P3.UVID ].ArrayPointer );
+      glVertex3fv( iVertices.Items[ iPL.P3.VertexID ].ArrayPointer );
     end;
     glEnd();
 
@@ -222,7 +209,6 @@ begin
 
   FNormalDPL.InitDisplayList();
   FNormalDPL.StartList();
-  iVertex := TGDVector.Create();
   glBegin(GL_LINES);
   for iI := 0 to FMesh.Polygons.Count - 1 do
   begin
@@ -232,7 +218,6 @@ begin
     RenderNormal(iTempPolygon.P3);
   end;
   glEnd();
-  FreeAndNil(iVertex);
   FNormalDPL.EndList();
 
   //Free recources

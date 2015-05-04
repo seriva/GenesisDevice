@@ -38,6 +38,7 @@ uses
 
 type
   TGDUVCoordList = specialize TFPGList<TGDUVCoord>;
+  TGDVectorList = specialize TFPGList<TGDVector>;
 
 implementation
 

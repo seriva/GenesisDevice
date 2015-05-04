@@ -208,22 +208,22 @@ begin
       iCell :=  TGDBaseCell( Cells.Items[  iI ]);
 
       If (iCell.BoundingBox.Min.X < FBoundingBox.Min.x) then
-        FBoundingBox.Min.x  := iCell.BoundingBox.Min.X;
+        FBoundingBox.Min.setX(iCell.BoundingBox.Min.X);
 
       If (iCell.BoundingBox.Min.Y < FBoundingBox.Min.Y) then
-        FBoundingBox.Min.y  := iCell.BoundingBox.Min.y;
+        FBoundingBox.Min.SetY(iCell.BoundingBox.Min.y);
 
       If (iCell.BoundingBox.Min.Z < FBoundingBox.Min.Z) then
-        FBoundingBox.Min.Z  := iCell.BoundingBox.Min.Z;
+        FBoundingBox.Min.SetZ(iCell.BoundingBox.Min.Z);
 
       If (iCell.BoundingBox.Max.X > FBoundingBox.Max.x) then
-        FBoundingBox.Max.x  := iCell.BoundingBox.Max.X;
+        FBoundingBox.Max.Setx(iCell.BoundingBox.Max.X);
 
       If (iCell.BoundingBox.Max.Y > FBoundingBox.Max.Y) then
-        FBoundingBox.Max.y  := iCell.BoundingBox.Max.y;
+        FBoundingBox.Max.Sety(iCell.BoundingBox.Max.y);
 
       If (iCell.BoundingBox.Max.Z > FBoundingBox.Max.Z) then
-        FBoundingBox.Max.Z  := iCell.BoundingBox.Max.Z;
+        FBoundingBox.Max.SetZ(iCell.BoundingBox.Max.Z);
 
       SetLength(FCellIndexes,Length(FCellIndexes) + 1);
       FCellIndexes[Length(FCellIndexes)-1] := iI;
@@ -264,14 +264,13 @@ begin
                                               
   With CellManager do
   begin
-    iVertex := TGDVector.Create();
     for iI := 0 to length(FCellIndexes)-1 do
     begin
       If Frustum.BoxInFrustum( TGDBaseCell( Cells.Items[  FCellIndexes[iI] ] ).BoundingBox ) then
       begin
           iCell := TGDBaseCell( Cells.Items[  FCellIndexes[iI] ] );
-          iVertex.Reset(   TGDBaseCell( Cells.Items[  FCellIndexes[iI] ] ).BoundingBox.Center );
-          iVertex.Substract(Camera.Position);
+          iVertex := TGDBaseCell( Cells.Items[  FCellIndexes[iI] ] ).BoundingBox.Center.Copy();
+          iVertex.Substract(Camera.Position.Copy());
           iCell.Distance := iVertex.Magnitude();
 
           If (iCell.OjectType = SO_WATERCELL) and Modes.RenderWater then
@@ -289,7 +288,6 @@ begin
      end;
     end;
   end;
-  FreeAndNil(iVertex);
 
   for iI := 0 to 7 do
     If FSubNodes[iI] <> nil then

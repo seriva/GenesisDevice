@@ -85,10 +85,10 @@ implementation
 
 Constructor TGDCamera.Create();
 Begin
-  FPosition := TGDVector.Create(0,0,0);
-  FUpvector  := TGDVector.Create(0,1,0);
-  FDirection  := TGDVector.Create(0,0,-1);
-  FRotation  := TGDVector.Create(0,0,0);
+  FPosition.Reset(0,0,0);
+  FUpvector.Reset(0,1,0);
+  FDirection.Reset(0,0,-1);
+  FRotation.Reset(0,0,0);
 end;
 
 {******************************************************************************}
@@ -97,10 +97,6 @@ end;
 
 Destructor  TGDCamera.Destroy();
 begin
-  FreeAndNil(FDirection);
-  FreeAndNil(FUpvector);
-  FreeAndNil(FPosition);
-  FreeAndNil(FRotation);
   inherited
 end;
 
@@ -180,9 +176,6 @@ var
   iM : TGDMatrix;
   iV,iV1,iV2 : TGDVector;
 begin
-  iV := TGDVector.Create();
-  iV2 := TGDVector.Create();
-
   iV1 := FRotation.Copy();
 
   iV1.X := 0;
@@ -197,10 +190,6 @@ begin
   iV.z := -iV2.z * aStep;
 
   FPosition.Add( iV );
-
-  FreeAndNil(iV);
-  FreeAndNil(iV1);
-  FreeAndNil(iV2);
 end;
 
 {******************************************************************************}
@@ -212,7 +201,6 @@ var
   iM : TGDMatrix;
   iV : TGDVector;
 begin
-  iV := TGDVector.Create();
   iM.CreateRotation( FRotation );
   FDirection.Reset(0,0,-1);
   iM.ApplyToVector(FDirection);
@@ -222,8 +210,6 @@ begin
   iV.z := FDirection.z * aStep;
 
   FPosition.Add( iV );
-
-  FreeAndNil(iV);
 end;
 
 {******************************************************************************}

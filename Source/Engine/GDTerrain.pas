@@ -150,8 +150,7 @@ implementation
 
 constructor TGDTerrainPoint.Create();
 begin
-  FVertex := TGDVector.Create();
-  FNormal := TGDVector.Create();
+  inherited;
 end;
 
 {******************************************************************************}
@@ -160,8 +159,6 @@ end;
 
 destructor  TGDTerrainPoint.Destroy();
 begin
-  FreeAndNil(FVertex);
-  FreeAndNil(FNormal);
   Inherited;
 end;
 
@@ -280,24 +277,23 @@ begin
     FreeAndNil(iBmp1);
     FreeAndNil(iJpg1);
 
-    iR := TGDVector.Create();
     for iX := 0 to (FTerrainWidth-1) do
     begin
       for iY := 0 to (FTerrainHeight-1) do
       begin
         if (iX = (FTerrainWidth-1)) and (iY = FTerrainHeight-1) then
         begin
-           TerrainPoints[iX,iY].FNormal.Reset(TerrainPoints[iX-1,iY-1].FNormal);
+           TerrainPoints[iX,iY].FNormal := TerrainPoints[iX-1,iY-1].FNormal.Copy();
            continue;
         end
         else if iX = (FTerrainWidth-1) then
         begin
-           TerrainPoints[iX,iY].FNormal.Reset(TerrainPoints[iX-1,iY].FNormal);
+           TerrainPoints[iX,iY].FNormal := TerrainPoints[iX-1,iY].FNormal.Copy();
            continue;
         end
         else if iY = FTerrainHeight-1 then
         begin
-          TerrainPoints[iX,iY].FNormal.Reset(TerrainPoints[iX,iY-1].FNormal);
+          TerrainPoints[iX,iY].FNormal := TerrainPoints[iX,iY-1].FNormal.Copy();
           continue;
         end;
         GetRotation(iStartWidth + iX*FTriangleSize, iStartHeight + iY*FTriangleSize, iR);
@@ -307,7 +303,6 @@ begin
         iM.ApplyToVector( TerrainPoints[iX,iY].FNormal );
       end;
     end;
-    FreeAndNil(iR);
 
     GUI.LoadingScreen.UpdateBar();
 
@@ -433,14 +428,13 @@ end;
 begin
   result := false;
   aRotation.Reset(0,0,0);
-  iPos := TGDVector.Create(aX,0,aZ);
+  iPos.Reset(aX,0,aZ);
   aX := (aX + ((FTerrainWidth * FTriangleSize)/2)) / FTriangleSize;
   aZ := (aZ + ((FTerrainHeight * FTriangleSize)/2)) / FTriangleSize;
   if (aX < 0) or (aX > FTerrainWidth-1) or
      (aZ < 0) or (aZ > FTerrainHeight-1) or
      Not(FTerrainLoaded) then
   begin
-    FreeAndNil(iPos);
     exit;
   end;
 
@@ -455,16 +449,16 @@ begin
   iPos.Y := (iA + (iB - iA) * iFX) + ((iC + (iD - iC) * iFX) - (iA + (iB - iA) * iFX)) * iFZ;
 
   iTriangle := TGDTriangle.Create();
-  iTriangle.V1.Reset(TerrainPoints[iRX, iRZ].FVertex );
-  iTriangle.V2.Reset(TerrainPoints[iRX+1, iRZ].FVertex );
-  iTriangle.V3.Reset(TerrainPoints[iRX, iRZ+1].FVertex );
+  iTriangle.V1 := TerrainPoints[iRX, iRZ].FVertex.Copy();
+  iTriangle.V2 := TerrainPoints[iRX+1, iRZ].FVertex.Copy();
+  iTriangle.V3 := TerrainPoints[iRX, iRZ+1].FVertex.Copy();
   iFound := true;
   iSecTris := false;;
   If Not(iTriangle.PointInTraingle( iPos )) then
   begin
-    iTriangle.V1.Reset(TerrainPoints[iRX+1, iRZ+1].FVertex );
-    iTriangle.V2.Reset(TerrainPoints[iRX, iRZ+1].FVertex );
-    iTriangle.V3.Reset(TerrainPoints[iRX+1, iRZ].FVertex );
+    iTriangle.V1 := TerrainPoints[iRX+1, iRZ+1].FVertex.Copy();
+    iTriangle.V2 := TerrainPoints[iRX, iRZ+1].FVertex.Copy();
+    iTriangle.V3 := TerrainPoints[iRX+1, iRZ].FVertex.Copy();
     iSecTris := true;
     If Not(iTriangle.PointInTraingle( iPos )) then iFound := false;
   end;
@@ -490,7 +484,6 @@ begin
       iRight.Normalize();
     end;
 
-    iUp := TGDVector.Create();
     iUp.CrossProduct( iRight, iForward );
     iUp.Normalize();
 
@@ -517,10 +510,6 @@ begin
   end;
   
   FreeAndNil(iTriangle);
-  FreeAndNil(iPos);
-  FreeAndNil(iUp);
-  FreeAndNil(iForward);
-  FreeAndNil(iRight);
 end;
 
 {******************************************************************************}
