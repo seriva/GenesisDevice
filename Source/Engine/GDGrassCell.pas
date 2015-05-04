@@ -137,7 +137,6 @@ end;
 
 begin
   iRandomRotation := TGDVector.Create(0,Random(360),0);
-  iM := TGDMatrix.Create();
   iM.CreateRotation( iRandomRotation );
   ApplyRotationToQuad(FQuad1);
   ApplyRotationToQuad(FQuad2);
@@ -148,7 +147,6 @@ begin
   ApplyRotationToQuad(FQuad2);
   ApplyRotationToQuad(FQuad3);
   iM.ApplyToVector(FNormal);
-  FreeAndNil(iM);
   FreeAndNil(iRandomRotation);
   FQuad1.Scale( aScale );
   FQuad2.Scale( aScale );

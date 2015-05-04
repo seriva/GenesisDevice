@@ -45,7 +45,8 @@ uses
   GDSettings,
   Contnrs,
   GDWater,
-  GDModes;
+  GDModes,
+  GDGenerics;
 
 type
 
@@ -120,18 +121,18 @@ procedure TGDSkyDome.CalculateDome( aSize : Double );
 var
   iRotationStep : double;
   iRotationZ, iRotationY : Double;
+  iUV : TGDUVCoord;
   iStartPoint, iTemp : TGDVector;
   iI, iJ, iX, iY : Integer;
   iUStep, iVStep: Double;
   iMatrix : TGDMatrix;
   iVertices : TObjectList;
-  iUVCoords : TObjectList;
+  iUVCoords : TGDUVCoordList;
 begin
   iRotationStep := 360/COMPLEXITY;
   iVertices := TObjectList.Create();
-  iUVCoords := TObjectList.Create();
+  iUVCoords := TGDUVCoordList.Create();
   iStartPoint := TGDVector.Create( aSize, 0, 0 );
-  iMatrix := TGDMatrix.Create();
   iUStep := 1 / (COMPLEXITY);
   iVStep := 1 / (COMPLEXITY div 4);
   iRotationZ := 0;
@@ -145,9 +146,12 @@ begin
       iMatrix.CreateRotationY(iRotationY);
       iMatrix.ApplyToVector(iTemp);
       iVertices.Add(TGDVector.Create(iTemp.X, iTemp.Y, iTemp.Z));
-      iUVCoords.Add( TGDUVCoord.Create(iJ * iUStep, iI* iVStep ));
+
+      iUV.Reset(iJ * iUStep, iI* iVStep );
+      iUVCoords.Add( iUV );
+
       iRotationY := iRotationY + iRotationStep;
-       FreeAndNil(iTemp);
+      FreeAndNil(iTemp);
     end;
     iStartPoint.Reset( aSize, 0, 0 );
     iRotationZ := iRotationZ - iRotationStep;
@@ -156,7 +160,6 @@ begin
     iMatrix.ApplyToVector(iStartPoint);
   end;
   FreeAndNil(iStartPoint);
-  FreeAndNil(iMatrix);
 
   FDisplayList.InitDisplayList();
   FDisplayList.StartList();
@@ -168,9 +171,9 @@ begin
     begin
       iX := iJ + (iI * (COMPLEXITY+1));
       iY := iJ + ((iI + 1) * (COMPLEXITY+1));
-      glTexCoord2fv( TGDUVCoord(iUVCoords.Items[ iY ]).ArrayPointer );
+      glTexCoord2fv( iUVCoords.Items[ iY ].ArrayPointer );
       glVertex3fv( TGDVector( iVertices.Items[  iY ] ).ArrayPointer);
-      glTexCoord2fv( TGDUVCoord(iUVCoords.Items[  iX ]).ArrayPointer );
+      glTexCoord2fv( iUVCoords.Items[  iX ].ArrayPointer );
       glVertex3fv( TGDVector( iVertices.Items[  iX ] ).ArrayPointer);
     end;
     glEnd;
@@ -179,7 +182,6 @@ begin
 
   FTriangleCount := (COMPLEXITY * (COMPLEXITY div 4)) * 2;
   iVertices.Clear();
-  iUVCoords.Clear();
   FreeAndNil(iVertices);
   FreeAndNil(iUVCoords);
 end;

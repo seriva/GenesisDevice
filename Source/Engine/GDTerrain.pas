@@ -152,9 +152,6 @@ constructor TGDTerrainPoint.Create();
 begin
   FVertex := TGDVector.Create();
   FNormal := TGDVector.Create();
-  FColorUVCoords  := TGDUVCoord.Create();
-  FDetailUVCoords := TGDUVCoord.Create();
-  FCausticUVCoords := TGDUVCoord.Create();
 end;
 
 {******************************************************************************}
@@ -165,9 +162,6 @@ destructor  TGDTerrainPoint.Destroy();
 begin
   FreeAndNil(FVertex);
   FreeAndNil(FNormal);
-  FreeAndNil(FColorUVCoords);
-  FreeAndNil(FDetailUVCoords);
-  FreeAndNil(FCausticUVCoords);
   Inherited;
 end;
 
@@ -286,7 +280,6 @@ begin
     FreeAndNil(iBmp1);
     FreeAndNil(iJpg1);
 
-    iM := TGDMatrix.Create();
     iR := TGDVector.Create();
     for iX := 0 to (FTerrainWidth-1) do
     begin
@@ -314,7 +307,6 @@ begin
         iM.ApplyToVector( TerrainPoints[iX,iY].FNormal );
       end;
     end;
-    FreeAndNil(iM);
     FreeAndNil(iR);
 
     GUI.LoadingScreen.UpdateBar();

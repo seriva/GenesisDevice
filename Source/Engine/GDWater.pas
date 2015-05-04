@@ -181,8 +181,6 @@ begin
   FWaterLoaded     := false;
   FCausticCounter  := 0;
   FWaterCounter    := 0;
-  FUnderWaterColor := TGDColor.Create();
-  FWaterColorCorrection := TGDColor.Create();
   FCausticTextures := TObjectList.Create();
   FWaterTextures   := TObjectList.Create();
   FUpdateTimer     := TimeSetEvent(50, 0, @UpdateWaterCallBack, 0, TIME_PERIODIC);
@@ -198,8 +196,6 @@ begin
   FreeAndNil(FReflection);
   FreeAndNil(FRenderBuffer);
   FreeAndNil(FFrameBuffer);
-  FreeAndNil(FUnderWaterColor);
-  FreeAndNil(FWaterColorCorrection);
   FreeAndNil(FCausticTextures);
   FreeAndNil(FWaterTextures);
   FreeAndNil(FDepthMap);
@@ -546,7 +542,8 @@ end;
 
 procedure UpdateWaterCallBack(TimerID, Msg: Uint; dwUser, dw1, dw2: DWORD); pascal;
 begin
-  Water.Update();
+  if Water <> nil then
+     Water.Update();
 end;
 
 end.

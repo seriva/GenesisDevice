@@ -151,9 +151,6 @@ end;
 
 begin
   //Create resources
-  iMX := TGDMatrix.Create();
-  iMY := TGDMatrix.Create();
-  iMZ := TGDMatrix.Create();
   iVertices := TObjectList.Create();
   iNormals  := TObjectList.Create();
 
@@ -208,7 +205,7 @@ begin
       glNormal3fv( TGDVector( iNormals.Items[ iPL.P1.NormalID ] ).ArrayPointer );
       glTexCoord2fv( TGDUVCoord( FMesh.UV.Items[ iPL.P1.UVID ] ).ArrayPointer );
       glVertex3fv( TGDVector(  iVertices.Items[ iPL.P1.VertexID ] ).ArrayPointer );
-        //V2
+      //V2
       glNormal3fv( TGDVector( iNormals.Items[ iPL.P2.NormalID ] ).ArrayPointer );
       glTexCoord2fv( TGDUVCoord( FMesh.UV.Items[ iPL.P2.UVID ] ).ArrayPointer );
       glVertex3fv( TGDVector(  iVertices.Items[ iPL.P2.VertexID ] ).ArrayPointer );
@@ -239,9 +236,6 @@ begin
   FNormalDPL.EndList();
 
   //Free recources
-  FreeAndNil(iMX);
-  FreeAndNil(iMY);
-  FreeAndNil(iMZ);
   FreeAndNil(iVertices);
   FreeAndNil(iNormals);
 end;

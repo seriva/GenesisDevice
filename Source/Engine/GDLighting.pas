@@ -85,8 +85,8 @@ implementation
 constructor TGDDirectionalLight.Create();
 begin
   Direction := TGDVector.Create(-1,-1,-1);
-  Ambient   := TGDColor.Create(1.0, 1.0, 1.0, 1.0);
-  Diffuse   := TGDColor.Create(1.0, 1.0, 1.0, 1.0);
+  Ambient.reset(1.0, 1.0, 1.0, 1.0);
+  Diffuse.reset(1.0, 1.0, 1.0, 1.0);
 end;
 
 {******************************************************************************}
@@ -96,8 +96,6 @@ end;
 destructor TGDDirectionalLight.Destroy();
 begin
   FreeAndNil(Direction);
-  FreeAndNil(Ambient);
-  FreeAndNil(Diffuse);
   inherited;
 end;
 

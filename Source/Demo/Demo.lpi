@@ -37,7 +37,7 @@
         <PackageName Value="LCL"/>
       </Item1>
     </RequiredPackages>
-    <Units Count="54">
+    <Units Count="55">
       <Unit0>
         <Filename Value="Demo.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -308,6 +308,11 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="GDStringParsing"/>
       </Unit53>
+      <Unit54>
+        <Filename Value="..\Engine\gdgenerics.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="GDGenerics"/>
+      </Unit54>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

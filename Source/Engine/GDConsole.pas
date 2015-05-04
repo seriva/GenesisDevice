@@ -88,7 +88,6 @@ type
     property Show : Boolean read FShow write FShow;
     property Command : String read FCommand write FCommand;
 
-
     constructor Create();
     destructor  Destroy(); override;
 
@@ -228,13 +227,13 @@ begin
       If copy(Uppercase(FLogText.Strings[iI]), 0, 5) = 'ERROR' then
         GUI.Font.Color.Red
       else
-        GUI.Font.Color.Reset(GUI.FontColor);
+        GUI.Font.Color := GUI.FontColor.Copy();
       GUI.Font.Render(0, (R_HUDHEIGHT/2)+28+(iJ*25), 0.40, FLogText.Strings[iI] );
       iJ := iJ + 1;
     end
   end;
 
-  GUI.Font.Color.Reset(GUI.FontColor);
+  GUI.Font.Color := GUI.FontColor.Copy();
   if FCursorUpdate then
      GUI.Font.Render(0, (R_HUDHEIGHT/2)-3, 0.40, FCommand + '_' )
   else
@@ -305,7 +304,8 @@ end;
 
 procedure UpdateConsoleCallBack(TimerID, Msg: Uint; dwUser, dw1, dw2: DWORD); pascal;
 begin
-  Console.Update();
+  if Console <> nil then
+     Console.Update();
 end;
 
 

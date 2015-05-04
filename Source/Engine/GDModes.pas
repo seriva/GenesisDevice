@@ -48,7 +48,7 @@ type
   TGDModes  = Class
   private
     //modes
-    FRenderWireframe        : Boolean;
+    FRenderWireframe   : Boolean;
     FRenderNodeBoxes   : Boolean;
     FRenderObjectBoxes : Boolean;
     FRenderNormals     : Boolean;

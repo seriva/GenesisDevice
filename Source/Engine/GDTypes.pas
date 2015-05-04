@@ -92,61 +92,34 @@ type
 {* UV                                                                         *}
 {******************************************************************************}
 
-  TGDUVCoord = class(TObject)
-  private
-    FUVArray : array[0..1] of Single;
-  public
-    Property U : Single read FUVArray[0] write FUVArray[0];
-    Property V : Single read FUVArray[1] write FUVArray[1];
-
-    constructor Create();overload;
-    constructor Create(aU,aV : Single);overload;
-    destructor  Destroy(); override;
-
+  TGDUVCoord  = record
     procedure   Reset(aU,aV : Single);overload;
-    procedure   Reset(aD : Single);overload;
-    procedure   Reset(aUVCoord : TGDUVCoord);overload;
+    function    Copy(): TGDUVCoord;
+
     procedure   Add(aU,aV : Single);overload;
-    procedure   Add(aD : Single);overload;
     procedure   Add(aUVCoord : TGDUVCoord);overload;
     procedure   Substract(aU,aV : Single);overload;
-    procedure   Substract(aD : Single);overload;
     procedure   Substract(aUVCoord : TGDUVCoord);overload;
     procedure   Multiply(aU,aV : Single);overload;
-    procedure   Multiply(aD : Single);overload;
     procedure   Multiply(aUVCoord : TGDUVCoord);overload;
     procedure   Devide(aU,aV : Single);overload;
-    procedure   Devide(aD : Single);overload;
     procedure   Devide(aUVCoord : TGDUVCoord);overload;
-    function    Copy(): TGDUVCoord;
-    procedure   Snap(aD : Single);
-    procedure   Invert();
 
     function    ArrayPointer() : PGLfloat;
+    class operator Equal (uv1, uv2: TGDUVCoord) B: Boolean;
+
+    case Boolean of
+      TRUE: ( u, v : Single; );
+      FALSE: ( uv: array [0..1] of Single; );
   end;
 
 {******************************************************************************}
 {* Color                                                                      *}
 {******************************************************************************}
 
-  TGDColor = class(TObject)
-  private
-    FColorArray : array[0..3] of Single;
-  public
-    property R : Single read FColorArray[0] write FColorArray[0];
-    property G : Single read FColorArray[1] write FColorArray[1];
-    property B : Single read FColorArray[2] write FColorArray[2];
-    property A : Single read FColorArray[3] write FColorArray[3];
-
-    constructor Create();overload;
-    constructor Create(aR,aG,aB,aA : Single);overload;
-    destructor  Destroy(); override;
-
-    procedure   Reset(aR,aG,aB,aA : Single);overload;
-    procedure   Reset(aD : Single);overload;
-    procedure   Reset(aColor : TGDColor);overload;
-    function    Copy(): TGDColor;
-    procedure   Invert();
+  TGDColor = record
+    procedure   Reset(aR,aG,aB,aA : Single);
+    function    Copy() : TGDColor;
 
     procedure   Red();
     procedure   Green();
@@ -155,23 +128,23 @@ type
     procedure   Black();
 
     function    ArrayPointer() : PGLFloat;
+
+    case Boolean of
+      TRUE: ( r, g, b, a : Single; );
+      FALSE: ( rgba: array [0..3] of Single; );
   end;
 
 {******************************************************************************}
 {* Matrix                                                                     *}
 {******************************************************************************}
 
-  TGDMatrix = class(TObject)
-  private
-    FMatrixArray : array[0..3, 0..3] of Single;
-    procedure   Multiply(aM1, aM2: TGDMatrix);
-  public
-    constructor Create();
-    destructor  Destroy();override;
+  TGDMatrix = record
+    data : array[0..3, 0..3] of Single;
 
     procedure   EmptyMatrix();
     procedure   IdentityMatrix();
     procedure   Invert();
+    procedure   Multiply(aM1, aM2: TGDMatrix);
 
     procedure   CreateRotation( aV : TGDVector );
     procedure   CreateRotationX(aRX : Single);
@@ -188,7 +161,7 @@ type
 {* Triangle class                                                             *}
 {******************************************************************************}
 
-  TGDTriangle = class(TObject)
+  TGDTriangle = class
   private
     FNormal   : TGDVector;
   public
@@ -529,30 +502,6 @@ begin
   result := @FArray;
 end;
 
-{******************************************************************************}
-{* Create the uv class                                                        *}
-{******************************************************************************}
-
-constructor TGDUVCoord.Create();
-begin
-  U := 0;
-  V := 0;
-end;
-
-constructor TGDUVCoord.Create(aU,aV : Single);
-begin
-  U := aU;
-  V := aV;
-end;
-
-{******************************************************************************}
-{* Destroy the uv class                                                       *}
-{******************************************************************************}
-
-destructor TGDUVCoord.Destroy();
-begin
-  inherited;
-end;
 
 {******************************************************************************}
 {* Reset the UV                                                               *}
@@ -564,18 +513,6 @@ begin
   V := aV;
 end;
 
-procedure TGDUVCoord.Reset(aD : Single);
-begin
-  U := aD;
-  V := aD;
-end;
-
-procedure TGDUVCoord.Reset(aUVCoord : TGDUVCoord);
-begin
-  U := aUVCoord.U;
-  V := aUVCoord.V;
-end;
-
 {******************************************************************************}
 {* Add a UV                                                                   *}
 {******************************************************************************}
@@ -584,12 +521,6 @@ procedure TGDUVCoord.Add(aU,aV : Single);
 begin
   U := U + aU;
   V := V + aV;
-end;
-
-procedure TGDUVCoord.Add(aD : Single);
-begin
-  U := U + aD;
-  V := V + aD;
 end;
 
 procedure TGDUVCoord.Add(aUVCoord : TGDUVCoord);
@@ -608,12 +539,6 @@ begin
   V := V - aV;
 end;
 
-procedure TGDUVCoord.Substract(aD : Single);
-begin
-  U := U - aD;
-  V := V - aD;
-end;
-
 procedure TGDUVCoord.Substract(aUVCoord : TGDUVCoord);
 begin
   U := U - aUVCoord.U;
@@ -628,12 +553,6 @@ procedure TGDUVCoord.Multiply(aU,aV : Single);
 begin
   U := U * aU;
   V := V * aV;
-end;
-
-procedure TGDUVCoord.Multiply(aD : Single);
-begin
-  U := U * aD;
-  V := V * aD;
 end;
 
 procedure TGDUVCoord.Multiply(aUVCoord : TGDUVCoord);
@@ -652,12 +571,6 @@ begin
   V := V / aV;
 end;
 
-procedure TGDUVCoord.Devide(aD : Single);
-begin
-  U := U / aD;
-  V := V / aD;
-end;
-
 procedure TGDUVCoord.Devide(aUVCoord : TGDUVCoord);
 begin
   U := U / aUVCoord.U;
@@ -670,27 +583,13 @@ end;
 
 function TGDUVCoord.Copy(): TGDUVCoord;
 begin
-  result := TGDUVCoord.Create(U,V);
+  result.u := u;
+  result.v := v;
 end;
 
-{******************************************************************************}
-{* Snap the UV                                                                *}
-{******************************************************************************}
-
-procedure TGDUVCoord.Snap(aD : Single);
+class operator TGDUVCoord.Equal (uv1, uv2: TGDUVCoord)B: Boolean;
 begin
-  U := round( U / aD ) * aD;
-  V := round( V / aD ) * aD;
-end;
-
-{******************************************************************************}
-{* Invert the UV                                                          *}
-{******************************************************************************}
-
-procedure TGDUVCoord.Invert();
-begin
-  U := -U;
-  V := -V;
+  B:=(uv1.u=uv2.u) and (uv1.v=uv2.v);
 end;
 
 {******************************************************************************}
@@ -699,36 +598,7 @@ end;
 
 function TGDUVCoord.ArrayPointer() : PGLfloat;
 begin
-  result := @FUVArray;
-end;
-
-{******************************************************************************}
-{* Create the RGBAColor class                                                 *}
-{******************************************************************************}
-
-constructor TGDColor.Create();
-begin
-  FColorArray[0] := 0;
-  FColorArray[1] := 0;
-  FColorArray[2] := 0;
-  FColorArray[3] := 0;
-end;
-
-constructor TGDColor.Create(aR,aG,aB,aA : Single);
-begin
-  FColorArray[0] := aR;
-  FColorArray[1] := aG;
-  FColorArray[2] := aB;
-  FColorArray[3] := aA;
-end;
-
-{******************************************************************************}
-{* Destroy the RGBAColor class                                                *}
-{******************************************************************************}
-
-destructor TGDColor.Destroy();
-begin
-  inherited;
+  result := @uv;
 end;
 
 {******************************************************************************}
@@ -737,48 +607,20 @@ end;
 
 procedure TGDColor.Reset(aR,aG,aB,aA : Single);
 begin
-  FColorArray[0] := aR;
-  FColorArray[1] := aG;
-  FColorArray[2] := aB;
-  FColorArray[3] := aA;
+  r := aR;
+  g := aG;
+  b := aB;
+  a := aA;
 end;
-
-procedure TGDColor.Reset(aD : Single);
-begin
-  FColorArray[0] := aD;
-  FColorArray[1] := aD;
-  FColorArray[2] := aD;
-  FColorArray[3] := aD;
-end;
-
-procedure TGDColor.Reset(aColor : TGDColor);
-begin
-  FColorArray[0] := aColor.R;
-  FColorArray[1] := aColor.G;
-  FColorArray[2] := aColor.B;
-  FColorArray[3] := aColor.A;
-end;
-
-{******************************************************************************}
-{* Copy the color                                                             *}
-{******************************************************************************}
 
 function TGDColor.Copy(): TGDColor;
 begin
-  result := TGDColor.Create(R,G,B,A);
+  result.r := r;
+  result.g := g;
+  result.b := b;
+  result.a := a;
 end;
 
-{******************************************************************************}
-{* Invert the Color                                                            *}
-{******************************************************************************}
-
-procedure TGDColor.Invert();
-begin
-  R := -R;
-  G := -G;
-  B := -B;
-  A := -A;
-end;
 
 {******************************************************************************}
 {* Set the color to red                                                       *}
@@ -786,10 +628,10 @@ end;
 
 procedure TGDColor.Red();
 begin
-  FColorArray[0] := 1;
-  FColorArray[1] := 0;
-  FColorArray[2] := 0;
-  FColorArray[3] := 1;
+  r := 1;
+  g := 0;
+  b := 0;
+  a := 1;
 end;
 
 {******************************************************************************}
@@ -798,10 +640,10 @@ end;
 
 procedure TGDColor.Green();
 begin
-  FColorArray[0] := 0;
-  FColorArray[1] := 1;
-  FColorArray[2] := 0;
-  FColorArray[3] := 1;
+  r := 0;
+  g := 1;
+  b := 0;
+  a := 1;
 end;
 
 {******************************************************************************}
@@ -810,10 +652,10 @@ end;
 
 procedure TGDColor.Blue();
 begin
-  FColorArray[0] := 0;
-  FColorArray[1] := 0;
-  FColorArray[2] := 1;
-  FColorArray[3] := 1;
+  r := 0;
+  g := 0;
+  b := 1;
+  a := 1;
 end;
 
 {******************************************************************************}
@@ -822,10 +664,10 @@ end;
 
 procedure TGDColor.White();
 begin
-  FColorArray[0] := 1;
-  FColorArray[1] := 1;
-  FColorArray[2] := 1;
-  FColorArray[3] := 1;
+  r := 1;
+  g := 1;
+  b := 1;
+  a := 1;
 end;
 
 {******************************************************************************}
@@ -834,10 +676,10 @@ end;
 
 procedure TGDColor.Black();
 begin
-  FColorArray[0] := 0;
-  FColorArray[1] := 0;
-  FColorArray[2] := 0;
-  FColorArray[3] := 1;
+  r := 0;
+  g := 0;
+  b := 0;
+  a := 1;
 end;
 
 {******************************************************************************}
@@ -846,25 +688,7 @@ end;
 
 function TGDColor.ArrayPointer() : PGLFloat;
 begin
-  result := @FColorArray;
-end;
-
-{******************************************************************************}
-{* Create the matrix class                                                    *}
-{******************************************************************************}
-
-constructor TGDMatrix.Create();
-begin
-  EmptyMatrix();
-end;
-
-{******************************************************************************}
-{* Destroy the matrix class                                                   *}
-{******************************************************************************}
-
-destructor TGDMatrix.Destroy();
-begin
-  inherited;
+  result := @rgba;
 end;
 
 {******************************************************************************}
@@ -873,25 +697,25 @@ end;
 
 procedure TGDMatrix.EmptyMatrix();
 begin
-  FMatrixArray[0,0] := 0;
-  FMatrixArray[1,0] := 0;
-  FMatrixArray[2,0] := 0;
-  FMatrixArray[3,0] := 0;
+  Data[0,0] := 0;
+  Data[1,0] := 0;
+  Data[2,0] := 0;
+  Data[3,0] := 0;
 
-  FMatrixArray[0,1] := 0;
-  FMatrixArray[1,1] := 0;
-  FMatrixArray[2,1] := 0;
-  FMatrixArray[3,1] := 0;
+  Data[0,1] := 0;
+  Data[1,1] := 0;
+  Data[2,1] := 0;
+  Data[3,1] := 0;
 
-  FMatrixArray[0,2] := 0;
-  FMatrixArray[1,2] := 0;
-  FMatrixArray[2,2] := 0;
-  FMatrixArray[3,2] := 0;
+  Data[0,2] := 0;
+  Data[1,2] := 0;
+  Data[2,2] := 0;
+  Data[3,2] := 0;
 
-  FMatrixArray[0,3] := 0;
-  FMatrixArray[1,3] := 0;
-  FMatrixArray[2,3] := 0;
-  FMatrixArray[3,3] := 0;
+  Data[0,3] := 0;
+  Data[1,3] := 0;
+  Data[2,3] := 0;
+  Data[3,3] := 0;
 end;
 
 {******************************************************************************}
@@ -900,25 +724,25 @@ end;
 
 procedure TGDMatrix.IdentityMatrix();
 begin
-  FMatrixArray[0,0] := 1;
-  FMatrixArray[1,0] := 0;
-  FMatrixArray[2,0] := 0;
-  FMatrixArray[3,0] := 0;
+  Data[0,0] := 1;
+  Data[1,0] := 0;
+  Data[2,0] := 0;
+  Data[3,0] := 0;
 
-  FMatrixArray[0,1] := 0;
-  FMatrixArray[1,1] := 1;
-  FMatrixArray[2,1] := 0;
-  FMatrixArray[3,1] := 0;
+  Data[0,1] := 0;
+  Data[1,1] := 1;
+  Data[2,1] := 0;
+  Data[3,1] := 0;
 
-  FMatrixArray[0,2] := 0;
-  FMatrixArray[1,2] := 0;
-  FMatrixArray[2,2] := 1;
-  FMatrixArray[3,2] := 0;
+  Data[0,2] := 0;
+  Data[1,2] := 0;
+  Data[2,2] := 1;
+  Data[3,2] := 0;
 
-  FMatrixArray[0,3] := 0;
-  FMatrixArray[1,3] := 0;
-  FMatrixArray[2,3] := 1;
-  FMatrixArray[3,3] := 0;
+  Data[0,3] := 0;
+  Data[1,3] := 0;
+  Data[2,3] := 1;
+  Data[3,3] := 0;
 end;
 
 {******************************************************************************}
@@ -931,7 +755,7 @@ Var
 begin
   for iC := 0 to 3 do
     for iR := 0 to 3 do
-      FMatrixArray[iC,iR] := -FMatrixArray[iC,iR];
+      Data[iC,iR] := -Data[iC,iR];
 end;
 
 {******************************************************************************}
@@ -942,10 +766,10 @@ procedure TGDMatrix.CreateRotationX(aRX : Single);
 begin
   aRX := DegToRad(aRX);
   IdentityMatrix();
-  FMatrixArray[1,1] := cos(aRX);
-  FMatrixArray[2,1] := sin(aRX);
-  FMatrixArray[1,2] := -sin(aRX);
-  FMatrixArray[2,2] := cos(aRX);
+  Data[1,1] := cos(aRX);
+  Data[2,1] := sin(aRX);
+  Data[1,2] := -sin(aRX);
+  Data[2,2] := cos(aRX);
 end;
 
 {******************************************************************************}
@@ -956,10 +780,10 @@ procedure TGDMatrix.CreateRotationY(aRY : Single);
 begin
   aRY := DegToRad(aRY);
   IdentityMatrix();
-  FMatrixArray[0,0] := cos(aRY);
-  FMatrixArray[0,2] := sin(aRY);
-  FMatrixArray[2,0] := -sin(aRY);
-  FMatrixArray[2,2] := cos(aRY);
+  Data[0,0] := cos(aRY);
+  Data[0,2] := sin(aRY);
+  Data[2,0] := -sin(aRY);
+  Data[2,2] := cos(aRY);
 end;
 
 {******************************************************************************}
@@ -970,10 +794,10 @@ procedure TGDMatrix.CreateRotationZ(aRZ : Single);
 begin
   aRZ := DegToRad(aRZ);
   IdentityMatrix();
-  FMatrixArray[0,0] := cos(aRZ);
-  FMatrixArray[1,0] := sin(aRZ);
-  FMatrixArray[0,1] := -sin(aRZ);
-  FMatrixArray[1,1] := cos(aRZ);
+  Data[0,0] := cos(aRZ);
+  Data[1,0] := sin(aRZ);
+  Data[0,1] := -sin(aRZ);
+  Data[1,1] := cos(aRZ);
 end;
 
 {******************************************************************************}
@@ -982,22 +806,22 @@ end;
 
 procedure TGDMatrix.Multiply(aM1, aM2: TGDMatrix);
 begin
-  FMatrixArray[0,0]:=aM1.FMatrixArray[0,0]*aM2.FMatrixArray[0,0]+aM1.FMatrixArray[0,1]*aM2.FMatrixArray[1,0]+aM1.FMatrixArray[0,2]*aM2.FMatrixArray[2,0]+aM1.FMatrixArray[0,3]*aM2.FMatrixArray[3,0];
-  FMatrixArray[0,1]:=aM1.FMatrixArray[0,0]*aM2.FMatrixArray[0,1]+aM1.FMatrixArray[0,1]*aM2.FMatrixArray[1,1]+aM1.FMatrixArray[0,2]*aM2.FMatrixArray[2,1]+aM1.FMatrixArray[0,3]*aM2.FMatrixArray[3,1];
-  FMatrixArray[0,2]:=aM1.FMatrixArray[0,0]*aM2.FMatrixArray[0,2]+aM1.FMatrixArray[0,1]*aM2.FMatrixArray[1,2]+aM1.FMatrixArray[0,2]*aM2.FMatrixArray[2,2]+aM1.FMatrixArray[0,3]*aM2.FMatrixArray[3,2];
-  FMatrixArray[0,3]:=aM1.FMatrixArray[0,0]*aM2.FMatrixArray[0,3]+aM1.FMatrixArray[0,1]*aM2.FMatrixArray[1,3]+aM1.FMatrixArray[0,2]*aM2.FMatrixArray[2,3]+aM1.FMatrixArray[0,3]*aM2.FMatrixArray[3,3];
-  FMatrixArray[1,0]:=aM1.FMatrixArray[1,0]*aM2.FMatrixArray[0,0]+aM1.FMatrixArray[1,1]*aM2.FMatrixArray[1,0]+aM1.FMatrixArray[1,2]*aM2.FMatrixArray[2,0]+aM1.FMatrixArray[1,3]*aM2.FMatrixArray[3,0];
-  FMatrixArray[1,1]:=aM1.FMatrixArray[1,0]*aM2.FMatrixArray[0,1]+aM1.FMatrixArray[1,1]*aM2.FMatrixArray[1,1]+aM1.FMatrixArray[1,2]*aM2.FMatrixArray[2,1]+aM1.FMatrixArray[1,3]*aM2.FMatrixArray[3,1];
-  FMatrixArray[1,2]:=aM1.FMatrixArray[1,0]*aM2.FMatrixArray[0,2]+aM1.FMatrixArray[1,1]*aM2.FMatrixArray[1,2]+aM1.FMatrixArray[1,2]*aM2.FMatrixArray[2,2]+aM1.FMatrixArray[1,3]*aM2.FMatrixArray[3,2];
-  FMatrixArray[1,3]:=aM1.FMatrixArray[1,0]*aM2.FMatrixArray[0,3]+aM1.FMatrixArray[1,1]*aM2.FMatrixArray[1,3]+aM1.FMatrixArray[1,2]*aM2.FMatrixArray[2,3]+aM1.FMatrixArray[1,3]*aM2.FMatrixArray[3,3];
-  FMatrixArray[2,0]:=aM1.FMatrixArray[2,0]*aM2.FMatrixArray[0,0]+aM1.FMatrixArray[2,1]*aM2.FMatrixArray[1,0]+aM1.FMatrixArray[2,2]*aM2.FMatrixArray[2,0]+aM1.FMatrixArray[2,3]*aM2.FMatrixArray[3,0];
-  FMatrixArray[2,1]:=aM1.FMatrixArray[2,0]*aM2.FMatrixArray[0,1]+aM1.FMatrixArray[2,1]*aM2.FMatrixArray[1,1]+aM1.FMatrixArray[2,2]*aM2.FMatrixArray[2,1]+aM1.FMatrixArray[2,3]*aM2.FMatrixArray[3,1];
-  FMatrixArray[2,2]:=aM1.FMatrixArray[2,0]*aM2.FMatrixArray[0,2]+aM1.FMatrixArray[2,1]*aM2.FMatrixArray[1,2]+aM1.FMatrixArray[2,2]*aM2.FMatrixArray[2,2]+aM1.FMatrixArray[2,3]*aM2.FMatrixArray[3,2];
-  FMatrixArray[2,3]:=aM1.FMatrixArray[2,0]*aM2.FMatrixArray[0,3]+aM1.FMatrixArray[2,1]*aM2.FMatrixArray[1,3]+aM1.FMatrixArray[2,2]*aM2.FMatrixArray[2,3]+aM1.FMatrixArray[2,3]*aM2.FMatrixArray[3,3];
-  FMatrixArray[3,0]:=aM1.FMatrixArray[3,0]*aM2.FMatrixArray[0,0]+aM1.FMatrixArray[3,1]*aM2.FMatrixArray[1,0]+aM1.FMatrixArray[3,2]*aM2.FMatrixArray[2,0]+aM1.FMatrixArray[3,3]*aM2.FMatrixArray[3,0];
-  FMatrixArray[3,1]:=aM1.FMatrixArray[3,0]*aM2.FMatrixArray[0,1]+aM1.FMatrixArray[3,1]*aM2.FMatrixArray[1,1]+aM1.FMatrixArray[3,2]*aM2.FMatrixArray[2,1]+aM1.FMatrixArray[3,3]*aM2.FMatrixArray[3,1];
-  FMatrixArray[3,2]:=aM1.FMatrixArray[3,0]*aM2.FMatrixArray[0,2]+aM1.FMatrixArray[3,1]*aM2.FMatrixArray[1,2]+aM1.FMatrixArray[3,2]*aM2.FMatrixArray[2,2]+aM1.FMatrixArray[3,3]*aM2.FMatrixArray[3,2];
-  FMatrixArray[3,3]:=aM1.FMatrixArray[3,0]*aM2.FMatrixArray[0,3]+aM1.FMatrixArray[3,1]*aM2.FMatrixArray[1,3]+aM1.FMatrixArray[3,2]*aM2.FMatrixArray[2,3]+aM1.FMatrixArray[3,3]*aM2.FMatrixArray[3,3];
+  Data[0,0]:=aM1.Data[0,0]*aM2.Data[0,0]+aM1.Data[0,1]*aM2.Data[1,0]+aM1.Data[0,2]*aM2.Data[2,0]+aM1.Data[0,3]*aM2.Data[3,0];
+  Data[0,1]:=aM1.Data[0,0]*aM2.Data[0,1]+aM1.Data[0,1]*aM2.Data[1,1]+aM1.Data[0,2]*aM2.Data[2,1]+aM1.Data[0,3]*aM2.Data[3,1];
+  Data[0,2]:=aM1.Data[0,0]*aM2.Data[0,2]+aM1.Data[0,1]*aM2.Data[1,2]+aM1.Data[0,2]*aM2.Data[2,2]+aM1.Data[0,3]*aM2.Data[3,2];
+  Data[0,3]:=aM1.Data[0,0]*aM2.Data[0,3]+aM1.Data[0,1]*aM2.Data[1,3]+aM1.Data[0,2]*aM2.Data[2,3]+aM1.Data[0,3]*aM2.Data[3,3];
+  Data[1,0]:=aM1.Data[1,0]*aM2.Data[0,0]+aM1.Data[1,1]*aM2.Data[1,0]+aM1.Data[1,2]*aM2.Data[2,0]+aM1.Data[1,3]*aM2.Data[3,0];
+  Data[1,1]:=aM1.Data[1,0]*aM2.Data[0,1]+aM1.Data[1,1]*aM2.Data[1,1]+aM1.Data[1,2]*aM2.Data[2,1]+aM1.Data[1,3]*aM2.Data[3,1];
+  Data[1,2]:=aM1.Data[1,0]*aM2.Data[0,2]+aM1.Data[1,1]*aM2.Data[1,2]+aM1.Data[1,2]*aM2.Data[2,2]+aM1.Data[1,3]*aM2.Data[3,2];
+  Data[1,3]:=aM1.Data[1,0]*aM2.Data[0,3]+aM1.Data[1,1]*aM2.Data[1,3]+aM1.Data[1,2]*aM2.Data[2,3]+aM1.Data[1,3]*aM2.Data[3,3];
+  Data[2,0]:=aM1.Data[2,0]*aM2.Data[0,0]+aM1.Data[2,1]*aM2.Data[1,0]+aM1.Data[2,2]*aM2.Data[2,0]+aM1.Data[2,3]*aM2.Data[3,0];
+  Data[2,1]:=aM1.Data[2,0]*aM2.Data[0,1]+aM1.Data[2,1]*aM2.Data[1,1]+aM1.Data[2,2]*aM2.Data[2,1]+aM1.Data[2,3]*aM2.Data[3,1];
+  Data[2,2]:=aM1.Data[2,0]*aM2.Data[0,2]+aM1.Data[2,1]*aM2.Data[1,2]+aM1.Data[2,2]*aM2.Data[2,2]+aM1.Data[2,3]*aM2.Data[3,2];
+  Data[2,3]:=aM1.Data[2,0]*aM2.Data[0,3]+aM1.Data[2,1]*aM2.Data[1,3]+aM1.Data[2,2]*aM2.Data[2,3]+aM1.Data[2,3]*aM2.Data[3,3];
+  Data[3,0]:=aM1.Data[3,0]*aM2.Data[0,0]+aM1.Data[3,1]*aM2.Data[1,0]+aM1.Data[3,2]*aM2.Data[2,0]+aM1.Data[3,3]*aM2.Data[3,0];
+  Data[3,1]:=aM1.Data[3,0]*aM2.Data[0,1]+aM1.Data[3,1]*aM2.Data[1,1]+aM1.Data[3,2]*aM2.Data[2,1]+aM1.Data[3,3]*aM2.Data[3,1];
+  Data[3,2]:=aM1.Data[3,0]*aM2.Data[0,2]+aM1.Data[3,1]*aM2.Data[1,2]+aM1.Data[3,2]*aM2.Data[2,2]+aM1.Data[3,3]*aM2.Data[3,2];
+  Data[3,3]:=aM1.Data[3,0]*aM2.Data[0,3]+aM1.Data[3,1]*aM2.Data[1,3]+aM1.Data[3,2]*aM2.Data[2,3]+aM1.Data[3,3]*aM2.Data[3,3];
 end;
 
 {******************************************************************************}
@@ -1009,10 +833,6 @@ var
   iM, iMX, iMY, iMZ : TGDMatrix;
 begin
   IdentityMatrix();
-  iM := TGDMatrix.Create();
-  iMX := TGDMatrix.Create();
-  iMY := TGDMatrix.Create();
-  iMZ := TGDMatrix.Create();
 
   iMX.CreateRotationX(aV.x);
   iMY.CreateRotationY(aV.y);
@@ -1020,11 +840,6 @@ begin
 
   iM.Multiply(iMZ,iMY);
   Multiply(iMX,iM);
-
-  FreeAndNil(iM);
-  FreeAndNil(iMX);
-  FreeAndNil(iMY);
-  FreeAndNil(iMZ);
 end;
 
 {******************************************************************************}
@@ -1036,9 +851,9 @@ var
   iV : TGDVector;
 begin
   iV := aV.Copy();
-  aV.x := iV.x * FMatrixArray[0,0] + iV.y * FMatrixArray[1,0] + iV.z * FMatrixArray[2,0] + FMatrixArray[3,0];
-  aV.y := iV.x * FMatrixArray[0,1] + iV.y * FMatrixArray[1,1] + iV.z * FMatrixArray[2,1] + FMatrixArray[3,1];
-  aV.z := iV.x * FMatrixArray[0,2] + iV.y * FMatrixArray[1,2] + iV.z * FMatrixArray[2,2] + FMatrixArray[3,2];
+  aV.x := iV.x * Data[0,0] + iV.y * Data[1,0] + iV.z * Data[2,0] + Data[3,0];
+  aV.y := iV.x * Data[0,1] + iV.y * Data[1,1] + iV.z * Data[2,1] + Data[3,1];
+  aV.z := iV.x * Data[0,2] + iV.y * Data[1,2] + iV.z * Data[2,2] + Data[3,2];
   FreeAndNil(iV)
 end;
 
@@ -1050,10 +865,9 @@ function TGDMatrix.Copy() : TGDMatrix;
 Var
   iR,iC: integer;
 begin
-  result := TGDMatrix.Create();
   for iC := 0 to 3 do
     for iR := 0 to 3 do
-      result.FMatrixArray[iC,iR] := FMatrixArray[iC,iR];
+      result.Data[iC,iR] := Data[iC,iR];
 end;
 
 {******************************************************************************}
@@ -1062,7 +876,7 @@ end;
 
 function TGDMatrix.ArrayPointer() : PGLfloat;
 begin
-  result := @FMatrixArray;
+  result := @Data;
 end;
 
 {******************************************************************************}
@@ -1128,12 +942,10 @@ procedure TGDTriangle.Rotate( aRotation : TGDVector );
 var
   iM : TGDMatrix;
 begin
-  iM := TGDMatrix.Create();
   iM.CreateRotation( aRotation );
   iM.ApplyToVector( Vertices[0] );
   iM.ApplyToVector( Vertices[1] );
   iM.ApplyToVector( Vertices[2] );
-  FreeAndNil(iM);
 end;
 
 {******************************************************************************}
@@ -1295,13 +1107,11 @@ procedure TGDQuad.Rotate( aRotation : TGDVector );
 var
   iM : TGDMatrix;
 begin
-  iM := TGDMatrix.Create();
   iM.CreateRotation( aRotation );
   iM.ApplyToVector( Vertices[0] );
   iM.ApplyToVector( Vertices[1] );
   iM.ApplyToVector( Vertices[2] );
   iM.ApplyToVector( Vertices[3] );
-  FreeAndNil(iM);
 end;
 
 {******************************************************************************}

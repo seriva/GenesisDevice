@@ -171,7 +171,7 @@ begin
   glEnd;
 
   Renderer.RenderState( RS_TEXTS );
-  GUI.Font.Color.Reset(GUI.FontColor);
+  GUI.Font.Color := GUI.FontColor.Copy();
   GUI.Font.Render(25,215-32,0.4,'FPS');
   GUI.Font.Render(25,190-32,0.4,'TRIS');
   GUI.Font.Render(25,165-32,0.4,'VOBJ');

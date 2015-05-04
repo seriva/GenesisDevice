@@ -180,7 +180,6 @@ var
   iM : TGDMatrix;
   iV,iV1,iV2 : TGDVector;
 begin
-  iM := TGDMatrix.Create();
   iV := TGDVector.Create();
   iV2 := TGDVector.Create();
 
@@ -199,7 +198,6 @@ begin
 
   FPosition.Add( iV );
 
-  FreeAndNil(iM);
   FreeAndNil(iV);
   FreeAndNil(iV1);
   FreeAndNil(iV2);
@@ -214,7 +212,6 @@ var
   iM : TGDMatrix;
   iV : TGDVector;
 begin
-  iM := TGDMatrix.Create();
   iV := TGDVector.Create();
   iM.CreateRotation( FRotation );
   FDirection.Reset(0,0,-1);
@@ -226,7 +223,6 @@ begin
 
   FPosition.Add( iV );
 
-  FreeAndNil(iM);
   FreeAndNil(iV);
 end;
 
@@ -239,8 +235,6 @@ var dDeltaX, dDeltaY : double;
     iM : TGDMatrix;
 begin
   if ((aOldX = aNewX) and (aOldY = aNewY)) then exit;
-
-  iM := TGDMatrix.Create();
 
   dDeltaX := aOldX-aNewX;
   dDeltaY := aOldY-aNewY;
@@ -258,8 +252,6 @@ begin
   iM.CreateRotation( FRotation );
   FDirection.Reset(0,0,-1);
   iM.ApplyToVector(FDirection);
-
-  FreeAndNil(iM);
 end;
 
 end.

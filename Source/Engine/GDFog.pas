@@ -110,10 +110,7 @@ implementation
 
 procedure TGDFogShader.SetColor(aColor : TGDColor);
 begin
-  FColor.R := aColor.R;
-  FColor.B := aColor.B;
-  FColor.G := aColor.G;
-  FColor.A := aColor.A;
+  FColor := aColor.Copy();
   ApplyFog();
 end;
 
@@ -143,7 +140,6 @@ end;
 
 constructor TGDFogShader.Create();
 begin
-  FColor := TGDColor.Create();
   FColor.Reset(0.5,0.5,0.5,1);
   FMinDistance := (((Settings.ViewDistance * R_VIEW_DISTANCE_STEP) / 10) *5);
   FMaxDistance := (((Settings.ViewDistance * R_VIEW_DISTANCE_STEP) / 10) *8);
@@ -155,7 +151,6 @@ end;
 
 destructor  TGDFogShader.Destroy();
 begin
-  FreeAndNil(FColor);
   inherited;
 end;
 
@@ -199,12 +194,8 @@ end;
 constructor TGDFogManager.Create();
 begin
   FFogShader := TGDFogShader.Create();
-
   FDistanceFog   := 5;
-  FDistanceColor := TGDColor.Create();
-
   FWaterFog      := 1;
-  FWaterColor    := TGDColor.Create();
 end;
 
 {******************************************************************************}
@@ -214,8 +205,6 @@ end;
 destructor TGDFogManager.Destroy();
 begin
   FreeAndNil(FFogShader);
-  FreeAndNil(FDistanceColor);
-  FreeAndNil(FWaterColor);
 end;
 
 {******************************************************************************}

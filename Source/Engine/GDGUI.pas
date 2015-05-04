@@ -274,7 +274,6 @@ uses
 
 constructor TGDFont.Create();
 begin
-  FColor   := TGDColor.Create();
   FColor.White();
   FTexture := TGDTexture.Create();
 end;
@@ -286,7 +285,6 @@ end;
 destructor TGDFont.Destroy();
 begin
   Clear();
-  FreeAndNil(FColor);
   FreeAndNil(FTexture);
   inherited;
 end;
@@ -466,8 +464,6 @@ begin
   FPosition := 0;
   FX := 0;
   FY := 0;
-  FBarColor        := TGDColor.Create();
-  FBackgroundColor := TGDColor.Create();
 end;
 
 {******************************************************************************}
@@ -477,8 +473,6 @@ end;
 destructor TGDLoadingScreen.Destroy();
 begin
   inherited;
-  FreeAndNil(FBarColor);
-  FreeAndNil(FBackgroundColor);
 end;
 
 {******************************************************************************}
@@ -607,7 +601,7 @@ begin
   If Not(FBarOnly) then
   begin
     Renderer.RenderState( RS_TEXTS );
-    GUI.Font.Color.Reset(GUI.FontColor);
+    GUI.Font.Color := GUI.FontColor.Copy();
     GUI.Font.Render(7+FX,65+FY,0.5,FProcesName);
     GUI.Font.Render(270+FX,16+FY,0.5,IntToStr(round(iPercent)) + '%');
   end;
@@ -626,9 +620,6 @@ begin
   FFont          := TGDFont.Create();
   FMouseCursor   := TGDMouseCursor.Create();
   FLoadingScreen := TGDLoadingScreen.Create();
-  FFontColor     := TGDColor.Create();
-  FOutLineColor  := TGDColor.Create();
-  FFillColor     := TGDColor.Create();
 end;
 
 {******************************************************************************}
@@ -640,9 +631,6 @@ begin
   FreeAndNil(FFont);
   FreeAndNil(FMouseCursor);
   FreeAndNil(FLoadingScreen);
-  FreeAndNil(FFontColor);
-  FreeAndNil(FOutLineColor);
-  FreeAndNil(FFillColor);
 end;
 
 {******************************************************************************}

@@ -23,8 +23,6 @@
 *******************************************************************************}   
 unit GDConstants;
 
-{$MODE Delphi}
-
 {******************************************************************************}
 {* Holds the main types, constants of the engine                              *}
 {******************************************************************************}
@@ -63,7 +61,7 @@ const
   TWaterReflection : array[1..2] of String  = ('Terrain Only', 'All');
 
   //engine constants
-  ENGINE_INFO     = '69 - 29 April 2015';
+  ENGINE_INFO     = '69 - 5 May 2015';
 
   //renderer constants
   R_HUDWIDTH             = 1600;

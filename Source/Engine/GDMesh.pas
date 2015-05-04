@@ -41,6 +41,7 @@ Uses
   GDMaterials,
   Contnrs,
   FileUtil,
+  GDGenerics,
   GDStringParsing;
 
 Type
@@ -108,7 +109,7 @@ Type
     FFileName            : String;
     FVertices            : TObjectList;
     FNormals             : TObjectList;
-    FUV                  : TObjectList;
+    FUV                  : TGDUVCoordList;
     FPolygons            : TObjectList;
     FMaterialSegmentList : TObjectList;
 
@@ -117,7 +118,7 @@ Type
     property FileName      : String read FFileName;
     property Vertices      : TObjectList read FVertices;
     property Normals       : TObjectList read FNormals;
-    property UV            : TObjectList read FUV;
+    property UV            : TGDUVCoordList read FUV;
     property Polygons      : TObjectList read FPolygons;
     property MaterialSegmentList : TObjectList read FMaterialSegmentList;
 
@@ -221,7 +222,7 @@ constructor TGDMesh.Create();
 begin
   FVertices            := TObjectList.Create();
   FNormals             := TObjectList.Create();
-  FUV                  := TObjectList.Create();
+  FUV                  := TGDUVCoordList.Create();
   FPolygons            := TObjectList.Create();
   FMaterialSegmentList := TObjectList.Create();
 end;
@@ -321,7 +322,6 @@ begin
       end
       else if iStr = 'vt' then //read a uv
       begin
-        iUV := TGDUVCoord.Create();
         iUV.U := StrToFloat(GetNextToken(iFile));
         iUV.V := -StrToFloat(GetNextToken(iFile));
         FUV.Add(iUV);
