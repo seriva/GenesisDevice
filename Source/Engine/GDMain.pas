@@ -332,8 +332,7 @@ end;
 
 procedure TGDMain.InputMain();
 begin
-  Input.ExecuteMouseMove();
-  Input.ExecuteDirectInput();
+  Input.ExecuteInput();
 end;
 
 {******************************************************************************}

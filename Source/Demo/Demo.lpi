@@ -37,7 +37,7 @@
         <PackageName Value="LCL"/>
       </Item1>
     </RequiredPackages>
-    <Units Count="52">
+    <Units Count="51">
       <Unit0>
         <Filename Value="Demo.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -260,46 +260,41 @@
         <UnitName Value="GDWaterCell"/>
       </Unit42>
       <Unit43>
-        <Filename Value="..\Libraries\DirectX\DXInput.pas"/>
-        <IsPartOfProject Value="True"/>
-        <UnitName Value="DXInput"/>
-      </Unit43>
-      <Unit44>
         <Filename Value="..\Libraries\FMod\fmod.inc"/>
         <IsPartOfProject Value="True"/>
-      </Unit44>
-      <Unit45>
+      </Unit43>
+      <Unit44>
         <Filename Value="..\Libraries\FMod\fmod.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="fmod"/>
+      </Unit44>
+      <Unit45>
+        <Filename Value="..\Libraries\FMod\fmoderrors.pas"/>
+        <IsPartOfProject Value="True"/>
       </Unit45>
       <Unit46>
-        <Filename Value="..\Libraries\FMod\fmoderrors.pas"/>
+        <Filename Value="..\Libraries\FMod\fmodpresets.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit46>
       <Unit47>
-        <Filename Value="..\Libraries\FMod\fmodpresets.pas"/>
+        <Filename Value="..\Libraries\FMod\fmodtypes.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit47>
       <Unit48>
-        <Filename Value="..\Libraries\FMod\fmodtypes.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit48>
-      <Unit49>
         <Filename Value="..\Engine\GDFoliage.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="GDFoliage"/>
-      </Unit49>
-      <Unit50>
+      </Unit48>
+      <Unit49>
         <Filename Value="..\Engine\GDStringParsing.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="GDStringParsing"/>
-      </Unit50>
-      <Unit51>
+      </Unit49>
+      <Unit50>
         <Filename Value="..\Engine\GDGenerics.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="GDGenerics"/>
-      </Unit51>
+      </Unit50>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -310,7 +305,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="..\Headers;..\Libraries\OpenGL;..\Libraries\Utils;$(ProjOutDir);..\Libraries\FMod"/>
-      <OtherUnitFiles Value="..\Libraries\OpenGL;..\Engine;..\Libraries\DirectX;..\Libraries\FMod"/>
+      <OtherUnitFiles Value="..\Libraries\OpenGL;..\Engine;..\Libraries\FMod"/>
       <UnitOutputDirectory Value="..\..\Build"/>
     </SearchPaths>
     <Parsing>

@@ -42,7 +42,7 @@ type
   TGDWaterReflection = (WR_ALL, WR_TERRAIN_ONLY);
 
   //input types
-  TGDInputTypes = (IT_DIRECT, IT_SINGLE, IT_DOWN, IT_UP);
+  TGDInputTypes = (IT_SINGLE, IT_DIRECT, IT_DOWN, IT_UP);
 
   //sound types
   TGDSoundTypes = (ST_SINGLE, ST_LOOP);

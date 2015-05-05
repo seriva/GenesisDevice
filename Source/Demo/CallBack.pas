@@ -55,7 +55,7 @@ implementation
 {* Set the interface render callback                                          *}
 {******************************************************************************}
 
-procedure RenderInterfaceCallBack(); stdcall;
+procedure RenderInterfaceCallBack();
 begin
   Intro.Render();
 end;
@@ -64,7 +64,7 @@ end;
 {* Exit thee engine                                                           *}
 {******************************************************************************}
 
-procedure ExitCallback(); stdcall;
+procedure ExitCallback();
 begin
   Configuration.ViewPortForm.Close();
 end;
@@ -73,7 +73,7 @@ end;
 {* Move the player forward                                                    *}
 {******************************************************************************}
 
-procedure PlayerForward(); stdcall;
+procedure PlayerForward();
 begin
   Player.MoveForward();
 end;
@@ -82,7 +82,7 @@ end;
 {* Move the player backwards                                                  *}
 {******************************************************************************}
 
-procedure PlayerBackward(); stdcall;
+procedure PlayerBackward();
 begin
   Player.MoveBackWard();
 end;
@@ -91,7 +91,7 @@ end;
 {* Move the player right                                                      *}
 {******************************************************************************}
 
-procedure PlayerRight(); stdcall;
+procedure PlayerRight();
 begin
   Player.MoveRight();
 end;
@@ -100,7 +100,7 @@ end;
 {* Move the player left                                                       *}
 {******************************************************************************}
 
-procedure PlayerLeft(); stdcall;
+procedure PlayerLeft();
 begin
   Player.MoveLeft();
 end;
@@ -109,7 +109,7 @@ end;
 {* Set the walkspeed                                                          *}
 {******************************************************************************}
 
-procedure SetWalk(); stdcall;
+procedure SetWalk();
 begin
   Player.Walk();
 end;
@@ -118,7 +118,7 @@ end;
 {* Set the runspeed                                                           *}
 {******************************************************************************}
 
-procedure SetRun(); stdcall;
+procedure SetRun();
 begin
   PLayer.Run();
 end;
@@ -139,7 +139,7 @@ end;
 {* Toggle the stats                                                           *}
 {******************************************************************************}
 
-procedure ToggleStats(); stdcall;
+procedure ToggleStats();
 begin
   Stats := not(Stats);
   gdConsoleCommand('RStats ' + BoolToStr(Stats));
@@ -149,7 +149,7 @@ end;
 {* Toggle wireframe rendering                                                 *}
 {******************************************************************************}
 
-procedure ToggleWireFrame(); stdcall;
+procedure ToggleWireFrame();
 begin
   WireFrame := not(WireFrame);
   gdConsoleCommand('RWireframe ' + BoolToStr(WireFrame));
@@ -179,7 +179,7 @@ end;
 {* Toggle the collision                                                       *}
 {******************************************************************************}
 
-procedure ToggleClipping(); stdcall;
+procedure ToggleClipping();
 begin
   Clip := not(Clip);
 end;
@@ -188,7 +188,7 @@ end;
 {* Beforce render callback                                                    *}
 {******************************************************************************}
 
-procedure BeforeRender() stdcall;
+procedure BeforeRender();
 begin
   //do soms sound stuff
   if Player.PlayerUnderWater() then
@@ -229,7 +229,7 @@ end;
 {* Static render callback                                                    *}
 {******************************************************************************}
 
-procedure StaticRender() stdcall;
+procedure StaticRender();
 begin
 end;
 
@@ -245,18 +245,18 @@ begin
   gdCallBackSetBeforeRender( @BeforeRender );
   
   //input funtions
-  gdInputRegisterAction(IT_SINGLE,'ESCAPE',@ExitCallback, false );
-  gdInputRegisterAction(IT_DIRECT,ConfigurationForm.AForwards,@PlayerForward, true );
-  gdInputRegisterAction(IT_DIRECT,ConfigurationForm.ABackwards,@PlayerBackward, true );
-  gdInputRegisterAction(IT_DIRECT,ConfigurationForm.ALeft,@PlayerLeft, true );
-  gdInputRegisterAction(IT_DIRECT,ConfigurationForm.ARight,@PlayerRight, true );
-  gdInputRegisterAction(IT_DOWN,ConfigurationForm.ARun,@SetRun, true );
-  gdInputRegisterAction(IT_UP,ConfigurationForm.ARun,@SetWalk, true );
-  gdInputRegisterAction(IT_SINGLE,'F1',@ToggleStats, true  );
-  gdInputRegisterAction(IT_SINGLE,'F2',@ToggleWireFrame, true  );
-  gdInputRegisterAction(IT_SINGLE,'F3',@ToggleOctreeNodes, true  );
-  gdInputRegisterAction(IT_SINGLE,'F4',@ToggleOBJBoxes, true  );
-  gdInputRegisterAction(IT_SINGLE,'F5',@ToggleClipping, true  );
+  gdInputRegisterAction(IT_SINGLE,VK_ESCAPE,@ExitCallback, false );
+  gdInputRegisterAction(IT_DIRECT,VK_W,@PlayerForward, true );
+  gdInputRegisterAction(IT_DIRECT,VK_S,@PlayerBackward, true );
+  gdInputRegisterAction(IT_DIRECT,VK_A,@PlayerLeft, true );
+  gdInputRegisterAction(IT_DIRECT,VK_D,@PlayerRight, true );
+  gdInputRegisterAction(IT_DOWN,VK_LSHIFT,@SetRun, true );
+  gdInputRegisterAction(IT_UP,VK_LSHIFT,@SetWalk, true );
+  gdInputRegisterAction(IT_SINGLE,VK_F1,@ToggleStats, true  );
+  gdInputRegisterAction(IT_SINGLE,VK_F2,@ToggleWireFrame, true  );
+  gdInputRegisterAction(IT_SINGLE,VK_F3,@ToggleOctreeNodes, true  );
+  gdInputRegisterAction(IT_SINGLE,VK_F4,@ToggleOBJBoxes, true  );
+  gdInputRegisterAction(IT_SINGLE,VK_F5,@ToggleClipping, true  );
 end;
 
 {******************************************************************************}

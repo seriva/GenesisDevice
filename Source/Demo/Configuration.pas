@@ -105,9 +105,6 @@ type
     MouseSensitivityLabel: TLabel;
     MouseSensitivityTrackBar: TTrackBar;
     InvertMouseCheckBox: TCheckBox;
-    KeyBindingsPanel: TPanel;
-    KeybindingsLabel: TLabel;
-    ControlValueListEditor: TValueListEditor;
     SoundTabSheet: TTabSheet;
     SoundPanel: TPanel;
     SoundDriverLabel: TLabel;
@@ -127,16 +124,7 @@ type
     procedure MonitorComboBoxChange(Sender: TObject);
 
     procedure RunButtonClick(Sender: TObject);
-    procedure ControlValueListEditorKeyDown(Sender: TObject; var Key: Word;
-      Shift: TShiftState);
-    procedure ControlValueListEditorSelectCell(Sender: TObject; ACol,
-      ARow: Integer; var CanSelect: Boolean);
-    procedure ControlValueListEditorKeyUp(Sender: TObject; var Key: Word;
-      Shift: TShiftState);
   private
-    FSelectedRow : Integer;
-    FKeyPressed : Boolean;
-    FForwards,FBackwards,FLeft,FRight,FRun : String;
     FMap : String;
 
     procedure FillComboboxes();
@@ -146,11 +134,6 @@ type
     FMonitorInfos      : array of TMonitorInfoEx;
     FAvailableModi     : array of TDisplayMode;
 
-    property AForwards   : String read FForwards;
-    property ABackwards  : String read FBackwards;
-    property ALeft       : String read FLeft;
-    property ARight      : String read FRight;
-    property ARun        : String read FRun;
     property Map         : String read FMap;
 
     procedure SettingsToInterface();
@@ -187,9 +170,6 @@ begin
     MessageBox(0, 'Error starting engine! See log for details.', 'Error', MB_OK);
     Application.Terminate();
   end;
-
-  //set some window vars.
-  FSelectedRow := 1;
 
   //fill settingscombos
   FillComboboxes();
@@ -465,72 +445,6 @@ begin
 end;
 
 {******************************************************************************}
-{* Keydown to detect the keyinput for keybindings (needs better solution)      *}
-{******************************************************************************}
-
-procedure TConfigurationForm.ControlValueListEditorKeyDown(Sender: TObject;
-  var Key: Word; Shift: TShiftState);
-begin
-  //set keypress to true on some keys used by the valuaeditor
-  If (key = VK_PRIOR) or (key = VK_NEXT) or (key = VK_UP) or (key = VK_DOWN) then
-  begin
-    FKeyPressed := true;
-  end;
-
-  //detect key on the selected actions
-  case FSelectedRow of
-      0 : Begin
-            FForwards := gdInputDetectCurrentKeyString();
-            ControlValueListEditor.Strings.Strings[0] := 'Forward=' + FForwards;
-          end;
-      1 : Begin
-            FBackWards := gdInputDetectCurrentKeyString();
-            ControlValueListEditor.Strings.Strings[1] := 'Backward=' + FBackWards;
-          end;
-      2 : Begin
-            FLeft := gdInputDetectCurrentKeyString();
-            ControlValueListEditor.Strings.Strings[2] := 'Left=' + FLeft;
-          end;
-      3 : Begin
-            FRight := gdInputDetectCurrentKeyString();
-            ControlValueListEditor.Strings.Strings[3] := 'Right=' + FRight;
-          end;
-      4 : Begin
-            FRun := gdInputDetectCurrentKeyString();
-            ControlValueListEditor.Strings.Strings[4] := 'Run=' + FRun;
-          end;
-
-  end;
-end;
-
-{******************************************************************************}
-{* Keyup event                                                                *}
-{******************************************************************************}
-
-procedure TConfigurationForm.ControlValueListEditorKeyUp(Sender: TObject;
-  var Key: Word; Shift: TShiftState);
-begin
-  //set keypress to false on some keys used by the valuaeditor
-  If (key = VK_PRIOR) or (key = VK_NEXT) or (key = VK_UP) or (key = VK_DOWN) then
-  begin
-    FKeyPressed := False;
-  end;
-end;
-
-{******************************************************************************}
-{* Select a current key action                                                *}
-{******************************************************************************}
-
-procedure TConfigurationForm.ControlValueListEditorSelectCell(Sender: TObject;
-  ACol, ARow: Integer; var CanSelect: Boolean);
-begin
-  If Not(FKeyPressed) then
-     FSelectedRow := ARow
-  else
-    CanSelect := false;
-end;
-
-{******************************************************************************}
 {* Load the input from the config file (IS NOT DONE IN THE ENGINE BECAUSE     *}
 {* ACTIONS CAN BE DIFFERENT FROM GAME TO GAME))                               *}
 {******************************************************************************}
@@ -545,21 +459,8 @@ begin
   MonitorComboBox.ItemIndex     := iIniFile.ReadInteger('Monitor', 'MonitorId', 0);
   ResolutionsComboBox.ItemIndex := iIniFile.ReadInteger('Monitor', 'ResolutionId', 0);
 
-  //controls
-  ControlValueListEditor.Strings.Clear;
-  FForwards  := iIniFile.ReadString('Controls', 'Forward', 'W');
-  ControlValueListEditor.Strings.Add('Forward=' + FForwards);
-  FBackwards := iIniFile.ReadString('Controls', 'Backward', 'S');
-  ControlValueListEditor.Strings.Add('Backward=' + FBackWards);
-  FLeft      := iIniFile.ReadString('Controls', 'Left', 'A');
-  ControlValueListEditor.Strings.Add('Left=' + FLeft);
-  FRight     := iIniFile.ReadString('Controls', 'Right', 'D');
-  ControlValueListEditor.Strings.Add('Right=' + FRight);
-  FRun     := iIniFile.ReadString('Controls', 'Run', 'LEFTSHIFT');
-  ControlValueListEditor.Strings.Add('Run=' + FRun);
-
   //maps
-  FMap         := iIniFile.ReadString('Demo', 'SelectedMap', '');
+  FMap := iIniFile.ReadString('Demo', 'SelectedMap', '');
 
   FreeAndNil(iIniFile);
 end;
@@ -578,13 +479,6 @@ begin
    //monitor
   iIniFile.WriteInteger('Monitor', 'MonitorId', MonitorComboBox.ItemIndex);
   iIniFile.WriteInteger('Monitor', 'ResolutionId', ResolutionsComboBox.ItemIndex);
-
-  //controls
-  iIniFile.WriteString('Controls', 'Forward', FForwards);
-  iIniFile.WriteString('Controls', 'Backward', FBackWards);
-  iIniFile.WriteString('Controls', 'Left', FLeft);
-  iIniFile.WriteString('Controls', 'Right', FRight);
-  iIniFile.WriteString('Controls', 'Run', FRun);
 
   //map
   iIniFile.WriteString('Demo', 'SelectedMap', FMap);

@@ -79,9 +79,10 @@ function  gdSettingsGetCurrent() : TSettings;
 procedure gdSettingsSetCurrent(aSettings : TSettings);
 
 //log functions
-procedure gdConsoleToggle();
 procedure gdConsoleLog(aText : String; aNewLine : boolean = true);
 procedure gdConsoleCommand( aCommand : String );
+procedure gdConsoleAddChar( aChar : Char );
+procedure gdConsoleControl( aKey : Integer );
 
 //timing functions
 procedure gdTimingStart();
@@ -117,14 +118,10 @@ procedure gdSoundPause( aPointer : pointer );
 procedure gdSoundResume( aPointer  : pointer );
 
 //input functions
-function  gdInputStringToKey( aName : String ) : Integer ;
-function  gdInputKeyToString( aKey : Integer ) : String ;
-function  gdInputDetectCurrentKeyString() : String ;
-function  gdInputDetectCurrentKey() : Integer ;
-procedure gdInputRegisterAction(aType : TGDInputTypes; aKeyString : String ; aAction : TGDProcEngineCallback;  aConsoleDisabled : boolean );
-procedure gdInputHandleChar( aChar : Char );
-procedure gdInputUseMouseLook( aUse : boolean );
 procedure gdInputEnable( aEnable : boolean );
+procedure gdInputUseMouseLook( aUse : boolean );
+procedure gdInputRegisterAction(aType : TGDInputTypes; aKey : Integer ; aAction : TGDProcEngineCallback;  aConsoleDisabled : boolean );
+
 
 //gui functions
 procedure gdGUIMouseCursorShow(aShow : boolean); 
@@ -426,63 +423,13 @@ begin
 end;
 
 {******************************************************************************}
-{* Keystring to key                                                           *}
-{******************************************************************************}
-
-function gdInputStringToKey( aName : String ) : Integer ;
-begin
-  If Not(FEngineInitialized) then exit;
-  result := Input.StringToKey( aName );
-end;
-
-{******************************************************************************}
-{* Key to keytring                                                            *}
-{******************************************************************************}
-
-function gdInputKeyToString( aKey : Integer ) : String ;
-begin
-  If Not(FEngineInitialized) then exit;
-  result := String(Input.KeyToString( aKey ));
-end;
-
-{******************************************************************************}
-{* Detect which Key is currently pressed and returns the keystring            *}
-{******************************************************************************}
-
-function gdInputDetectCurrentKeyString() : String ;
-begin
-  If Not(FEngineInitialized) then exit;
-  result := String(Input.DetectCurrentKeyString());
-end;
-
-{******************************************************************************}
-{* Detect which Key is currently pressed and returns it                       *}
-{******************************************************************************}
-
-function gdInputDetectCurrentKey() : Integer ;
-begin
-  If Not(FEngineInitialized) then exit;
-  result := Input.DetectCurrentKey();
-end;
-
-{******************************************************************************}
 {* Register a keyaction                                                       *}
 {******************************************************************************}
 
-procedure gdInputRegisterAction(aType : TGDInputTypes; aKeyString : String ; aAction : TGDProcEngineCallback;  aConsoleDisabled : boolean );
+procedure gdInputRegisterAction(aType : TGDInputTypes; aKey : Integer ; aAction : TGDProcEngineCallback;  aConsoleDisabled : boolean );
 begin
   If Not(FEngineInitialized) then exit;
-  Input.RegisterInputAction(aType, aKeyString, aAction, aConsoleDisabled );
-end;
-
-{******************************************************************************}
-{* Pas down a char the engine (used for typing and such)                      *}
-{******************************************************************************}
-
-procedure gdInputHandleChar( aChar : Char );
-begin
-  If Not(FEngineInitialized) then exit;
-  Input.ExecuteCharInput( aChar );
+  Input.RegisterInputAction(aType, aKey, aAction, aConsoleDisabled );
 end;
 
 {******************************************************************************}
@@ -679,16 +626,6 @@ begin
 end;
 
 {******************************************************************************}
-{* Toggle the console                                                         *}
-{******************************************************************************}
-
-procedure gdConsoleToggle();
-begin
-  If Not(FEngineInitialized) then exit;
-  Console.Show := Not(Console.Show);
-end;
-
-{******************************************************************************}
 {* Excute console command                                                     *}
 {******************************************************************************}
 
@@ -708,6 +645,22 @@ begin
   If Not(FEngineInitialized) then exit;
   If aText = '' then exit;
   Console.Write(aText, aNewLine);
+end;
+
+{******************************************************************************}
+{* Pas down a char to the console                                             *}
+{******************************************************************************}
+
+procedure gdConsoleAddChar( aChar : Char );
+begin
+  If Not(FEngineInitialized) then exit;
+  Console.AddChar(aChar);
+end;
+
+procedure gdConsoleControl( aKey : Integer );
+begin
+  If Not(FEngineInitialized) then exit;
+  Console.Control(aKey);
 end;
 
 {******************************************************************************}

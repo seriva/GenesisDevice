@@ -441,64 +441,6 @@ object ConfigurationForm: TConfigurationForm
           ShowHint = True
           TabOrder = 1
         end
-        object KeyBindingsPanel: TPanel
-          Left = 5
-          Height = 172
-          Top = 65
-          Width = 378
-          BevelOuter = bvNone
-          BorderStyle = bsSingle
-          ClientHeight = 168
-          ClientWidth = 374
-          TabOrder = 2
-          object KeybindingsLabel: TLabel
-            Left = 0
-            Height = 16
-            Top = 0
-            Width = 374
-            Align = alTop
-            Alignment = taCenter
-            AutoSize = False
-            Caption = 'Keybindings'
-            Font.Color = clWindowText
-            Font.Height = -13
-            Font.Name = 'MS Sans Serif'
-            Font.Style = [fsBold]
-            Layout = tlCenter
-            ParentColor = False
-            ParentFont = False
-          end
-          object ControlValueListEditor: TValueListEditor
-            Left = 0
-            Height = 153
-            Top = 16
-            Width = 379
-            FixedCols = 0
-            RowCount = 1
-            TabOrder = 0
-            TabStop = False
-            TitleFont.Color = clWindowText
-            TitleFont.Height = -12
-            TitleFont.Name = 'MS Sans Serif'
-            TitleFont.Style = [fsBold]
-            OnKeyDown = ControlValueListEditorKeyDown
-            OnKeyUp = ControlValueListEditorKeyUp
-            OnSelectCell = ControlValueListEditorSelectCell
-            DisplayOptions = [doAutoColResize, doKeyColFixed]
-            Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goDrawFocusSelected]
-            Strings.Strings = (
-              ''
-            )
-            TitleCaptions.Strings = (
-              'Action'
-              'Control'
-            )
-            ColWidths = (
-              185
-              169
-            )
-          end
-        end
       end
     end
     object SoundTabSheet: TTabSheet

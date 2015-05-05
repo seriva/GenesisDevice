@@ -75,13 +75,16 @@ type
 
   TGDConsole = class
   private
-    FShow         : Boolean;
-    FUse          : Boolean;
-    FRow          : integer;
-    FCursorUpdate : boolean;
-    FUpdateTimer  : Integer;
-    FLogText      : TStringList;
-    FCommand      : String;
+    FShow           : Boolean;
+    FUse            : Boolean;
+    FRow            : integer;
+    FCursorUpdate   : boolean;
+    FCursorPos      : integer;
+    FUpdateTimer    : Integer;
+    FLogText        : TStringList;
+    FCommand        : String;
+    FCommandRow     : integer;
+    FCommandHistory : TStringList;
   public
     CommandMap : TGDCommandMap<String, TGDCommand>;
     property Use  : Boolean read FUse write FUse;
@@ -95,11 +98,10 @@ type
     procedure Clear();
 
     procedure Render();
-    procedure MoveUp();
-    procedure MoveDown();
-    procedure AddChar( aChar : Char );
-    procedure RemoveChar();
     procedure Update();
+
+    procedure AddChar( aChar : Char );
+    procedure Control( aKey : Integer );
 
     procedure Write(aString : String; aNewLine : boolean = true);
     procedure WriteOkFail(aResult : boolean; aError : String; aIncludeFailed : boolean = true);
@@ -142,15 +144,16 @@ end;
 
 constructor TGDConsole.Create();
 begin
-  Write('Log started at ' + DateToStr(Date()) + ', ' + TimeToStr(Time()));
-  Write('Build: ' + ENGINE_INFO);
   FUse          := True;
   FShow         := False;
   FLogText      := TStringList.Create();
+  FCommandHistory := TStringList.Create();
   CommandMap    := TGDCommandMap<String, TGDCommand>.Create();
   FCursorUpdate := False;
   AddCommand('Help', 'Show help', CT_FUNCTION, @Help);
   FUpdateTimer  := TimeSetEvent(C_CURSOR_TIME, 0, @UpdateConsoleCallBack, 0, TIME_PERIODIC);
+  Write('Log started at ' + DateToStr(Date()) + ', ' + TimeToStr(Time()));
+  Write('Build: ' + ENGINE_INFO);
 end;
 
 {******************************************************************************}
@@ -163,6 +166,7 @@ begin
   TimeKillEvent(FUpdateTimer);
   FreeAndNil(CommandMap);
   FreeAndNil(FLogText);
+  FreeAndNil(FCommandHistory);
 end;
 
 {******************************************************************************}
@@ -191,7 +195,7 @@ end;
 
 procedure TGDConsole.Render();
 var
-  iI,iJ : Integer;
+  iI,iJ,iX : Integer;
 begin
   If Not(FShow) then
   begin
@@ -234,36 +238,12 @@ begin
   end;
 
   GUI.Font.Color := GUI.FontColor.Copy();
+  GUI.Font.Render(0, (R_HUDHEIGHT/2)-3, 0.40, FCommand);
+  iX := GUI.Font.TextWidth(Copy(FCommand, 1, FCursorpos-1), 0.40);
   if FCursorUpdate then
-     GUI.Font.Render(0, (R_HUDHEIGHT/2)-3, 0.40, FCommand + '_' )
-  else
-     GUI.Font.Render(0, (R_HUDHEIGHT/2)-3, 0.40, FCommand );
+     GUI.Font.Render(iX, (R_HUDHEIGHT/2)-3, 0.40, '_' );
 
   glDisable(GL_BLEND);
-end;
-
-{******************************************************************************}
-{* Move the shown text up                                                     *}
-{******************************************************************************}
-
-procedure TGDConsole.MoveUp();
-begin
-  If Not(FShow) then Exit;
-  If FLogText.Count = 0 then exit;
-  FRow := FRow - 1;
-  If FRow < 0 then FRow := 0;
-end;
-
-{******************************************************************************}
-{* Move the shown text down                                                   *}
-{******************************************************************************}
-
-procedure TGDConsole.MoveDown();
-begin
-  If Not(FShow) then Exit;
-  If FLogText.Count = 0 then exit;
-  FRow := FRow + 1;
-  If FRow > FLogText.Count-1 then FRow := FLogText.Count-1;
 end;
 
 {******************************************************************************}
@@ -275,19 +255,68 @@ begin
   If Not(FShow) then Exit;
   If Not(((Ord(aChar) >= 32) and (Ord(aChar) <= 126))) then Exit;
   If aChar = '`' then Exit;
-  FCommand := FCommand + aChar;
+  Insert(aChar, FCommand, FCursorPos);
+  FCursorPos := FCursorPos + 1;
 end;
 
 {******************************************************************************}
-{* Remove a character to the console command input                            *}
+{* Control the console                                                        *}
 {******************************************************************************}
 
-procedure TGDConsole.RemoveChar();
+procedure TGDConsole.Control( aKey : Integer );
 begin
-   If Not(FShow) then Exit;
-   SetLength(FCommand, Length(FCommand)-1);
-end;
+  if aKey = 192 then
+  begin
+    FShow := not(FShow);
+    If Not(FShow) then
+      Exit
+    else
+      FCursorPos := length(FCommand)+1;
+  end;
 
+  case aKey of
+    VK_PRIOR  : begin
+                  If FLogText.Count = 0 then exit;
+                  FRow := FRow - 1;
+                  If FRow < 0 then FRow := 0;
+                end;
+    VK_NEXT   : begin
+                  If FLogText.Count = 0 then exit;
+                  FRow := FRow + 1;
+                  If FRow > FLogText.Count-1 then FRow := FLogText.Count-1;
+                end;
+    VK_UP     : begin
+                  If FCommandHistory.Count = 0 then exit;
+                  FCommandRow := FCommandRow - 1;
+                  If FCommandRow < 0 then
+                    FCommandRow := FCommandHistory.Count-1;
+                  FCommand :=  FCommandHistory.Strings[FCommandRow];
+                  FCursorPos := length(FCommand)+1;
+                end;
+    VK_DOWN   : begin
+                  If FCommandHistory.Count = 0 then exit;
+                  FCommandRow := FCommandRow + 1;
+                  If FCommandRow > FCommandHistory.Count-1 then
+                    FCommandRow := 0;
+                  FCommand :=  FCommandHistory.Strings[FCommandRow];
+                  FCursorPos := length(FCommand)+1;
+                end;
+    VK_BACK   : begin
+                  if FCursorPos = 1 then exit;
+                  Delete(FCommand, FCursorPos-1, 1);
+                  FCursorPos := FCursorPos - 1;
+                end;
+    VK_LEFT   : begin
+                  if (FCursorPos = 1) then exit;
+                  FCursorPos := FCursorPos - 1
+                end;
+    VK_RIGHT  : begin
+                  if (FCursorPos = (length(FCommand) + 1)) then exit;
+                  FCursorPos := FCursorPos + 1
+                end;
+    VK_RETURN : ExecuteCommand();
+  end;
+end;
 
 {******************************************************************************}
 {* Update the console                                                         *}
@@ -308,6 +337,9 @@ begin
      Console.Update();
 end;
 
+{******************************************************************************}
+{* Write to the log                                                           *}
+{******************************************************************************}
 
 procedure TGDConsole.Write(aString : String; aNewLine : boolean = true);
 begin
@@ -363,6 +395,7 @@ end;
 
 procedure TGDConsole.ExecuteCommand();
 var
+  iI : Integer;
   iIdx : Integer;
   iCommand : TGDCommand;
   iCommandStr  : String;
@@ -396,6 +429,8 @@ begin
 
   //add command string
   Write(FCommand);
+  If Not(FCommandHistory.Find( FCommand, iI )) then
+    FCommandHistory.Add(FCommand);
 
   //get the command parameters
   iStrPos := 1;
@@ -450,6 +485,7 @@ begin
   //reset some stuff
   FCommand := '';
   FRow := FLogText.Count-1;
+  FCursorPos := 1;
 end;
 
 end.

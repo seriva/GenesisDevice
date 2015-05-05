@@ -164,6 +164,7 @@ type
     function    InitFont( aTexture : string) : boolean;
     procedure   Clear();
     procedure   Render( aLeft, aTop, aScale : Double; aString : string);
+    function    TextWidth(const str : String; const scale : Single = 1): Integer;
   end;
 
 {******************************************************************************}
@@ -306,6 +307,26 @@ end;
 Procedure TGDFont.Clear();
 begin
   FTexture.Clear();
+end;
+
+{******************************************************************************}
+{* Text width the font                                                        *}
+{******************************************************************************}
+
+function TGDFont.TextWidth(const str : String; const scale : Single = 1): Integer;
+var
+  i, x, c, inwidth : integer;
+begin
+  x := 0;
+  for i := 1 to length(str) do
+  begin
+    if(str[i] = ' ') then begin x := x + round((FONT_HEIGHT/2) * scale); continue; end;
+    c := Ord(str[i])-33;
+    if(c < 0) or (c >= 95) then continue;
+    inwidth := round((FONT_CHARCOORDS[c][2] - FONT_CHARCOORDS[c][0]) * scale);
+    x := x + inwidth + 1;
+  end;
+  result := x;
 end;
 
 {******************************************************************************}

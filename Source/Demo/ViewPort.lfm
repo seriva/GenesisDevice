@@ -13,6 +13,7 @@ object ViewPortForm: TViewPortForm
   OnClose = FormClose
   OnCreate = FormCreate
   OnDestroy = FormDestroy
+  OnKeyDown = FormKeyDown
   OnKeyPress = FormKeyPress
   OnResize = FormResize
   ShowInTaskBar = stAlways

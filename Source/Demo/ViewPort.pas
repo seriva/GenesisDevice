@@ -56,6 +56,7 @@ type
     ApplicationEvents: TApplicationProperties;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
+    procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure FormResize(Sender: TObject);
     procedure WMMove(var Message: TMessage) ; message WM_MOVE;
     procedure ApplicationEventsIdle(Sender: TObject; var Done: Boolean);
@@ -212,14 +213,18 @@ begin
 end;
 
 {******************************************************************************}
-{* Keypress event to send to the engine                                       *}
+{* Keypress events send to the console                                        *}
 {******************************************************************************}
 
 procedure TViewPortForm.FormKeyPress(Sender: TObject; var Key : Char);
 begin
-  //pas chars to the engine using the WM_CHAR message
-  //we use this instead of direct input because it is better in timing and detecting
-  gdInputHandleChar( Key );
+  gdConsoleAddChar( Key );
+end;
+
+procedure TViewPortForm.FormKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  gdConsoleControl(Key);
 end;
 
 {******************************************************************************}
