@@ -34,7 +34,6 @@ interface
 uses
   LCLIntf, LCLType,
   SysUtils,
-  MMSystem,
   dglOpenGL,
   GDRenderer,
   GDCellManager,
@@ -52,7 +51,8 @@ type
 
   TGDStatistics = class(TObject)
   private
-    FUpdateTimer      : Integer;
+    FFPSTime          : Integer;
+    FLastTime         : Integer;
     FFrameCount       : integer;
     FFpsCount         : Integer;
     FTriangleCount    : integer;
@@ -80,8 +80,6 @@ type
 var
   Statistics : TGDStatistics;
 
-  procedure UpdateStatisticsCallBack(TimerID, Msg: Uint; dwUser, dw1, dw2: DWORD); pascal;
-
 implementation
 
 {******************************************************************************}
@@ -90,7 +88,6 @@ implementation
 
 constructor TGDStatistics.Create();
 begin
-  FUpdateTimer   := TimeSetEvent(S_UPDATE_TIME, 0, @UpdateStatisticsCallBack, 0, TIME_PERIODIC);
   InitStatistics();
 end;
 
@@ -100,7 +97,7 @@ end;
 
 destructor  TGDStatistics.Destroy();
 begin
-  TimeKillEvent(FUpdateTimer);
+  inherited;
 end;
 
 {******************************************************************************}
@@ -109,6 +106,7 @@ end;
 
 procedure TGDStatistics.InitStatistics();
 begin
+  FLastTime         := Timing.GetTime();
   FFrameCount       := 0;
   FFpsCount         := 0;
   FTriangleCount    := 0;
@@ -137,9 +135,21 @@ end;
 {******************************************************************************}
 
 procedure TGDStatistics.Update();
+var
+  iDT, iTime : Integer;
 begin
-  Statistics.FpsCount   := Statistics.FrameCount;
-  Statistics.FrameCount := 0;
+  //calculate fps
+  Statistics.FrameCount := Statistics.FrameCount + 1;
+  iTime        := Timing.GetTime();
+  iDT          := iTime - FLastTime;
+  FLastTime    := iTime;
+  FFPSTime  := FFPSTime + iDT;
+  if (FFPSTime >= 1000) then
+  begin
+    FpsCount   := FrameCount;
+    FrameCount := 0;
+    FFPSTime   := 0;
+  end;
 end;
 
 {******************************************************************************}
@@ -187,15 +197,6 @@ begin
   GUI.Font.Render(150,90-32,0.4,': ' + IntToStr( Round(Camera.Position.Y) ));
   GUI.Font.Render(150,65-32,0.4,': ' + IntToStr( Round(Camera.Position.Z) ));
   glDisable(GL_BLEND);
-end;
-
-{******************************************************************************}
-{* Update Statistics Callback                                                 *}
-{******************************************************************************}
-
-procedure UpdateStatisticsCallBack(TimerID, Msg: Uint; dwUser, dw1, dw2: DWORD); pascal;
-begin
-  Statistics.Update();
 end;
 
 end.

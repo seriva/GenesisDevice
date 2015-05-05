@@ -37,7 +37,6 @@ uses
   Classes,
   LCLIntf,
   LCLType,
-  MMSystem,
   dglOpenGL,
   GDGUI,
   GDConstants,
@@ -75,12 +74,13 @@ type
 
   TGDConsole = class
   private
+    FCursorTime     : Integer;
+    FLastTime       : Integer;
+    FCursorUpdate   : Boolean;
     FShow           : Boolean;
     FUse            : Boolean;
     FRow            : integer;
-    FCursorUpdate   : boolean;
     FCursorPos      : integer;
-    FUpdateTimer    : Integer;
     FLogText        : TStringList;
     FCommand        : String;
     FCommandRow     : integer;
@@ -98,7 +98,6 @@ type
     procedure Clear();
 
     procedure Render();
-    procedure Update();
 
     procedure AddChar( aChar : Char );
     procedure Control( aKey : Integer );
@@ -106,18 +105,18 @@ type
     procedure Write(aString : String; aNewLine : boolean = true);
     procedure WriteOkFail(aResult : boolean; aError : String; aIncludeFailed : boolean = true);
 
-    procedure AddCommand(const aCommand, aHelp : String; const aType : TGDCommandType; const aPointer : Pointer );
-    procedure ExecuteCommand();
+    procedure AddCommand(aCommand, aHelp : String; aType : TGDCommandType; aPointer : Pointer );
+    procedure ExecuteCommand(aCommand : String);
   end;
 
 var
   Console : TGDConsole;
 
-  procedure UpdateConsoleCallBack(TimerID, Msg: Uint; dwUser, dw1, dw2: DWORD); pascal;
-
 implementation
 
 uses
+  GDTiming,
+  GDInput,
   GDRenderer;
 
 {******************************************************************************}
@@ -151,7 +150,6 @@ begin
   CommandMap    := TGDCommandMap<String, TGDCommand>.Create();
   FCursorUpdate := False;
   AddCommand('Help', 'Show help', CT_FUNCTION, @Help);
-  FUpdateTimer  := TimeSetEvent(C_CURSOR_TIME, 0, @UpdateConsoleCallBack, 0, TIME_PERIODIC);
   Write('Log started at ' + DateToStr(Date()) + ', ' + TimeToStr(Time()));
   Write('Build: ' + ENGINE_INFO);
 end;
@@ -163,7 +161,6 @@ end;
 destructor  TGDConsole.Destroy();
 begin
   Write('Log ended at ' + DateToStr(Date()) + ', ' + TimeToStr(Time()));
-  TimeKillEvent(FUpdateTimer);
   FreeAndNil(CommandMap);
   FreeAndNil(FLogText);
   FreeAndNil(FCommandHistory);
@@ -196,11 +193,23 @@ end;
 procedure TGDConsole.Render();
 var
   iI,iJ,iX : Integer;
+  iDT, iTime : Integer;
 begin
   If Not(FShow) then
   begin
     FRow := FLogText.Count-1;
     exit;
+  end;
+
+  //calculate cursor timing
+  iTime      := Timing.GetTime();
+  iDT        := iTime - FLastTime;
+  FLastTime  := iTime;
+  FCursorTime   := FCursorTime + iDT;
+  if (FCursorTime >= 500) then
+  begin
+    FCursorUpdate := Not( FCursorUpdate);
+    FCursorTime := 0;
   end;
 
   Renderer.RenderState( RS_COLOR );
@@ -269,7 +278,10 @@ begin
   begin
     FShow := not(FShow);
     If Not(FShow) then
-      Exit
+    begin
+      Input.SetMouseStartPos();
+      Exit;
+    end
     else
       FCursorPos := length(FCommand)+1;
   end;
@@ -314,28 +326,10 @@ begin
                   if (FCursorPos = (length(FCommand) + 1)) then exit;
                   FCursorPos := FCursorPos + 1
                 end;
-    VK_RETURN : ExecuteCommand();
+    VK_RETURN : ExecuteCommand(FCommand);
   end;
 end;
 
-{******************************************************************************}
-{* Update the console                                                         *}
-{******************************************************************************}
-
-procedure TGDConsole.Update();
-begin
-  FCursorUpdate := Not( FCursorUpdate );
-end;
-
-{******************************************************************************}
-{* Update Console Callback                                                    *}
-{******************************************************************************}
-
-procedure UpdateConsoleCallBack(TimerID, Msg: Uint; dwUser, dw1, dw2: DWORD); pascal;
-begin
-  if Console <> nil then
-     Console.Update();
-end;
 
 {******************************************************************************}
 {* Write to the log                                                           *}
@@ -372,7 +366,7 @@ end;
 {* Add a command to the console.                                              *}
 {******************************************************************************}
 
-procedure TGDConsole.AddCommand(const aCommand, aHelp : String; const aType : TGDCommandType; const aPointer : Pointer );
+procedure TGDConsole.AddCommand(aCommand, aHelp : String; aType : TGDCommandType; aPointer : Pointer );
 var
   iCommand : TGDCommand;
 begin
@@ -393,7 +387,7 @@ end;
 {* Add a command to the console.                                              *}
 {******************************************************************************}
 
-procedure TGDConsole.ExecuteCommand();
+procedure TGDConsole.ExecuteCommand(aCommand : String);
 var
   iI : Integer;
   iIdx : Integer;
@@ -425,9 +419,10 @@ end;
 
 begin
   //no command string so exit
-  if FCommand = '' then exit;
+  if aCommand = '' then exit;
 
   //add command string
+  FCommand := aCommand;
   Write(FCommand);
   If Not(FCommandHistory.Find( FCommand, iI )) then
     FCommandHistory.Add(FCommand);

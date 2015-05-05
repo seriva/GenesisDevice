@@ -69,7 +69,6 @@ type
     MouseSensitivity : Integer;
 
     //sound settings
-    SoundDriver : Integer;
     MuteSound   : Boolean;
     MusicVolume : Double;
     SoundVolume : Double;
@@ -106,7 +105,6 @@ type
     FMouseSensitivity : Integer;
 
     //sound settings
-    FSoundDriver : Integer;
     FMuteSound   : boolean;
     FMusicVolume : Double;
     FSoundVolume : Double;
@@ -145,7 +143,6 @@ type
     property MouseSensitivity : Integer read FMouseSensitivity write FMouseSensitivity;
 
     //sound settings
-    property SoundDriver : Integer read FSoundDriver write FSoundDriver;
     property MuteSound : Boolean read FMuteSound write FMuteSound;
     property MusicVolume : Double read FMusicVolume write FMusicVolume;
     property SoundVolume : Double read FSoundVolume write FSoundVolume;
@@ -200,7 +197,6 @@ begin
   FMouseSensitivity := 5;
 
   //sound
-  FSoundDriver := 0;
   FMuteSound   := false;
   FMusicVolume := 0.3;
   FSoundVolume := 0.7;
@@ -259,7 +255,6 @@ begin
   FMouseSensitivity := iIniFile.ReadInteger('Controls', 'MouseSensitivity', 5);
 
   //sound settings
-  FSoundDriver := iIniFile.ReadInteger( 'Sound', 'Driver', 0);
   FMuteSound   := iIniFile.ReadBool( 'Sound', 'Mute', False);
   FMusicVolume := iIniFile.ReadFloat( 'Sound', 'MusicVolume', 0.3);
   FSoundVolume := iIniFile.ReadFloat( 'Sound', 'SoundVolume', 0.7);
@@ -300,7 +295,6 @@ begin
   iIniFile.WriteInteger('Controls', 'MouseSensitivity', FMouseSensitivity);
 
   //sound settings
-  iIniFile.WriteInteger( 'Sound', 'Driver', FSoundDriver);
   iIniFile.WriteBool( 'Sound', 'Mute', FMuteSound);
   iIniFile.WriteFloat( 'Sound', 'MusicVolume', FMusicVolume);
   iIniFile.WriteFloat( 'Sound', 'SoundVolume', FSoundVolume);
@@ -337,7 +331,6 @@ begin
   Result.MouseSensitivity := FMouseSensitivity;
 
   //sound settings
-  Result.SoundDriver := FSoundDriver;
   Result.MuteSound   := FMuteSound;
   Result.MusicVolume := FMusicVolume;
   Result.SoundVolume := FSoundVolume;
@@ -372,7 +365,6 @@ begin
   FMouseSensitivity := aSettings.MouseSensitivity;
 
   //sound settings
-  FSoundDriver := aSettings.SoundDriver;
   FMuteSound   := aSettings.MuteSound;
   FMusicVolume := aSettings.MusicVolume;
   FSoundVolume := aSettings.SoundVolume;

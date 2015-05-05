@@ -266,6 +266,8 @@ var
 implementation
 
 uses
+  GDInput,
+  GDConsole,
   GDRenderer,
   GDSettings;
 
@@ -415,6 +417,7 @@ begin
   FShowMouse := false;
 end;
 
+
 {******************************************************************************}
 {* Render the mousecursor                                                     *}
 {******************************************************************************}
@@ -432,10 +435,6 @@ begin
     glTexCoord2f(0.0, 0.0); glVertex2f(aX, aY);
   glEnd();
 end;
-
-{******************************************************************************}
-{* Calculate the mouse screenposition                                         *}
-{******************************************************************************}
 
 procedure CalculateScreenPosition( aX, aY : Integer);
 var
@@ -461,7 +460,7 @@ begin
   GetCursorPos(iCurPos);
   CalculateScreenPosition(iCurPos.X-Settings.Left, iCurPos.Y-Settings.Top);
 
-  If ShowMouse then
+  If ShowMouse or Console.Show then
   begin
     FCursorTexture.BindTexture( GL_TEXTURE0 );
     

@@ -91,13 +91,13 @@ begin
 
   FAmbientId    := gdSoundLoad( PChar( iIniFile.ReadString('GameSounds', 'AmbientSound', '')), ST_LOOP);
   FUnderWaterId := gdSoundLoad( PChar( iIniFile.ReadString('GameSounds', 'UnderWater', '')), ST_LOOP);
-  FMusicId      := gdSoundLoad( PChar( iIniFile.ReadString('GameSounds', 'Music', '')), ST_LOOP);
+  //FMusicId      := gdSoundLoad( PChar( iIniFile.ReadString('GameSounds', 'Music', '')), ST_LOOP);
 
   gdSoundPlay(FAmbientId);
   gdSoundPause(FAmbientId);
   gdSoundPlay(FUnderWaterId);
   gdSoundPause(FUnderWaterId);
-  gdSoundPlay( FMusicId );
+  //gdSoundPlay( FMusicId );
 
   FreeAndNil( iIniFile );
 end;
@@ -110,10 +110,7 @@ procedure TSounds.ClearSounds();
 begin
   gdSoundRemove(FAmbientId);
   gdSoundRemove(FUnderWaterId);
-  gdSoundRemove(FMusicId);
-  FMusicId := nil;
-  FAmbientId := nil;
-  FUnderWaterId := nil;
+  //gdSoundRemove(FMusicId);
 end;
 
 end.

@@ -1,7 +1,7 @@
 object ConfigurationForm: TConfigurationForm
-  Left = 2311
+  Left = 0
   Height = 380
-  Top = 480
+  Top = 0
   Width = 398
   BorderIcons = [biSystemMenu]
   BorderStyle = bsSingle
@@ -16,7 +16,7 @@ object ConfigurationForm: TConfigurationForm
   OnDestroy = FormDestroy
   OnShow = FormShow
   Position = poDefault
-  LCLVersion = '1.2.6.0'
+  LCLVersion = '1.4.0.4'
   object RunButton: TButton
     Left = 328
     Height = 26
@@ -46,16 +46,16 @@ object ConfigurationForm: TConfigurationForm
     TabOrder = 1
     object WindowTabSheet: TTabSheet
       Caption = 'Window'
-      ClientHeight = 308
+      ClientHeight = 311
       ClientWidth = 392
       object WindowPanel: TPanel
         Left = 0
-        Height = 308
+        Height = 311
         Top = 0
         Width = 392
         Align = alClient
         BevelOuter = bvNone
-        ClientHeight = 308
+        ClientHeight = 311
         ClientWidth = 392
         TabOrder = 0
         object ResolutionLabel: TLabel
@@ -84,10 +84,10 @@ object ConfigurationForm: TConfigurationForm
         end
         object ResolutionsComboBox: TComboBox
           Left = 134
-          Height = 24
+          Height = 21
           Top = 43
           Width = 245
-          ItemHeight = 16
+          ItemHeight = 13
           ParentShowHint = False
           ShowHint = True
           Style = csDropDownList
@@ -95,9 +95,9 @@ object ConfigurationForm: TConfigurationForm
         end
         object FullScreenCheckBox: TCheckBox
           Left = 6
-          Height = 23
+          Height = 20
           Top = 80
-          Width = 146
+          Width = 142
           Caption = 'Fullscreen                    '
           Font.Color = clWindowText
           Font.Height = -13
@@ -109,9 +109,9 @@ object ConfigurationForm: TConfigurationForm
         end
         object VerticalSyncCheckBox: TCheckBox
           Left = 6
-          Height = 23
+          Height = 20
           Top = 112
-          Width = 102
+          Width = 98
           Caption = 'Vertical Sync'
           Font.Color = clWindowText
           Font.Height = -13
@@ -147,10 +147,10 @@ object ConfigurationForm: TConfigurationForm
         end
         object MonitorComboBox: TComboBox
           Left = 134
-          Height = 24
+          Height = 21
           Top = 8
           Width = 245
-          ItemHeight = 16
+          ItemHeight = 13
           OnChange = MonitorComboBoxChange
           ParentShowHint = False
           ShowHint = True
@@ -161,17 +161,17 @@ object ConfigurationForm: TConfigurationForm
     end
     object RenderingTabSheet: TTabSheet
       Caption = 'Rendering'
-      ClientHeight = 308
+      ClientHeight = 311
       ClientWidth = 392
       ImageIndex = 1
       object RenderingPanel: TPanel
         Left = 0
-        Height = 308
+        Height = 311
         Top = 0
         Width = 392
         Align = alClient
         BevelOuter = bvNone
-        ClientHeight = 308
+        ClientHeight = 311
         ClientWidth = 392
         TabOrder = 0
         object WaterDetailLabel: TLabel
@@ -293,14 +293,14 @@ object ConfigurationForm: TConfigurationForm
         end
         object TextureDetailComboBox: TComboBox
           Left = 136
-          Height = 24
+          Height = 21
           Top = 102
           Width = 247
           Font.Color = clWindowText
           Font.Height = -12
           Font.Name = 'MS Sans Serif'
           Font.Style = [fsBold]
-          ItemHeight = 16
+          ItemHeight = 13
           ParentFont = False
           ParentShowHint = False
           ShowHint = True
@@ -309,14 +309,14 @@ object ConfigurationForm: TConfigurationForm
         end
         object TextureFilterComboBox: TComboBox
           Left = 135
-          Height = 24
+          Height = 21
           Top = 137
           Width = 248
           Font.Color = clWindowText
           Font.Height = -12
           Font.Name = 'MS Sans Serif'
           Font.Style = [fsBold]
-          ItemHeight = 16
+          ItemHeight = 13
           Items.Strings = (
             ''
           )
@@ -328,14 +328,14 @@ object ConfigurationForm: TConfigurationForm
         end
         object WaterReflectionComboBox: TComboBox
           Left = 136
-          Height = 24
+          Height = 21
           Top = 174
           Width = 247
           Font.Color = clWindowText
           Font.Height = -12
           Font.Name = 'MS Sans Serif'
           Font.Style = [fsBold]
-          ItemHeight = 16
+          ItemHeight = 13
           Items.Strings = (
             ''
           )
@@ -345,14 +345,14 @@ object ConfigurationForm: TConfigurationForm
         end
         object WaterDetailComboBox: TComboBox
           Left = 135
-          Height = 24
+          Height = 21
           Top = 209
           Width = 248
           Font.Color = clWindowText
           Font.Height = -12
           Font.Name = 'MS Sans Serif'
           Font.Style = [fsBold]
-          ItemHeight = 16
+          ItemHeight = 13
           Items.Strings = (
             ''
           )
@@ -362,9 +362,9 @@ object ConfigurationForm: TConfigurationForm
         end
         object BloomCheckBox: TCheckBox
           Left = 8
-          Height = 23
+          Height = 20
           Top = 280
-          Width = 63
+          Width = 59
           Caption = 'Bloom'
           Font.Color = clWindowText
           Font.Height = -13
@@ -376,9 +376,9 @@ object ConfigurationForm: TConfigurationForm
         end
         object FXAACheckBox: TCheckBox
           Left = 8
-          Height = 23
+          Height = 20
           Top = 248
-          Width = 58
+          Width = 54
           Caption = 'FXAA'
           Font.Color = clWindowText
           Font.Height = -13
@@ -392,17 +392,17 @@ object ConfigurationForm: TConfigurationForm
     end
     object InputTabSheet: TTabSheet
       Caption = 'Input'
-      ClientHeight = 308
+      ClientHeight = 311
       ClientWidth = 392
       ImageIndex = 2
       object InputPanel: TPanel
         Left = 0
-        Height = 308
+        Height = 311
         Top = 0
         Width = 392
         Align = alClient
         BevelOuter = bvNone
-        ClientHeight = 308
+        ClientHeight = 311
         ClientWidth = 392
         TabOrder = 0
         object MouseSensitivityLabel: TLabel
@@ -429,9 +429,9 @@ object ConfigurationForm: TConfigurationForm
         end
         object InvertMouseCheckBox: TCheckBox
           Left = 5
-          Height = 23
+          Height = 20
           Top = 42
-          Width = 136
+          Width = 132
           Caption = 'Invert Mouse            '
           Font.Color = clWindowText
           Font.Height = -13
@@ -445,35 +445,23 @@ object ConfigurationForm: TConfigurationForm
     end
     object SoundTabSheet: TTabSheet
       Caption = 'Sound'
-      ClientHeight = 308
+      ClientHeight = 311
       ClientWidth = 392
       ImageIndex = 3
       object SoundPanel: TPanel
         Left = 0
-        Height = 308
+        Height = 311
         Top = 0
         Width = 392
         Align = alClient
         BevelOuter = bvNone
-        ClientHeight = 308
+        ClientHeight = 311
         ClientWidth = 392
         TabOrder = 0
-        object SoundDriverLabel: TLabel
-          Left = 6
-          Height = 16
-          Top = 9
-          Width = 78
-          Caption = 'Sound Driver'
-          Font.Color = clWindowText
-          Font.Height = -13
-          Font.Name = 'MS Sans Serif'
-          ParentColor = False
-          ParentFont = False
-        end
         object MusicVolumeLabel: TLabel
           Left = 6
           Height = 16
-          Top = 73
+          Top = 9
           Width = 84
           Caption = 'Music Volume'
           Font.Color = clWindowText
@@ -485,7 +473,7 @@ object ConfigurationForm: TConfigurationForm
         object SoundVolumeLabel: TLabel
           Left = 6
           Height = 16
-          Top = 104
+          Top = 39
           Width = 88
           Caption = 'Sound Volume'
           Font.Color = clWindowText
@@ -494,22 +482,11 @@ object ConfigurationForm: TConfigurationForm
           ParentColor = False
           ParentFont = False
         end
-        object SoundDriverComboBox: TComboBox
-          Left = 134
-          Height = 24
-          Top = 5
-          Width = 245
-          ItemHeight = 16
-          ParentShowHint = False
-          ShowHint = True
-          Style = csDropDownList
-          TabOrder = 0
-        end
         object MuteSoundCheckBox: TCheckBox
           Left = 6
-          Height = 23
-          Top = 42
-          Width = 155
+          Height = 20
+          Top = 72
+          Width = 151
           Caption = 'Mute Sound                    '
           Font.Color = clWindowText
           Font.Height = -13
@@ -517,29 +494,29 @@ object ConfigurationForm: TConfigurationForm
           ParentFont = False
           ParentShowHint = False
           ShowHint = True
-          TabOrder = 1
+          TabOrder = 0
         end
         object MusicVolumeTrackBar: TTrackBar
           Left = 126
-          Height = 26
-          Top = 70
+          Height = 25
+          Top = 6
+          Width = 257
+          Max = 100
+          PageSize = 1
+          Position = 50
+          TickStyle = tsNone
+          TabOrder = 1
+        end
+        object SoundVolumeTrackBar: TTrackBar
+          Left = 126
+          Height = 25
+          Top = 37
           Width = 257
           Max = 100
           PageSize = 1
           Position = 50
           TickStyle = tsNone
           TabOrder = 2
-        end
-        object SoundVolumeTrackBar: TTrackBar
-          Left = 126
-          Height = 26
-          Top = 102
-          Width = 257
-          Max = 100
-          PageSize = 1
-          Position = 50
-          TickStyle = tsNone
-          TabOrder = 3
         end
       end
     end
@@ -572,10 +549,10 @@ object ConfigurationForm: TConfigurationForm
         end
         object MapComboBox: TComboBox
           Left = 134
-          Height = 24
+          Height = 21
           Top = 5
           Width = 245
-          ItemHeight = 16
+          ItemHeight = 13
           ParentShowHint = False
           ShowHint = True
           Style = csDropDownList

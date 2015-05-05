@@ -64,6 +64,7 @@ type
     Procedure Stop();
     Function  TimeInSeconds() : String;
     Function  TimeInMilliSeconds() : String;
+    function  GetTime(): integer;
   end;
   
 var
@@ -143,5 +144,13 @@ begin
   result := FormatFloat('0.###',((Fstop - FStart)));
 end;
 
+{******************************************************************************}
+{* Get time tick                                                              *}
+{******************************************************************************}
+
+function TGDTiming.GetTime(): integer;
+begin
+  result := GetTickCount();
+end;
 
 end.

@@ -34,12 +34,12 @@ interface
 
 uses
   SysUtils,
-  fmod,
-  fmodtypes,
   GDConsole,
   GDConstants,
   GDSettings,
-  contnrs;
+  contnrs,
+  openal,
+  mpg123;
 
 Type
 
@@ -50,20 +50,15 @@ Type
   TGDSound = class
   private
     FInitialized : boolean;
-    FSoundSystem : FMOD_SYSTEM;
+    FContext     : PALCcontext;
+    FDevice      : PALCdevice;
   public
     property Initialized : boolean read FInitialized;
-    Property System      : FMOD_SYSTEM read FSoundSystem;
 
     constructor Create();
     destructor  Destroy(); override;
 
     procedure   UpdateSound();
-
-    function    GetNumberOfDrivers() : Integer;
-    function    GetDriverName( aDriverNumber : Integer ) : String;
-    function    InitSoundDriver() : boolean;
-    function    ShutDownSoundDriver(): boolean;
   end;
 
 {******************************************************************************}
@@ -72,8 +67,9 @@ Type
 
   TGDSoundFile = class (TObject)
   private
-    FSound   : FMOD_SOUND;
-    FChannel : FMOD_CHANNEL;
+    FBuffer  : TALuint;
+    FSource  : TALuint;
+    FPlaying : boolean;
   public
     constructor Create();
     destructor  Destroy(); override;
@@ -84,14 +80,12 @@ Type
     procedure   Play();
     procedure   Pause();
     procedure   Resume();
+    procedure   Stop();
   end;
 
 var
   Sound : TGDSound;
   SoundList : TObjectList;
-
-const
-  CHANNEL_COUNT = 128;
 
 implementation
 
@@ -102,19 +96,20 @@ implementation
 constructor TGDSound.Create();
 var
   iError    : string;
-  iVersion : Cardinal;
 begin
   Console.Write('Initializing sound...');
   try
     FInitialized := true;
-    If not(FMOD_System_Create( FSoundSystem ) = FMOD_OK) then
-      Raise Exception.Create('Error initializing FMOD!');
-
-    if not(FMOD_System_GetVersion( FSoundSystem, iVersion) = FMOD_OK) then
-      Raise Exception.Create('Error getting FMOD version!');
-
-    If not(iVersion = FMOD_VERSION) Then
-      Raise Exception.Create('FMOD version is different!');
+    InitOpenAL();
+    FDevice := alcOpenDevice(nil);
+    if not(alGetError() = AL_NO_ERROR) then
+      Raise Exception.Create('Error initializing device!');
+    FContext := alcCreateContext(FDevice,nil);
+    if not(alGetError() = AL_NO_ERROR) then
+      Raise Exception.Create('Error initializing context!');
+    alcMakeContextCurrent(FContext);
+    if not(alGetError() = AL_NO_ERROR) then
+      Raise Exception.Create('Error making the context current!');
   except
     on E: Exception do
     begin
@@ -139,8 +134,12 @@ begin
   Console.Write('Shutting down sound...');
   try
     iResult := true;
-    if not(FMOD_System_Release(FSoundSystem) = FMOD_OK) then
-      Raise Exception.Create('Error shutting down FMOD!');
+    alcDestroyContext(FContext);
+    if not(alGetError() = AL_NO_ERROR) then
+      Raise Exception.Create('Error destroying contect!');
+    alcCloseDevice(FDevice);
+    if not(alGetError() = AL_NO_ERROR) then
+      Raise Exception.Create('Error destroying device!');
   except
     on E: Exception do
     begin
@@ -152,132 +151,81 @@ begin
 end;
 
 {******************************************************************************}
-{* Get the number of available sound drivers                                  *}
-{******************************************************************************}
-
-function TGDSound.GetNumberOfDrivers() : Integer;
-var
-  iDriverCount : integer;
-begin
-  result := -1;
-  if  FMOD_System_GetNumDrivers( FSoundSystem, iDriverCount) = FMOD_OK  then
-    result := iDriverCount
-end;
-
-{******************************************************************************}
-{* Get the name of a driver                                                   *}
-{******************************************************************************}
-
-function   TGDSound.GetDriverName( aDriverNumber : Integer ) : String;
-var
-  iName  : array[0..256] of byte;
-begin
-  result := 'NO_DRIVER';
-  if FMOD_System_getDriverName(FSoundSystem, aDriverNumber, @iName[0], 256) = FMOD_OK  then
-    SetString(result, PAnsiChar(@iName[0]), 256);
-end;
-
-{******************************************************************************}
-{* Init the sound engine                                                      *}
-{******************************************************************************}
-
-function   TGDSound.InitSoundDriver() : boolean;
-var
-  iError    : string;
-begin
-  Console.Write('Initializing sound driver...');
-  try
-    Result := true;
-
-    If  Not(FMOD_System_setDriver( FSoundSystem, Settings.SoundDriver ) = FMOD_OK )then
-      Raise Exception.Create('Unable to set the sounddriver!');
-
-    If  Not(FMOD_System_Init(FSoundSystem, CHANNEL_COUNT, FMOD_INIT_NORMAL, 0 ) = FMOD_OK )then
-      Raise Exception.Create('Unable to initialize the sounddriver!');
-
-  except
-    on E: Exception do
-    begin
-      iError := E.Message;
-      result := false;
-    end;
-  end;
-
-  Console.WriteOkFail(result, iError);
-end;
-
-{******************************************************************************}
-{* Shutdown the sound engine                                                  *}
-{******************************************************************************}
-
-function  TGDSound.ShutDownSoundDriver(): boolean;
-var
-  iError    : string;
-begin
-  Console.Write('Shutting down sound driver...');
-  try
-    result := true;
-
-    If  Not(FMOD_System_Close( FSoundSystem ) = FMOD_OK )then
-      Raise Exception.Create('Unable to release the sounddriver!');
-
-  except
-    on E: Exception do
-    begin
-      iError := E.Message;
-      result := false;
-    end;
-  end;
-
-  Console.WriteOkFail(result, iError);
-end;
-
-{******************************************************************************}
 {* Update the sound engine                                                    *}
 {******************************************************************************}
 
 procedure TGDSound.UpdateSound();
+var
+  iListenerPos : array [0..2] of TALfloat= ( 0.0, 0.0, 0.0);
+  iListenerVel : array [0..2] of TALfloat= ( 0.0, 0.0, 0.0);
+  iListenerOri : array [0..5] of TALfloat= ( 0.0, 0.0, -1.0, 0.0, 1.0, 0.0);
 begin
-  FMOD_System_Update( FSoundSystem );
+  //TODO: add player data here later.
+  AlListenerfv ( AL_POSITION, @iListenerPos);
+  AlListenerfv ( AL_VELOCITY, @iListenerVel);
+  AlListenerfv ( AL_ORIENTATION, @iListenerOri);
 end;
 
 {******************************************************************************}
-{* Create a soundfile class                                                   *}
+{* Create                                                                     *}
 {******************************************************************************}
 
 constructor TGDSoundFile.Create();
 begin
-  FSound   := nil;
-  FChannel := nil;
+  inherited;
 end;
 
 {******************************************************************************}
-{* Destroy a soundfile class                                                  *}
+{* Destroy                                                                    *}
 {******************************************************************************}
 
 destructor  TGDSoundFile.Destroy();
 begin
+  inherited;
   Clear();
 end;
 
 {******************************************************************************}
-{* Init the soundfile                                                         *}
+{* Init sound                                                                 *}
 {******************************************************************************}
 
 function    TGDSoundFile.InitSoundFile( aFileName : String; aType : TGDSoundTypes ) : boolean;
 var
   iError : string;
+  iFormat: TALEnum;
+  iSize: TALSizei;
+  iFreq: TALSizei;
+  iLoop: TALInt;
+  iData: TALVoid;
+  iSourcePos: array [0..2] of TALfloat= ( 0.0, 0.0, 0.0 );
+  iSourceVel: array [0..2] of TALfloat= ( 0.0, 0.0, 0.0 );
 begin
   Console.Write('Loading sound ' + aFileName + '...');
   try
     Clear();
     result := true;
-    case aType of
-      ST_SINGLE : if Not( FMOD_System_CreateSound(Sound.System, PChar(aFileName), FMOD_HARDWARE, 0, FSound) = FMOD_OK ) then
-                      Raise Exception.Create('Problem loading file ' + aFileName);
+    FPlaying := false;
 
-      ST_LOOP   :  if Not( FMOD_System_CreateSound(Sound.System, PChar(aFileName), FMOD_HARDWARE or FMOD_LOOP_NORMAL, 0, FSound) = FMOD_OK ) then
-                      Raise Exception.Create('Problem loading file ' + aFileName);
+    //Buffer sound
+    AlGenBuffers(1, @FBuffer);
+    AlutLoadWavFile(aFileName, iFormat, iData, iSize, iFreq, iLoop);
+    AlBufferData(FBuffer, iFormat, iData, iSize, iFreq);
+    AlutUnloadWav(iFormat, iData, iSize, iFreq);
+
+    //Create Sources
+    AlGenSources(1, @FSource);
+    AlSourcei ( FSource, AL_BUFFER, FBuffer);
+    AlSourcef ( FSource, AL_PITCH, 1.0 );
+    AlSourcef ( FSource, AL_GAIN, Settings.SoundVolume);
+
+    //TODO: Add positional sound.
+    AlSourcefv ( FSource, AL_POSITION, @iSourcePos);
+    AlSourcefv ( FSource, AL_VELOCITY, @iSourceVel);
+
+    //Loop the file?
+    case aType of
+      ST_SINGLE : AlSourcei ( FSource, AL_LOOPING, AL_FALSE );
+      ST_LOOP   : AlSourcei ( FSource, AL_LOOPING, AL_TRUE );
     end;
   except
     on E: Exception do
@@ -291,47 +239,55 @@ begin
 end;
 
 {******************************************************************************}
-{* Clear the soundfile                                                        *}
+{* Clear the sound                                                            *}
 {******************************************************************************}
 
 procedure   TGDSoundFile.Clear();
 begin
-  FMOD_Sound_Release( FSound );
-  FChannel := nil;
-  FSound   := nil;
+  AlDeleteBuffers(1, @FBuffer);
+  AlDeleteSources(1, @FSource);
 end;
 
 {******************************************************************************}
-{* Pause play the soundfile                                                   *}
+{* Pause play                                                                 *}
 {******************************************************************************}
 
 procedure   TGDSoundFile.Play();
 begin
   If Not(Settings.MuteSound) then
   begin
-    FMOD_System_PlaySound(Sound.System, FMOD_CHANNEL_FREE, FSound, true, FChannel);
-    FMOD_Channel_SetVolume(FChannel, Settings.SoundVolume);
-    FMOD_Channel_SetPaused(FChannel,False);
+    if FPlaying = false then
+      AlSourcePlay(FSource);
+    FPlaying := true;
   end;
 end;
 
 {******************************************************************************}
-{* Pause play the soundfile                                                   *}
+{* Pause play                                                                 *}
 {******************************************************************************}
 
-procedure   TGDSoundFile.Pause();
+procedure TGDSoundFile.Pause();
 begin
-  FMOD_Channel_SetPaused(FChannel,True);
+  FPlaying := false;
+  AlSourcePause(FSource);
 end;
 
 {******************************************************************************}
-{* Resume play the soundfile                                                  *}
+{* Resume play                                                                *}
 {******************************************************************************}
 
-procedure   TGDSoundFile.Resume();
+procedure TGDSoundFile.Resume();
 begin
-  FMOD_Channel_SetPaused(FChannel,False);
+  Play();
 end;
 
+{******************************************************************************}
+{* Stop play the soundfile                                                  *}
+{******************************************************************************}
+
+procedure TGDSoundFile.Stop();
+begin
+  AlSourceStop(FSource);
+end;
 
 end.

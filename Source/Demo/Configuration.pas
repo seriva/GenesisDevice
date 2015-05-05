@@ -106,10 +106,8 @@ type
     InvertMouseCheckBox: TCheckBox;
     SoundTabSheet: TTabSheet;
     SoundPanel: TPanel;
-    SoundDriverLabel: TLabel;
     MusicVolumeLabel: TLabel;
     SoundVolumeLabel: TLabel;
-    SoundDriverComboBox: TComboBox;
     MuteSoundCheckBox: TCheckBox;
     MusicVolumeTrackBar: TTrackBar;
     SoundVolumeTrackBar: TTrackBar;
@@ -280,19 +278,6 @@ begin
   for iI := Low(TWaterReflection) to High(TWaterReflection) do
     WaterReflectionComboBox.Items.Add(TWaterReflection[iI]);
 
-  //fill sounddriver combobox
-  iSoundDriverCount := gdSoundNumberOfDrivers();
-  if (iSoundDriverCount <> -1) then
-  begin
-    for iI := 0 to iSoundDriverCount-1 do
-      SoundDriverComboBox.Items.Add(  String(gdSoundGetDriverName(iI)) );
-  end
-  else
-  begin
-    MessageBox(0, 'No valid sounddriver was detected!', 'Error', MB_OK or MB_ICONERROR);
-    Application.Terminate();
-  end;
-
   //detect maps
   MapComboBox.Items.Clear();
   iResult := TStringList.Create();
@@ -357,7 +342,6 @@ begin
   MouseSensitivityTrackBar.Position := iSettings.MouseSensitivity;
 
   //sound settings
-  SoundDriverComboBox.ItemIndex := iSettings.SoundDriver;
   MuteSoundCheckBox.Checked := iSettings.MuteSound;
   MusicVolumeTrackBar.Position := Round(100 * iSettings.MusicVolume );
   SoundVolumeTrackBar.Position := Round(100 * iSettings.SoundVolume );
@@ -404,7 +388,6 @@ begin
   iSettings.MouseSensitivity := MouseSensitivityTrackBar.Position;
 
   //sound settings
-  iSettings.SoundDriver := SoundDriverComboBox.ItemIndex;
   iSettings.MuteSound   := MuteSoundCheckBox.Checked;
   iSettings.MusicVolume := MusicVolumeTrackBar.Position / 100;
   iSettings.SoundVolume := SoundVolumeTrackBar.Position / 100;

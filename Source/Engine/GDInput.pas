@@ -78,7 +78,6 @@ type
   TGDInput = class
   private
     FInitialized     : boolean;
-    FDone            : boolean;
     FEnableInput     : Boolean;
     FMouseLook       : boolean;
     FKeyBuffer       : array[0..255] of Boolean;
@@ -97,12 +96,14 @@ type
     Constructor Create();
     Destructor  Destroy();override;
 
-    function KeyboardState(): Boolean;
-    function KeyDown(aKey: byte): boolean;
+    procedure KeyboardState();
+    function  KeyDown(aKey: byte): boolean;
 
     procedure ExecuteInput();
 
     procedure CalculateMousePosStart();
+    procedure SetMouseStartPos();
+
     procedure RegisterInputAction(aType : TGDInputTypes; aKey : integer; aAction : TGDProcEngineCallback;  aConsoleDisabled : boolean );
     procedure ClearInputActions();
   end;
@@ -211,7 +212,7 @@ end;
 {* Get the keyboard state                                                     *}
 {******************************************************************************}
 
-function TGDInput.KeyboardState(): Boolean;
+procedure TGDInput.KeyboardState();
 var
   iI : integer;
 begin
@@ -236,10 +237,10 @@ procedure TGDInput.ExecuteInput();
 var
   iTempAction : TGDInputAction;
   iI : Integer;
-  iCurPos : TPoint;
 begin
   if Input.EnableInput = false then exit;
 
+  //Keyboard
   KeyboardState();
   For iI := 0 to FSingle.Count-1 do
   begin
@@ -282,16 +283,15 @@ begin
       If Not(Input.KeyDown( iTempAction.Key )) Then iTempAction.Execute();
   end;
 
-  if Console.Show then exit;
+  //Mouse
   if FMouseLook then
   begin
-    GetCursorPos(iCurPos);
-    FMousePosCurrent.X := iCurPos.X;
-    FMousePosCurrent.Y := iCurPos.Y;
+    if Console.Show then exit;
+    GetCursorPos(FMousePosCurrent);
+    SetMouseStartPos();
     Camera.MouseLook(FMousePosStart.X, FMousePosStart.Y, FMousePosCurrent.X,
                      FMousePosCurrent.Y,Settings.MouseSensitivity,
                      Settings.InvertMouse);
-    SetCursorPos(FMousePosStart.X, FMousePosStart.Y);
     FMousePosCurrent.X := FMousePosStart.x;
     FMousePosCurrent.Y := FMousePosStart.Y;
   end;
@@ -307,6 +307,15 @@ begin
   FMousePosStart.Y := Round( Settings.Top + (Settings.Height / 2) );
   FMousePosCurrent.X := FMousePosStart.x;
   FMousePosCurrent.Y := FMousePosStart.Y;
+end;
+
+{******************************************************************************}
+{* Set mouse at the mousestart position                                       *}
+{******************************************************************************}
+
+procedure TGDInput.SetMouseStartPos();
+begin
+  SetCursorPos(FMousePosStart.X, FMousePosStart.Y);
 end;
 
 {******************************************************************************}

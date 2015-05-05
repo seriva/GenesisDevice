@@ -320,7 +320,9 @@ begin
 
   //end the frame and increment the framecounter
   Renderer.EndFrame();
-  Statistics.FrameCount:= Statistics.FrameCount + 1;
+
+  //Update statistics
+  Statistics.Update();
 
   //do after rendering and end timing
   CallBack.AfterRender();

@@ -100,16 +100,13 @@ procedure gdRendererResizeViewPort(aTop, aLeft, aWidth, aHeight : integer);
 procedure gdRendererState(aState : TGDRenderState);
 
 //sound functions
-function  gdSoundNumberOfDrivers() : Integer;
-function  gdSoundGetDriverName( aDriverNumber : Integer ) : String;
-function  gdSoundInitDriver() : boolean;
-function  gdSoundShutDownDriver() : boolean;
 function  gdSoundLoad( aFileName : String; aType : TGDSoundTypes ) : pointer;
 procedure gdSoundRemove( aPointer : pointer );
 procedure gdSoundClear();
 procedure gdSoundPlay( aPointer : pointer );
 procedure gdSoundPause( aPointer : pointer );
 procedure gdSoundResume( aPointer  : pointer );
+procedure gdSoundStop( aPointer  : pointer );
 
 //input functions
 procedure gdInputEnable( aEnable : boolean );
@@ -190,8 +187,6 @@ begin
   CellManager      := TGDCellManager.Create();
   GUI              := TGDGUI.Create();
   DirectionalLight := TGDDirectionalLight.Create();
-
-
   SoundList        := TObjectList.Create();
   TextureList      := TObjectList.Create();
   MaterialList     := TGDMaterialList.Create();
@@ -286,42 +281,6 @@ begin
 end;
 
 {******************************************************************************}
-{* Get the number of sounddrivers the soundengine supports                    *}
-{******************************************************************************}
-
-function gdSoundNumberOfDrivers() : Integer;
-begin
-  result := Sound.GetNumberOfDrivers();
-end;
-
-{******************************************************************************}
-{* Get the name string of a driver                                            *}
-{******************************************************************************}
-
-function gdSoundGetDriverName( aDriverNumber : Integer ) : String;
-begin
-  result :=  String(Sound.GetDriverName( aDriverNumber ));
-end;
-
-{******************************************************************************}
-{* Initialize the soundsystem                                                 *}
-{******************************************************************************}
-
-function gdSoundInitDriver() : boolean;
-begin
-  result := Sound.InitSoundDriver()
-end;
-
-{******************************************************************************}
-{* Shutdown the soundengine                                                    *}
-{******************************************************************************}
-
-function gdSoundShutDownDriver() : boolean;
-begin
-  result := Sound.ShutDownSoundDriver();
-end;
-
-{******************************************************************************}
 {* Init a soundfile                                                           *}
 {******************************************************************************}
 
@@ -337,7 +296,7 @@ begin
 end;
 
 {******************************************************************************}
-{* Clear all soundfiles                                                       *}
+{* Clear all sounds                                                           *}
 {******************************************************************************}
 
 procedure gdSoundClear();
@@ -346,7 +305,7 @@ begin
 end;
 
 {******************************************************************************}
-{* Remove soundfile                                                           *}
+{* Remove sound                                                               *}
 {******************************************************************************}
 
 procedure gdSoundRemove( aPointer : pointer );
@@ -356,7 +315,7 @@ begin
 end;
 
 {******************************************************************************}
-{* Play a soundfile                                                           *}
+{* Play a sound                                                               *}
 {******************************************************************************}
 
 procedure gdSoundPlay( aPointer  : pointer );
@@ -365,7 +324,7 @@ begin
 end;
 
 {******************************************************************************}
-{* Pause a soundfile                                                          *}
+{* Pause a sound                                                              *}
 {******************************************************************************}
 
 procedure gdSoundPause( aPointer  : pointer );
@@ -375,12 +334,21 @@ begin
 end;
 
 {******************************************************************************}
-{* Resume playing of a soundfile                                              *}
+{* Resume a sound                                                             *}
 {******************************************************************************}
 
 procedure gdSoundResume( aPointer  : pointer );
 begin
   TGDSoundFile(aPointer).Resume();
+end;
+
+{******************************************************************************}
+{* Stop a sound                                                               *}
+{******************************************************************************}
+
+procedure gdSoundStop( aPointer  : pointer );
+begin
+  TGDSoundFile(aPointer).Stop();
 end;
 
 {******************************************************************************}
@@ -563,8 +531,7 @@ end;
 
 procedure gdConsoleCommand(aCommand : String );
 begin
-  Console.Command := aCommand;
-  Console.ExecuteCommand();
+  Console.ExecuteCommand(aCommand);
 end;
 
 {******************************************************************************}

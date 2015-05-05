@@ -87,13 +87,6 @@ begin
   Application.Title := 'Genesis Device Engine - (Build : ' + gdEngineBuildInfo() + ')';
   self.Caption := 'Genesis Device Engine - (Build : ' + gdEngineBuildInfo() + ')';
 
-  //initialize the soundsystem with the current settings
-  If Not(gdSoundInitDriver()) then
-  begin
-    MessageBox(0, 'Error initializing sound driver. See Console.txt for details.', 'Error', MB_OK or MB_ICONERROR);
-    Application.Terminate();
-  end;
-
   //initialize the renderer with the current settings
   If Not(gdRendererInitViewPort( self.Handle )) then
   begin
@@ -169,9 +162,6 @@ begin
 
   //shutdown the renderer
   gdRendererShutDownViewPort();
-
-  //shutdown the sound engine
-  gdSoundShutDownDriver();
 
   //back to configuration
   ConfigurationForm.Visible := true;
