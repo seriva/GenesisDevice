@@ -37,7 +37,7 @@
         <PackageName Value="LCL"/>
       </Item1>
     </RequiredPackages>
-    <Units Count="55">
+    <Units Count="52">
       <Unit0>
         <Filename Value="Demo.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -286,33 +286,20 @@
         <IsPartOfProject Value="True"/>
       </Unit48>
       <Unit49>
-        <Filename Value="..\Libraries\DirectX\DirectDraw.pas"/>
-        <IsPartOfProject Value="True"/>
-        <UnitName Value="DirectDraw"/>
-      </Unit49>
-      <Unit50>
-        <Filename Value="..\Libraries\DirectX\DirectX.inc"/>
-        <IsPartOfProject Value="True"/>
-      </Unit50>
-      <Unit51>
-        <Filename Value="..\Libraries\DirectX\Jedi.inc"/>
-        <IsPartOfProject Value="True"/>
-      </Unit51>
-      <Unit52>
         <Filename Value="..\Engine\GDFoliage.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="GDFoliage"/>
-      </Unit52>
-      <Unit53>
+      </Unit49>
+      <Unit50>
         <Filename Value="..\Engine\GDStringParsing.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="GDStringParsing"/>
-      </Unit53>
-      <Unit54>
+      </Unit50>
+      <Unit51>
         <Filename Value="..\Engine\GDGenerics.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="GDGenerics"/>
-      </Unit54>
+      </Unit51>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -322,7 +309,7 @@
       <Filename Value="..\..\Bin\Demo"/>
     </Target>
     <SearchPaths>
-      <IncludeFiles Value="..\Headers;..\Libraries\OpenGL;..\Libraries\Utils;$(ProjOutDir);..\Libraries\FMod;..\Libraries\DirectX"/>
+      <IncludeFiles Value="..\Headers;..\Libraries\OpenGL;..\Libraries\Utils;$(ProjOutDir);..\Libraries\FMod"/>
       <OtherUnitFiles Value="..\Libraries\OpenGL;..\Engine;..\Libraries\DirectX;..\Libraries\FMod"/>
       <UnitOutputDirectory Value="..\..\Build"/>
     </SearchPaths>
