@@ -50,7 +50,6 @@ uses
   multimon,
   GDConstants,
   GDSettings,
-  ValEdit,
   FileUtil;
 
 type

@@ -59,13 +59,7 @@ uses
   GDLighting,
   GDStatistics,
   GDModes,
-  GDCallBack; 
-  
-Var
-  FEngineInitialized   : Boolean = false;
-
- //some functions to check the engine 
-function CheckEngineInitialized(): boolean;
+  GDCallBack;
 
 //Engine Functions
 function  gdEngineInit() : Boolean;
@@ -132,7 +126,6 @@ procedure gdGUITextColor(aR,aG,aB : Double);
 procedure gdGUITextRender(aX,aY,aScale : Double; aText : String);
 
 //camera functions
-procedure gdCameraInit(aX,aY,aZ : double); 
 procedure gdCameraSetPosition(aX,aY,aZ : double); 
 function  gdCameraGetPosition() : TGDVector;
 procedure gdCameraSetDirection(aX,aY,aZ : double); 
@@ -156,27 +149,11 @@ procedure gdTexturesRemove( aPointer : pointer );
 implementation
 
 {******************************************************************************}
-{* Check if the engine is initialized                                         *}
-{******************************************************************************}
-
-function CheckEngineInitialized(): boolean;
-begin
-  If not(FEngineInitialized) then MessageBox(0, 'Engine is not initialized!', 'Error', MB_OK or MB_ICONERROR);
-  result := FEngineInitialized;
-end;
-
-{******************************************************************************}
 {* Initialize the engine`s core                                               *}
 {******************************************************************************}
 
 function gdEngineInit() : Boolean;
 begin
-  If FEngineInitialized then
-  begin
-     ShowMessage('Engine is already initialized!');
-     result := false;
-     exit;
-  end;
   DefaultFormatSettings.DecimalSeparator := '.';
 
   //Init engine base systems.
@@ -220,9 +197,7 @@ begin
   MaterialList     := TGDMaterialList.Create();
   MeshList         := TGDMeshList.Create();
 
-
   result := true;
-  FEngineInitialized := true;
 end;
 
 {******************************************************************************}
@@ -231,8 +206,6 @@ end;
 
 procedure gdEngineShutDown(); 
 begin
-  If Not(FEngineInitialized) then exit;
-
   //Clear engine classes
   FreeAndNil(Input);
   FreeAndNil(Camera);
@@ -277,7 +250,6 @@ end;
 
 function gdRendererInitViewPort( aWnd  : HWND ) : boolean;
 begin
-  If Not(FEngineInitialized) then exit;
   result := Renderer.InitViewPort( aWnd );
 end;
 
@@ -287,7 +259,6 @@ end;
 
 function gdRendererShutDownViewPort() : boolean;
 begin
-  If Not(FEngineInitialized) then exit;
   result := Renderer.ShutDownViewPort();
 end;
 
@@ -297,7 +268,6 @@ end;
 
 procedure gdRendererResizeViewPort(aTop, aLeft, aWidth, aHeight : integer);
 begin
-  If Not(FEngineInitialized) then exit;
   Settings.Top := aTop;
   Settings.Left := aLeft;
   Settings.Width := aWidth;
@@ -312,7 +282,6 @@ end;
 
 procedure gdRendererState(aState : TGDRenderState);
 begin
-  If Not(FEngineInitialized) then exit;
   Renderer.RenderState(aState);
 end;
 
@@ -322,7 +291,6 @@ end;
 
 function gdSoundNumberOfDrivers() : Integer;
 begin
-  If Not(FEngineInitialized) then exit;
   result := Sound.GetNumberOfDrivers();
 end;
 
@@ -332,7 +300,6 @@ end;
 
 function gdSoundGetDriverName( aDriverNumber : Integer ) : String;
 begin
-  If Not(FEngineInitialized) then exit;
   result :=  String(Sound.GetDriverName( aDriverNumber ));
 end;
 
@@ -363,7 +330,6 @@ var
   iTempSoundFile : TGDSoundFile;
 begin
   result := nil;
-  If Not(FEngineInitialized) then exit;
   iTempSoundFile := TGDSoundFile.Create();
   If Not(iTempSoundFile.InitSoundFile( aFileName, aType )) then exit;
   SoundList.Add( iTempSoundFile );
@@ -376,7 +342,6 @@ end;
 
 procedure gdSoundClear();
 begin
-  If Not(FEngineInitialized) then exit;
   SoundList.Clear();
 end;
 
@@ -386,7 +351,6 @@ end;
 
 procedure gdSoundRemove( aPointer : pointer );
 begin
-  If Not(FEngineInitialized) then exit;
   SoundList.Remove(aPointer);
   aPointer := nil
 end;
@@ -397,7 +361,6 @@ end;
 
 procedure gdSoundPlay( aPointer  : pointer );
 begin
-  If Not(FEngineInitialized) then exit;
   TGDSoundFile(aPointer).Play();
 end;
 
@@ -408,7 +371,6 @@ end;
 procedure gdSoundPause( aPointer  : pointer );
 
 begin
-  If Not(FEngineInitialized) then exit;
   TGDSoundFile(aPointer).Pause();
 end;
 
@@ -418,7 +380,6 @@ end;
 
 procedure gdSoundResume( aPointer  : pointer );
 begin
-  If Not(FEngineInitialized) then exit;
   TGDSoundFile(aPointer).Resume();
 end;
 
@@ -428,7 +389,6 @@ end;
 
 procedure gdInputRegisterAction(aType : TGDInputTypes; aKey : Integer ; aAction : TGDProcEngineCallback;  aConsoleDisabled : boolean );
 begin
-  If Not(FEngineInitialized) then exit;
   Input.RegisterInputAction(aType, aKey, aAction, aConsoleDisabled );
 end;
 
@@ -438,7 +398,6 @@ end;
 
 procedure gdInputUseMouseLook( aUse : boolean );
 begin
-  If Not(FEngineInitialized) then exit;
   Input.MouseLook := aUse;
 end;
 
@@ -448,7 +407,6 @@ end;
 
 procedure gdInputEnable( aEnable : boolean );
 begin
-  If Not(FEngineInitialized) then exit;
   Input.EnableInput := aEnable;
 end;
 
@@ -458,7 +416,6 @@ end;
 
 procedure gdGUIMouseCursorShow(aShow : boolean); 
 begin
-  If Not(FEngineInitialized) then exit;
   Input.CalculateMousePosStart();
   GUI.MouseCursor.ShowMouse := aShow;
 end;
@@ -469,7 +426,6 @@ end;
 
 function gdGUIMouseCursorGetPosition() : TPoint; 
 begin
-  If Not(FEngineInitialized) then exit;
   result.X := GUI.MouseCursor.Position.X;
   result.Y := GUI.MouseCursor.Position.Y;
 end;
@@ -480,7 +436,6 @@ end;
 
 procedure gdGUILoadingScreenSetup( aProcessName : String; aMax : Integer ); 
 begin
-  If Not(FEngineInitialized) then exit;
   GUI.LoadingScreen.SetupForUse(String(aProcessName),aMax);
 end;
 
@@ -490,7 +445,6 @@ end;
 
 procedure gdGUILoadingScreenUpdate(); 
 begin
-  If Not(FEngineInitialized) then exit;
   GUI.LoadingScreen.UpdateBar();
 end;
 
@@ -500,7 +454,6 @@ end;
 
 procedure gdGUITextColor(aR,aG,aB : Double);
 begin
-  If Not(FEngineInitialized) then exit;
   GUI.Font.Color.Reset(aR,aG,aB, 1);
 end;
 
@@ -510,37 +463,24 @@ end;
 
 procedure gdGUITextRender(aX,aY,aScale : Double; aText : String);
 begin
-  If Not(FEngineInitialized) then exit;
   GUI.Font.Render(aX,aY,aScale,aText);
 end;
 
 {******************************************************************************}
-{* Initialize the camera                                                      *}
-{******************************************************************************}
-
-procedure gdCameraInit(aX,aY,aZ : double); 
-begin
-  If Not(FEngineInitialized) then exit;
-  Camera.InitCamera(aX,aY,aZ);
-end;
-
-{******************************************************************************}
-{* Set the camera position                                                     *}
+{* Set the camera position                                                    *}
 {******************************************************************************}
 
 procedure gdCameraSetPosition(aX,aY,aZ : double); 
 begin
-  If Not(FEngineInitialized) then exit;
   Camera.Position.Reset(aX,aY,aZ);
 end;
 
 {******************************************************************************}
-{* Get the camera position                                                     *}
+{* Get the camera position                                                    *}
 {******************************************************************************}
 
 function gdCameraGetPosition() : TGDVector;
 begin
-  If Not(FEngineInitialized) then exit;
   result := Camera.Position.Copy();
 end;
 
@@ -550,7 +490,6 @@ end;
 
 procedure gdCameraSetDirection(aX,aY,aZ : double); 
 begin
-  If Not(FEngineInitialized) then exit;
   Camera.Direction.Reset(aX, aY, aZ);
 end;
 
@@ -560,7 +499,6 @@ end;
 
 function gdCameraGetDirection() : TGDVector;
 begin
-  If Not(FEngineInitialized) then exit;
   result := Camera.Direction.Copy();
 end;
 
@@ -570,7 +508,6 @@ end;
 
 procedure gdCameraMove(aStep : double); 
 begin
-  If Not(FEngineInitialized) then exit;
   Camera.Move(aStep);
 end;
 
@@ -580,7 +517,6 @@ end;
 
 procedure gdCameraStrafe(aStep : double); 
 begin
-  If Not(FEngineInitialized) then exit;
   Camera.Strafe(aStep);
 end;
 
@@ -591,7 +527,6 @@ end;
 
 procedure gdSettingsLoad();
 begin
-  If Not(FEngineInitialized) then exit;
   Settings.LoadIniFile();
 end;
 
@@ -601,7 +536,6 @@ end;
 
 procedure gdSettingsSave();
 begin
-  If Not(FEngineInitialized) then exit;
   Settings.SaveIniFile();
 end;
 
@@ -611,7 +545,6 @@ end;
 
 function  gdSettingsGetCurrent() : TSettings; 
 begin
-  If Not(FEngineInitialized) then exit;
   result := Settings.GetSettings();
 end;
 
@@ -621,7 +554,6 @@ end;
 
 procedure gdSettingsSetCurrent(aSettings : TSettings); 
 begin
-  If Not(FEngineInitialized) then exit;
   Settings.SetSettings(aSettings);
 end;
 
@@ -631,7 +563,6 @@ end;
 
 procedure gdConsoleCommand(aCommand : String );
 begin
-  If Not(FEngineInitialized) then exit;
   Console.Command := aCommand;
   Console.ExecuteCommand();
 end;
@@ -642,7 +573,6 @@ end;
 
 procedure gdConsoleLog(aText : String; aNewLine : boolean = true);
 begin
-  If Not(FEngineInitialized) then exit;
   If aText = '' then exit;
   Console.Write(aText, aNewLine);
 end;
@@ -653,13 +583,11 @@ end;
 
 procedure gdConsoleAddChar( aChar : Char );
 begin
-  If Not(FEngineInitialized) then exit;
   Console.AddChar(aChar);
 end;
 
 procedure gdConsoleControl( aKey : Integer );
 begin
-  If Not(FEngineInitialized) then exit;
   Console.Control(aKey);
 end;
 
@@ -669,7 +597,6 @@ end;
 
 procedure gdTimingStart();
 begin
-  If Not(FEngineInitialized) then exit;
   Timing.Start();
 end;
 
@@ -679,7 +606,6 @@ end;
 
 procedure gdTimingStop();
 begin
-  If Not(FEngineInitialized) then exit;
   Timing.Stop();
 end;
 
@@ -689,7 +615,6 @@ end;
 
 function gdTimingInSeconds() : String;
 begin
-  If Not(FEngineInitialized) then exit;
   result := Timing.TimeInSeconds();
 end;
 
@@ -699,7 +624,6 @@ end;
 
 function gdTimingInMilliSeconds() : String;
 begin
-  If Not(FEngineInitialized) then exit;
   result := Timing.TimeInMilliSeconds();
 end;
 
@@ -709,8 +633,6 @@ end;
 
 function gdTimingFrameTime() : Integer;
 begin
-  result := 0;
-  If Not(FEngineInitialized) then exit;
   result := Timing.FrameTime;
 end;
 
@@ -720,7 +642,6 @@ end;
 
 procedure gdCallBackSetInterfaceRenderer( aFunction : TGDProcEngineCallback ); 
 begin
-  If Not(FEngineInitialized) then exit;
   RenderInterfaceCallBack := aFunction;
 end;
 
@@ -730,7 +651,6 @@ end;
 
 procedure gdCallBackSetBeforeRender( aFunction : TGDProcEngineCallback ); 
 begin
-  If Not(FEngineInitialized) then exit;
   AfterRenderCallBack := aFunction;
 end;
 
@@ -740,7 +660,6 @@ end;
 
 procedure gdCallBackSetAfterRender( aFunction : TGDProcEngineCallback ); 
 begin
-  If Not(FEngineInitialized) then exit;
   BeforeRenderCallBack := aFunction;
 end;
 
@@ -750,7 +669,6 @@ end;
 
 procedure gdLoopMain(); 
 begin
-  If Not(FEngineInitialized) then exit;
   Main.Main();
 end;
 
@@ -761,7 +679,6 @@ end;
 function gdMapLoad( aFileName : String ) : boolean; 
 begin
   result := false;
-  If Not(FEngineInitialized) then exit;
   Octree.Clear();
   CellManager.Cells.Clear();
   result := Map.InitMap( aFileName );
@@ -778,7 +695,6 @@ end;
 
 procedure gdMapClear(); 
 begin
-  If Not(FEngineInitialized) then exit;
   Map.Clear();
   CellManager.Clear();
   Octree.Clear();
@@ -792,8 +708,6 @@ function gdMapTerrainHeight(aX, aZ  : Double) : Double;
 var
   iHeight : Double;
 begin
-  result := 0;
-  If Not(FEngineInitialized) then exit;
   Terrain.GetHeight( aX, aZ, iHeight );
   result := iHeight;
 end;
@@ -806,7 +720,6 @@ function  gdMapTerrainRotation(aX, aZ : Double) : TGDVector;
 var
   iRotation : TGDVector;
 begin
-  If Not(FEngineInitialized) then exit;
   Terrain.GetRotation( aX, aZ, iRotation );
   result := iRotation;
 end;
@@ -817,8 +730,6 @@ end;
 
 function gdMapWaterHeight(): Double; 
 begin
-  result := 0;
-  If Not(FEngineInitialized) then exit;
   result := Water.WaterHeight;
 end;
 
@@ -830,8 +741,6 @@ function gdTexturesLoad( aFileName : String ) : pointer;
 var
   iTempTexture : TGDTexture;
 begin
-  result := nil;
-  If Not(FEngineInitialized) then exit;
   iTempTexture := TGDTexture.Create();
   If Not(iTempTexture.InitTexture( aFileName, Settings.TextureDetail,
           Settings.TextureFilter)) then exit;
@@ -845,7 +754,6 @@ end;
 
 procedure gdTexturesBind(aPointer : pointer; aTextureUnit : GLEnum );
 begin
-  If Not(FEngineInitialized) then exit;
   TGDTexture(aPointer).BindTexture(aTextureUnit); ;
 end;
 
@@ -855,7 +763,6 @@ end;
 
 procedure gdTexturesRemove( aPointer : pointer ); 
 begin
-  If Not(FEngineInitialized) then exit;
   TextureList.Remove(aPointer);
   aPointer := nil
 end;
@@ -866,7 +773,6 @@ end;
 
 procedure gdTexturesClear(); 
 begin
-  If Not(FEngineInitialized) then exit;
   TextureList.Clear();
 end;
 
