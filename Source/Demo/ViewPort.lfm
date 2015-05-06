@@ -9,7 +9,6 @@ object ViewPortForm: TViewPortForm
   Font.Height = -11
   Font.Name = 'Tahoma'
   FormStyle = fsStayOnTop
-  OnClick = FormClick
   OnClose = FormClose
   OnCreate = FormCreate
   OnDestroy = FormDestroy

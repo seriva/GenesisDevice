@@ -2,7 +2,6 @@
 *                            Genesis Device Engine                             *
 *                   Copyright © 2007-2015 Luuk van Venrooij                    *
 *                        http://www.luukvanvenrooij.nl                         *
-*                         luukvanvenrooij84@gmail.com                          *
 ********************************************************************************
 *                                                                              *
 *  This file is part of the Genesis Device Engine.                             *
@@ -103,7 +102,7 @@ end;
 
 procedure TPlayer.MoveForward();
 begin
-  if Not(Intro.FRenderIntroText) then
+  //if Not(Intro.FRenderIntroText) then
     gdCameraMove( MovementSpeed );
 end;
 
@@ -113,7 +112,7 @@ end;
 
 procedure TPlayer.MoveBackWard();
 begin
-  if Not(Intro.FRenderIntroText) then
+  //if Not(Intro.FRenderIntroText) then
     gdCameraMove( -MovementSpeed );
 end;
 
@@ -123,7 +122,7 @@ end;
 
 procedure TPlayer.MoveLeft();
 begin
-  if Not(Intro.FRenderIntroText) then
+  //if Not(Intro.FRenderIntroText) then
     gdCameraStrafe(MovementSpeed);
 end;
 
@@ -133,7 +132,7 @@ end;
 
 procedure TPlayer.MoveRight();
 begin
-  if Not(Intro.FRenderIntroText) then
+  //if Not(Intro.FRenderIntroText) then
     gdCameraStrafe(-MovementSpeed);
 end;
 

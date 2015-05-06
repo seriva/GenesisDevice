@@ -58,7 +58,7 @@ Type
     constructor Create();
     destructor  Destroy(); override;
 
-    procedure   UpdateSound();
+    procedure   Update();
   end;
 
 {******************************************************************************}
@@ -154,7 +154,7 @@ end;
 {* Update the sound engine                                                    *}
 {******************************************************************************}
 
-procedure TGDSound.UpdateSound();
+procedure TGDSound.Update();
 var
   iListenerPos : array [0..2] of TALfloat= ( 0.0, 0.0, 0.0);
   iListenerVel : array [0..2] of TALfloat= ( 0.0, 0.0, 0.0);

@@ -174,7 +174,7 @@ begin
   end;
 
   //Calculate boundingbox
-  BoundingBox.Generate( iVertices );
+  BoundingBox := iVertices.GenerateBoundingBox();
 
   //prepare the displaylists.
   for iI := 0 to Mesh.MaterialSegmentList.Count - 1 do

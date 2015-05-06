@@ -2,7 +2,6 @@
 *                            Genesis Device Engine                             *
 *                   Copyright © 2007-2015 Luuk van Venrooij                    *
 *                        http://www.luukvanvenrooij.nl                         *
-*                         luukvanvenrooij84@gmail.com                          *
 ********************************************************************************
 *                                                                              *
 *  This file is part of the Genesis Device Engine.                             *
@@ -38,19 +37,13 @@ uses
   LCLType,
   SysUtils,
   dglOpenGL,
-  GDSettings,
   GDRenderer,
   GDConsole,
   GDTiming,
   GDConstants,
-  GDFog,
-  GDWater,
-  GDCamera,
   GDInput,
   GDGUI,
   GDMap,
-  GDSkyDome,
-  GDFrustum,
   GDSound,
   GDOctree,
   GDCellManager,
@@ -74,9 +67,6 @@ type
     procedure ClearBaseResources();
 
     procedure Main();
-    procedure RenderMain();
-    procedure InputMain();
-    procedure SoundMain();
   end;
 
 var
@@ -144,209 +134,15 @@ begin
   Statistics.FrameStart();
   Timing.CalculateFrameTime();
 
-  //input
-  InputMain();
-
-  //sound
-  SoundMain();
-
-  //rendering
-  RenderMain();
+  Input.ExecuteInput();
+  Sound.Update();
+  Map.Update();
+  CallBack.BeforeRender();
+  Renderer.Render();
 
   //end timing
   Statistics.FrameStop();
-end;
-
-{******************************************************************************}
-{* The main renderloop                                                        *}
-{******************************************************************************}
-
-procedure TGDMain.RenderMain();
-
-{******************************************************************************}
-{* Render debug                                                               *}
-{******************************************************************************}
-
-Procedure RenderDebug();
-begin
-  glLoadIdentity();
-  Camera.Translate();
-  Renderer.RenderState( RS_COLOR );
-  If Modes.RenderNormals     then CellManager.RenderVisibleCells( RA_NORMALS, RF_NORMAL );
-  If Modes.RenderObjectBoxes then CellManager.RenderVisibleCells( RA_FRUSTUM_BOXES, RF_NORMAL );
-  If Modes.RenderNodeBoxes   then Octree.RenderTreeBoxes();
-end;
-
-{******************************************************************************}
-{* Render water reflections                                                   *}
-{******************************************************************************}
-
-procedure RenderWaterReflection();
-begin
-  If (Modes.RenderWireframe = false) and Water.Visible() then
-  begin
-    //render reflection texture
-    Renderer.StartFrame();
-    Camera.Translate();
-    Water.StartReflection();
-    If Modes.RenderSky then SkyDome.Render();
-    Frustum.CalculateFrustum();
-    CellManager.DetectVisibleCells();
-    CellManager.RenderVisibleCells( RA_NORMAL, RF_WATER );
-    Water.EndReflection();
-  end;
-end;
-
-{******************************************************************************}
-{* Render ortho                                                               *}
-{******************************************************************************}
-
-procedure RenderGUI();
-begin
-  //rendering 2d stuff (console,stats,interfaces, menus enz)
-  Renderer.SwitchToOrtho();
-    If Modes.RenderWireframe = false then Water.RenderUnderWater();
-    CallBack.RenderInterface();
-    If Modes.RenderStats then Statistics.Render();
-    Console.Render();
-    GUI.MouseCursor.Render();
-  Renderer.SwitchToPerspective();
-end;
-
-{******************************************************************************}
-{* Render static geometry                                                     *}
-{******************************************************************************}
-
-Procedure RenderStaticGeometry();
-begin
- //Render sky
- FogManager.UseDistanceFog();
- SkyDome.Render();
-
- //Set the right fog type
- If not(Camera.Position.Y > Water.WaterHeight) then
-   FogManager.UseWaterFog();
-
- //Render other cells.
- CellManager.RenderVisibleCells( RA_NORMAL, RF_NORMAL );
-end;
-
-{******************************************************************************}
-{* Render source image                                                        *}
-{******************************************************************************}
-
-procedure RenderSourceImage();
-begin
-  Renderer.StartRenderSource();
-  RenderStaticGeometry();
-  Renderer.EndRenderSource();
-end;
-
-{******************************************************************************}
-{* Render underwater source image                                             *}
-{******************************************************************************}
-
-procedure RenderUnderWaterSourceImage();
-begin
-  Renderer.StartRenderUnderWaterSource();
-  RenderStaticGeometry();
-  Renderer.EndRenderUnderWaterSource();
-end;
-
-{******************************************************************************}
-{* Render bloom image                                                         *}
-{******************************************************************************}
-
-procedure RenderBloomImage();
-begin
-  Renderer.StartRenderBloom();
-  If Modes.RenderSky then SkyDome.Render();
-  CellManager.RenderVisibleCells( RA_NORMAL, RF_BLOOM );
-  Renderer.EndRenderBloom();
-end;
-
-begin
-  //do before render and start timing
-  CallBack.BeforeRender();
-
-  //make renderer current
-  Renderer.MakeCurrent();
-
-  //create the water reflection texture
-  RenderWaterReflection();
-
-  //detect the visibel objects
-  glLoadIdentity();
-  Camera.Translate();
-  Frustum.CalculateFrustum();
-  CellManager.DetectVisibleCells();
-
-  //set the current rendermode
-  if not(Modes.RenderWireframe) then
-  begin
-    FogManager.FogShader.ApplyFog();
-
-    //check if where underwater
-    if Water.UnderWater() then
-    begin
-      //render the underwater source image
-      RenderUnderWaterSourceImage();
-    end
-    else
-    begin
-      //render the source image
-      RenderSourceImage();
-
-      //render bloom image and apply bloom shader
-      If Settings.UseBloom then RenderBloomImage();
-    end;
-
-    //render the final image
-    Renderer.StartFrame();
-    Renderer.RenderFinal();
-  end
-  else
-  begin
-    Renderer.RenderState( RS_WIREFRAME );
-    Renderer.StartFrame();
-    Camera.Translate();
-    SkyDome.Render();
-    CellManager.RenderVisibleCells( RA_NORMAL, RF_NORMAL );
-  end;
-
-  //render debug and ortho stuff
-  RenderDebug();
-  RenderGUI();
-
-  //end the frame and increment the framecounter
-  Renderer.EndFrame();
-
-  //Update statistics
   Statistics.Update();
-
-  //do after rendering and end timing
-  CallBack.AfterRender();
-end;
-
-{******************************************************************************}
-{* The main input loop                                                        *}
-{******************************************************************************}
-
-procedure TGDMain.InputMain();
-begin
-  Input.ExecuteInput();
-end;
-
-{******************************************************************************}
-{* The main sound loop                                                        *}
-{******************************************************************************}
-
-procedure TGDMain.SoundMain();
-begin
-  If Not(Settings.MuteSound) then
-  begin
-    Sound.UpdateSound();
-  end;
 end;
 
 end.

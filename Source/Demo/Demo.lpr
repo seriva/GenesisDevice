@@ -32,11 +32,8 @@ uses
   GDInterface,
   ViewPort in 'ViewPort.pas' {ViewPortForm},
   Configuration in 'Configuration.pas' {ConfigurationForm},
-  Intro in 'Intro.pas',
   Main in 'Main.pas',
-  Player in 'Player.pas',
-  CallBack in 'CallBack.pas',
-  Sounds in 'Sounds.pas';
+  Player in 'Player.pas';
 
 begin
   Application.Initialize;

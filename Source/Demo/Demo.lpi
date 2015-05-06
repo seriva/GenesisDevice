@@ -37,7 +37,7 @@
         <PackageName Value="LCL"/>
       </Item1>
     </RequiredPackages>
-    <Units Count="48">
+    <Units Count="44">
       <Unit0>
         <Filename Value="Demo.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -59,202 +59,201 @@
         <UnitName Value="Configuration"/>
       </Unit2>
       <Unit3>
-        <Filename Value="Intro.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit3>
-      <Unit4>
         <Filename Value="Main.pas"/>
         <IsPartOfProject Value="True"/>
-      </Unit4>
-      <Unit5>
+        <UnitName Value="Main"/>
+      </Unit3>
+      <Unit4>
         <Filename Value="Player.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="Player"/>
-      </Unit5>
-      <Unit6>
-        <Filename Value="CallBack.pas"/>
-        <IsPartOfProject Value="True"/>
-        <UnitName Value="CallBack"/>
-      </Unit6>
-      <Unit7>
+      </Unit4>
+      <Unit5>
         <Filename Value="..\Libraries\OpenGL\dglOpenGL.pas"/>
         <IsPartOfProject Value="True"/>
-      </Unit7>
-      <Unit8>
-        <Filename Value="Sounds.pas"/>
-        <IsPartOfProject Value="True"/>
-        <UnitName Value="Sounds"/>
-      </Unit8>
-      <Unit9>
+        <UnitName Value="dglOpenGL"/>
+      </Unit5>
+      <Unit6>
         <Filename Value="..\Engine\GDBaseCell.pas"/>
         <IsPartOfProject Value="True"/>
-      </Unit9>
-      <Unit10>
-        <Filename Value="..\Engine\GDBoundingVolumes.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit10>
-      <Unit11>
+        <UnitName Value="GDBaseCell"/>
+      </Unit6>
+      <Unit7>
         <Filename Value="..\Engine\GDCallBack.pas"/>
         <IsPartOfProject Value="True"/>
-      </Unit11>
-      <Unit12>
+        <UnitName Value="GDCallBack"/>
+      </Unit7>
+      <Unit8>
         <Filename Value="..\Engine\GDCamera.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="GDCamera"/>
-      </Unit12>
-      <Unit13>
+      </Unit8>
+      <Unit9>
         <Filename Value="..\Engine\GDCellManager.pas"/>
         <IsPartOfProject Value="True"/>
-      </Unit13>
-      <Unit14>
+        <UnitName Value="GDCellManager"/>
+      </Unit9>
+      <Unit10>
         <Filename Value="..\Engine\GDConsole.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="GDConsole"/>
-      </Unit14>
-      <Unit15>
+      </Unit10>
+      <Unit11>
         <Filename Value="..\Engine\GDConstants.pas"/>
         <IsPartOfProject Value="True"/>
-      </Unit15>
-      <Unit16>
+        <UnitName Value="GDConstants"/>
+      </Unit11>
+      <Unit12>
         <Filename Value="..\Engine\GDFog.pas"/>
         <IsPartOfProject Value="True"/>
-      </Unit16>
-      <Unit17>
+      </Unit12>
+      <Unit13>
         <Filename Value="..\Engine\GDFrustum.pas"/>
         <IsPartOfProject Value="True"/>
-      </Unit17>
-      <Unit18>
+        <UnitName Value="GDFrustum"/>
+      </Unit13>
+      <Unit14>
         <Filename Value="..\Engine\GDGLObjects.pas"/>
         <IsPartOfProject Value="True"/>
-      </Unit18>
-      <Unit19>
+      </Unit14>
+      <Unit15>
         <Filename Value="..\Engine\GDGrassCell.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="GDGrassCell"/>
-      </Unit19>
-      <Unit20>
+      </Unit15>
+      <Unit16>
         <Filename Value="..\Engine\GDGUI.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="GDGUI"/>
-      </Unit20>
-      <Unit21>
+      </Unit16>
+      <Unit17>
         <Filename Value="..\Engine\GDInput.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="GDInput"/>
-      </Unit21>
-      <Unit22>
+      </Unit17>
+      <Unit18>
         <Filename Value="..\Engine\GDInterface.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="GDInterface"/>
-      </Unit22>
-      <Unit23>
+      </Unit18>
+      <Unit19>
         <Filename Value="..\Engine\GDLighting.pas"/>
         <IsPartOfProject Value="True"/>
-      </Unit23>
-      <Unit24>
+      </Unit19>
+      <Unit20>
         <Filename Value="..\Engine\GDMain.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="GDMain"/>
-      </Unit24>
-      <Unit25>
+      </Unit20>
+      <Unit21>
         <Filename Value="..\Engine\GDMap.pas"/>
         <IsPartOfProject Value="True"/>
-      </Unit25>
-      <Unit26>
+        <UnitName Value="GDMap"/>
+      </Unit21>
+      <Unit22>
         <Filename Value="..\Engine\GDMaterials.pas"/>
         <IsPartOfProject Value="True"/>
-      </Unit26>
-      <Unit27>
+      </Unit22>
+      <Unit23>
         <Filename Value="..\Engine\GDMesh.pas"/>
         <IsPartOfProject Value="True"/>
-      </Unit27>
-      <Unit28>
+      </Unit23>
+      <Unit24>
         <Filename Value="..\Engine\GDMeshCell.pas"/>
         <IsPartOfProject Value="True"/>
-      </Unit28>
-      <Unit29>
+        <UnitName Value="GDMeshCell"/>
+      </Unit24>
+      <Unit25>
         <Filename Value="..\Engine\GDModes.pas"/>
         <IsPartOfProject Value="True"/>
-      </Unit29>
-      <Unit30>
+        <UnitName Value="GDModes"/>
+      </Unit25>
+      <Unit26>
         <Filename Value="..\Engine\GDOctree.pas"/>
         <IsPartOfProject Value="True"/>
-      </Unit30>
-      <Unit31>
+        <UnitName Value="GDOctree"/>
+      </Unit26>
+      <Unit27>
         <Filename Value="..\Engine\GDRenderer.pas"/>
         <IsPartOfProject Value="True"/>
-      </Unit31>
-      <Unit32>
+        <UnitName Value="GDRenderer"/>
+      </Unit27>
+      <Unit28>
         <Filename Value="..\Engine\GDSettings.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="GDSettings"/>
-      </Unit32>
-      <Unit33>
+      </Unit28>
+      <Unit29>
         <Filename Value="..\Engine\GDSkyDome.pas"/>
         <IsPartOfProject Value="True"/>
-      </Unit33>
-      <Unit34>
+        <UnitName Value="GDSkyDome"/>
+      </Unit29>
+      <Unit30>
         <Filename Value="..\Engine\GDSound.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="GDSound"/>
-      </Unit34>
-      <Unit35>
+      </Unit30>
+      <Unit31>
         <Filename Value="..\Engine\GDStatistics.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="GDStatistics"/>
-      </Unit35>
-      <Unit36>
+      </Unit31>
+      <Unit32>
         <Filename Value="..\Engine\GDTerrain.pas"/>
         <IsPartOfProject Value="True"/>
-      </Unit36>
-      <Unit37>
+      </Unit32>
+      <Unit33>
         <Filename Value="..\Engine\GDTerrainCell.pas"/>
         <IsPartOfProject Value="True"/>
-      </Unit37>
-      <Unit38>
+      </Unit33>
+      <Unit34>
         <Filename Value="..\Engine\GDTexture.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="GDTexture"/>
-      </Unit38>
-      <Unit39>
+      </Unit34>
+      <Unit35>
         <Filename Value="..\Engine\GDTiming.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="GDTiming"/>
+      </Unit35>
+      <Unit36>
+        <Filename Value="..\Engine\GDTypes.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="GDTypes"/>
+      </Unit36>
+      <Unit37>
+        <Filename Value="..\Engine\GDWater.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="GDWater"/>
+      </Unit37>
+      <Unit38>
+        <Filename Value="..\Engine\GDWaterCell.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit38>
+      <Unit39>
+        <Filename Value="..\Engine\GDFoliage.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="GDFoliage"/>
       </Unit39>
       <Unit40>
-        <Filename Value="..\Engine\GDTypes.pas"/>
+        <Filename Value="..\Engine\GDStringParsing.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit40>
       <Unit41>
-        <Filename Value="..\Engine\GDWater.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit41>
-      <Unit42>
-        <Filename Value="..\Engine\GDWaterCell.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit42>
-      <Unit43>
-        <Filename Value="..\Engine\GDFoliage.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit43>
-      <Unit44>
-        <Filename Value="..\Engine\GDStringParsing.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit44>
-      <Unit45>
         <Filename Value="..\Engine\GDGenerics.pas"/>
         <IsPartOfProject Value="True"/>
-      </Unit45>
-      <Unit46>
+        <UnitName Value="GDGenerics"/>
+      </Unit41>
+      <Unit42>
         <Filename Value="..\Libraries\OpenAL\mpg123.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="mpg123"/>
-      </Unit46>
-      <Unit47>
+      </Unit42>
+      <Unit43>
         <Filename Value="..\Libraries\OpenAL\openal.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="openal"/>
-      </Unit47>
+      </Unit43>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -282,6 +281,7 @@
     </Linking>
     <Other>
       <CustomOptions Value="-dBorland -dVer150 -dDelphi7 -dCompiler6_Up -dPUREPASCAL"/>
+      <CompilerPath Value="$(CompPath)"/>
     </Other>
   </CompilerOptions>
   <Debugging>

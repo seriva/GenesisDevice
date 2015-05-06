@@ -2,7 +2,6 @@
 *                            Genesis Device Engine                             *
 *                   Copyright © 2007-2015 Luuk van Venrooij                    *
 *                        http://www.luukvanvenrooij.nl                         *
-*                         luukvanvenrooij84@gmail.com                          *
 ********************************************************************************
 *                                                                              *
 *  This file is part of the Genesis Device Engine.                             *
@@ -42,6 +41,7 @@ uses
   GDSettings,
   GDConstants,
   GDFog,
+  GDMesh,
   GDRenderer,
   GDTiming,
   GDLighting,
@@ -269,6 +269,7 @@ end;
 procedure TGDTreeType.InitTreeType( aInput : TGDTreeTypesInput );
 begin
   FModel := aInput.Model;
+  MeshList.AddMesh( FModel );
   FStartRotation.Reset(aInput.StartRotationX, aInput.StartRotationY, aInput.StartRotationZ);
   FStartScale := aInput.StartScale;
   FRandomScale := aInput.RandomScale;

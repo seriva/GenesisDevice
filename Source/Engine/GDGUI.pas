@@ -2,7 +2,6 @@
 *                            Genesis Device Engine                             *
 *                   Copyright © 2007-2015 Luuk van Venrooij                    *
 *                        http://www.luukvanvenrooij.nl                         *
-*                         luukvanvenrooij84@gmail.com                          *
 ********************************************************************************
 *                                                                              *
 *  This file is part of the Genesis Device Engine.                             *
@@ -39,6 +38,7 @@ uses
   LCLType,
   Windows,
   Classes,
+  Contnrs,
   IniFiles,
   SysUtils,
   dglOpenGL,
@@ -149,6 +149,76 @@ const
 type
 
 {******************************************************************************}
+{* GUI component classes                                                      *}
+{******************************************************************************}
+
+  TGDComponent = class (TObject)
+  private
+    FDepth : Integer;
+    FX : Integer;
+    FY : Integer;
+  public
+    property Depth : Integer read FDepth write FDepth;
+    property X : Integer read FX write FX;
+    property Y : Integer read FY write FY;
+
+    procedure Render(); virtual;
+  end;
+
+  TGDPanelInput = record
+    Depth : Integer;
+    X : integer;
+    Y : integer;
+    Width : integer;
+    Height : integer;
+    Texture : String;
+  end;
+
+  TGDPanel = class (TGDComponent)
+  private
+    FHasTexture : boolean;
+    FWidth : Integer;
+    FHeight : Integer;
+    FTexture : TGDTexture;
+  public
+    constructor Create(aInput : TGDPanelInput);
+    destructor  Destroy(); override;
+    procedure   Render();  override;
+  end;
+
+  TGDLabelInput = record
+    Depth : Integer;
+    X : integer;
+    Y : integer;
+    R, G, B : Single;
+    Scale : Single;
+    Text : String;
+  end;
+
+  TGDLabel = class (TGDComponent)
+  private
+    FScale : Single;
+    FText : String;
+    FColor : TGDColor;
+  public
+    constructor Create(aInput : TGDLabelInput);
+    destructor  Destroy(); override;
+    procedure   Render();  override;
+  end;
+
+  TGDScreen = class (TObject)
+  private
+    FVisible : Boolean;
+    FComponents : TObjectList;
+  public
+    property Visible : Boolean read FVisible write FVisible;
+
+    constructor Create(aFileName : String);
+    destructor  Destroy(); override;
+    procedure   Render();
+  end;
+
+{******************************************************************************}
 {* Font class                                                                 *}
 {******************************************************************************}
 
@@ -198,7 +268,6 @@ type
     X : integer;
     Y : integer;
     BarR, BarG, BarB, BarA : Double;
-    BackGroundR, BackGroundG, BackGroundB, BackGroundA : Double;
   end;
 
 {******************************************************************************}
@@ -212,7 +281,6 @@ type
     FMax             : integer;
     FPosition        : integer;
     FBarColor        : TGDColor;
-    FBackgroundColor : TGDColor;
     FProcesName      : String;
     FBarOnly         : boolean;
 
@@ -237,13 +305,18 @@ type
 
   TGDGUI = class
   private
+    //Base components
     FFont          : TGDFont;
     FMouseCursor   : TGDMouseCursor;
     FLoadingScreen : TGDLoadingScreen;
 
+    //Base colors
     FFontColor     : TGDColor;
     FOutlineColor  : TGDColor;
     FFillColor     : TGDColor;
+
+    //Screens
+    FScreens : TObjectList;
   public
     property Font : TGDFont read FFont;
     property MouseCursor : TGDMouseCursor read FMouseCursor;
@@ -258,7 +331,19 @@ type
 
     procedure InitGUI();
     procedure Clear();
+
+    function  InitScreen(aFileName : String): TGDScreen;
+    function  ScreenGetVisible(aScreen : TGDScreen): Boolean;
+    procedure ScreenSetVisible(aScreen : TGDScreen; aVisible : Boolean);
+    procedure RenderScreens();
   end;
+
+procedure RenderTexturedQuad(x, y, width, height : Integer;
+                             u1 : Single=1; v1 : Single=1;
+                             u2 : Single=0; v2 : Single=1;
+                             u3 : Single=0; v3 : Single=0;
+                             u4 : Single=1; v4 : Single=0);
+procedure RenderFlatQuad(x, y, width, height : Integer; inside : boolean = true; outline : boolean = true);
 
 var
   GUI : TGDGUI;
@@ -266,10 +351,186 @@ var
 implementation
 
 uses
-  GDInput,
   GDConsole,
   GDRenderer,
   GDSettings;
+
+procedure RenderTexturedQuad(x, y, width, height : Integer;
+                             u1 : Single=1; v1 : Single=1;
+                             u2 : Single=0; v2 : Single=1;
+                             u3 : Single=0; v3 : Single=0;
+                             u4 : Single=1; v4 : Single=0);
+begin
+  glBegin(GL_QUADS);
+    glTexCoord2f(u1, v1); glVertex2f( x,       y);
+    glTexCoord2f(u2, v2); glVertex2f( x+width, y);
+    glTexCoord2f(u3, v3); glVertex2f( x+width, y+height);
+    glTexCoord2f(u4, v4); glVertex2f( x,       y+height);
+  glEnd;
+end;
+
+
+procedure RenderFlatQuad(x, y, width, height : Integer; inside : boolean = true; outline : boolean = true);
+
+procedure SendQuad(mode: GLenum);
+begin
+  glBegin(mode);
+    glVertex2f( x,       y);
+    glVertex2f( x+width, y);
+    glVertex2f( x+width, y+height);
+    glVertex2f( x,       y+height);
+  glEnd;
+end;
+
+begin
+  Renderer.RenderState( RS_COLOR );
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  glEnable(GL_BLEND);
+  if inside then
+  begin
+    glColor4fv(GUI.FillColor.ArrayPointer());
+    SendQuad(GL_QUADS);
+  end;
+  if outline then
+  begin
+    glColor4fv(GUI.OutlineColor.ArrayPointer());
+    SendQuad(GL_LINE_LOOP);
+  end;
+end;
+
+{******************************************************************************}
+{* GUI component classes                                                      *}
+{******************************************************************************}
+
+procedure TGDComponent.Render();
+begin
+  //Do nothing
+end;
+
+constructor TGDPanel.Create(aInput : TGDPanelInput);
+begin
+  Depth := aInput.Depth;
+  X := aInput.X;
+  Y := aInput.Y;
+  FWidth := aInput.Width;
+  FHeight := aInput.Height;
+  if aInput.Texture <> '' then
+  begin
+    FTexture := TGDTexture.Create();
+    FTexture.InitTexture(aInput.Texture, TD_HIGH, TF_TRILINEAR);
+  end
+  else
+    FTexture := nil;
+end;
+
+destructor  TGDPanel.Destroy();
+begin
+   inherited;
+   FreeAndNil(FTexture);
+end;
+
+procedure   TGDPanel.Render();
+begin
+  if FTexture = nil then
+    RenderFlatQuad(X, Y, FWidth, FHeight)
+  else
+  begin
+    Renderer.RenderState(RS_TEXTURE);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_BLEND);
+    FTexture.BindTexture( GL_TEXTURE0 );
+    glColor4f(1,1,1,1);
+    RenderTexturedQuad(X, Y, FWidth, FHeight);
+    glDisable(GL_BLEND);
+  end;
+end;
+
+constructor TGDLabel.Create(aInput : TGDLabelInput);
+begin
+  Depth := aInput.Depth;
+  X := aInput.X;
+  Y := aInput.Y;
+  FScale := aInput.Scale;
+  FText := aInput.Text;
+  FColor.Reset(aInput.r,aInput.g, aInput.b, 1.0);
+end;
+
+destructor  TGDLabel.Destroy();
+begin
+   inherited;
+end;
+
+procedure   TGDLabel.Render();
+begin
+  Renderer.RenderState( RS_TEXTS );
+  GUI.Font.Color := FColor.Copy();
+  GUI.Font.Render(X,Y,FScale,FText);
+end;
+
+constructor TGDScreen.Create(aFileName : String);
+var
+  iIniFile    : TIniFile;
+  iLabelInput : TGDLabelInput;
+  iPanelInput : TGDPanelInput;
+  iI          : Integer;
+  iString     : String;
+begin
+  FComponents := TObjectList.create(true);
+  FVisible := false;
+  iIniFile := TIniFile.Create( aFileName );
+
+  //Panels
+  iI := 1;
+  while(iIniFile.SectionExists('Panel' + IntToStr(iI))) do
+  begin
+    iString := 'Panel' + IntToStr(iI);
+
+    iPanelInput.Depth   := iIniFile.ReadInteger( iString, 'Depth', 0 );
+    iPanelInput.X       := iIniFile.ReadInteger( iString, 'X', 0 );
+    iPanelInput.Y       := iIniFile.ReadInteger( iString, 'Y', 0 );
+    iPanelInput.Width   := iIniFile.ReadInteger( iString, 'Width', 0 );
+    iPanelInput.Height  := iIniFile.ReadInteger( iString, 'Height', 0 );
+    iPanelInput.Texture := iIniFile.ReadString( iString, 'Texture', '' );
+
+    FComponents.Add( TGDPanel.Create(iPanelInput) );
+    iI := iI + 1;
+  end;
+
+  //Labels
+  iI := 1;
+  while(iIniFile.SectionExists('Label' + IntToStr(iI))) do
+  begin
+    iString := 'Label' + IntToStr(iI);
+
+    iLabelInput.Depth := iIniFile.ReadInteger( iString, 'Depth', 0 );
+    iLabelInput.X     := iIniFile.ReadInteger( iString, 'X', 0 );
+    iLabelInput.Y     := iIniFile.ReadInteger( iString, 'Y', 0 );
+    iLabelInput.R     := iIniFile.ReadFloat( iString, 'R', 1 );
+    iLabelInput.G     := iIniFile.ReadFloat( iString, 'G', 1 );
+    iLabelInput.B     := iIniFile.ReadFloat( iString, 'B', 1 );
+    iLabelInput.Scale := iIniFile.ReadFloat( iString, 'Scale', 1 );
+    iLabelInput.Text  := iIniFile.ReadString( iString, 'Text', '' );
+
+    FComponents.Add(TGDLabel.Create(iLabelInput));
+    iI := iI + 1;
+  end;
+
+  FreeAndNil(iIniFile);
+end;
+
+destructor  TGDScreen.Destroy();
+begin
+  inherited;
+  FreeAndNil(FComponents);
+end;
+
+procedure TGDScreen.Render();
+var
+  iI : Integer;
+begin
+  for iI := 0 to FComponents.Count - 1 do
+    (FComponents.Items[iI] as TGDComponent).Render();
+end;
 
 {******************************************************************************}
 {* Create the font class                                                      *}
@@ -339,21 +600,6 @@ Procedure TGDFont.Render( aLeft, aTop, aScale : Double; aString : string);
 var
   i, x, y, c, inwidth, inheight : integer;
   inleft, intop, inright, inbottom : Single;
-
-procedure RenderTexturedQuad(x,y,width,height: Single;
-                               u1 : Single=0; v1 : Single=0;
-                               u2 : Single=1; v2 : Single=0;
-                               u3 : Single=1; v3 : Single=1;
-                               u4 : Single=0; v4 : Single=1);
-begin
-  glBegin(GL_QUADS);
-    glTexCoord2f(u1, v1); glVertex2f( x,       y);
-    glTexCoord2f(u2, v2); glVertex2f( x+width, y);
-    glTexCoord2f(u3, v3); glVertex2f( x+width, y+height);
-    glTexCoord2f(u4, v4); glVertex2f( x,       y+height);
-  glEnd();
-end;
-
 begin
   FTexture.BindTexture(GL_TEXTURE0);
   glColor4fv(FColor.ArrayPointer());
@@ -426,16 +672,6 @@ procedure TGDMouseCursor.Render();
 var
  iCurPos     : TPoint;
 
-procedure RenderQuad(aX, aY, aWidth, aHeight : Integer);
-begin
-  glBegin(GL_QUADS);
-    glTexCoord2f(0.0, 1.0); glVertex2f(aX,  aY-aHeight);
-    glTexCoord2f(1.0, 1.0); glVertex2f(aX+aWidth, aY-aHeight);
-    glTexCoord2f(1.0, 0.0); glVertex2f(aX+aWidth, aY);
-    glTexCoord2f(0.0, 0.0); glVertex2f(aX, aY);
-  glEnd();
-end;
-
 procedure CalculateScreenPosition( aX, aY : Integer);
 var
   iViewPort   : TGLVectori4;
@@ -457,17 +693,19 @@ begin
 end;
 
 begin
+  Renderer.RenderState( RS_TEXTS );
   GetCursorPos(iCurPos);
   CalculateScreenPosition(iCurPos.X-Settings.Left, iCurPos.Y-Settings.Top);
+  glDisable(GL_BLEND);
 
   If ShowMouse or Console.Show then
   begin
+    Renderer.RenderState(RS_TEXTURE);
     FCursorTexture.BindTexture( GL_TEXTURE0 );
-    
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_BLEND);
     glColor4f(1,1,1,1);
-    RenderQuad(FPosition.x,FPosition.y,FCursorSize,FCursorSize);
+    RenderTexturedQuad(FPosition.x,FPosition.y,FCursorSize,FCursorSize);
     glDisable(GL_BLEND);
   end;
 end;
@@ -506,7 +744,6 @@ begin
   FY := aInput.Y;
   FBarOnly := false;
   FBarColor.Reset( aInput.BarR,  aInput.BarG,  aInput.BarB,  aInput.BarA);
-  FBackgroundColor.Reset( aInput.BackGroundR,  aInput.BackGroundG, aInput.BackGroundB, aInput.BackGroundA);
 end;
 
 {******************************************************************************}
@@ -516,7 +753,6 @@ end;
 procedure TGDLoadingScreen.Clear();
 begin
   FBarColor.Reset(1,1,1,1);
-  FBackgroundColor.Reset(1,1,1,1);
   FUse := true;
   FBarOnly := false;
   FMax  := 100;
@@ -558,6 +794,7 @@ var
   iProgress : Double;
   iPercent : Double;
 begin
+  glClearColor(0.0, 0.0, 0.0, 1.0);
   Renderer.MakeCurrent();
   Renderer.StartFrame();
   Renderer.SwitchToOrtho();
@@ -565,28 +802,11 @@ begin
   Renderer.RenderState( RS_COLOR );
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   glEnable(GL_BLEND);
-
-  glColor4fv( FBackgroundColor.ArrayPointer() );
-  glBegin(GL_QUADS);
-    glVertex2f(0, 0);
-    glVertex2f(R_HUDWIDTH, 0);
-    glVertex2f(R_HUDWIDTH, R_HUDHEIGHT);
-    glVertex2f(0, R_HUDHEIGHT);
-  glEnd();
-
   glPushMatrix();
   glTranslatef(FX, FY, 0);
 
   If Not(FBarOnly) then
-  begin
-    glColor4fv( GUI.FillColor.ArrayPointer );
-    glBegin(GL_QUADS);
-      glVertex2f( 600 ,0  );
-      glVertex2f( 600 ,100 );
-      glVertex2f( 0   ,100 );
-      glVertex2f( 0   ,0  );
-    glEnd;
-  end;
+    RenderFlatQuad(0, 0, 600, 100);
 
   iProgress := 580/FMax;
   iProgress := iProgress * FPosition;
@@ -597,23 +817,7 @@ begin
     glVertex2f(10 ,60 );
     glVertex2f(10 ,10 );
   glEnd;
-
-  glColor4fv( GUI.OutLineColor.ArrayPointer );
-  If Not(FBarOnly) then
-  begin
-    glBegin(GL_LINE_LOOP);
-      glVertex2f(600 ,0  );
-      glVertex2f(600 ,100 );
-      glVertex2f(0   ,100 );
-      glVertex2f(0   ,0  );
-    glEnd;
-  end;
-  glBegin(GL_LINE_LOOP);
-    glVertex2f(590 ,10 );
-    glVertex2f(590 ,60 );
-    glVertex2f(10  ,60 );
-    glVertex2f(10  ,10 );
-  glEnd;
+  RenderFlatQuad(10, 10, 580, 50, false);
 
   glPopMatrix();
   iPercent := (FPosition * 100) / FMax;
@@ -640,6 +844,7 @@ begin
   FFont          := TGDFont.Create();
   FMouseCursor   := TGDMouseCursor.Create();
   FLoadingScreen := TGDLoadingScreen.Create();
+  FScreens       := TObjectList.Create(true);
 end;
 
 {******************************************************************************}
@@ -651,6 +856,7 @@ begin
   FreeAndNil(FFont);
   FreeAndNil(FMouseCursor);
   FreeAndNil(FLoadingScreen);
+  FreeAndNil(FScreens);
 end;
 
 {******************************************************************************}
@@ -693,10 +899,6 @@ begin
   iLoadingInput.BarG := iIniFile.ReadFloat('Loading', 'BarG', 1);
   iLoadingInput.BarB := iIniFile.ReadFloat('Loading', 'BarB', 1);
   iLoadingInput.BarA := iIniFile.ReadFloat('Loading', 'BarA', 1);
-  iLoadingInput.BackGroundR := iIniFile.ReadFloat('Loading', 'BackGroundR', 1);
-  iLoadingInput.BackGroundG := iIniFile.ReadFloat('Loading', 'BackGroundG', 1);
-  iLoadingInput.BackGroundB := iIniFile.ReadFloat('Loading', 'BackGroundB', 1);
-  iLoadingInput.BackGroundA := iIniFile.ReadFloat('Loading', 'BackGroundA', 1);
   GUI.LoadingScreen.InitLoadingScreen( iLoadingInput );
 
   FreeAndNil(iIniFile);
@@ -712,6 +914,52 @@ begin
   FFont.Clear();
   FMouseCursor.Clear();
   FLoadingScreen.Clear();
+  FScreens.Clear();
+end;
+
+{******************************************************************************}
+{* Init screen                                                                *}
+{******************************************************************************}
+
+function TGDGUI.InitScreen(aFileName : String): TGDScreen;
+begin
+  result := TGDScreen.Create(aFileName);
+  FScreens.Add(result);
+end;
+
+{******************************************************************************}
+{* Get screen visible                                                         *}
+{******************************************************************************}
+
+function TGDGUI.ScreenGetVisible(aScreen : TGDScreen): Boolean;
+begin
+  result := aScreen.Visible;
+end;
+
+{******************************************************************************}
+{* Set screen visible                                                         *}
+{******************************************************************************}
+
+procedure TGDGUI.ScreenSetVisible(aScreen : TGDScreen; aVisible : Boolean);
+begin
+  aScreen.Visible := aVisible;
+end;
+
+{******************************************************************************}
+{* Set screen visible                                                         *}
+{******************************************************************************}
+
+procedure TGDGUI.RenderScreens();
+var
+  iI : Integer;
+  iScreen : TGDScreen;
+begin
+  for iI := 0 to FScreens.Count - 1 do
+  begin
+    iScreen := (FScreens.Items[iI] as TGDScreen);
+    if iScreen.Visible then
+      iScreen.Render();
+  end;
 end;
 
 end.

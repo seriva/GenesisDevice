@@ -2,7 +2,6 @@
 *                            Genesis Device Engine                             *
 *                   Copyright © 2007-2015 Luuk van Venrooij                    *
 *                        http://www.luukvanvenrooij.nl                         *
-*                         luukvanvenrooij84@gmail.com                          *
 ********************************************************************************
 *                                                                              *
 *  This file is part of the Genesis Device Engine.                             *
@@ -86,9 +85,7 @@ function  gdTimingInMilliSeconds() : String;
 function  gdTimingFrameTime() : Integer;
 
 //callback functions
-procedure gdCallBackSetInterfaceRenderer( aFunction : TGDProcEngineCallback );
-procedure gdCallBackSetBeforeRender( aFunction : TGDProcEngineCallback ); 
-procedure gdCallBackSetAfterRender( aFunction : TGDProcEngineCallback ); 
+procedure gdCallBackSetBeforeRender( aFunction : TGDProcEngineCallback );
 
 //loop functions
 procedure gdLoopMain();
@@ -113,14 +110,14 @@ procedure gdInputEnable( aEnable : boolean );
 procedure gdInputUseMouseLook( aUse : boolean );
 procedure gdInputRegisterAction(aType : TGDInputTypes; aKey : Integer ; aAction : TGDProcEngineCallback;  aConsoleDisabled : boolean );
 
-
 //gui functions
 procedure gdGUIMouseCursorShow(aShow : boolean); 
 function  gdGUIMouseCursorGetPosition() : TPoint;
 procedure gdGUILoadingScreenSetup( aProcessName : String; aMax : Integer ); 
 procedure gdGUILoadingScreenUpdate();
-procedure gdGUITextColor(aR,aG,aB : Double);
-procedure gdGUITextRender(aX,aY,aScale : Double; aText : String);
+function  gdGUIInitScreen(aFileName : String) : pointer;
+function  gdGUIScreenGetVisible(aPointer : pointer ): Boolean;
+procedure gdGUIScreenSetVisible(aPointer : pointer ; aVisible : Boolean);
 
 //camera functions
 procedure gdCameraSetPosition(aX,aY,aZ : double); 
@@ -136,12 +133,6 @@ procedure gdMapClear();
 function  gdMapTerrainHeight(aX, aZ : Double) : Double; 
 function  gdMapTerrainRotation(aX, aZ : Double) : TGDVector;
 function  gdMapWaterHeight(): Double;
-
-//texture functions
-function  gdTexturesLoad( aFileName : String ) : pointer; 
-procedure gdTexturesBind( aPointer : pointer; aTextureUnit : GLEnum );
-procedure gdTexturesClear(); 
-procedure gdTexturesRemove( aPointer : pointer );
 
 implementation
 
@@ -417,21 +408,30 @@ begin
 end;
 
 {******************************************************************************}
-{* Set text color                                                             *}
+{* Init a screen                                                              *}
 {******************************************************************************}
 
-procedure gdGUITextColor(aR,aG,aB : Double);
+function  gdGUIInitScreen(aFileName : String) : pointer;
 begin
-  GUI.Font.Color.Reset(aR,aG,aB, 1);
+  result := GUI.InitScreen(aFileName);
 end;
 
 {******************************************************************************}
-{* Render a text                                                              *}
+{* Get screen visible                                                         *}
 {******************************************************************************}
 
-procedure gdGUITextRender(aX,aY,aScale : Double; aText : String);
+function  gdGUIScreenGetVisible(aPointer : pointer ): Boolean;
 begin
-  GUI.Font.Render(aX,aY,aScale,aText);
+  result := TGDScreen(aPointer).Visible;
+end;
+
+{******************************************************************************}
+{* Set screen visible                                                         *}
+{******************************************************************************}
+
+procedure gdGUIScreenSetVisible(aPointer : pointer ; aVisible : Boolean);
+begin
+  TGDScreen(aPointer).Visible := aVisible;
 end;
 
 {******************************************************************************}
@@ -604,28 +604,10 @@ begin
 end;
 
 {******************************************************************************}
-{* Sets the RenderInterface callback function                                 *}
-{******************************************************************************}
-
-procedure gdCallBackSetInterfaceRenderer( aFunction : TGDProcEngineCallback ); 
-begin
-  RenderInterfaceCallBack := aFunction;
-end;
-
-{******************************************************************************}
 {* Sets the beforerender callback function                                    *}
 {******************************************************************************}
 
 procedure gdCallBackSetBeforeRender( aFunction : TGDProcEngineCallback ); 
-begin
-  AfterRenderCallBack := aFunction;
-end;
-
-{******************************************************************************}
-{* Sets the afterrender callback function                                     *}
-{******************************************************************************}
-
-procedure gdCallBackSetAfterRender( aFunction : TGDProcEngineCallback ); 
 begin
   BeforeRenderCallBack := aFunction;
 end;
@@ -698,49 +680,6 @@ end;
 function gdMapWaterHeight(): Double; 
 begin
   result := Water.WaterHeight;
-end;
-
-{******************************************************************************}
-{* Load a texture from a file and return the retrievel index                  *}
-{******************************************************************************}
-
-function gdTexturesLoad( aFileName : String ) : pointer; 
-var
-  iTempTexture : TGDTexture;
-begin
-  iTempTexture := TGDTexture.Create();
-  If Not(iTempTexture.InitTexture( aFileName, Settings.TextureDetail,
-          Settings.TextureFilter)) then exit;
-  TextureList.Add( iTempTexture );
-  result := iTempTexture;
-end;
-
-{******************************************************************************}
-{* Bind texture to a texture unit                                             *}
-{******************************************************************************}
-
-procedure gdTexturesBind(aPointer : pointer; aTextureUnit : GLEnum );
-begin
-  TGDTexture(aPointer).BindTexture(aTextureUnit); ;
-end;
-
-{******************************************************************************}
-{* remove a texture in the engine                                             *}
-{******************************************************************************}
-
-procedure gdTexturesRemove( aPointer : pointer ); 
-begin
-  TextureList.Remove(aPointer);
-  aPointer := nil
-end;
-
-{******************************************************************************}
-{* Bind texture to a texture unit                                             *}
-{******************************************************************************}
-
-procedure gdTexturesClear(); 
-begin
-  TextureList.Clear();
 end;
 
 end.

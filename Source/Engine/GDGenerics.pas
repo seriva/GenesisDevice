@@ -2,7 +2,6 @@
 *                            Genesis Device Engine                             *
 *                   Copyright © 2007-2015 Luuk van Venrooij                    *
 *                        http://www.luukvanvenrooij.nl                         *
-*                         luukvanvenrooij84@gmail.com                          *
 ********************************************************************************
 *                                                                              *
 *  This file is part of the Genesis Device Engine.                             *
@@ -38,9 +37,47 @@ uses
 
 type
   TGDUVCoordList = specialize TFPGList<TGDUVCoord>;
-  TGDVectorList = specialize TFPGList<TGDVector>;
+  TVectorList = specialize TFPGList<TGDVector>;
+  TGDVectorList = class (TVectorList)
+  public
+    function GenerateBoundingBox(): TGDBoundingBox;
+  end;
 
 implementation
+
+function TGDVectorList.GenerateBoundingBox(): TGDBoundingBox;
+var
+  iI : integer;
+  iVector : TGDVector;
+  iCenter : TGDVector;
+begin
+  for iI := 0 to Count-1 do iCenter.Add( Items[iI] );
+  iCenter.Devide( Count );
+  result.Min := iCenter.Copy();
+  result.Max := iCenter.Copy();
+
+  for iI := 0 to Count-1 do
+  begin
+    iVector := Items[iI].Copy();
+
+    If (iVector.X <=  result.Min.x) then
+       result.Min.x  := iVector.X
+    else If (iVector.X >=  result.Max.x) then
+            result.Max.x  := iVector.X;
+
+    If (iVector.Y <=  result.Min.Y) then
+       result.Min.Y  := iVector.Y
+    else If (iVector.Y >=  result.Max.Y) then
+            result.Max.Y  := iVector.Y;
+
+    If (iVector.Z <=  result.Min.Z) then
+       result.Min.Z  := iVector.Z
+    else If (iVector.Z >=  result.Max.Z) then
+            result.Max.Z  := iVector.Z;
+  end;
+
+  result.CalculateCenter();
+end;
 
 end.
 

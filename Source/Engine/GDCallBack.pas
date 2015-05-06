@@ -36,7 +36,8 @@ interface
 {******************************************************************************}
 
 uses
-  LCLIntf, LCLType, LMessages,
+  LCLIntf,
+  LCLType,
   SysUtils,
   dglOpenGL,
   GDConstants,
@@ -54,16 +55,12 @@ type
     constructor Create();
     destructor  Destroy(); override;
 
-    procedure RenderInterface();
     procedure BeforeRender();
-    procedure AfterRender();
   end;
 
 var
   CallBack                : TGDCallBack;
-  RenderInterfaceCallBack : TGDProcEngineCallback = nil;
   BeforeRenderCallBack    : TGDProcEngineCallback = nil;
-  AfterRenderCallBack     : TGDProcEngineCallback = nil;
 
 implementation
 
@@ -73,9 +70,7 @@ implementation
 
 constructor TGDCallBack.Create();
 begin
-  RenderInterfaceCallBack := nil;
   BeforeRenderCallBack := nil;
-  AfterRenderCallBack := nil;
 end;
 
 {******************************************************************************}
@@ -84,19 +79,7 @@ end;
 
 destructor  TGDCallBack.Destroy();
 begin
-  RenderInterfaceCallBack := nil;
   BeforeRenderCallBack := nil;
-  AfterRenderCallBack := nil;
-end;
-
-{******************************************************************************}
-{* Interface rendering callback                                               *}
-{******************************************************************************}
-
-procedure TGDCallBack.RenderInterface();
-begin
-  if (Assigned(RenderInterfaceCallBack) and Modes.RenderGUI) then
-      RenderInterfaceCallBack();
 end;
 
 {******************************************************************************}
@@ -107,16 +90,6 @@ procedure TGDCallBack.BeforeRender();
 begin
   if Assigned(BeforeRenderCallBack) then
       BeforeRenderCallBack();
-end;
-
-{******************************************************************************}
-{* After rendering callback                                                   *}
-{******************************************************************************}
-
-procedure TGDCallBack.AfterRender();
-begin
-  if Assigned(AfterRenderCallBack) then
-      AfterRenderCallBack();
 end;
 
 end.

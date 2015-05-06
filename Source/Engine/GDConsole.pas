@@ -194,6 +194,7 @@ procedure TGDConsole.Render();
 var
   iI,iJ,iX : Integer;
   iDT, iTime : Integer;
+  iHalf : Integer;
 begin
   If Not(FShow) then
   begin
@@ -212,24 +213,9 @@ begin
     FCursorTime := 0;
   end;
 
-  Renderer.RenderState( RS_COLOR );
-  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-  glEnable(GL_BLEND);
-
-  glColor4fv(GUI.FillColor.ArrayPointer());
-  glBegin(GL_QUADS);
-    glVertex2f(0, (R_HUDHEIGHT/2)-7);
-    glVertex2f(R_HUDWIDTH, (R_HUDHEIGHT/2)-7);
-    glVertex2f(R_HUDWIDTH, R_HUDHEIGHT);
-    glVertex2f(0, R_HUDHEIGHT);
-  glEnd;
-  glColor4fv(GUI.OutlineColor.ArrayPointer());
-  glBegin(GL_LINES);
-    glVertex2f(0,          (R_HUDHEIGHT/2)-7);
-    glVertex2f(R_HUDWIDTH, (R_HUDHEIGHT/2)-7);
-    glVertex2f(0,          (R_HUDHEIGHT/2)+25);
-    glVertex2f(R_HUDWIDTH, (R_HUDHEIGHT/2)+25);
-  glEnd;
+  iHalf := round(R_HUDHEIGHT/2);
+  RenderFlatQuad(0, iHalf-7, R_HUDWIDTH, iHalf+7, true, false);
+  RenderFlatQuad(-5, iHalf-7, R_HUDWIDTH+5, 32, false, true);
 
   Renderer.RenderState(RS_TEXTS);
   iJ := 0;

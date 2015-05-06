@@ -2,7 +2,6 @@
 *                            Genesis Device Engine                             *
 *                   Copyright © 2007-2015 Luuk van Venrooij                    *
 *                        http://www.luukvanvenrooij.nl                         *
-*                         luukvanvenrooij84@gmail.com                          *
 ********************************************************************************
 *                                                                              *
 *  This file is part of the Genesis Device Engine.                             *
@@ -161,25 +160,7 @@ begin
   FTriangleCount := SkyDome.TriangleCount + CellManager.TriangleCount;
   FOBJCount := CellManager.VisibleCells.Count + CellManager.VisibleWaterCells.Count;
 
-  Renderer.RenderState( RS_COLOR );
-  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-  glEnable(GL_BLEND);
-
-  glColor4fv(GUI.FillColor.ArrayPointer());
-  glBegin(GL_QUADS);
-    glVertex2f(20, 215);
-    glVertex2f(20, 25);
-    glVertex2f(400, 25);
-    glVertex2f(400, 215);
-  glEnd;
-  glColor4fv(GUI.OutlineColor.ArrayPointer());
-  glBegin(GL_LINE_LOOP);
-    glVertex2f(400, 25);
-    glVertex2f(400, 215);
-    glVertex2f(20, 215);
-    glVertex2f(20, 25);
-  glEnd;
-
+  RenderFlatQuad(20, 20, 375, 195);
   Renderer.RenderState( RS_TEXTS );
   GUI.Font.Color := GUI.FontColor.Copy();
   GUI.Font.Render(25,215-32,0.4,'FPS');

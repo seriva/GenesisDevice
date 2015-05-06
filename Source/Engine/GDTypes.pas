@@ -2,7 +2,6 @@
 *                            Genesis Device Engine                             *
 *                   Copyright © 2007-2015 Luuk van Venrooij                    *
 *                        http://www.luukvanvenrooij.nl                         *
-*                         luukvanvenrooij84@gmail.com                          *
 ********************************************************************************
 *                                                                              *
 *  This file is part of the Genesis Device Engine.                             *
@@ -33,6 +32,7 @@ unit GDTypes;
 {* - Matrix                                                                   *}
 {* - Triangle                                                                 *}
 {* - Quad                                                                     *}
+{* - BoundingBox                                                              *}
 {******************************************************************************}
 
 interface
@@ -176,6 +176,23 @@ type
 
     procedure   Render();
   end;
+
+{******************************************************************************}
+{* Axis aligned bounding box class                                            *}
+{******************************************************************************}
+
+    TGDBoundingBox = record
+      Min : TGDVector;
+      Max : TGDVector;
+      Center : TGDVector;
+
+      procedure CalculateCenter();
+
+      function  BoxInsideBox( aBoundingBox : TGDBoundingBox ) : boolean;
+      function  PointInsideBox( aV : TGDVector ) : boolean;
+
+      procedure RenderWireFrame();
+    end;
 
 implementation
 
@@ -928,6 +945,78 @@ begin
     glMultiTexCoord2f(GL_TEXTURE0, 0.0, 0.0);
     glVertex3fv(V3.ArrayPointer);
   glEnd();
+end;
+
+{******************************************************************************}
+{* Check if a AABB is inside another AABB                                     *}
+{******************************************************************************}
+
+function TGDBoundingBox.BoxInsideBox( aBoundingBox : TGDBoundingBox ) : boolean;
+begin
+  If (Min.X <= aBoundingBox.Min.X) and (Min.Y <= aBoundingBox.Min.Y) and (Min.Z <= aBoundingBox.Min.Z) and
+     (Max.X >= aBoundingBox.Max.X) and (Max.Y >= aBoundingBox.Max.Y) and (Max.Z >= aBoundingBox.Max.Z) then
+    result := true
+  else
+    result := false;
+end;
+
+{******************************************************************************}
+{* Check if a point is inside the AABB                                        *}
+{******************************************************************************}
+
+function  TGDBoundingBox.PointInsideBox( aV : TGDVector ) : boolean;
+begin
+  If (Min.X <= aV.X) and (Min.Y <= aV.Y) and (Min.Z <= aV.Z) and
+     (Max.X >= aV.X) and (Max.Y >= aV.Y) and (Max.Z >= aV.Z) then
+    result := true
+  else
+    result := false;
+end;
+
+{******************************************************************************}
+{* Calculate the center of the AABB using the MIN and the MAX points          *}
+{******************************************************************************}
+
+procedure TGDBoundingBox.CalculateCenter();
+begin
+ Center := Max.Copy;
+ Center.Add(Min);
+ Center.Devide(2);
+end;
+
+{******************************************************************************}
+{* Render the AABB wireframe                                                  *}
+{******************************************************************************}
+
+procedure TGDBoundingBox.RenderWireFrame();
+begin
+  glBegin(GL_LINE_LOOP);
+    glVertex3f( Max.x, Max.y, Max.Z  );
+    glVertex3f( Min.x, Max.y, Max.Z  );
+    glVertex3f( Min.x, Max.y, Min.Z  );
+    glVertex3f( Max.x, Max.y, Min.Z  );
+  glEnd;
+
+  glBegin(GL_LINE_LOOP);
+    glVertex3f( Max.x, Min.y, Max.Z  );
+    glVertex3f( Min.x, Min.y, Max.Z  );
+    glVertex3f( Min.x, Min.y, Min.Z  );
+    glVertex3f( Max.x, Min.y, Min.Z  );
+  glEnd;
+
+  glBegin(GL_LINES);
+    glVertex3f( Max.x, Max.y, Max.Z  );
+    glVertex3f( Max.x, Min.y, Max.Z  );
+
+    glVertex3f( Min.x, Max.y, Min.Z  );
+    glVertex3f( Min.x, Min.y, Min.Z  );
+
+    glVertex3f( Min.x, Max.y, Max.Z  );
+    glVertex3f( Min.x, Min.y, Max.Z  );
+
+    glVertex3f( Max.x, Max.y, Min.Z  );
+    glVertex3f( Max.x, Min.y, Min.Z  );
+  glEnd;
 end;
 
 end.

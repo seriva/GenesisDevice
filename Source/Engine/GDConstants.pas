@@ -2,7 +2,6 @@
 *                            Genesis Device Engine                             *
 *                   Copyright © 2007-2015 Luuk van Venrooij                    *
 *                        http://www.luukvanvenrooij.nl                         *
-*                         luukvanvenrooij84@gmail.com                          *
 ********************************************************************************
 *                                                                              *
 *  This file is part of the Genesis Device Engine.                             *
@@ -61,7 +60,7 @@ const
   TWaterReflection : array[1..2] of String  = ('Terrain Only', 'All');
 
   //engine constants
-  ENGINE_INFO     = '69 - 5 May 2015';
+  ENGINE_INFO     = '70 - 6 May 2015';
 
   //renderer constants
   R_HUDWIDTH             = 1600;

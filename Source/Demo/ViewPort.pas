@@ -2,7 +2,6 @@
 *                            Genesis Device Engine                             *
 *                   Copyright © 2007-2015 Luuk van Venrooij                    *
 *                        http://www.luukvanvenrooij.nl                         *
-*                         luukvanvenrooij84@gmail.com                          *
 ********************************************************************************
 *                                                                              *
 *  This file is part of the Genesis Device Engine.                             *
@@ -62,7 +61,6 @@ type
     procedure ApplicationEventsIdle(Sender: TObject; var Done: Boolean);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormKeyPress(Sender: TObject; var Key: Char);
-    procedure FormClick(Sender: TObject);
   private
   public
   end;
@@ -72,8 +70,7 @@ implementation
 {$R *.lfm}
 
 uses
-  Configuration,
-  CallBack;
+  Configuration;
 
 {******************************************************************************}
 {* Form create                                                                *}
@@ -153,9 +150,6 @@ begin
   ConfigurationForm.SettingsToInterface();
   Application.Title := 'Configuration';
   ConfigurationForm.Caption := 'Configuration';
-  
-  //clear the callbackfuntions
-  ClearCallBackFunctions();
 
   //clear the gameresources
   ClearGame();
@@ -215,16 +209,6 @@ procedure TViewPortForm.FormKeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 begin
   gdConsoleControl(Key);
-end;
-
-{******************************************************************************}
-{* Do the onclick event here because the engine doesnt supports it jet        *}
-{******************************************************************************}
-
-procedure TViewPortForm.FormClick(Sender: TObject);
-begin
-  If Intro.CheckInsideButton() then
-     Intro.ToggleIntroText();
 end;
 
 {******************************************************************************}

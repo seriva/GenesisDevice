@@ -2,7 +2,6 @@
 *                            Genesis Device Engine                             *
 *                   Copyright © 2007-2015 Luuk van Venrooij                    *
 *                        http://www.luukvanvenrooij.nl                         *
-*                         luukvanvenrooij84@gmail.com                          *
 ********************************************************************************
 *                                                                              *
 *  This file is part of the Genesis Device Engine.                             *
@@ -90,8 +89,6 @@ type
     procedure InitFrameBuffers();
     procedure ClearFrameBuffers();
     Procedure ResizeFrameBuffers();
-
-    procedure RenderQuad();
   public
     property    TerrainShader  : TGDGLShader read FTerrainShader;
     property    SkyShader      : TGDGLShader read FSkyShader;
@@ -115,21 +112,15 @@ type
     procedure   ResizeViewPort();
 
     procedure   RenderState( aState : TGDRenderState );
+
     procedure   StartFrame();
     procedure   EndFrame();
     function    MakeCurrent() : boolean;
     procedure   SwitchToOrtho();
     procedure   SwitchToPerspective();
     procedure   VerticalSync();
-    function    CheckUsePostProcessing(): boolean;
-    procedure   StartRenderSource();
-    procedure   EndRenderSource();
-    procedure   StartRenderUnderWaterSource();
-    procedure   EndRenderUnderWaterSource();
-    procedure   StartRenderBloom();
-    procedure   EndRenderBloom();
-    procedure   ApplyBlurToImage( aSourceImage : TGDTexture; aBlurStrength : double );
-    procedure   RenderFinal();
+
+    procedure   Render();
   end;
 
 var
@@ -139,7 +130,16 @@ implementation
 
 uses
   GDMain,
-  GDWater;
+  GDCamera,
+  GDWater,
+  GDCellManager,
+  GDSkyDome,
+  GDFrustum,
+  GDStatistics,
+  GDGUI,
+  GDFog,
+  GDCallBack,
+  GDOctree;
 
 {******************************************************************************}
 {* Create the renderer class                                                  *}
@@ -627,23 +627,13 @@ begin
    end;
 end;
 
-{******************************************************************************}
-{* Check if post processing is used al together                               *}
-{******************************************************************************}
-
-function TGDRenderer.CheckUsePostProcessing(): boolean;
-begin
-  If ((Settings.UseBloom) or (Water.UnderWater) ) then
-    result := true
-  else
-    result := false;
-end;
+procedure TGDRenderer.Render();
 
 {******************************************************************************}
 {* Render the screen quad for post processing                                 *}
 {******************************************************************************}
 
-procedure TGDRenderer.RenderQuad();
+procedure RenderQuad();
 begin
   glBegin(GL_QUADS);
     glTexCoord2f(0, 0);   glVertex2f(-1, -1);
@@ -654,113 +644,10 @@ begin
 end;
 
 {******************************************************************************}
-{* Start the rendering of the source image                                    *}
-{******************************************************************************}
-
-procedure TGDRenderer.StartRenderSource();
-begin
-  FFrameBuffer.Bind();
-  FFrameBuffer.AttachTexture(FSourceImage1,GL_COLOR_ATTACHMENT0_EXT,GL_TEXTURE_2D);
-  FFrameBuffer.AttachRenderBufferObject(FRenderBuffer1,GL_DEPTH_ATTACHMENT_EXT);
-  FFrameBuffer.Status();
-  glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT);
-end;
-
-{******************************************************************************}
-{* End the rendering of the source image                                      *}
-{******************************************************************************}
-
-procedure TGDRenderer.EndRenderSource();
-begin
-  FFrameBuffer.UnBind();
-end;
-
-{******************************************************************************}
-{* Start the rendering of the underwater source image                         *}
-{******************************************************************************}
-
-procedure TGDRenderer.StartRenderUnderWaterSource();
-begin
-  FFrameBuffer.Bind();
-  FFrameBuffer.AttachTexture(FSourceImage1,GL_COLOR_ATTACHMENT0_EXT,GL_TEXTURE_2D);
-  FFrameBuffer.AttachRenderBufferObject(FRenderBuffer1,GL_DEPTH_ATTACHMENT_EXT);
-  FFrameBuffer.Status();
-  glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT);
-end;
-
-{******************************************************************************}
-{* End the rendering of the underwater source image                           *}
-{******************************************************************************}
-
-procedure TGDRenderer.EndRenderUnderWaterSource();
-begin
-  FFrameBuffer.UnBind();
-  ApplyBlurToImage( FSourceImage1, 3 );
-
-  glDisable(GL_DEPTH_TEST);
-  glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT);
-  FFrameBuffer.Bind();
-  FFrameBuffer.AttachRenderBufferObject(FRenderBuffer1, GL_DEPTH_ATTACHMENT_EXT);
-  FFrameBuffer.AttachTexture(FSourceImage2,GL_COLOR_ATTACHMENT0_EXT,GL_TEXTURE_2D);
-  FFrameBuffer.Status();
-
-  CopyShader.Enable();
-  CopyShader.SetInt('T_SOURCE_IMAGE',0);
-  FVerticalBlurImage.BindTexture( GL_TEXTURE0 );
-  RenderQuad();
-  CopyShader.Disable();
-
-  FFrameBuffer.Unbind();
-  glEnable(GL_DEPTH_TEST);
-end;
-
-{******************************************************************************}
-{* Start the rendering of the bloom image                                     *}
-{******************************************************************************}
-
-procedure TGDRenderer.StartRenderBloom();
-begin
-  FFrameBuffer.Bind();
-  FFrameBuffer.AttachTexture(FBloomImage,GL_COLOR_ATTACHMENT0_EXT,GL_TEXTURE_2D);
-  FFrameBuffer.AttachRenderBufferObject(FRenderBuffer1,GL_DEPTH_ATTACHMENT_EXT);
-  FFrameBuffer.Status();
-  glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT);
-end;
-
-{******************************************************************************}
-{* End the rendering of the bloom image                                       *}
-{******************************************************************************}
-
-procedure TGDRenderer.EndRenderBloom();
-begin
-  FFrameBuffer.UnBind();
-  ApplyBlurToImage( FBloomImage, 1.5 );
-
-  glDisable(GL_DEPTH_TEST);
-  glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT);
-  BloomMixShader.Enable();
-  BloomMixShader.SetInt('T_SOURCE_IMAGE',0);
-  BloomMixShader.SetInt('T_BLUR_IMAGE',1);
-  BloomMixShader.SetFloat('I_BLOOM_STENGTH',FBloomStrengh);
-  FFrameBuffer.Bind();
-  FFrameBuffer.AttachRenderBufferObject(FRenderBuffer1, GL_DEPTH_ATTACHMENT_EXT);
-  FFrameBuffer.AttachTexture(FSourceImage2,GL_COLOR_ATTACHMENT0_EXT,GL_TEXTURE_2D);
-  FFrameBuffer.Status();
-
-  FSourceImage1.BindTexture( GL_TEXTURE0 );
-  FVerticalBlurImage.BindTexture( GL_TEXTURE1 );
-  RenderQuad();
-
-  FFrameBuffer.Unbind();
-  BloomMixShader.Disable();
-  glEnable(GL_DEPTH_TEST);
-end;
-
-{******************************************************************************}
 {* Apply blur to a source image                                               *}
 {******************************************************************************}
 
-procedure TGDRenderer.ApplyBlurToImage( aSourceImage : TGDTexture; aBlurStrength : double );
+procedure ApplyBlurToImage( aSourceImage : TGDTexture; aBlurStrength : double );
 begin
   glViewport(0, 0, Settings.Width div 4, Settings.Height div 4);
   glDisable(GL_DEPTH_TEST);
@@ -793,10 +680,166 @@ begin
 end;
 
 {******************************************************************************}
+{* Render debug                                                               *}
+{******************************************************************************}
+
+Procedure RenderDebug();
+begin
+  glLoadIdentity();
+  Camera.Translate();
+  RenderState( RS_COLOR );
+  If Modes.RenderNormals     then CellManager.RenderVisibleCells( RA_NORMALS, RF_NORMAL );
+  If Modes.RenderObjectBoxes then CellManager.RenderVisibleCells( RA_FRUSTUM_BOXES, RF_NORMAL );
+  If Modes.RenderNodeBoxes   then Octree.RenderTreeBoxes();
+end;
+
+{******************************************************************************}
+{* Render water reflections                                                   *}
+{******************************************************************************}
+
+procedure RenderWaterReflection();
+begin
+  If (Modes.RenderWireframe = false) and Water.Visible() then
+  begin
+    //render reflection texture
+    StartFrame();
+    Camera.Translate();
+    Water.StartReflection();
+    If Modes.RenderSky then SkyDome.Render();
+    Frustum.CalculateFrustum();
+    CellManager.DetectVisibleCells();
+    CellManager.RenderVisibleCells( RA_NORMAL, RF_WATER );
+    Water.EndReflection();
+  end;
+end;
+
+{******************************************************************************}
+{* Render GUI                                                               *}
+{******************************************************************************}
+
+procedure RenderGUI();
+begin
+  SwitchToOrtho();
+    If Modes.RenderWireframe = false then Water.RenderUnderWater();
+    GUI.RenderScreens();
+    If Modes.RenderStats then Statistics.Render();
+    Console.Render();
+    GUI.MouseCursor.Render();
+  SwitchToPerspective();
+end;
+
+{******************************************************************************}
+{* Render static geometry                                                     *}
+{******************************************************************************}
+
+Procedure RenderStaticGeometry();
+begin
+ //Render sky
+ FogManager.UseDistanceFog();
+ SkyDome.Render();
+
+ //Set the right fog type
+ If not(Camera.Position.Y > Water.WaterHeight) then
+   FogManager.UseWaterFog();
+
+ //Render other cells.
+ CellManager.RenderVisibleCells( RA_NORMAL, RF_NORMAL );
+end;
+
+{******************************************************************************}
+{* Render source image                                                        *}
+{******************************************************************************}
+
+procedure RenderSourceImage();
+begin
+  FFrameBuffer.Bind();
+  FFrameBuffer.AttachTexture(FSourceImage1,GL_COLOR_ATTACHMENT0_EXT,GL_TEXTURE_2D);
+  FFrameBuffer.AttachRenderBufferObject(FRenderBuffer1,GL_DEPTH_ATTACHMENT_EXT);
+  FFrameBuffer.Status();
+  glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT);
+
+  RenderStaticGeometry();
+
+  FFrameBuffer.UnBind();
+end;
+
+{******************************************************************************}
+{* Render underwater source image                                             *}
+{******************************************************************************}
+
+procedure RenderUnderWaterSourceImage();
+begin
+  FFrameBuffer.Bind();
+  FFrameBuffer.AttachTexture(FSourceImage1,GL_COLOR_ATTACHMENT0_EXT,GL_TEXTURE_2D);
+  FFrameBuffer.AttachRenderBufferObject(FRenderBuffer1,GL_DEPTH_ATTACHMENT_EXT);
+  FFrameBuffer.Status();
+  glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT);
+
+  RenderStaticGeometry();
+
+  FFrameBuffer.UnBind();
+  ApplyBlurToImage( FSourceImage1, 3 );
+
+  glDisable(GL_DEPTH_TEST);
+  glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT);
+  FFrameBuffer.Bind();
+  FFrameBuffer.AttachRenderBufferObject(FRenderBuffer1, GL_DEPTH_ATTACHMENT_EXT);
+  FFrameBuffer.AttachTexture(FSourceImage2,GL_COLOR_ATTACHMENT0_EXT,GL_TEXTURE_2D);
+  FFrameBuffer.Status();
+
+  CopyShader.Enable();
+  CopyShader.SetInt('T_SOURCE_IMAGE',0);
+  FVerticalBlurImage.BindTexture( GL_TEXTURE0 );
+  RenderQuad();
+  CopyShader.Disable();
+
+  FFrameBuffer.Unbind();
+  glEnable(GL_DEPTH_TEST);
+end;
+
+{******************************************************************************}
+{* Render bloom image                                                         *}
+{******************************************************************************}
+
+procedure RenderBloomImage();
+begin
+  FFrameBuffer.Bind();
+  FFrameBuffer.AttachTexture(FBloomImage,GL_COLOR_ATTACHMENT0_EXT,GL_TEXTURE_2D);
+  FFrameBuffer.AttachRenderBufferObject(FRenderBuffer1,GL_DEPTH_ATTACHMENT_EXT);
+  FFrameBuffer.Status();
+  glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT);
+
+  If Modes.RenderSky then SkyDome.Render();
+  CellManager.RenderVisibleCells( RA_NORMAL, RF_BLOOM );
+
+  FFrameBuffer.UnBind();
+  ApplyBlurToImage( FBloomImage, 1.5 );
+
+  glDisable(GL_DEPTH_TEST);
+  glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT);
+  BloomMixShader.Enable();
+  BloomMixShader.SetInt('T_SOURCE_IMAGE',0);
+  BloomMixShader.SetInt('T_BLUR_IMAGE',1);
+  BloomMixShader.SetFloat('I_BLOOM_STENGTH',FBloomStrengh);
+  FFrameBuffer.Bind();
+  FFrameBuffer.AttachRenderBufferObject(FRenderBuffer1, GL_DEPTH_ATTACHMENT_EXT);
+  FFrameBuffer.AttachTexture(FSourceImage2,GL_COLOR_ATTACHMENT0_EXT,GL_TEXTURE_2D);
+  FFrameBuffer.Status();
+
+  FSourceImage1.BindTexture( GL_TEXTURE0 );
+  FVerticalBlurImage.BindTexture( GL_TEXTURE1 );
+  RenderQuad();
+
+  FFrameBuffer.Unbind();
+  BloomMixShader.Disable();
+  glEnable(GL_DEPTH_TEST);
+end;
+
+{******************************************************************************}
 {* Render the final source image                                              *}
 {******************************************************************************}
 
-procedure TGDRenderer.RenderFinal();
+procedure RenderFinal();
 begin
   glDisable(GL_DEPTH_TEST);
   glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT);
@@ -827,6 +870,60 @@ begin
 
   FinalShader.Disable();
   glEnable(GL_DEPTH_TEST);
+end;
+
+begin
+  //make renderer current
+  MakeCurrent();
+
+  //create the water reflection texture
+  RenderWaterReflection();
+
+  //detect the visibel objects
+  glLoadIdentity();
+  Camera.Translate();
+  Frustum.CalculateFrustum();
+  CellManager.DetectVisibleCells();
+
+  //set the current rendermode
+  if not(Modes.RenderWireframe) then
+  begin
+    FogManager.FogShader.ApplyFog();
+
+    //check if where underwater
+    if Water.UnderWater() then
+    begin
+      //render the underwater source image
+      RenderUnderWaterSourceImage();
+    end
+    else
+    begin
+      //render the source image
+      RenderSourceImage();
+
+      //render bloom image and apply bloom shader
+      If Settings.UseBloom then RenderBloomImage();
+    end;
+
+    //render the final image
+    StartFrame();
+    RenderFinal();
+  end
+  else
+  begin
+    RenderState( RS_WIREFRAME );
+    StartFrame();
+    Camera.Translate();
+    SkyDome.Render();
+    CellManager.RenderVisibleCells( RA_NORMAL, RF_NORMAL );
+  end;
+
+  //render debug and ortho stuff
+  RenderDebug();
+  RenderGUI();
+
+  //end the frame and increment the framecounter
+  EndFrame();
 end;
 
 end.

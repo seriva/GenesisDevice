@@ -2,7 +2,6 @@
 *                            Genesis Device Engine                             *
 *                   Copyright © 2007-2015 Luuk van Venrooij                    *
 *                        http://www.luukvanvenrooij.nl                         *
-*                         luukvanvenrooij84@gmail.com                          *
 ********************************************************************************
 *                                                                              *
 *  This file is part of the Genesis Device Engine.                             *
@@ -71,6 +70,8 @@ type
 
     function  InitMap( aFileName : String ) : boolean;
     procedure Clear();
+
+    procedure Update();
   end;
 
 var
@@ -299,7 +300,7 @@ begin
     begin
       iString := 'TreeType' + IntToStr(iI);
 
-      iTreeTypeInput.Model        := iIniFile.ReadString( iString, 'Model', '');
+      iTreeTypeInput.Model           := iIniFile.ReadString( iString, 'Model', '');
       iTreeTypeInput.StartScale      := iIniFile.ReadFloat( iString, 'StartScale', 100 );
       iTreeTypeInput.StartRotationX  := iIniFile.ReadFloat( iString, 'StartRotationX', 0 );
       iTreeTypeInput.StartRotationY  := iIniFile.ReadFloat( iString, 'StartRotationY', 0 );
@@ -365,5 +366,15 @@ begin
   MaterialList.Clear();
   DirectionalLight.Clear();
 end;
+
+{******************************************************************************}
+{* Update the map                                                             *}
+{******************************************************************************}
+
+procedure TGDMap.Update();
+begin
+  Water.Update();
+end;
+
 
 end.

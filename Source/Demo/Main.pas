@@ -2,7 +2,6 @@
 *                            Genesis Device Engine                             *
 *                   Copyright © 2007-2015 Luuk van Venrooij                    *
 *                        http://www.luukvanvenrooij.nl                         *
-*                         luukvanvenrooij84@gmail.com                          *
 ********************************************************************************
 *                                                                              *
 *  This file is part of the Genesis Device Engine.                             *
@@ -32,10 +31,14 @@ unit Main;
 interface
 
 uses
+  GDConstants,
   SysUtils,
-  Intro,
+  LCLIntf,
+  LCLType,
+  Forms,
+  ExtCtrls,
+  Controls,
   Player,
-  Sounds,
   GDInterface;
 
 var
@@ -47,9 +50,15 @@ var
   Clip       : boolean;
 
   //main classes
-  Intro      : TIntro;
   Player     : TPlayer;
-  Sounds     : TSounds;
+
+  //Sounds
+  AmbientId    : pointer;
+  UnderWaterId : pointer;
+  MusicId      : pointer;
+
+  //Screens
+  IntroId    : pointer;
 
 procedure InitGame();
 procedure ClearGame();
@@ -60,12 +69,178 @@ uses
   Configuration;
 
 {******************************************************************************}
+{* Exit thee engine                                                           *}
+{******************************************************************************}
+
+procedure ExitCallback();
+begin
+  Configuration.ViewPortForm.Close();
+end;
+
+{******************************************************************************}
+{* Move the player forward                                                    *}
+{******************************************************************************}
+
+procedure PlayerForward();
+begin
+  if not(gdGUIScreenGetVisible(IntroId)) then
+    Player.MoveForward();
+end;
+
+{******************************************************************************}
+{* Move the player backwards                                                  *}
+{******************************************************************************}
+
+procedure PlayerBackward();
+begin
+  if not(gdGUIScreenGetVisible(IntroId)) then
+    Player.MoveBackWard();
+end;
+
+{******************************************************************************}
+{* Move the player right                                                      *}
+{******************************************************************************}
+
+procedure PlayerRight();
+begin
+  if not(gdGUIScreenGetVisible(IntroId)) then
+    Player.MoveRight();
+end;
+
+{******************************************************************************}
+{* Move the player left                                                       *}
+{******************************************************************************}
+
+procedure PlayerLeft();
+begin
+  if not(gdGUIScreenGetVisible(IntroId)) then
+    Player.MoveLeft();
+end;
+
+{******************************************************************************}
+{* Set the walkspeed                                                          *}
+{******************************************************************************}
+
+procedure SetWalk();
+begin
+  if not(gdGUIScreenGetVisible(IntroId)) then
+    Player.Walk();
+end;
+
+{******************************************************************************}
+{* Set the runspeed                                                           *}
+{******************************************************************************}
+
+procedure SetRun();
+begin
+  if not(gdGUIScreenGetVisible(IntroId)) then
+    PLayer.Run();
+end;
+
+{******************************************************************************}
+{* Bool to string                                                             *}
+{******************************************************************************}
+
+function BoolToStr(b : boolean): String;
+begin
+  If b then
+    result := '1'
+  else
+    result := '0';
+end;
+
+{******************************************************************************}
+{* Toggle the stats                                                           *}
+{******************************************************************************}
+
+procedure ToggleStats();
+begin
+  Stats := not(Stats);
+  gdConsoleCommand('RStats ' + BoolToStr(Stats));
+end;
+
+{******************************************************************************}
+{* Toggle wireframe rendering                                                 *}
+{******************************************************************************}
+
+procedure ToggleWireFrame();
+begin
+  WireFrame := not(WireFrame);
+  gdConsoleCommand('RTris ' + BoolToStr(WireFrame));
+end;
+
+{******************************************************************************}
+{* Toggle the octree nodes                                                    *}
+{******************************************************************************}
+
+procedure ToggleOctreeNodes(); stdcall;
+begin
+  TreeNodes := not(TreeNodes);
+  gdConsoleCommand('RNodes ' + BoolToStr(TreeNodes));
+end;
+
+{******************************************************************************}
+{* Toggle the OBJ boxes                                                       *}
+{******************************************************************************}
+
+procedure ToggleOBJBoxes(); stdcall;
+begin
+  ObjBoxes := not(ObjBoxes);
+  gdConsoleCommand('RAABB ' + BoolToStr(ObjBoxes));
+end;
+
+{******************************************************************************}
+{* Toggle the collision                                                       *}
+{******************************************************************************}
+
+procedure ToggleClipping();
+begin
+  Clip := not(Clip);
+end;
+
+{******************************************************************************}
+{* Toggle the intro text                                                      *}
+{******************************************************************************}
+
+procedure ToggleIntroText();
+begin
+  gdGUIScreenSetVisible(IntroId, not(gdGUIScreenGetVisible(IntroId)));
+  gdInputUseMouseLook(not(gdGUIScreenGetVisible(IntroId)));
+  gdGUIMouseCursorShow(gdGUIScreenGetVisible(IntroId));
+end;
+
+{******************************************************************************}
+{* Beforce render callback                                                    *}
+{******************************************************************************}
+
+procedure BeforeRender();
+begin
+  //do soms sound stuff
+  if Player.PlayerUnderWater() then
+  begin
+    gdSoundResume( UnderWaterID );
+    gdSoundPause( AmbientId);
+  end
+  else
+  begin
+    gdSoundPause( UnderWaterID);
+    gdSoundResume( AmbientID);
+  end;
+
+  If (ViewPortForm.Focused = False) or (ViewPortForm.WindowState = wsMinimized) then
+    Sleep(50);
+
+  //calculate player collision and response
+  Player.DoPlayerCollisionAndPhysics();
+end;
+
+{******************************************************************************}
 {* Init the main                                                              *}
 {******************************************************************************}
 
 procedure InitGame();
 begin
-  //initialize the resources
+  //initialize game vars
   Stats      := false;
   WireFrame  := false;
   TreeNodes  := false;
@@ -76,24 +251,54 @@ begin
   gdTimingStart();
   gdGUILoadingScreenSetup( 'Loading game...', 3);
   gdConsoleLog('......Initializing game resources');
-  //intro
-  Intro   := TIntro.Create();
-  Intro.InitializeIntro('Ini\Intro.ini');
-  gdGUILoadingScreenUpdate();
+
   //sounds
-  Sounds  := TSounds.Create();
-  Sounds.InitializeSounds( 'Ini\Sounds.ini' );
+  AmbientId    := gdSoundLoad( 'Sounds\ambient.wav', ST_LOOP);
+  UnderWaterId := gdSoundLoad( 'Sounds\underwater.wav', ST_LOOP);
+  //MusicId     := gdSoundLoad( 'Sounds\music.mp3', ST_LOOP);
+  gdSoundPlay(AmbientId);
+  gdSoundPause(AmbientId);
+  gdSoundPlay(UnderWaterId);
+  gdSoundPause(UnderWaterId);
+  //gdSoundPlay( FMusicId );
   gdGUILoadingScreenUpdate();
+
+  //intro
+  IntroId := gdGUIInitScreen('Ini\Intro.ini');
+  gdGUILoadingScreenUpdate();
+
   //player
   Player  := TPlayer.Create();
   gdGUILoadingScreenUpdate();
   gdTimingStop();
   gdConsoleLog( PChar('......Done initializing game resources (' + gdTimingInSeconds() + ' Sec)') );
 
-  //load the gameworld
+  //map
   gdMapLoad( PChar( 'Maps\' + ConfigurationForm.Map + '\map.ini') );
 
+  //final settings.
+  gdGUIScreenSetVisible(IntroId, true);
   gdInputEnable(true);
+  gdGUIMouseCursorShow(true);
+  gdInputUseMouseLook(false);
+
+  //main callback functions
+  gdCallBackSetBeforeRender( @BeforeRender );
+
+  //input funtions
+  gdInputRegisterAction(IT_SINGLE,VK_ESCAPE,@ExitCallback, false );
+  gdInputRegisterAction(IT_DIRECT,VK_W,@PlayerForward, true );
+  gdInputRegisterAction(IT_DIRECT,VK_S,@PlayerBackward, true );
+  gdInputRegisterAction(IT_DIRECT,VK_A,@PlayerLeft, true );
+  gdInputRegisterAction(IT_DIRECT,VK_D,@PlayerRight, true );
+  gdInputRegisterAction(IT_DOWN,VK_LSHIFT,@SetRun, true );
+  gdInputRegisterAction(IT_UP,VK_LSHIFT,@SetWalk, true );
+  gdInputRegisterAction(IT_SINGLE,VK_F1,@ToggleStats, false  );
+  gdInputRegisterAction(IT_SINGLE,VK_F2,@ToggleWireFrame, false  );
+  gdInputRegisterAction(IT_SINGLE,VK_F3,@ToggleOctreeNodes, false  );
+  gdInputRegisterAction(IT_SINGLE,VK_F4,@ToggleOBJBoxes, false  );
+  gdInputRegisterAction(IT_SINGLE,VK_F5,@ToggleClipping, false  );
+  gdInputRegisterAction(IT_SINGLE,VK_P,@ToggleIntroText, true  );
 end;
 
 {******************************************************************************}
@@ -102,9 +307,11 @@ end;
 
 procedure ClearGame();
 begin
-  FreeAndNil(Intro);
   FreeAndNil(Player);
-  FreeAndNil(Sounds);
+  gdSoundRemove(AmbientId);
+  gdSoundRemove(UnderWaterId);
+  //gdSoundRemove(MusicId);
+  gdCallBackSetBeforeRender( nil );
 end;
 
 end.

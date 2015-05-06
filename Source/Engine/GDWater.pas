@@ -2,7 +2,6 @@
 *                            Genesis Device Engine                             *
 *                   Copyright © 2007-2015 Luuk van Venrooij                    *
 *                        http://www.luukvanvenrooij.nl                         *
-*                         luukvanvenrooij84@gmail.com                          *
 ********************************************************************************
 *                                                                              *
 *  This file is part of the Genesis Device Engine.                             *
@@ -36,14 +35,12 @@ uses
   LCLIntf,
   LCLType,
   SysUtils,
-  mmSystem,
   dglOpenGL,
   GDConsole,
   GDTexture,
   GDTypes,
   GDFrustum,
   GDRenderer,
-  GDBoundingVolumes,
   GDGLObjects,
   GDConstants,
   GDSettings,
@@ -94,6 +91,8 @@ type
 
   TGDWater = Class
   private
+    FWaterTime       : Integer;
+    FLastTime        : Integer;
     FBoundingBox     : TGDBoundingBox;
     FWaterU          : Double;
     FWaterV          : Double;
@@ -116,7 +115,6 @@ type
     FCausticCounter  : Integer;
     FWaterTextures   : TObjectList;
     FWaterCounter    : Integer;
-    FUpdateTimer     : Integer;
 
     function GetHeight() : Double;
   public
@@ -160,8 +158,6 @@ type
     procedure Update();
   end;
 
-  procedure UpdateWaterCallBack(TimerID, Msg: Uint; dwUser, dw1, dw2: DWORD); pascal;
-
 var
   Water : TGDWater;
 
@@ -173,7 +169,6 @@ implementation
 
 constructor TGDWater.Create();
 begin
-  FBoundingBox     := TGDBoundingBox.Create();
   FReflection      := TGDTexture.Create();
   FDepthMap        := TGDTexture.Create();
   FRenderBuffer    := TGDGLRenderBufferObject.Create();
@@ -183,7 +178,6 @@ begin
   FWaterCounter    := 0;
   FCausticTextures := TObjectList.Create();
   FWaterTextures   := TObjectList.Create();
-  FUpdateTimer     := TimeSetEvent(50, 0, @UpdateWaterCallBack, 0, TIME_PERIODIC);
 end;
 
 {******************************************************************************}
@@ -192,14 +186,12 @@ end;
 
 destructor  TGDWater.Destroy();
 begin
-  FreeAndNil(FBoundingBox);
   FreeAndNil(FReflection);
   FreeAndNil(FRenderBuffer);
   FreeAndNil(FFrameBuffer);
   FreeAndNil(FCausticTextures);
   FreeAndNil(FWaterTextures);
   FreeAndNil(FDepthMap);
-  TimeKillEvent(FUpdateTimer);
   inherited;
 end;
 
@@ -347,9 +339,18 @@ end;
 {******************************************************************************}
 
 procedure TGDWater.Update();
+var
+  iDT, iTime : Integer;
 begin
-  If FWaterLoaded then
+  If not(FWaterLoaded) then exit;
+  iTime      := Timing.GetTime();
+  iDT        := iTime - FLastTime;
+  FLastTime  := iTime;
+  FWaterTime := FWaterTime + iDT;
+  if (FWaterTime >= 50) then
   begin
+    FWaterTime := 0;
+
     inc(FCausticCounter);
     If FCausticCounter = FCausticTextures.Count-1 then
     FCausticCounter := 0;
@@ -534,16 +535,6 @@ begin
   begin
     TGDTexture(FWaterTextures.Items[FWaterCounter]).BindTexture(GL_TEXTURE1);
   end;
-end;
-
-{******************************************************************************}
-{* Update Water Callback                                                      *}
-{******************************************************************************}
-
-procedure UpdateWaterCallBack(TimerID, Msg: Uint; dwUser, dw1, dw2: DWORD); pascal;
-begin
-  if Water <> nil then
-     Water.Update();
 end;
 
 end.

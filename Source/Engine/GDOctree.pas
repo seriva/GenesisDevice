@@ -2,7 +2,6 @@
 *                            Genesis Device Engine                             *
 *                   Copyright © 2007-2015 Luuk van Venrooij                    *
 *                        http://www.luukvanvenrooij.nl                         *
-*                         luukvanvenrooij84@gmail.com                          *
 ********************************************************************************
 *                                                                              *
 *  This file is part of the Genesis Device Engine.                             *
@@ -38,7 +37,6 @@ uses
   SysUtils,
   GDFrustum,
   GDTypes,
-  GDBoundingVolumes,
   GDCamera,
   GDConstants,
   GDSettings,
@@ -91,7 +89,6 @@ implementation
 constructor TGDOcTree.Create();
 begin
   SetLength(FCellIndexes,0);
-  FBoundingBox := TGDBoundingBox.Create();
 end;
 
 {******************************************************************************}
@@ -101,7 +98,7 @@ end;
 destructor TGDOcTree.Destroy();
 begin
   Clear();
-  FreeAndNil(FBoundingBox);
+  inherited;
 end;
 
 {******************************************************************************}
