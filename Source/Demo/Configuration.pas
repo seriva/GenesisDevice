@@ -148,8 +148,7 @@ implementation
 {$R *.lfm}
 
 uses
-  Main,
-  CallBack;
+  Main;
 
 {******************************************************************************}
 {* Form create                                                                *}
@@ -421,9 +420,6 @@ begin
 
   //initialize the gameresources
   InitGame();
-
-  //initialize the game callback functions
-  InitCallBackFunctions();
 end;
 
 {******************************************************************************}
