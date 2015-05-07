@@ -42,11 +42,13 @@ uses
   GDGUI,
   GDSettings,
   GDConstants,
+  GDResource,
   GDRenderer,
   GDLighting,
   GDFog,
   GDWater,
   GDCamera,
+  GDResources,
   GDModes;
 
 type
@@ -172,11 +174,6 @@ begin
   FTerrainHeight  := 0;
   FTerrainTop     := 0;
   FTerrainBottom  := 0;
-  FColorTexture   := TGDTexture.Create();
-  FDetailTexture1 := TGDTexture.Create();
-  FDetailTexture2 := TGDTexture.Create();
-  FDetailTexture3 := TGDTexture.Create();
-  FDetailLookup   := TGDTexture.Create();
   FTerrainLoaded  := False;
   FDetailUV       := 0;
   FTriangleSize   := 0;
@@ -191,11 +188,6 @@ destructor TGDTerrain.Destroy();
 begin
   inherited;
   Clear();
-  FreeAndNil(FColorTexture);
-  FreeAndNil(FDetailTexture1);
-  FreeAndNil(FDetailTexture2);
-  FreeAndNil(FDetailTexture3);
-  FreeAndNil(FDetailLookup);
 end;
 
 {******************************************************************************}
@@ -302,20 +294,14 @@ begin
         iM.ApplyToVector( TerrainPoints[iX,iY].FNormal );
       end;
     end;
-
     GUI.LoadingScreen.UpdateBar();
 
-    if Not( FColorTexture.InitTexture(aInput.ColorMap ,Settings.TextureDetail,Settings.TextureFilter)) then
-       Raise Exception.Create('Failed to load color texture!');
+    FColorTexture := Resources.LoadTexture(aInput.ColorMap ,Settings.TextureDetail,Settings.TextureFilter);
     GUI.LoadingScreen.UpdateBar();
-    if Not( FDetailTexture1.InitTexture(aInput.Detail1 ,Settings.TextureDetail,Settings.TextureFilter)) then
-       Raise Exception.Create('Failed to load detail textures!');
-    if Not( FDetailTexture2.InitTexture(aInput.Detail2 ,Settings.TextureDetail,Settings.TextureFilter)) then
-       Raise Exception.Create('Failed to load detail textures!');
-    if Not( FDetailTexture3.InitTexture(aInput.Detail3 ,Settings.TextureDetail,Settings.TextureFilter)) then
-       Raise Exception.Create('Failed to load detail textures!');
-    if Not( FDetailLookup.InitTexture(aInput.DetailLookup ,TD_HIGH,Settings.TextureFilter)) then
-       Raise Exception.Create('Failed to load detail textures!');
+    FDetailTexture1 := Resources.LoadTexture(aInput.Detail1 ,Settings.TextureDetail,Settings.TextureFilter);
+    FDetailTexture2 := Resources.LoadTexture(aInput.Detail2 ,Settings.TextureDetail,Settings.TextureFilter);
+    FDetailTexture3 := Resources.LoadTexture(aInput.Detail3 ,Settings.TextureDetail,Settings.TextureFilter);
+    FDetailLookup   := Resources.LoadTexture(aInput.DetailLookup ,Settings.TextureDetail,Settings.TextureFilter);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     GUI.LoadingScreen.UpdateBar();
@@ -362,11 +348,12 @@ begin
   TerrainPoints := nil;
 
   FDetailUV := 1;
-  FColorTexture.Clear();
-  FDetailTexture1.Clear();
-  FDetailTexture2.Clear();
-  FDetailTexture3.Clear();
-  FDetailLookup.Clear();
+
+  Resources.RemoveResource(TGDResource(FColorTexture));
+  Resources.RemoveResource(TGDResource(FDetailTexture1));
+  Resources.RemoveResource(TGDResource(FDetailTexture2));
+  Resources.RemoveResource(TGDResource(FDetailTexture3));
+  Resources.RemoveResource(TGDResource(FDetailLookup));
 
   FTerrainLoaded := False;
 end;

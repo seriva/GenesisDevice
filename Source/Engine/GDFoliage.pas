@@ -46,6 +46,8 @@ uses
   GDTiming,
   GDLighting,
   Contnrs,
+  GDResources,
+  GDResource,
   GDModes;
 
 type
@@ -201,7 +203,6 @@ implementation
 
 constructor TGDGrassType.Create();
 begin
-  FTexture := TGDTexture.Create();
   FScale.Reset(100,100,100);
   FCoverOfTotal := 100;
 end;
@@ -212,7 +213,7 @@ end;
 
 destructor  TGDGrassType.Destroy();
 begin
-  FreeAndNil(FTexture);
+  Clear();
   inherited
 end;
 
@@ -222,7 +223,7 @@ end;
 
 procedure TGDGrassType.InitGrassType( aInput : TGDGrassTypesInput );
 begin
-  FTexture.InitTexture( aInput.Texture, TD_HIGH, Settings.TextureFilter );
+  FTexture := Resources.LoadTexture(aInput.Texture ,TD_HIGH,Settings.TextureFilter);
   FScale.Reset(aInput.ScaleX, aInput.ScaleY, aInput.ScaleZ);
   FRandomScale.Reset(aInput.RandomScaleX, aInput.RandomScaleY, aInput.RandomScaleZ);
   FCoverOfTotal := aInput.CoverOfTotal;
@@ -234,7 +235,7 @@ end;
 
 procedure TGDGrassType.Clear();
 begin
-  FTexture.Clear();
+  Resources.RemoveResource(TGDResource(FTexture));
   FScale.Reset(100,100,100);
   FRandomScale.Reset(0,0,0);
   FCoverOfTotal := 100;

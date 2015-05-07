@@ -47,6 +47,8 @@ uses
   GDCamera,
   GDFog,
   GDLighting,
+  GDResources,
+  GDResource,
   GDTiming,
   Contnrs,
   GDModes;
@@ -169,15 +171,12 @@ implementation
 
 constructor TGDWater.Create();
 begin
-  FReflection      := TGDTexture.Create();
-  FDepthMap        := TGDTexture.Create();
-  FRenderBuffer    := TGDGLRenderBufferObject.Create();
   FFrameBuffer     := TGDGLFrameBufferObject.Create();
   FWaterLoaded     := false;
   FCausticCounter  := 0;
   FWaterCounter    := 0;
-  FCausticTextures := TObjectList.Create();
-  FWaterTextures   := TObjectList.Create();
+  FCausticTextures := TObjectList.Create(false);
+  FWaterTextures   := TObjectList.Create(false);
 end;
 
 {******************************************************************************}
@@ -186,12 +185,10 @@ end;
 
 destructor  TGDWater.Destroy();
 begin
-  FreeAndNil(FReflection);
-  FreeAndNil(FRenderBuffer);
+  Clear();
   FreeAndNil(FFrameBuffer);
   FreeAndNil(FCausticTextures);
   FreeAndNil(FWaterTextures);
-  FreeAndNil(FDepthMap);
   inherited;
 end;
 
@@ -238,16 +235,13 @@ begin
     FWaveSpeed := aInput.WaveSpeed;
     FWaveStrength := aInput.WaveStrength;
 
-    If Not( FDepthMap.InitTexture( aInput.WaterDepthMap, Settings.TextureDetail, Settings.TextureFilter) ) then
-      Raise Exception.Create('Failed to load depth texture!');
+    FDepthMap := Resources.LoadTexture(aInput.WaterDepthMap ,Settings.TextureDetail,Settings.TextureFilter);
 
     For iI := 0 to aInput.NumberOfWaterText-1 do
     begin
       iFileName := '';
       iFileName := aInput.WaterPath + aInput.WaterPrefix + IntToStr(iI) + '.' + aInput.WaterExtension;
-      iTexture := TGDTexture.Create();
-      If Not( iTexture.InitTexture(iFileName ,Settings.TextureDetail,Settings.TextureFilter) ) then
-        Raise Exception.Create('Failed to load water textures!');
+      iTexture := Resources.LoadTexture(iFileName ,Settings.TextureDetail,Settings.TextureFilter);
       FWaterTextures.Add( iTexture );
     end;
 
@@ -258,9 +252,7 @@ begin
     begin
       iFileName := '';
       iFileName := aInput.CausticsPath + aInput.CausticsPrefix + IntToStr(iI) + '.' + aInput.CausticsExtension;
-      iTexture := TGDTexture.Create();
-      If Not( iTexture.InitTexture(iFileName ,Settings.TextureDetail,Settings.TextureFilter)) then
-        Raise Exception.Create('Failed to load caustics textures!');
+      iTexture := Resources.LoadTexture(iFileName ,Settings.TextureDetail,Settings.TextureFilter);
       FCausticTextures.Add( iTexture );
     end;
 
@@ -298,12 +290,12 @@ begin
                    FHeight := Settings.Height;
                  end;
   end;
-  FRenderBuffer.Clear();
-  FFrameBuffer.Clear();
-  FReflection.Clear();
-  FRenderBuffer.InitRenderBuffer(FWidth,FHeight,GL_DEPTH_COMPONENT24);
-  FFrameBuffer.InitFrameBuffer();
-  FReflection.RenderTextureFloat(FWidth,FHeight);
+  FreeAndNil(FRenderBuffer);
+  FreeAndNil(FFrameBuffer);
+  FreeAndNil(FReflection);
+  FRenderBuffer := TGDGLRenderBufferObject.Create(FWidth,FHeight,GL_DEPTH_COMPONENT24);
+  FFrameBuffer := TGDGLFrameBufferObject.Create();
+  FReflection := TGDTexture.Create(GL_RGBA, FWidth,FHeight);
 end;
 
 {******************************************************************************}
@@ -311,17 +303,36 @@ end;
 {******************************************************************************}
 
 procedure TGDWater.Clear();
+var
+  iI : integer;
+  iTex : TGDTexture;
 begin
+  FreeAndNil(FRenderBuffer);
+  FreeAndNil(FFrameBuffer);
+
   FBoundingBox.Min.Reset(0,0,0);
   FBoundingBox.Max.Reset(0,0,0);
-  FDepthMap.Clear();
-  FReflection.Clear();
-  FWaterTextures.Clear();
-  FWaterCounter := 0;
+  Resources.RemoveResource(TGDResource(FDepthMap));
+  FreeAndNil(FReflection);
   FUnderWaterColor.Reset(1,1,1,1);
   FWaterColorCorrection.Reset(1,1,1,1);
+
+  for iI := 0 to FCausticTextures.Count-1 do
+  begin
+    iTex := TGDTexture(FCausticTextures.Items[iI]);
+    Resources.RemoveResource(TGDResource(iTex));
+  end;
   FCausticTextures.Clear();
   FCausticCounter := 0;
+
+  for iI := 0 to FWaterTextures.Count-1 do
+  begin
+    iTex := TGDTexture(FWaterTextures.Items[iI]);
+    Resources.RemoveResource(TGDResource(iTex));
+  end;
+  FWaterTextures.Clear();
+  FWaterCounter := 0;
+
   FWaterLoaded := false;
 end;
 

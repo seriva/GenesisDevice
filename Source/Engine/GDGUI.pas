@@ -44,6 +44,8 @@ uses
   dglOpenGL,
   GDTexture,
   GDConstants,
+  GDResources,
+  GDResource,
   GDTypes;
 
 const
@@ -415,10 +417,7 @@ begin
   FWidth := aInput.Width;
   FHeight := aInput.Height;
   if aInput.Texture <> '' then
-  begin
-    FTexture := TGDTexture.Create();
-    FTexture.InitTexture(aInput.Texture, TD_HIGH, TF_TRILINEAR);
-  end
+    FTexture := Resources.LoadTexture(aInput.Texture, TD_HIGH, TF_TRILINEAR)
   else
     FTexture := nil;
 end;
@@ -426,7 +425,7 @@ end;
 destructor  TGDPanel.Destroy();
 begin
    inherited;
-   FreeAndNil(FTexture);
+   Resources.RemoveResource(TGDResource(FTexture));
 end;
 
 procedure   TGDPanel.Render();
@@ -539,7 +538,6 @@ end;
 constructor TGDFont.Create();
 begin
   FColor.White();
-  FTexture := TGDTexture.Create();
 end;
 
 {******************************************************************************}
@@ -549,7 +547,6 @@ end;
 destructor TGDFont.Destroy();
 begin
   Clear();
-  FreeAndNil(FTexture);
   inherited;
 end;
 
@@ -560,7 +557,7 @@ end;
 
 function TGDFont.InitFont( aTexture : string) : boolean;
 begin
-  result := FTexture.InitTexture(aTexture, TD_HIGH, TF_TRILINEAR);
+  FTexture := Resources.LoadTexture(aTexture, TD_HIGH, TF_TRILINEAR);
 end;
 
 {******************************************************************************}
@@ -569,7 +566,7 @@ end;
 
 Procedure TGDFont.Clear();
 begin
-  FTexture.Clear();
+  Resources.RemoveResource(TGDResource(FTexture));
 end;
 
 {******************************************************************************}
@@ -627,8 +624,6 @@ end;
 
 constructor TGDMouseCursor.Create();
 begin
-  FCursorTexture := TGDTexture.Create();
-  Clear();
 end;
 
 {******************************************************************************}
@@ -637,7 +632,6 @@ end;
 
 destructor  TGDMouseCursor.Destroy();
 begin
-  FreeAndNil(FCursorTexture);
   Clear();
 end;
 
@@ -650,7 +644,7 @@ begin
   Clear();
   FShowMouse := false;
   FCursorSize := aCursorSize;
-  FCursorTexture.InitTexture( aFileName, TD_HIGH, TF_TRILINEAR );
+  FCursorTexture := Resources.LoadTexture(aFileName, TD_HIGH, TF_TRILINEAR);
 end;
 
 {******************************************************************************}
@@ -659,7 +653,7 @@ end;
 
 procedure TGDMouseCursor.Clear();
 begin
-  FCursorTexture.Clear();
+  Resources.RemoveResource(TGDResource(FCursorTexture));
   FShowMouse := false;
 end;
 

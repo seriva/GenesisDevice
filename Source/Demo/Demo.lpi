@@ -110,6 +110,7 @@
       <Unit14>
         <Filename Value="..\Engine\GDGLObjects.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="GDGLObjects"/>
       </Unit14>
       <Unit15>
         <Filename Value="..\Engine\GDGrassCell.pas"/>
@@ -145,6 +146,7 @@
       <Unit22>
         <Filename Value="..\Engine\GDMaterials.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="GDMaterials"/>
       </Unit22>
       <Unit23>
         <Filename Value="..\Engine\GDMesh.pas"/>
@@ -176,10 +178,12 @@
       <Unit29>
         <Filename Value="..\Engine\GDSkyDome.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="GDSkyDome"/>
       </Unit29>
       <Unit30>
         <Filename Value="..\Engine\GDSound.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="GDSound"/>
       </Unit30>
       <Unit31>
         <Filename Value="..\Engine\GDStatistics.pas"/>
@@ -211,6 +215,7 @@
       <Unit37>
         <Filename Value="..\Engine\GDWater.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="GDWater"/>
       </Unit37>
       <Unit38>
         <Filename Value="..\Engine\GDWaterCell.pas"/>
@@ -275,6 +280,7 @@
     </Linking>
     <Other>
       <CustomOptions Value="-dBorland -dVer150 -dDelphi7 -dCompiler6_Up -dPUREPASCAL"/>
+      <CompilerPath Value="$(CompPath)"/>
     </Other>
   </CompilerOptions>
   <Debugging>

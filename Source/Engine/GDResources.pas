@@ -27,6 +27,7 @@ unit GDResources;
 interface
 
 uses
+  SysUtils,
   GDResource,
   GDTexture,
   GDConstants,
@@ -65,13 +66,16 @@ begin
   if Find(aFileName, iIdx) then
   begin
     iResource := Data[iIdx];
+    iResource.RefCount := iResource.RefCount;
     result := iResource as TGDTexture;
   end
   else
   begin
-    result := TGDTexture.Create();
-    result.InitTexture(aFileName, aDetail, aTextureFilter);
+    result := TGDTexture.Create(aFileName, aDetail, aTextureFilter);
+    result.Name := aFileName;
+    result.RefCount := 1;
     Add(aFileName, result);
+    Sort();
   end;
 end;
 
@@ -80,8 +84,20 @@ end;
 {******************************************************************************}
 
 procedure TGDResources.RemoveResource(var aResource : TGDResource);
+var
+  iIdx : Integer;
 begin
-
+  if aResource = nil then exit;
+  if Find(aResource.Name, iIdx) then
+  begin
+    aResource.RefCount := aResource.RefCount-1;
+    if aResource.RefCount = 0 then
+    begin
+     self.Remove(aResource.Name);
+     FreeAndNil(aResource);
+     aResource := nil;
+    end;
+  end
 end;
 
 {******************************************************************************}

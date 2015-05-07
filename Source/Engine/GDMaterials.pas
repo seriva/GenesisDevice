@@ -42,6 +42,8 @@ Uses
   Contnrs,
   GDLighting,
   FileUtil,
+  GDResources,
+  GDResource,
   GDStringParsing;
 
 Type
@@ -96,7 +98,6 @@ implementation
 constructor TGDMaterial.Create();
 begin
   FName    := 'NONE';
-  FTexture := TGDTexture.Create();
   FHasAlpha := false;
   FAlphaFunc := 1.0;
   FDoBloom := false;
@@ -108,7 +109,7 @@ end;
 
 destructor TGDMaterial.Destroy();
 begin
-  FreeAndNil(FTexture);
+  clear();
   inherited;
 end;
 
@@ -120,7 +121,7 @@ end;
 procedure TGDMaterial.Clear();
 begin
   FName := 'NONE';
-  FTexture.Clear();
+  Resources.RemoveResource(TGDResource(FTexture));
   FHasAlpha := false;
   FAlphaFunc := 1.0;
   FDoBloom := false;
@@ -217,8 +218,7 @@ begin
         if iMat = nil then
            raise Exception.Create('');
         iStr := GetNextToken(iFile);
-        if not(iMat.Texture.InitTexture( ExtractFilePath(aFileName) + iStr, Settings.TextureDetail, Settings.TextureFilter)) then
-           Raise Exception.Create('');
+        iMat.Texture := Resources.LoadTexture(ExtractFilePath(aFileName) + iStr ,Settings.TextureDetail,Settings.TextureFilter);
         continue;
       end
       else if iStr = 'has_alpha' then //read alpha

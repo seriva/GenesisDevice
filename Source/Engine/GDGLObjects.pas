@@ -83,10 +83,8 @@ Type
   public
     property RenderBufferObject : GLuint read FRenderBufferObject;
 
-    constructor Create();
+    constructor Create(aSizeW, aSizeH : Integer; aFormat  : cardinal);
     destructor  Destroy(); override;
-    procedure InitRenderBuffer(aSizeW, aSizeH : Integer; aFormat  : cardinal);
-    procedure Clear();
     procedure Bind();
     procedure Unbind();
   end;
@@ -102,8 +100,6 @@ Type
     constructor Create();
     destructor  Destroy(); override;
 
-    procedure InitFrameBuffer();
-    procedure Clear();
     procedure Bind();
     procedure Unbind();
     procedure AttachTexture( aTexture : TGDTexture; aAttachement, aTexTarget : cardinal);
@@ -349,25 +345,6 @@ end;
 destructor TGDGLFrameBufferObject.Destroy();
 begin
   inherited;
-  Clear();
-end;
-
-{******************************************************************************}
-{* Init the frame buffer                                                      *}
-{******************************************************************************}
-
-procedure TGDGLFrameBufferObject.InitFrameBuffer();
-begin
-  Clear();
-  glGenFrameBuffersEXT(1, @FFrameBufferObject);
-end;
-
-{******************************************************************************}
-{* Clear the framebuffer                                                      *}
-{******************************************************************************}
-
-procedure TGDGLFrameBufferObject.Clear();
-begin
   glDeleteFrameBuffersEXT(1, @FFrameBufferObject);
 end;
 
@@ -444,9 +421,11 @@ end;
 {* Create the renderbuffer class                                              *}
 {******************************************************************************}
 
-constructor TGDGLRenderBufferObject.Create();
+constructor TGDGLRenderBufferObject.Create(aSizeW, aSizeH : Integer; aFormat  : cardinal);
 begin
-  FRenderBufferObject := 0;
+  glGenRenderBuffersEXT(1, @FRenderBufferObject);
+  glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, FRenderBufferObject);
+  glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, aFormat,aSizeW, aSizeH);
 end;
 
 {******************************************************************************}
@@ -456,27 +435,6 @@ end;
 destructor  TGDGLRenderBufferObject.Destroy();
 begin
   inherited;
-  Clear();
-end;
-
-{******************************************************************************}
-{* Init the renderbuffer                                                      *}
-{******************************************************************************}
-
-procedure TGDGLRenderBufferObject.InitRenderBuffer(aSizeW, aSizeH  : integer;  aFormat : cardinal);
-begin
-  Clear();
-  glGenRenderBuffersEXT(1, @FRenderBufferObject);
-  glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, FRenderBufferObject);
-  glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, aFormat,aSizeW, aSizeH);
-end;
-
-{******************************************************************************}
-{* Clear the renderbuffer                                                     *}
-{******************************************************************************}
-
-Procedure TGDGLRenderBufferObject.Clear();
-begin
   glDeleteRenderBuffersEXT(1, @FRenderBufferObject);
 end;
 

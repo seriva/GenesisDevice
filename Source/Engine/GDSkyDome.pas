@@ -44,6 +44,8 @@ uses
   GDSettings,
   GDWater,
   GDModes,
+  GDResources,
+  GDResource,
   GDGenerics;
 
 type
@@ -85,7 +87,6 @@ Const
 
 constructor TGDSkyDome.Create();
 begin
-  FSkyTexture  := TGDTexture.Create();
   FDisplayList := TGDGLDisplayList.Create();
 end;
 
@@ -95,7 +96,6 @@ end;
 
 destructor  TGDSkyDome.Destroy();
 begin
-  FreeAndNil(FSkyTexture);
   FreeAndNil(FDisplayList);
   Inherited;
 end;
@@ -108,7 +108,7 @@ procedure TGDSkyDome.Clear();
 begin
   FTriangleCount := 0;
   FDisplayList.Clear();
-  FSkyTexture.Clear();
+  Resources.RemoveResource(TGDResource(FSkyTexture));
 end;
 
 {******************************************************************************}
@@ -186,7 +186,7 @@ end;
 procedure TGDSkyDome.InitSkyDome( aSkyTexture : String; aSize : Double );
 begin
   Clear();
-  FSkyTexture.InitTexture(aSkyTexture,Settings.TextureDetail,Settings.TextureFilter);
+  FSkyTexture := Resources.LoadTexture(aSkyTexture ,Settings.TextureDetail,Settings.TextureFilter);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
   CalculateDome(aSize);

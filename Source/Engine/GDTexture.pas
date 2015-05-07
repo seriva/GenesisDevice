@@ -147,20 +147,14 @@ type
   TGDTexture = class (TGDResource)
   private
     FTexture: TGLuint;
-    FPath : String;
   public
-    property Path : String read FPath;
     property Texture : TGLuint read FTexture;
 
-    constructor Create();
+    constructor Create(aFileName : String; aDetail : TGDTextureDetail; aTextureFilter : TGDTextureFilter); overload;
+    constructor Create( aType : GLEnum; aSizeW, aSizeH : integer ); overload;
     destructor  Destroy(); override;
 
-    Function  InitTexture(aFileName : String; aDetail : TGDTextureDetail; aTextureFilter : TGDTextureFilter) : boolean;
-    procedure Clear();
     procedure BindTexture(aTU : GLEnum);
-
-    procedure RenderTextureInteger( aSizeW, aSizeH : integer );
-    procedure RenderTextureFloat( aSizeW, aSizeH: Integer );
   end;
 
 implementation
@@ -172,78 +166,10 @@ uses
 {* Create the texture class                                                   *}
 {******************************************************************************}
 
-constructor TGDTexture.Create();
-begin
-  FTexture := 0;
-end;
-
-{******************************************************************************}
-{* Destroy the texture class                                                  *}
-{******************************************************************************}
-
-destructor  TGDTexture.Destroy();
-begin
-  Clear();
-end;
-
-{******************************************************************************}
-{* Clear the texture                                                          *}
-{******************************************************************************}
-
-procedure TGDTexture.Clear();
-begin
-  glDeleteTextures(1, @FTexture);
-end;
-
-{******************************************************************************}
-{* Bind the texture to a texture unit                                         *}
-{******************************************************************************}
-
-procedure TGDTexture.BindTexture(aTU : GLenum);
-begin
-  glActiveTexture(aTU);
-  glBindTexture(GL_TEXTURE_2D, FTexture);
-end;
-
-{******************************************************************************}
-{*  Create a rendertexture                                                    *}
-{******************************************************************************}
-
-procedure TGDTexture.RenderTextureInteger(aSizeW, aSizeH : integer);
-begin
-  glGenTextures(1, @FTexture);
-  glBindTexture(GL_TEXTURE_2D, FTexture);
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, aSizeW, aSizeH, 0,GL_RGBA, GL_UNSIGNED_BYTE, nil);
-  glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
-  glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-end;
-
-{******************************************************************************}
-{*  Create a float rendertexture                                              *}
-{******************************************************************************}
-
-procedure TGDTexture.RenderTextureFloat( aSizeW, aSizeH : Integer );
-begin
-  Clear();
-  glGenTextures(1, @FTexture);
-  glBindTexture(GL_TEXTURE_2D,FTexture);
-  glTexImage2D(GL_TEXTURE_2D,0,GL_RGBA16F_ARB,aSizeW, aSizeH,0,GL_RGBA,GL_UNSIGNED_BYTE,nil);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-end;
-
-{******************************************************************************}
-{* Init the texture                                                           *}
-{******************************************************************************}
-
-Function TGDTexture.InitTexture(aFileName : String; aDetail : TGDTextureDetail; aTextureFilter : TGDTextureFilter) : boolean;
-
+constructor TGDTexture.Create(aFileName : String; aDetail : TGDTextureDetail; aTextureFilter : TGDTextureFilter);
 var
   iError : string;
+  iResult : boolean;
 
 type
   TDDSData = record
@@ -389,9 +315,7 @@ end;
 begin
   Console.Write('Loading texture ' + aFileName + '...');
   try
-    Clear();
-    Result := True;
-    FPath := aFileName;
+    iResult := True;
 
     LoadTextureFromFile(aFileName, aDetail);
 
@@ -426,11 +350,41 @@ begin
     on E: Exception do
     begin
       iError := E.Message;
-      result := false;
+      iResult := false;
     end;
   end;
 
-  Console.WriteOkFail(result, iError);
+  Console.WriteOkFail(iResult, iError);
+end;
+
+constructor TGDTexture.Create( aType : GLEnum; aSizeW, aSizeH : integer );
+begin
+  glGenTextures(1, @FTexture);
+  glBindTexture(GL_TEXTURE_2D, FTexture);
+  glTexImage2D(GL_TEXTURE_2D, 0, aType, aSizeW, aSizeH, 0,GL_RGBA, GL_UNSIGNED_BYTE, nil);
+  glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
+  glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+end;
+
+{******************************************************************************}
+{* Destroy the texture class                                                  *}
+{******************************************************************************}
+
+destructor  TGDTexture.Destroy();
+begin
+  glDeleteTextures(1, @FTexture);
+end;
+
+{******************************************************************************}
+{* Bind the texture to a texture unit                                         *}
+{******************************************************************************}
+
+procedure TGDTexture.BindTexture(aTU : GLenum);
+begin
+  glActiveTexture(aTU);
+  glBindTexture(GL_TEXTURE_2D, FTexture);
 end;
 
 end.

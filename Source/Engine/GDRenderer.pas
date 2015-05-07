@@ -505,21 +505,13 @@ end;
 procedure TGDRenderer.InitFrameBuffers();
 begin
   FFrameBuffer         := TGDGLFrameBufferObject.Create();
-  FRenderBuffer1       := TGDGLRenderBufferObject.Create();
-  FRenderBuffer2       := TGDGLRenderBufferObject.Create();
-  FSourceImage1        := TGDTexture.Create();
-  FSourceImage2        := TGDTexture.Create();
-  FBloomImage          := TGDTexture.Create();
-  FHorizontalBlurImage := TGDTexture.Create();
-  FVerticalBlurImage   := TGDTexture.Create();
-  FFrameBuffer.InitFrameBuffer();
-  FRenderBuffer1.InitRenderBuffer(Settings.Width, Settings.Height, GL_DEPTH_COMPONENT24);
-  FRenderBuffer2.InitRenderBuffer(Settings.Width div 4, Settings.Height div 4, GL_DEPTH_COMPONENT24);
-  FSourceImage1.RenderTextureFloat( Settings.Width, Settings.Height );
-  FSourceImage2.RenderTextureFloat( Settings.Width, Settings.Height );
-  FBloomImage.RenderTextureFloat( Settings.Width, Settings.Height );
-  FHorizontalBlurImage.RenderTextureFloat( Settings.Width div 4, Settings.Height div 4);
-  FVerticalBlurImage.RenderTextureFloat( Settings.Width div 4, Settings.Height div 4);
+  FRenderBuffer1       := TGDGLRenderBufferObject.Create(Settings.Width, Settings.Height, GL_DEPTH_COMPONENT24);
+  FRenderBuffer2       := TGDGLRenderBufferObject.Create(Settings.Width div 4, Settings.Height div 4, GL_DEPTH_COMPONENT24);
+  FSourceImage1        := TGDTexture.Create(GL_RGBA, Settings.Width, Settings.Height );
+  FSourceImage2        := TGDTexture.Create(GL_RGBA, Settings.Width, Settings.Height );
+  FBloomImage          := TGDTexture.Create(GL_RGBA, Settings.Width, Settings.Height );
+  FHorizontalBlurImage := TGDTexture.Create(GL_RGBA, Settings.Width div 4, Settings.Height div 4);
+  FVerticalBlurImage   := TGDTexture.Create(GL_RGBA, Settings.Width div 4, Settings.Height div 4);
 end;
 
 {******************************************************************************}
