@@ -8,11 +8,10 @@
       <Unit0>
         <Filename Value="Demo.lpr"/>
         <IsPartOfProject Value="True"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="10"/>
         <WindowIndex Value="1"/>
         <TopLine Value="1"/>
-        <CursorPos X="5" Y="29"/>
+        <CursorPos X="8" Y="19"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -37,7 +36,7 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="Configuration"/>
-        <EditorIndex Value="13"/>
+        <EditorIndex Value="14"/>
         <WindowIndex Value="1"/>
         <TopLine Value="200"/>
         <CursorPos X="14" Y="222"/>
@@ -154,7 +153,7 @@
         <UnitName Value="GDGLObjects"/>
         <EditorIndex Value="11"/>
         <WindowIndex Value="1"/>
-        <TopLine Value="447"/>
+        <TopLine Value="39"/>
         <CursorPos X="105" Y="462"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
@@ -205,10 +204,14 @@
       <Unit19>
         <Filename Value="..\Engine\GDLighting.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="GDLighting"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="12"/>
         <WindowIndex Value="1"/>
-        <TopLine Value="61"/>
+        <TopLine Value="76"/>
         <CursorPos X="6" Y="97"/>
         <UsageCount Value="200"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit19>
       <Unit20>
@@ -305,7 +308,7 @@
         <Filename Value="..\Engine\GDSkyDome.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="GDSkyDome"/>
-        <EditorIndex Value="14"/>
+        <EditorIndex Value="15"/>
         <WindowIndex Value="1"/>
         <TopLine Value="11"/>
         <CursorPos X="1" Y="47"/>
@@ -317,7 +320,7 @@
         <Filename Value="..\Engine\GDSound.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="GDSound"/>
-        <EditorIndex Value="12"/>
+        <EditorIndex Value="13"/>
         <WindowIndex Value="1"/>
         <TopLine Value="7"/>
         <CursorPos X="79" Y="261"/>
