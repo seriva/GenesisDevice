@@ -24,9 +24,9 @@ void main(void)
 
 	if(GrassUV.y < 0.1)
 	{    
-	 float cosine = cos(F_WAVE_SPEED);
-	 Eye.x        += cosine*F_WAVE_STRENGHT;
-	 Eye.z        += cosine*F_WAVE_STRENGHT;
+        float cosine = cos(F_WAVE_SPEED * gl_Color.r);
+        Eye.x        += cosine*F_WAVE_STRENGHT*gl_Color.g;
+        Eye.z        += cosine*F_WAVE_STRENGHT*gl_Color.b;
 	}
 
 	gl_Position = gl_ModelViewProjectionMatrix * Eye;

@@ -167,6 +167,7 @@ var
   iParticalCount : array of Integer;
   iHeight, iRandomHeightScale : Double;
   iTempGrassType : TGDGrassType;
+  iRandomR, iRandomG, iRandomB : single;
 begin
   randomize();
 
@@ -232,7 +233,13 @@ begin
   begin
     TGDGrassType(Foliage.GrassTypes.Items[iI]).Texture.BindTexture( GL_TEXTURE0 );
     for iJ := 0 to Length( iParticalLists[iI] )-1 do
+    begin
+      iRandomR := 0.75 + (Random(25)/100);
+      iRandomG := 0.75 + (Random(25)/100);
+      iRandomB := 0.75 + (Random(25)/100);
+      glColor3f(iRandomR, iRandomG, iRandomB);
       iParticalLists[iI,iJ].Render();
+    end;
   end;
   FDisplayList.EndList();
 

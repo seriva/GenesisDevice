@@ -115,6 +115,7 @@
       <Unit15>
         <Filename Value="..\Engine\GDGrassCell.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="GDGrassCell"/>
       </Unit15>
       <Unit16>
         <Filename Value="..\Engine\GDGUI.pas"/>
@@ -133,6 +134,7 @@
       <Unit19>
         <Filename Value="..\Engine\GDLighting.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="GDLighting"/>
       </Unit19>
       <Unit20>
         <Filename Value="..\Engine\GDMain.pas"/>
