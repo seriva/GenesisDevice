@@ -1,7 +1,7 @@
 uniform float F_MIN_VIEW_DISTANCE;
 uniform float F_MAX_VIEW_DISTANCE;
-uniform float F_WAVE_SPEED;
-uniform float F_WAVE_STRENGHT;
+uniform float F_ANIMATION_SPEED;
+uniform float F_ANIMATION_STRENGTH;
 uniform vec3 V_LIGHT_DIR;
 uniform vec4 V_LIGHT_AMB;
 uniform vec4 V_LIGHT_DIFF;
@@ -24,9 +24,9 @@ void main(void)
 
 	if(GrassUV.y < 0.1)
 	{    
-        float cosine = cos(F_WAVE_SPEED * gl_Color.r);
-        Eye.x        += cosine*F_WAVE_STRENGHT*gl_Color.g;
-        Eye.z        += cosine*F_WAVE_STRENGHT*gl_Color.b;
+        float cosine = cos(F_ANIMATION_SPEED * gl_Color.r);
+        Eye.x        += cosine*F_ANIMATION_STRENGTH*gl_Color.g;
+        Eye.z        += cosine*F_ANIMATION_STRENGTH*gl_Color.b;
 	}
 
 	gl_Position = gl_ModelViewProjectionMatrix * Eye;

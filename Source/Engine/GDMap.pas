@@ -211,12 +211,12 @@ begin
     Renderer.BloomStrengh := iIniFile.ReadFloat( 'Bloom', 'Strengh', 0.5 );
 
     //foliage
+    iFoliageInput.AnimationSpeed    := iIniFile.ReadFloat( 'Foliage', 'AnimationSpeed', 1000 );
+    iFoliageInput.AnimationStrength := iIniFile.ReadFloat( 'Foliage', 'AnimationStrength', 5 );
     iFoliageInput.GrassMap        := iIniFile.ReadString( 'Foliage', 'GrassMap', 'grassmap.bmp' );
     iFoliageInput.TreeMap        := iIniFile.ReadString( 'Foliage', 'TreeMap', 'treemap.bmp' );
     iFoliageInput.GrassCellCountX   := iIniFile.ReadInteger( 'Foliage', 'GrassCellCountX', 1 );
     iFoliageInput.GrassCellCountY   := iIniFile.ReadInteger( 'Foliage', 'GrassCellCountY', 1 );
-    iFoliageInput.GrassWaveSpeed    := iIniFile.ReadFloat( 'Foliage', 'GrassWaveSpeed', 1000 );
-    iFoliageInput.GrassWaveStrength := iIniFile.ReadFloat( 'Foliage', 'GrassWaveStrength', 5 );
     iFoliageInput.TreeCount         := iIniFile.ReadInteger( 'Foliage', 'TreeCount', 0 );
     iFoliageInput.TreeLowerLimit    := iIniFile.ReadInteger( 'Foliage', 'TreeLowerLimit', 0 );
     iFoliageInput.TreeUpperLimit    := iIniFile.ReadInteger( 'Foliage', 'TreeUpperLimit', 0 );

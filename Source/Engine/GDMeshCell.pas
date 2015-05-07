@@ -187,6 +187,7 @@ begin
     glBegin(GL_TRIANGLES);
     for iJ := 0 to iMS.Polygons.Count-1 do
     begin
+      glColor3f(0.75 + (Random(25)/100), 0.75 + (Random(25)/100), 0.75 + (Random(25)/100));
       iPL := TGDMeshPolygon(iMS.Polygons.Items[iJ]);
       //V1
       glNormal3fv( iNormals.Items[ iPL.P1.NormalID ].ArrayPointer );

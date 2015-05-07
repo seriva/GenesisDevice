@@ -16,3 +16,4 @@ colormap cherryCo.dds
 has_alpha true
 alpha_func 0.7
 do_bloom false
+do_treeanim true

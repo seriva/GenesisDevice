@@ -44,6 +44,7 @@ Uses
   FileUtil,
   GDResources,
   GDResource,
+  GDTiming,
   GDStringParsing;
 
 Type
@@ -59,12 +60,14 @@ Type
     FHasAlpha : Boolean;
     FAlphaFunc : double;
     FDoBloom : boolean;
+    FDoTreeAnim : boolean;
   public
     property Name : String read FName write FName;
     property Texture : TGDTexture read FTexture write FTexture;
     property HasAlpha : Boolean read FHasAlpha write FHasAlpha;
     property AlphaFunc : double read FAlphaFunc write FAlphaFunc;
     property DoBloom : Boolean read FDoBloom write FDoBloom;
+    property DoTreeAnim : Boolean read FDoTreeAnim write FDoTreeAnim;
 
     constructor Create();
     destructor  Destroy(); override;
@@ -91,16 +94,16 @@ var
   
 implementation
 
+uses
+  GDFoliage;
+
 {******************************************************************************}
 {* Create material                                                            *}
 {******************************************************************************}
 
 constructor TGDMaterial.Create();
 begin
-  FName    := 'NONE';
-  FHasAlpha := false;
-  FAlphaFunc := 1.0;
-  FDoBloom := false;
+  clear();
 end;
 
 {******************************************************************************}
@@ -125,6 +128,7 @@ begin
   FHasAlpha := false;
   FAlphaFunc := 1.0;
   FDoBloom := false;
+  FDoTreeAnim := false;
 end;
 
 {******************************************************************************}
@@ -151,6 +155,13 @@ begin
                                                FogManager.FogShader.Color.G, FogManager.FogShader.Color.B,
                                                FogManager.FogShader.Color.A);
   Renderer.MeshShader.SetInt('T_COLORMAP', 0);
+
+  if DoTreeAnim then
+    Renderer.MeshShader.SetInt('I_DO_TREE_ANIM', 1)
+  else
+    Renderer.MeshShader.SetInt('I_DO_TREE_ANIM', 0);
+  Renderer.MeshShader.SetFloat('F_ANIMATION_SPEED', Timing.ElapsedTime / (Foliage.AnimationSpeed*0.6));
+  Renderer.MeshShader.SetFloat('F_ANIMATION_STRENGTH', Foliage.AnimationStrength+4);
 
   if FHasAlpha then
   begin
@@ -235,6 +246,14 @@ begin
            raise Exception.Create('');
         iStr := GetNextToken(iFile);
         iMat.DoBloom:= iStr = 'true';
+        continue;
+      end
+      else if iStr = 'do_treeanim' then //read bloom
+      begin
+        if iMat = nil then
+           raise Exception.Create('');
+        iStr := GetNextToken(iFile);
+        iMat.DoTreeAnim:= iStr = 'true';
         continue;
       end
       else if iStr = 'alpha_func' then //read bloom

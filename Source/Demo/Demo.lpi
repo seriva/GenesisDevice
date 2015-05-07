@@ -144,6 +144,7 @@
       <Unit21>
         <Filename Value="..\Engine\GDMap.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="GDMap"/>
       </Unit21>
       <Unit22>
         <Filename Value="..\Engine\GDMaterials.pas"/>
@@ -153,10 +154,12 @@
       <Unit23>
         <Filename Value="..\Engine\GDMesh.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="GDMesh"/>
       </Unit23>
       <Unit24>
         <Filename Value="..\Engine\GDMeshCell.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="GDMeshCell"/>
       </Unit24>
       <Unit25>
         <Filename Value="..\Engine\GDModes.pas"/>
