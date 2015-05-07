@@ -44,6 +44,7 @@ uses
   GDInput,
   GDGUI,
   GDMap,
+  GDResources,
   GDSound,
   GDOctree,
   GDCellManager,
@@ -122,6 +123,7 @@ begin
   GUI.Clear();
   Map.Clear();
   SoundList.Clear();
+  Resources.Clear();
 end;
 
 {******************************************************************************}

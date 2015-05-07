@@ -36,10 +36,10 @@ Uses
  LCLIntf,
  LCLType,
  Graphics,
+ GDResource,
  SysUtils,
  dglOpenGL,
- GDConstants,
- Contnrs;
+ GDConstants;
 
 type
 
@@ -144,7 +144,7 @@ const
 {******************************************************************************}
 
 type
-  TGDTexture = class (TObject)
+  TGDTexture = class (TGDResource)
   private
     FTexture: TGLuint;
     FPath : String;
@@ -162,9 +162,6 @@ type
     procedure RenderTextureInteger( aSizeW, aSizeH : integer );
     procedure RenderTextureFloat( aSizeW, aSizeH: Integer );
   end;
-
-var
-  TextureList : TObjectList;
 
 implementation
 

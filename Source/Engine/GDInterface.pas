@@ -51,10 +51,10 @@ uses
   GDFoliage,
   GDFog,
   GDCellManager,
-  GDTexture,
   GDMesh,
   GDMaterials,
   contnrs,
+  GDResources,
   GDLighting,
   GDStatistics,
   GDModes,
@@ -163,6 +163,7 @@ begin
   end;
 
   //Create engine classes
+  Resources        := TGDResources.Create();
   Camera           := TGDCamera.Create();
   Frustum          := TGDFrustum.Create();
   Map              := TGDMap.Create();
@@ -179,7 +180,6 @@ begin
   GUI              := TGDGUI.Create();
   DirectionalLight := TGDDirectionalLight.Create();
   SoundList        := TObjectList.Create();
-  TextureList      := TObjectList.Create();
   MaterialList     := TGDMaterialList.Create();
   MeshList         := TGDMeshList.Create();
 
@@ -210,7 +210,6 @@ begin
   FreeAndNil(CellManager);
   FreeAndNil(MeshList);
   FreeAndNil(Octree);
-  FreeAndNil(TextureList);
   FreeAndNil(Main);
   FreeAndNil(Settings);
   FreeAndNil(MaterialList);
@@ -219,6 +218,7 @@ begin
   FreeAndNil(DirectionalLight);
   FreeAndNil(Modes);
   FreeAndNil(Console);
+  FreeAndNil(Resources)
 end;
 
 {******************************************************************************}
