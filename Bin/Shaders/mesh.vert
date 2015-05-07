@@ -24,9 +24,8 @@ void main(void)
 	
     vec4 Eye     = gl_Vertex;
     if(I_DO_TREE_ANIM == 1){
-        float cosine = cos(F_ANIMATION_SPEED * gl_Color.r);
-        Eye.x        += cosine*F_ANIMATION_STRENGTH * gl_Color.g;
-        Eye.z        += cosine*F_ANIMATION_STRENGTH * gl_Color.b;    
+        Eye.x        += cos(F_ANIMATION_SPEED * gl_Color.r)*F_ANIMATION_STRENGTH * gl_Color.g;
+        Eye.z        += sin(F_ANIMATION_SPEED * gl_Color.r)*F_ANIMATION_STRENGTH * gl_Color.b;    
     }
     vec4 Pos = gl_ModelViewProjectionMatrix * Eye;
     

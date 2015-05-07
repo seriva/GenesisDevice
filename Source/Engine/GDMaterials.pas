@@ -160,8 +160,8 @@ begin
     Renderer.MeshShader.SetInt('I_DO_TREE_ANIM', 1)
   else
     Renderer.MeshShader.SetInt('I_DO_TREE_ANIM', 0);
-  Renderer.MeshShader.SetFloat('F_ANIMATION_SPEED', Timing.ElapsedTime / (Foliage.AnimationSpeed*0.6));
-  Renderer.MeshShader.SetFloat('F_ANIMATION_STRENGTH', Foliage.AnimationStrength+4);
+  Renderer.MeshShader.SetFloat('F_ANIMATION_SPEED', Timing.ElapsedTime / Foliage.TreeAnimationSpeed);
+  Renderer.MeshShader.SetFloat('F_ANIMATION_STRENGTH', Foliage.TreeAnimationStrength);
 
   if FHasAlpha then
   begin

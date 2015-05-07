@@ -26,7 +26,7 @@ void main()
 	Fog          = clamp((length(Eye    ) - F_MIN_VIEW_DISTANCE) / F_MAX_VIEW_DISTANCE, 0.0, 1.0);
 	vec4 EyeVert = gl_Vertex;
 
-	float Cosine = cos(EyeVert.x + F_WAVE_SPEED) * sin(EyeVert.x + F_WAVE_SPEED);
+	float Cosine = cos(EyeVert.x + F_WAVE_SPEED) * sin(EyeVert.z + F_WAVE_SPEED);
 	EyeVert.y    += Cosine * F_WAVE_STRENGHT; 
 	gl_Position  = gl_ModelViewProjectionMatrix * EyeVert;
 }

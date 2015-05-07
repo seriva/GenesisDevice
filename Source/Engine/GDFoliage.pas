@@ -137,8 +137,10 @@ type
 {******************************************************************************}
 
   TGDFoliageInput = record
-    AnimationSpeed    : Double;
-    AnimationStrength : Double;
+    GrassAnimationSpeed    : Double;
+    GrassAnimationStrength : Double;
+    TreeAnimationSpeed     : Double;
+    TreeAnimationStrength  : Double;
 
     GrassMap          : String;
     TreeMap           : String;
@@ -156,8 +158,10 @@ type
 
   TGDFoliage = class
   private
-    FAnimationSpeed       : Double;
-    FAnimationStrength    : Double;
+    FGrassAnimationSpeed    : Double;
+    FGrassAnimationStrength : Double;
+    FTreeAnimationSpeed     : Double;
+    FTreeAnimationStrength  : Double;
 
     FGrassTypes           : TObjectList;
     FGrassCellCountX      : Integer;
@@ -171,8 +175,10 @@ type
     GrassMap : array of array of boolean;
     TreeMap : array of array of boolean;
 
-    property AnimationSpeed    : Double read FAnimationSpeed;
-    property AnimationStrength : Double read FAnimationStrength;
+    property GrassAnimationSpeed    : Double read FGrassAnimationSpeed;
+    property GrassAnimationStrength : Double read FGrassAnimationStrength;
+    property TreeAnimationSpeed    : Double read FTreeAnimationSpeed;
+    property TreeAnimationStrength : Double read FTreeAnimationStrength;
 
     property GrassTypes : TObjectList read FGrassTypes;
     property GrassCellCountX : Integer read FGrassCellCountX;
@@ -332,8 +338,10 @@ begin
   try
     result := true;
 
-    FAnimationSpeed    := aInput.AnimationSpeed;
-    FAnimationStrength := aInput.AnimationStrength;
+    FGrassAnimationSpeed    := aInput.GrassAnimationSpeed;
+    FGrassAnimationStrength := aInput.GrassAnimationStrength;
+    FTreeAnimationSpeed     := aInput.TreeAnimationSpeed;
+    FTreeAnimationStrength  := aInput.TreeAnimationStrength;
 
     FGrassCellCountX   := aInput.GrassCellCountX;
     FGrassCellCountY   := aInput.GrassCellCountY;
@@ -445,8 +453,8 @@ begin
                                                     DirectionalLight.Diffuse.B,
                                                     DirectionalLight.Diffuse.A);
     Renderer.GrassShader.SetInt('T_GRASSTEX', 0);
-    Renderer.GrassShader.SetFloat('F_ANIMATION_SPEED', Timing.ElapsedTime / FAnimationSpeed);
-    Renderer.GrassShader.SetFloat('F_ANIMATION_STRENGTH', FAnimationStrength);
+    Renderer.GrassShader.SetFloat('F_ANIMATION_SPEED', Timing.ElapsedTime / FGrassAnimationSpeed);
+    Renderer.GrassShader.SetFloat('F_ANIMATION_STRENGTH', FGrassAnimationStrength);
     Renderer.GrassShader.SetFloat('F_MIN_VIEW_DISTANCE', FogManager.FogShader.MinDistance);
     Renderer.GrassShader.SetFloat('F_MAX_VIEW_DISTANCE', FogManager.FogShader.MaxDistance);
     Renderer.GrassShader.SetFloat4('V_FOG_COLOR', FogManager.FogShader.Color.R,
