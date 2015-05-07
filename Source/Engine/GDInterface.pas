@@ -179,6 +179,7 @@ begin
   CellManager      := TGDCellManager.Create();
   GUI              := TGDGUI.Create();
   DirectionalLight := TGDDirectionalLight.Create();
+
   SoundList        := TObjectList.Create();
   MaterialList     := TGDMaterialList.Create();
   MeshList         := TGDMeshList.Create();
@@ -196,7 +197,6 @@ begin
   FreeAndNil(Input);
   FreeAndNil(Camera);
   FreeAndNil(Renderer);
-  FreeAndNil(SoundList);
   FreeAndNil(Sound);
   FreeAndNil(GUI);
   FreeAndNil(Frustum);
@@ -208,16 +208,19 @@ begin
   FreeAndNil(Water);
   FreeAndNil(FogManager);
   FreeAndNil(CellManager);
-  FreeAndNil(MeshList);
   FreeAndNil(Octree);
   FreeAndNil(Main);
   FreeAndNil(Settings);
-  FreeAndNil(MaterialList);
   FreeAndNil(Statistics);
   FreeAndNil(CallBack);
   FreeAndNil(DirectionalLight);
   FreeAndNil(Modes);
   FreeAndNil(Console);
+
+  FreeAndNil(MeshList);
+  FreeAndNil(MaterialList);
+  FreeAndNil(SoundList);
+
   FreeAndNil(Resources)
 end;
 
