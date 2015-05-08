@@ -432,7 +432,7 @@ begin
 
   if Modes.RenderWireframe then
   begin
-    glColor4f(0,0.25,0,1);
+    Renderer.SetColor(0,0.25,0,1);
     glDisable(GL_CULL_FACE);
   end
   else
@@ -460,7 +460,6 @@ begin
     Renderer.GrassShader.SetFloat4('V_FOG_COLOR', FogManager.FogShader.Color.R,
                                   FogManager.FogShader.Color.G, FogManager.FogShader.Color.B,
                                   FogManager.FogShader.Color.A);
-    glColor4f(0,0,0,1)
   end;
 end;
 

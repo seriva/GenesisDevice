@@ -506,7 +506,7 @@ begin
 
   if Modes.RenderWireframe then
   begin
-    glColor4f(0.2,0.8,0.2,1);
+    Renderer.SetColor(0.2,0.8,0.2,1);
   end
   else
   begin
@@ -556,7 +556,7 @@ begin
       RF_BLOOM : begin
                    Renderer.RenderState( RS_COLOR );
                    glEnable(GL_DEPTH_TEST);
-                   glColor4f(0,0,0,1)
+                   Renderer.SetColor(0,0,0,1)
                  end;
     end;
   end;

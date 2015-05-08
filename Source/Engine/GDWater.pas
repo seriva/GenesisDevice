@@ -429,7 +429,7 @@ begin
   
   if Modes.RenderWireframe then
   begin
-    glColor4f(0.3,0.3,1,1);
+    Renderer.SetColor(0.3,0.3,1,1);
   end
   else
   begin
@@ -474,7 +474,7 @@ begin
         RF_BLOOM : begin
                  Renderer.RenderState( RS_COLOR );
                  glEnable(GL_DEPTH_TEST);
-                 glColor4f(0,0,0,1)
+                 Renderer.SetColor(0,0,0,1)
         end;
     end;
   end;
@@ -511,7 +511,7 @@ procedure TGDWater.RenderUnderWater();
 begin
   If (Camera.Position.Y < FBoundingBox.Max.Y ) then
   begin
-    glColor4fv(FUnderWaterColor.ArrayPointer);
+    Renderer.SetColor(FUnderWaterColor);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_BLEND);
     glBegin(GL_QUADS);

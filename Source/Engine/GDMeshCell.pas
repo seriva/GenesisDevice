@@ -256,7 +256,7 @@ begin
 
                             if Modes.RenderWireframe then
                             begin
-                              glColor4f(1.0,1.0,1.0,1.0);
+                              Renderer.SetColor(1.0,1.0,1.0,1.0);
                             end
                             else
                             begin
@@ -305,11 +305,11 @@ begin
                           end;
                         end;
     RA_FRUSTUM_BOXES  : begin
-                          glColor4f(1,0,0,1);
+                          Renderer.SetColor(1,0,0,1);
                           BoundingBox.RenderWireFrame();
                         end;
     RA_NORMALS        : begin
-                          glColor4f(1,0.5,0.25,1);
+                          Renderer.SetColor(1,0.5,0.25,1);
                           FNormalDPL.CallList();
                         end;
     end;

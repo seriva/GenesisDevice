@@ -35,6 +35,7 @@ uses
   Types,
   dglOpenGL,
   GDConstants,
+  GDRenderer,
   GDGLObjects,
   GDTerrain,
   GDBaseCell;
@@ -182,11 +183,11 @@ begin
                           FDisplayList.CallList();
                         end;
     RA_FRUSTUM_BOXES  : begin
-                          glColor4f(1,0,0,1);
+                          Renderer.SetColor(1,0,0,1);
                           BoundingBox.RenderWireFrame();
                         end;
     RA_NORMALS        : begin
-                          glColor4f(1,0.5,0.25,1);
+                          Renderer.SetColor(1,0.5,0.25,1);
                           With Terrain do
                           begin
                             for iY := (FStartPoint.Y-1) to FEndPoint.Y-1 do

@@ -212,7 +212,7 @@ begin
 
   if Modes.RenderWireframe then
   begin
-    glColor4f(0.2,0.2,0.8,1);
+    Renderer.SetColor(0.2,0.2,0.8,1);
   end
   else
   begin

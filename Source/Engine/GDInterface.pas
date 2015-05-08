@@ -182,7 +182,7 @@ begin
 
   SoundList        := TObjectList.Create();
   MaterialList     := TGDMaterialList.Create();
-  MeshList         := TGDMeshList.Create();
+  //MeshList         := TGDMeshList.Create();
 
   result := true;
 end;

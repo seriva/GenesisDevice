@@ -390,12 +390,12 @@ begin
   glEnable(GL_BLEND);
   if inside then
   begin
-    glColor4fv(GUI.FillColor.ArrayPointer());
+    Renderer.SetColor(GUI.FillColor);
     SendQuad(GL_QUADS);
   end;
   if outline then
   begin
-    glColor4fv(GUI.OutlineColor.ArrayPointer());
+    Renderer.SetColor(GUI.OutlineColor);
     SendQuad(GL_LINE_LOOP);
   end;
 end;
@@ -438,7 +438,7 @@ begin
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_BLEND);
     FTexture.BindTexture( GL_TEXTURE0 );
-    glColor4f(1,1,1,1);
+    Renderer.SetColor(1,1,1,1);
     RenderTexturedQuad(X, Y, FWidth, FHeight);
     glDisable(GL_BLEND);
   end;
@@ -599,7 +599,7 @@ var
   inleft, intop, inright, inbottom : Single;
 begin
   FTexture.BindTexture(GL_TEXTURE0);
-  glColor4fv(FColor.ArrayPointer());
+  Renderer.SetColor(FColor);
   x := Round(aLeft);
   y := Round(aTop);
   for i := 1 to length(aString) do
@@ -698,7 +698,7 @@ begin
     FCursorTexture.BindTexture( GL_TEXTURE0 );
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_BLEND);
-    glColor4f(1,1,1,1);
+    Renderer.SetColor(1,1,1,1);
     RenderTexturedQuad(FPosition.x,FPosition.y,FCursorSize,FCursorSize);
     glDisable(GL_BLEND);
   end;
@@ -804,7 +804,7 @@ begin
 
   iProgress := 580/FMax;
   iProgress := iProgress * FPosition;
-  glColor4fv(FBarColor.ArrayPointer);
+  Renderer.SetColor(FBarColor);
   glBegin(GL_QUADS);
     glVertex2f(10 + iProgress ,10 );
     glVertex2f(10 + iProgress ,60 );

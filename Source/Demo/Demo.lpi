@@ -160,6 +160,7 @@
       <Unit26>
         <Filename Value="..\Engine\GDOctree.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="GDOctree"/>
       </Unit26>
       <Unit27>
         <Filename Value="..\Engine\GDRenderer.pas"/>
@@ -192,6 +193,7 @@
       <Unit33>
         <Filename Value="..\Engine\GDTerrainCell.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="GDTerrainCell"/>
       </Unit33>
       <Unit34>
         <Filename Value="..\Engine\GDTexture.pas"/>
@@ -213,6 +215,7 @@
       <Unit38>
         <Filename Value="..\Engine\GDWaterCell.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="GDWaterCell"/>
       </Unit38>
       <Unit39>
         <Filename Value="..\Engine\GDFoliage.pas"/>
@@ -270,6 +273,7 @@
     </Linking>
     <Other>
       <CustomOptions Value="-dBorland -dVer150 -dDelphi7 -dCompiler6_Up -dPUREPASCAL"/>
+      <CompilerPath Value="$(CompPath)"/>
     </Other>
   </CompilerOptions>
   <Debugging>

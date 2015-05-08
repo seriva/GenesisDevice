@@ -40,6 +40,7 @@ uses
   GDSettings,
   GDTexture,
   GDGLObjects,
+  GDTypes,
   GDConsole,
   GDModes,
   GDTiming;
@@ -111,6 +112,8 @@ type
     function    ShutDownViewPort() : boolean;
     procedure   ResizeViewPort();
 
+    procedure   SetColor(aC : TGDColor); overload;
+    procedure   SetColor(aR, aG, aB, aA : Single); overload;
     procedure   RenderState( aState : TGDRenderState );
 
     procedure   StartFrame();
@@ -421,6 +424,18 @@ begin
   ResizeFrameBuffers();
 end;
 
+procedure TGDRenderer.SetColor(aC : TGDColor);
+begin
+  FTextureShader.SetFloat4('V_COLOR', aC.R, aC.G, aC.B, aC.A);
+  FColorShader.SetFloat4('V_COLOR',  aC.R, aC.G, aC.B, aC.A);
+end;
+
+procedure TGDRenderer.SetColor(aR, aG, aB, aA : Single);
+begin
+  FTextureShader.SetFloat4('V_COLOR', aR, aG, aB, aA);
+  FColorShader.SetFloat4('V_COLOR', aR, aG, aB, aA);
+end;
+
 {******************************************************************************}
 {* Set the renderstate                                                        *}
 {******************************************************************************}
@@ -429,7 +444,6 @@ procedure  TGDRenderer.RenderState( aState : TGDRenderState );
 begin
   FState := aState;
   glPolygonMode(GL_FRONT, GL_FILL);
-  glColor4f(1,1,1,1);
   glDisable(GL_BLEND);
 
   Case FState Of

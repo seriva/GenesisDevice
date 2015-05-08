@@ -36,6 +36,7 @@ uses
   GDConstants,
   GDGLObjects,
   GDWater,
+  GDRenderer,
   GDBaseCell;
 
 type
@@ -163,7 +164,7 @@ begin
                           FDisplayList.CallList();
                         end;
     RA_FRUSTUM_BOXES  : begin
-                          glColor4f(1,0,0,1);
+                          Renderer.SetColor(1,0,0,1);
                           BoundingBox.RenderWireFrame();
                         end;
     RA_NORMALS        : begin

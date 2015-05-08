@@ -38,6 +38,7 @@ uses
   GDFrustum,
   GDTypes,
   GDCamera,
+  GDRenderer,
   GDConstants,
   GDSettings,
   GDBaseCell,
@@ -302,7 +303,7 @@ begin
  if Not(Frustum.BoxInFrustum(FBoundingBox)) then
   exit;
 
- glColor4f(1,1,0,1);
+ Renderer.SetColor(1,1,0,1);
  FBoundingBox.RenderWireFrame();
 
  for iI := 0 to 7 do
