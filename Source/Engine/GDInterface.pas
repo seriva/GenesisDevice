@@ -51,7 +51,6 @@ uses
   GDFoliage,
   GDFog,
   GDCellManager,
-  GDMaterials,
   contnrs,
   GDResources,
   GDLighting,
@@ -180,8 +179,6 @@ begin
   DirectionalLight := TGDDirectionalLight.Create();
 
   SoundList        := TObjectList.Create();
-  MaterialList     := TGDMaterialList.Create();
-  //MeshList         := TGDMeshList.Create();
 
   result := true;
 end;
@@ -216,7 +213,6 @@ begin
   FreeAndNil(Modes);
   FreeAndNil(Console);
 
-  FreeAndNil(MaterialList);
   FreeAndNil(SoundList);
 
   FreeAndNil(Resources)

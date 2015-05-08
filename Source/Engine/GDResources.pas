@@ -27,10 +27,15 @@ unit GDResources;
 interface
 
 uses
+  GDSettings,
+  GDStringParsing,
+  Classes,
   SysUtils,
   GDResource,
   GDTexture,
   GDMesh,
+  FileUtil,
+  GDMaterial,
   GDConstants,
   FGL;
 
@@ -44,8 +49,9 @@ type
    TGDResources = class (TResources)
    private
    public
-     function LoadTexture(aFileName : String; aDetail : TGDTextureDetail; aTextureFilter : TGDTextureFilter): TGDTexture;
-     function Loadmesh(aFileName : String): TGDMesh;
+     function  LoadTexture(aFileName : String; aDetail : TGDTextureDetail; aTextureFilter : TGDTextureFilter): TGDTexture;
+     function  LoadMesh(aFileName : String): TGDMesh;
+     procedure LoadMaterials(aFileName : String);
 
      procedure RemoveResource(var aResource : TGDResource);
      procedure Clear();
@@ -103,6 +109,88 @@ begin
     result.RefCount := 1;
     Add(aFileName, result);
     Sort();
+  end;
+end;
+
+{******************************************************************************}
+{* Load materials                                                             *}
+{******************************************************************************}
+
+procedure TGDResources.LoadMaterials(aFileName : String);
+var
+  iFile : TMemoryStream;
+  iMat  : TGDMaterial;
+  iStr  : String;
+  iIdx : Integer;
+  iResource : TGDResource;
+begin
+  try
+    If Not(FileExistsUTF8(aFileName) ) then
+      Raise Exception.Create('');
+
+    iFile := TMemoryStream.Create();
+    iFile.LoadFromFile(aFileName);
+    CommentString := '#';
+
+    while (iFile.Position < iFile.Size) do
+    begin
+      iStr := GetNextToken(iFile);
+      if iStr = 'newmtl' then //read the material name
+      begin
+        iStr := GetNextToken(iFile);
+        iMat := TGDMaterial.Create();
+        iMat.Name := iStr;
+        iMat.RefCount := 1;
+        self.Add(iStr, iMat);
+        self.Sort();
+        continue;
+      end
+      else if iStr = 'colormap' then //load the material texture
+      begin
+        if iMat = nil then
+           raise Exception.Create('');
+        iStr := GetNextToken(iFile);
+        iMat.Texture := Resources.LoadTexture(ExtractFilePath(aFileName) + iStr ,Settings.TextureDetail,Settings.TextureFilter);
+        continue;
+      end
+      else if iStr = 'has_alpha' then //read alpha
+      begin
+        if iMat = nil then
+           raise Exception.Create('');
+        iStr := GetNextToken(iFile);
+        iMat.HasAlpha:= iStr = 'true';
+        continue;
+      end
+      else if iStr = 'do_bloom' then //read bloom
+      begin
+        if iMat = nil then
+           raise Exception.Create('');
+        iStr := GetNextToken(iFile);
+        iMat.DoBloom:= iStr = 'true';
+        continue;
+      end
+      else if iStr = 'do_treeanim' then //read bloom
+      begin
+        if iMat = nil then
+           raise Exception.Create('');
+        iStr := GetNextToken(iFile);
+        iMat.DoTreeAnim:= iStr = 'true';
+        continue;
+      end
+      else if iStr = 'alpha_func' then //read bloom
+      begin
+        if iMat = nil then
+          raise Exception.Create('');
+        iStr := GetNextToken(iFile);
+        iMat.AlphaFunc := StrToFloat(iStr);
+        continue;
+      end;
+    end;
+    FreeAndNil(iFile);
+  except
+    on E: Exception do
+    begin
+    end;
   end;
 end;
 

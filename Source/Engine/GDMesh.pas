@@ -36,7 +36,7 @@ Uses
   dglOpenGL,
   GDTypes,
   GDConstants,
-  GDMaterials,
+  GDMaterial,
   Contnrs,
   FileUtil,
   GDGenerics,
@@ -128,6 +128,7 @@ Type
 implementation
 
 uses
+  GDResources,
   GDConsole;
 
 {******************************************************************************}
@@ -170,7 +171,7 @@ end;
 
 destructor  TGDMeshPolygon.Destroy();
 begin
-  FMaterial := Nil;
+  Resources.RemoveResource(TGDResource(FMaterial));
   FreeAndNil(FPoint1);
   FreeAndNil(FPoint2);
   FreeAndNil(FPoint3);
@@ -195,6 +196,7 @@ end;
 
 destructor  TGDMaterialSegment.Destroy();
 begin
+  Resources.RemoveResource(TGDResource(FMaterial));
   FMaterial := Nil;
   FreeAndNil(FPolygons);
   Inherited;
@@ -206,6 +208,7 @@ end;
 
 constructor TGDMesh.Create( aFileName : String );
 var
+  iIdx : Integer;
   iFile : TMemoryStream;
   iStr, iError : String;
   iVec, iNorm : TGDVector;
@@ -275,8 +278,7 @@ begin
       if iStr = 'mtllib' then //read the material lib
       begin
         iStr := GetNextToken(iFile);
-        if not(MaterialList.LoadMaterials(ExtractFilePath(aFileName) + iStr)) then
-           Raise Exception.Create('Material file ' + iStr + ' failed to load');
+        Resources.LoadMaterials(ExtractFilePath(aFileName) + iStr);
         continue;
       end
       else if iStr = 'v' then //read a vertex
@@ -305,9 +307,9 @@ begin
       else if iStr = 'usemtl' then //read the current material for the faces
       begin
         iStr := GetNextToken(iFile);
-        iMat := MaterialList.GetMaterial(iStr);
-        if (iMat = nil) then
+        if not(Resources.Find(iStr, iIdx)) then
            Raise Exception.Create('Material ' + iStr + ' doesn`t excist!');
+        iMat := TGDMaterial(Resources.Data[iIdx]);
         continue;
       end
       else if iStr = 'f' then //read a face (we only support triangles)

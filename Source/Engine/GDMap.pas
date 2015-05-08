@@ -45,9 +45,7 @@ uses
   GDWater,
   GDFog,
   GDTiming,
-  GDMesh,
   GDMeshCell,
-  GDMaterials,
   GDRenderer,
   GDLighting;
 
@@ -364,7 +362,6 @@ begin
   FPlayerStart.Reset(0,0,0);
   FPlayerViewAngle.Reset(0,0,0);
   CellManager.Clear();
-  MaterialList.Clear();
   DirectionalLight.Clear();
 end;
 

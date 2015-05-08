@@ -20,7 +20,7 @@
 *  along with Genesis Device.  If not, see <http://www.gnu.org/licenses/>.     *
 *                                                                              *
 *******************************************************************************}   
-unit GDMaterials;
+unit GDMaterial;
 
 {$MODE Delphi}
 
@@ -37,9 +37,7 @@ Uses
   GDRenderer,
   GDTexture,
   GDConstants,
-  GDSettings,
   GDFog,
-  Contnrs,
   FileUtil,
   GDResource,
   GDTiming,
@@ -51,7 +49,7 @@ Type
 {* Material class                                                             *}
 {******************************************************************************}
 
-  TGDMaterial = class (TObject)
+  TGDMaterial = class (TGDResource)
   private
     FName    : String;
     FTexture : TGDTexture;
@@ -75,20 +73,6 @@ Type
     procedure   DisableMaterial();
     procedure   BindMaterialTextures();
   end;
-
-{******************************************************************************}
-{* Materialmanager class                                                      *}
-{******************************************************************************}
-
-  TGDMaterialList = class (TObjectList)
-  private
-  public
-    function LoadMaterials( aFileName : String ) : boolean;
-    function GetMaterial(aName : String): TGDMaterial;
-  end;
-
-var
-  MaterialList : TGDMaterialList;
   
 implementation
 
@@ -123,7 +107,6 @@ end;
 
 procedure TGDMaterial.Clear();
 begin
-  FName := 'NONE';
   Resources.RemoveResource(TGDResource(FTexture));
   FHasAlpha := false;
   FAlphaFunc := 1.0;
@@ -192,107 +175,6 @@ end;
 procedure   TGDMaterial.BindMaterialTextures();
 begin
   FTexture.BindTexture( GL_TEXTURE0 );
-end;
-
-{******************************************************************************}
-{* Load materials from a file                                                 *}
-{******************************************************************************}
-
-function TGDMaterialList.LoadMaterials( aFileName : String ) : boolean;
-var
-  iFile : TMemoryStream;
-  iMat : TGDMaterial;
-  iStr : String;
-begin
-  try
-    result := true;
-    If Not(FileExistsUTF8(aFileName) ) then
-      Raise Exception.Create('');
-
-    iFile := TMemoryStream.Create();
-    iFile.LoadFromFile(aFileName);
-    CommentString := '#';
-
-    while (iFile.Position < iFile.Size) do
-    begin
-      iStr := GetNextToken(iFile);
-      if iStr = 'newmtl' then //read the material name
-      begin
-        iStr := GetNextToken(iFile);
-        iMat := TGDMaterial.Create();
-        iMat.Name := iStr;
-        self.Add(iMat);
-        continue;
-      end
-      else if iStr = 'colormap' then //load the material texture
-      begin
-        if iMat = nil then
-           raise Exception.Create('');
-        iStr := GetNextToken(iFile);
-        iMat.Texture := Resources.LoadTexture(ExtractFilePath(aFileName) + iStr ,Settings.TextureDetail,Settings.TextureFilter);
-        continue;
-      end
-      else if iStr = 'has_alpha' then //read alpha
-      begin
-        if iMat = nil then
-           raise Exception.Create('');
-        iStr := GetNextToken(iFile);
-        iMat.HasAlpha:= iStr = 'true';
-        continue;
-      end
-      else if iStr = 'do_bloom' then //read bloom
-      begin
-        if iMat = nil then
-           raise Exception.Create('');
-        iStr := GetNextToken(iFile);
-        iMat.DoBloom:= iStr = 'true';
-        continue;
-      end
-      else if iStr = 'do_treeanim' then //read bloom
-      begin
-        if iMat = nil then
-           raise Exception.Create('');
-        iStr := GetNextToken(iFile);
-        iMat.DoTreeAnim:= iStr = 'true';
-        continue;
-      end
-      else if iStr = 'alpha_func' then //read bloom
-      begin
-        if iMat = nil then
-          raise Exception.Create('');
-        iStr := GetNextToken(iFile);
-        iMat.AlphaFunc := StrToFloat(iStr);
-        continue;
-      end;
-    end;
-    FreeAndNil(iFile);
-  except
-    on E: Exception do
-    begin
-      result := false;
-    end;
-  end;
-end;
-
-{******************************************************************************}
-{* Add material                                                               *}
-{******************************************************************************}
-
-function TGDMaterialList.GetMaterial( aName : String ) : TGDMaterial;
-var
-  iMat    :  TGDMaterial;
-  iI       : Integer;
-begin
-  result := nil;
-  iI := 0;
-  while ((iI < self.Count) and (result = nil )) do
-  begin
-    iMat := TGDMaterial(self.Items[iI]);
-    If UpperCase(iMat.Name) = UpperCase(aName) then
-      result := iMat;
-
-    iI := iI + 1;
-  end;
 end;
 
 end.

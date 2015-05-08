@@ -178,7 +178,6 @@ type
 
   TGDPanel = class (TGDComponent)
   private
-    FHasTexture : boolean;
     FWidth : Integer;
     FHeight : Integer;
     FTexture : TGDTexture;

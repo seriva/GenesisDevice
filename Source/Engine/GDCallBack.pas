@@ -40,8 +40,7 @@ uses
   LCLType,
   SysUtils,
   dglOpenGL,
-  GDConstants,
-  GDModes;
+  GDConstants;
 
 type
 
