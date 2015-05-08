@@ -40,9 +40,7 @@ Uses
   GDSettings,
   GDFog,
   Contnrs,
-  GDLighting,
   FileUtil,
-  GDResources,
   GDResource,
   GDTiming,
   GDStringParsing;
@@ -95,6 +93,8 @@ var
 implementation
 
 uses
+  GDResources,
+  GDLighting,
   GDFoliage;
 
 {******************************************************************************}

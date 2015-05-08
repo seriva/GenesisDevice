@@ -39,7 +39,6 @@ uses
   Classes,
   FileUtil,
   dglOpenGL,
-  GDConsole,
   GDConstants,
   GDTexture;
 
@@ -126,6 +125,9 @@ Type
   end;
 
 implementation
+
+uses
+  GDConsole;
 
 {******************************************************************************}
 {* Create shader class                                                        *}

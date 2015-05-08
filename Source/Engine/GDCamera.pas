@@ -63,11 +63,8 @@ type
     Constructor Create();
     Destructor  Destroy(); override;
 
-    procedure   InitCamera(aPositionX, aPositionY, aPositionZ : Double);
-
     Procedure   Move(aStep : Double);
     Procedure   Strafe(aStep : Double);
-
     procedure   MouseLook(aOldX, aOldY, aNewX, aNewY  : Integer; aSensitivity : Double; aInvertMouse : Boolean);
 
     Procedure   Translate();
@@ -97,18 +94,6 @@ end;
 Destructor  TGDCamera.Destroy();
 begin
   inherited
-end;
-
-{******************************************************************************}
-{* Init the camera class                                                      *}
-{******************************************************************************}
-
-procedure TGDCamera.InitCamera(aPositionX, aPositionY, aPositionZ : Double);
-begin
-  FPosition.Reset(aPositionX,aPositionY,aPositionZ);
-  FUpvector.Reset(0,1,0);
-  FDirection.Reset(0,0,-1);
-  FRotation.Reset(0,0,0);
 end;
 
 {******************************************************************************}

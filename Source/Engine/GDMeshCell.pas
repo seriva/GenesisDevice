@@ -43,6 +43,8 @@ uses
   GDWater,
   GDGLObjects,
   GDRenderer,
+  GDResource,
+  GDResources,
   GDBaseCell,
   GDGenerics,
   Contnrs;
@@ -113,7 +115,7 @@ end;
 
 destructor  TGDMeshCell.Destroy();
 begin
-  FMesh := nil;
+  Resources.RemoveResource(TGDResource(FMesh));
   FreeAndNil(FDPLS);
   FreeAndNil(FNormalDPL);
   Inherited;
@@ -232,7 +234,7 @@ end;
 
 procedure TGDMeshCell.InitMeshCell( aInput : TGDMeshCellInput );
 begin
-  FMesh := TGDMesh(MeshList.AddMesh( aInput.MeshName ));
+  FMesh := Resources.LoadMesh(aInput.MeshName);  ;
   FPosition.Reset(aInput.PosX, aInput.PosY, aInput.PosZ);
   FRotation.Reset(aInput.RotX, aInput.RotY, aInput.RotZ);
   FScale.Reset( aInput.ScaleX, aInput.ScaleY, aInput.ScaleZ );

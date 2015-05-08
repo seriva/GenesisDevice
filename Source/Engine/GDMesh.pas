@@ -35,12 +35,12 @@ Uses
   Classes,
   dglOpenGL,
   GDTypes,
-  GDConsole,
   GDConstants,
   GDMaterials,
   Contnrs,
   FileUtil,
   GDGenerics,
+  GDResource,
   GDStringParsing;
 
 Type
@@ -103,7 +103,7 @@ Type
 {* Mesh class                                                                 *}
 {******************************************************************************}
 
-  TGDMesh = class
+  TGDMesh = class (TGDResource)
   private
     FFileName            : String;
     FVertices            : TGDVectorList;
@@ -121,27 +121,14 @@ Type
     property Polygons      : TObjectList read FPolygons;
     property MaterialSegmentList : TObjectList read FMaterialSegmentList;
 
-    constructor Create();
+    constructor Create(aFileName : String);
     destructor  Destroy();override;
-
-    function  LoadMesh( aFileName : String ) : boolean;
-    procedure Clear();
   end;
-
-{******************************************************************************}
-{* Meshlist class                                                             *}
-{******************************************************************************}
-
-  TGDMeshList = class (TObjectList)
-  private
-  public
-    function  AddMesh( aFileName : String ) : TGDMesh;
-  end;
-
-var
-  MeshList : TGDMeshList;
 
 implementation
+
+uses
+  GDConsole;
 
 {******************************************************************************}
 {* Create the staticmeshpoint class                                           *}
@@ -217,39 +204,14 @@ end;
 {* Create the mesh class                                                      *}
 {******************************************************************************}
 
-constructor TGDMesh.Create();
-begin
-  FVertices            := TGDVectorList.Create();
-  FNormals             := TGDVectorList.Create();
-  FUV                  := TGDUVCoordList.Create();
-  FPolygons            := TObjectList.Create();
-  FMaterialSegmentList := TObjectList.Create();
-end;
-
-{******************************************************************************}
-{* Destroy the mesh class                                                     *}
-{******************************************************************************}
-
-destructor  TGDMesh.Destroy();
-begin
-  FreeAndNil(FVertices);
-  FreeAndNil(FNormals);
-  FreeAndNil(FUV);
-  FreeAndNil(FPolygons);
-  FreeAndnil(FMaterialSegmentList);
-end;
-
-{******************************************************************************}
-{* Load the mesh                                                              *}
-{******************************************************************************}
-
-function  TGDMesh.LoadMesh( aFileName : String ) : boolean;
+constructor TGDMesh.Create( aFileName : String );
 var
   iFile : TMemoryStream;
   iStr, iError : String;
   iVec, iNorm : TGDVector;
   iUV : TGDUVCoord;
   iMat : TGDMaterial;
+  iResult : boolean;
   iPolygon : TGDMeshPolygon;
 
 procedure ParsePointSet(aStr : String; aPoint : TGDMeshPoint );
@@ -288,7 +250,14 @@ end;
 begin
   Console.Write('Loading mesh ' + aFileName + '...');
   try
-    result := true;
+    iResult := true;
+
+    FVertices            := TGDVectorList.Create();
+    FNormals             := TGDVectorList.Create();
+    FUV                  := TGDUVCoordList.Create();
+    FPolygons            := TObjectList.Create();
+    FMaterialSegmentList := TObjectList.Create();
+
     If Not(FileExistsUTF8(aFileName) ) then
       Raise Exception.Create('Mesh ' + aFileName + ' doesn`t excist!');
 
@@ -361,28 +330,32 @@ begin
     on E: Exception do
     begin
       iError := E.Message;
-      result := false;
+      iResult := false;
     end;
   end;
 
   Console.Use:=true;
-  Console.WriteOkFail(result, iError);
+  Console.WriteOkFail(iResult, iError);
 
   CreateMaterialSegmentLists();
 end;
 
-
 {******************************************************************************}
-{* Clear mesh                                                                 *}
+{* Destroy the mesh class                                                     *}
 {******************************************************************************}
 
-procedure TGDMesh.Clear();
+destructor  TGDMesh.Destroy();
 begin
   FVertices.Clear();
   FNormals.Clear();
   FUV.Clear();
   FPolygons.Clear();
   FMaterialSegmentList.Clear();
+  FreeAndNil(FVertices);
+  FreeAndNil(FNormals);
+  FreeAndNil(FUV);
+  FreeAndNil(FPolygons);
+  FreeAndnil(FMaterialSegmentList);
 end;
 
 {******************************************************************************}
@@ -432,37 +405,6 @@ begin
   end;
 
   EndMaterialSegment();
-end;
-
-{******************************************************************************}
-{* Add mesh                                                                   *}
-{******************************************************************************}
-
-function TGDMeshList.AddMesh( aFileName : String ) : TGDMesh;
-var
-  iMesh    : TGDMesh;
-  iI       : Integer;
-begin
-  result := nil;
-
-  If Not(FileExistsUTF8(aFileName )) then exit;
-
-  iI := 0;
-  while ((iI < self.Count) and (result = nil )) do
-  begin
-    iMesh := TGDMesh(self.Items[iI]);
-    If UpperCase(iMesh.FileName) = UpperCase(aFileName) then
-      result := iMesh;
-
-    iI := iI + 1;
-  end;
-
-  If result <> nil then exit;
-
-  iMesh := TGDMesh.Create();
-  iMesh.LoadMesh( aFileName );
-  self.Add( iMesh );
-  result := iMesh;
 end;
 
 end.

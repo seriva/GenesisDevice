@@ -280,7 +280,7 @@ end;
 procedure TGDTreeType.InitTreeType( aInput : TGDTreeTypesInput );
 begin
   FModel := aInput.Model;
-  MeshList.AddMesh( FModel );
+  Resources.Loadmesh(FModel);
   FStartRotation.Reset(aInput.StartRotationX, aInput.StartRotationY, aInput.StartRotationZ);
   FStartScale := aInput.StartScale;
   FRandomScale := aInput.RandomScale;

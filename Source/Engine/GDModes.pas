@@ -35,7 +35,6 @@ uses
   LCLType,
   SysUtils,
   dglOpenGL,
-  GDConsole,
   GDConstants;
 
 type
@@ -81,6 +80,9 @@ var
   Modes : TGDModes;
 
 implementation
+
+uses
+  GDConsole;
 
 constructor TGDModes.Create();
 begin

@@ -80,10 +80,12 @@
       <Unit8>
         <Filename Value="..\Engine\GDCamera.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="GDCamera"/>
       </Unit8>
       <Unit9>
         <Filename Value="..\Engine\GDCellManager.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="GDCellManager"/>
       </Unit9>
       <Unit10>
         <Filename Value="..\Engine\GDConsole.pas"/>
@@ -123,6 +125,7 @@
       <Unit18>
         <Filename Value="..\Engine\GDInterface.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="GDInterface"/>
       </Unit18>
       <Unit19>
         <Filename Value="..\Engine\GDLighting.pas"/>
@@ -156,6 +159,7 @@
       <Unit25>
         <Filename Value="..\Engine\GDModes.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="GDModes"/>
       </Unit25>
       <Unit26>
         <Filename Value="..\Engine\GDOctree.pas"/>
@@ -206,6 +210,7 @@
       <Unit36>
         <Filename Value="..\Engine\GDTypes.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="GDTypes"/>
       </Unit36>
       <Unit37>
         <Filename Value="..\Engine\GDWater.pas"/>
@@ -241,6 +246,7 @@
       <Unit44>
         <Filename Value="..\Engine\GDResources.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="GDResources"/>
       </Unit44>
       <Unit45>
         <Filename Value="..\Engine\GDResource.pas"/>

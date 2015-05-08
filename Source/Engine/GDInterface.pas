@@ -51,7 +51,6 @@ uses
   GDFoliage,
   GDFog,
   GDCellManager,
-  GDMesh,
   GDMaterials,
   contnrs,
   GDResources,
@@ -217,7 +216,6 @@ begin
   FreeAndNil(Modes);
   FreeAndNil(Console);
 
-  FreeAndNil(MeshList);
   FreeAndNil(MaterialList);
   FreeAndNil(SoundList);
 
@@ -636,7 +634,7 @@ begin
   result := Map.InitMap( aFileName );
   CellManager.GenerateAllCells();
   Octree.InitOcTree();
-  Camera.InitCamera(Map.PlayerStart.X,Map.PlayerStart.Y,Map.PlayerStart.Z);
+  Camera.Position := Map.PlayerStart.Copy();
   Camera.Rotation := Map.PlayerViewAngle.Copy();
   Camera.MouseLook(0,0,1,1,0,False);
 end;

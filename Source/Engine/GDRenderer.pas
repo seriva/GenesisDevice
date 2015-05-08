@@ -41,7 +41,6 @@ uses
   GDTexture,
   GDGLObjects,
   GDTypes,
-  GDConsole,
   GDModes,
   GDTiming;
 
@@ -132,6 +131,7 @@ var
 implementation
 
 uses
+  GDConsole,
   GDMain,
   GDCamera,
   GDWater,

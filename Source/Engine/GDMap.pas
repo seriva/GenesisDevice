@@ -364,7 +364,6 @@ begin
   FPlayerStart.Reset(0,0,0);
   FPlayerViewAngle.Reset(0,0,0);
   CellManager.Clear();
-  MeshList.Clear();
   MaterialList.Clear();
   DirectionalLight.Clear();
 end;

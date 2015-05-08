@@ -30,6 +30,7 @@ uses
   SysUtils,
   GDResource,
   GDTexture,
+  GDMesh,
   GDConstants,
   FGL;
 
@@ -44,6 +45,7 @@ type
    private
    public
      function LoadTexture(aFileName : String; aDetail : TGDTextureDetail; aTextureFilter : TGDTextureFilter): TGDTexture;
+     function Loadmesh(aFileName : String): TGDMesh;
 
      procedure RemoveResource(var aResource : TGDResource);
      procedure Clear();
@@ -72,6 +74,31 @@ begin
   else
   begin
     result := TGDTexture.Create(aFileName, aDetail, aTextureFilter);
+    result.Name := aFileName;
+    result.RefCount := 1;
+    Add(aFileName, result);
+    Sort();
+  end;
+end;
+
+{******************************************************************************}
+{* Load a mesh resource                                                       *}
+{******************************************************************************}
+
+function TGDResources.Loadmesh(aFileName : String): TGDMesh;
+var
+  iIdx : Integer;
+  iResource : TGDResource;
+begin
+  if Find(aFileName, iIdx) then
+  begin
+    iResource := Data[iIdx];
+    iResource.RefCount := iResource.RefCount;
+    result := iResource as TGDMesh;
+  end
+  else
+  begin
+    result := TGDMesh.Create(aFileName);
     result.Name := aFileName;
     result.RefCount := 1;
     Add(aFileName, result);
