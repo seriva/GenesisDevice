@@ -122,7 +122,6 @@ begin
   CellManager.Clear();
   GUI.Clear();
   Map.Clear();
-  SoundList.Clear();
   Resources.Clear();
 end;
 

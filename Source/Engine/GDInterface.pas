@@ -53,6 +53,7 @@ uses
   GDCellManager,
   contnrs,
   GDResources,
+  GDResource,
   GDLighting,
   GDStatistics,
   GDModes,
@@ -62,6 +63,7 @@ uses
 function  gdEngineInit() : Boolean;
 procedure gdEngineShutDown(); 
 function  gdEngineBuildInfo() : String;
+procedure gdEngineLoop();
 
 //settings functions
 procedure gdSettingsLoad();
@@ -85,9 +87,6 @@ function  gdTimingFrameTime() : Integer;
 //callback functions
 procedure gdCallBackSetBeforeRender( aFunction : TGDProcEngineCallback );
 
-//loop functions
-procedure gdLoopMain();
-
 //renderer functions
 function  gdRendererInitViewPort( aWnd  : HWND ) : boolean;
 function  gdRendererShutDownViewPort() : boolean;
@@ -97,7 +96,6 @@ procedure gdRendererState(aState : TGDRenderState);
 //sound functions
 function  gdSoundLoad( aFileName : String; aType : TGDSoundTypes ) : pointer;
 procedure gdSoundRemove( aPointer : pointer );
-procedure gdSoundClear();
 procedure gdSoundPlay( aPointer : pointer );
 procedure gdSoundPause( aPointer : pointer );
 procedure gdSoundResume( aPointer  : pointer );
@@ -178,8 +176,6 @@ begin
   GUI              := TGDGUI.Create();
   DirectionalLight := TGDDirectionalLight.Create();
 
-  SoundList        := TObjectList.Create();
-
   result := true;
 end;
 
@@ -213,8 +209,6 @@ begin
   FreeAndNil(Modes);
   FreeAndNil(Console);
 
-  FreeAndNil(SoundList);
-
   FreeAndNil(Resources)
 end;
 
@@ -225,6 +219,24 @@ end;
 function gdEngineBuildInfo() : String;
 begin
    result := ENGINE_INFO;
+end;
+
+{******************************************************************************}
+{* Main loop of the engine                                                    *}
+{******************************************************************************}
+
+procedure gdEngineLoop();
+begin
+  Main.Main();
+end;
+
+{******************************************************************************}
+{* Sets the beforerender callback function                                    *}
+{******************************************************************************}
+
+procedure gdCallBackSetBeforeRender( aFunction : TGDProcEngineCallback );
+begin
+  BeforeRenderCallBack := aFunction;
 end;
 
 {******************************************************************************}
@@ -273,23 +285,8 @@ end;
 {******************************************************************************}
 
 function  gdSoundLoad( aFileName : String;  aType : TGDSoundTypes  ) : pointer;
-var
-  iTempSoundFile : TGDSoundFile;
 begin
-  result := nil;
-  iTempSoundFile := TGDSoundFile.Create();
-  If Not(iTempSoundFile.InitSoundFile( aFileName, aType )) then exit;
-  SoundList.Add( iTempSoundFile );
-  result := iTempSoundFile;
-end;
-
-{******************************************************************************}
-{* Clear all sounds                                                           *}
-{******************************************************************************}
-
-procedure gdSoundClear();
-begin
-  SoundList.Clear();
+  result := Resources.LoadSound(aFileName,aType );
 end;
 
 {******************************************************************************}
@@ -298,7 +295,7 @@ end;
 
 procedure gdSoundRemove( aPointer : pointer );
 begin
-  SoundList.Remove(aPointer);
+  Resources.RemoveResource(TGDResource(aPointer));
   aPointer := nil
 end;
 
@@ -592,30 +589,12 @@ begin
 end;
 
 {******************************************************************************}
-{* Main render loop of the engine                                             *}
+{* Get frame time                                                             *}
 {******************************************************************************}
 
 function gdTimingFrameTime() : Integer;
 begin
   result := Timing.FrameTime;
-end;
-
-{******************************************************************************}
-{* Sets the beforerender callback function                                    *}
-{******************************************************************************}
-
-procedure gdCallBackSetBeforeRender( aFunction : TGDProcEngineCallback ); 
-begin
-  BeforeRenderCallBack := aFunction;
-end;
-
-{******************************************************************************}
-{* Main loop of the engine                                                    *}
-{******************************************************************************}
-
-procedure gdLoopMain(); 
-begin
-  Main.Main();
 end;
 
 {******************************************************************************}

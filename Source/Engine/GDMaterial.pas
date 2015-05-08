@@ -41,6 +41,7 @@ Uses
   FileUtil,
   GDResource,
   GDTiming,
+  GDConsole,
   GDStringParsing;
 
 Type
@@ -68,7 +69,6 @@ Type
     constructor Create();
     destructor  Destroy(); override;
 
-    procedure   Clear();
     procedure   ApplyMaterial();
     procedure   DisableMaterial();
     procedure   BindMaterialTextures();
@@ -87,7 +87,6 @@ uses
 
 constructor TGDMaterial.Create();
 begin
-  clear();
 end;
 
 {******************************************************************************}
@@ -96,22 +95,12 @@ end;
 
 destructor TGDMaterial.Destroy();
 begin
-  clear();
-  inherited;
-end;
-
-
-{******************************************************************************}
-{* Clear material                                                             *}
-{******************************************************************************}
-
-procedure TGDMaterial.Clear();
-begin
   Resources.RemoveResource(TGDResource(FTexture));
   FHasAlpha := false;
   FAlphaFunc := 1.0;
   FDoBloom := false;
   FDoTreeAnim := false;
+  inherited;
 end;
 
 {******************************************************************************}

@@ -77,11 +77,8 @@ type
   public
     property TrisCount : Integer Read FTrisCount;
 
-    constructor Create();
+    constructor Create(aStartX, aStartY, aEndX, aEndY : Integer);
     destructor  Destroy(); override;
-
-    procedure InitGrassCell( aStartX, aStartY, aEndX, aEndY : Integer );
-    procedure Clear();
 
     procedure RenderGrassCell( aRenderAttribute : TGDRenderAttribute );
   end;
@@ -137,29 +134,7 @@ end;
 {* Create the grasscell class                                                 *}
 {******************************************************************************}
 
-constructor TGDGrassCell.Create();
-begin
-  Inherited;
-  OjectType    := SO_GRASSCELL;
-  FTrisCount   := 0;
-  FDisplayList := TGDGLDisplayList.Create();
-end;
-
-{******************************************************************************}
-{* Destroy the grasscell class                                                *}
-{******************************************************************************}
-
-destructor  TGDGrassCell.Destroy();
-begin
-  FreeAndNil(FDisplayList);
-  inherited;
-end;
-
-{******************************************************************************}
-{* Init the grasscell                                                         *}
-{******************************************************************************}
-
-procedure TGDGrassCell.InitGrassCell(  aStartX, aStartY, aEndX, aEndY : Integer );
+constructor TGDGrassCell.Create( aStartX, aStartY, aEndX, aEndY : Integer );
 var
   iI, iJ : Integer;
   iX, iY : Integer;
@@ -170,6 +145,10 @@ var
   iTempGrassType : TGDGrassType;
   iRandomR, iRandomG, iRandomB : single;
 begin
+  OjectType    := SO_GRASSCELL;
+  FTrisCount   := 0;
+  FDisplayList := TGDGLDisplayList.Create();
+
   randomize();
 
   //set the boundingbox
@@ -252,6 +231,17 @@ begin
 end;
 
 {******************************************************************************}
+{* Destroy the grasscell class                                                *}
+{******************************************************************************}
+
+destructor  TGDGrassCell.Destroy();
+begin
+  FTrisCount := 0;
+  FreeAndNil(FDisplayList);
+  inherited;
+end;
+
+{******************************************************************************}
 {* Calculate the grasscells AABB                                              *}
 {******************************************************************************}
 
@@ -280,16 +270,6 @@ begin
   end;
   BoundingBox.Max.SetY( BoundingBox.Max.Y+150 );
   BoundingBox.CalculateCenter();
-end;
-
-{******************************************************************************}
-{* Clear the grasscell                                                        *}
-{******************************************************************************}
-
-procedure TGDGrassCell.Clear();
-begin
-  FTrisCount := 0;
-  FDisplayList.Clear();
 end;
 
 {******************************************************************************}

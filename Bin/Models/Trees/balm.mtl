@@ -14,6 +14,6 @@ do_treeanim true
 
 newmtl Material__treeMat1
 colormap bbarkCo.dds
-has_alpha true
+has_alpha false
 alpha_func 0.7
 do_bloom false

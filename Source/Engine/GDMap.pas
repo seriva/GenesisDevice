@@ -129,7 +129,6 @@ var
   iTreeType       : TGDTreeType;
 
   //mesh
-  iMeshCell  : TGDMeshCell;
   iMeshInput : TGDMeshCellInput;
 
   //directional light
@@ -333,10 +332,7 @@ begin
       iMeshInput.ScaleX   := iIniFile.ReadFloat( iString, 'ScaleX', 100);
       iMeshInput.ScaleY   := iIniFile.ReadFloat( iString, 'ScaleY', 100);
       iMeshInput.ScaleZ   := iIniFile.ReadFloat( iString, 'ScaleZ', 100);
-
-      iMeshCell := TGDMeshCell.Create();
-      iMeshCell.InitMeshCell( iMeshInput );
-      CellManager.Cells.Add( iMeshCell );
+      CellManager.Cells.Add( TGDMeshCell.Create(iMeshInput)   );
 
       iI := iI + 1;
     end;
@@ -357,8 +353,7 @@ begin
   SkyDome.Clear();
   Water.Clear();
   Foliage.Clear();
-  FogManager.ClearDistanceFog();
-  FogManager.ClearWaterFog();
+  FogManager.Clear();
   FPlayerStart.Reset(0,0,0);
   FPlayerViewAngle.Reset(0,0,0);
   CellManager.Clear();

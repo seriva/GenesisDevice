@@ -102,7 +102,6 @@ type
     destructor  Destroy(); override;
 
     procedure InitGrassType( aInput : TGDGrassTypesInput );
-    procedure Clear();
   end;
 
 {******************************************************************************}
@@ -111,14 +110,14 @@ type
 
   TGDTreeType = class(TObject)
   private
-    FModel        : String;
+    FMesh            : TGDMesh;
     FStartRotation   : TGDVector;
     FStartScale      : Double;
     FRandomScale     : Double;
     FRandomRotationY : Double;
     FCoverOfTotal    : Double;
   public
-    property Model : String read FModel;
+    property Mesh : TGDMesh read FMesh;
     property StartRotation : TGDVector read FStartRotation;
     property StartScale : Double read FStartScale;
     property RandomScale : Double read FRandomScale;
@@ -129,7 +128,6 @@ type
     destructor  Destroy(); override;
 
     procedure InitTreeType( aInput : TGDTreeTypesInput );
-    procedure Clear();
   end;
 
 {******************************************************************************}
@@ -223,7 +221,10 @@ end;
 
 destructor  TGDGrassType.Destroy();
 begin
-  Clear();
+  Resources.RemoveResource(TGDResource(FTexture));
+  FScale.Reset(100,100,100);
+  FRandomScale.Reset(0,0,0);
+  FCoverOfTotal := 100;
   inherited
 end;
 
@@ -240,27 +241,16 @@ begin
 end;
 
 {******************************************************************************}
-{* Clear the grasstype                                                        *}
-{******************************************************************************}
-
-procedure TGDGrassType.Clear();
-begin
-  Resources.RemoveResource(TGDResource(FTexture));
-  FScale.Reset(100,100,100);
-  FRandomScale.Reset(0,0,0);
-  FCoverOfTotal := 100;
-end;
-
-{******************************************************************************}
 {* Create the treetype class                                                  *}
 {******************************************************************************}
 
 constructor TGDTreeType.Create();
 begin
-  FModel         := '';
+  FMesh          := nil;
   FStartRotation.Reset(0,0,0);
   FStartScale    := 100;
   FRandomScale   := 0;
+  FRandomRotationY := 0;
   FCoverOfTotal  := 100;
 end;
 
@@ -270,6 +260,7 @@ end;
 
 destructor  TGDTreeType.Destroy();
 begin
+  Resources.RemoveResource(TGDResource(FMesh));
   inherited
 end;
 
@@ -279,27 +270,12 @@ end;
 
 procedure TGDTreeType.InitTreeType( aInput : TGDTreeTypesInput );
 begin
-  FModel := aInput.Model;
-  Resources.Loadmesh(FModel);
+  FMesh := Resources.Loadmesh(aInput.Model);
   FStartRotation.Reset(aInput.StartRotationX, aInput.StartRotationY, aInput.StartRotationZ);
   FStartScale := aInput.StartScale;
   FRandomScale := aInput.RandomScale;
   FRandomRotationY := aInput.RandomRotationY;
   FCoverOfTotal := aInput.CoverOfTotal;
-end;
-
-{******************************************************************************}
-{* Clear the treetype                                                         *}
-{******************************************************************************}
-
-procedure TGDTreeType.Clear();
-begin
-  FModel := '';
-  FStartRotation.Reset(0,0,0);
-  FStartScale    := 100;
-  FRandomScale   := 0;
-  FRandomRotationY := 0;
-  FCoverOfTotal  := 100;
 end;
 
 {******************************************************************************}

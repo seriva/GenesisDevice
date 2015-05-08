@@ -90,12 +90,12 @@ Type
     destructor  Destroy(); override;
 
     procedure InitDistanceFog(aR, aG, aB, aA : Double; aDistance : Integer);
-    procedure ClearDistanceFog();
     procedure UseDistanceFog();
 
     procedure InitWaterFog(aR, aG, aB, aA : Double; aDistance : Integer);
-    procedure ClearWaterFog();
     procedure UseWaterFog();
+
+    procedure Clear();
   end;
 
 var
@@ -216,15 +216,6 @@ begin
   FDistanceFog := aDistance;
 end;
 
-{******************************************************************************}
-{* Clear the distance fog                                                     *}
-{******************************************************************************}
-
-procedure TGDFogManager.ClearDistanceFog();
-begin
-  FDistanceColor.Reset( 0.5, 0.5, 0.5, 0.5 );
-  FDistanceFog := 5;
-end;
 
 {******************************************************************************}
 {* Use the distance fog                                                       *}
@@ -247,15 +238,6 @@ begin
   FWaterFog := aDistance;
 end;
 
-{******************************************************************************}
-{* Clear the water fog                                                        *}
-{******************************************************************************}
-
-procedure TGDFogManager.ClearWaterFog();
-begin
-  FWaterColor.Reset( 0.5, 0.5, 0.5, 0.5 );
-  FWaterFog := 1;
-end;
 
 {******************************************************************************}
 {* Use the water fog                                                          *}
@@ -266,6 +248,18 @@ begin
   FFogShader.InitFog( FWaterColor.R,FWaterColor.G, FWaterColor.B, FWaterColor.A,
                       (((FWaterFog * R_WATER_DISTANCE_STEP) / 20) *5),
                       (((FWaterFog * R_WATER_DISTANCE_STEP) / 20) *20) );
+end;
+
+{******************************************************************************}
+{* Clear fog                                                                  *}
+{******************************************************************************}
+
+procedure TGDFogManager.Clear();
+begin
+  FWaterColor.Reset( 0.5, 0.5, 0.5, 0.5 );
+  FWaterFog := 1;
+  FDistanceColor.Reset( 0.5, 0.5, 0.5, 0.5 );
+  FDistanceFog := 5;
 end;
 
 end.

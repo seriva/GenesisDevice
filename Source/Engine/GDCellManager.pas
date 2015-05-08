@@ -170,7 +170,6 @@ end;
 procedure TGDCellManager.GenerateCellsFromTerrain();
 var
  iI, iJ : Integer;
- iTerrainCell : TGDTerrainCell;
 Begin
   If Not(Terrain.TerrainLoaded) then
     exit;
@@ -181,9 +180,7 @@ Begin
     iJ := 1;
     while (iJ <= (Terrain.TerrainHeight-CELLSIZE)) do
     begin
-      iTerrainCell := TGDTerrainCell.Create();
-      iTerrainCell.InitTerrainCell( iI, iJ, iI+CELLSIZE, iJ+CELLSIZE );
-      FCells.Add( iTerrainCell );
+      FCells.Add( TGDTerrainCell.Create(iI, iJ, iI+CELLSIZE, iJ+CELLSIZE) );
       iJ := iJ + CELLSIZE
     end;
     iI := iI + CELLSIZE
@@ -204,7 +201,6 @@ var
  iStepU2, iStepV2 : Double;
  iCurrentU1, iCurrentV1 : Double;
  iCurrentU2, iCurrentV2 : Double;
- iWaterCell : TGDWaterCell;
  iCellNotAboveTerrain : Boolean;
  iHeight : Double;
 Begin
@@ -224,13 +220,13 @@ Begin
   iCurrentU1 := 0;
   iCurrentU2 := 0;
   iCountX := 0;
-  while (iI < (Water.BoundingBox.Max.X-iStepX1)) do
+  while (iI < (Water.BoundingBox.Max.X)) do
   begin
     iJ := Water.BoundingBox.Min.Z-iStepY1;
     iCurrentV1 := 0;
     iCurrentV2 := 0;
     iCountY := 0;
-    while (iJ < (Water.BoundingBox.Max.Z-iStepY1)) do
+    while (iJ < (Water.BoundingBox.Max.Z)) do
     begin
       iCellNotAboveTerrain := true;
 
@@ -245,10 +241,8 @@ Begin
           begin
             if iHeight <= Water.WaterHeight then
             begin
-              iWaterCell := TGDWaterCell.Create();
-              iWaterCell.InitWaterCell( iI, iJ, iI+iStepX1, iJ+iStepY1, iCurrentU1, iCurrentV1, iStepU1, iStepV1,
-                                                                        iCurrentU2, iCurrentV2, iStepU2, iStepV2);
-              FCells.Add( iWaterCell );
+              FCells.Add( TGDWaterCell.Create(iI, iJ, iI+iStepX1, iJ+iStepY1, iCurrentU1, iCurrentV1, iStepU1, iStepV1,
+                                                                        iCurrentU2, iCurrentV2, iStepU2, iStepV2) );
               iCellNotAboveTerrain := false;
             end;
           end;
@@ -280,9 +274,7 @@ var
  iX, iY : Integer;
  iCellHasGrass : boolean;
  iStepX, iStepY : Integer;
- iGrassCell : TGDGrassCell;
  iTreeType : TGDTreeType;
- iMeshCell  : TGDMeshCell;
  iMeshInput : TGDMeshCellInput;
  iHeight : Double;
  iPos : TGDVector;
@@ -318,9 +310,7 @@ Begin
 
       If iCellHasGrass then
       begin
-        iGrassCell := TGDGrassCell.Create();
-        iGrassCell.InitGrassCell( iI, iJ, iI+iStepX, iJ+iStepY );
-        FCells.Add( iGrassCell );
+        FCells.Add( TGDGrassCell.Create(iI, iJ, iI+iStepX, iJ+iStepY) );
       end;
 
       iJ := iJ + iStepY;
@@ -350,7 +340,7 @@ Begin
         if not((iHeight > Foliage.TreeLowerLimit) and (iHeight < Foliage.TreeUpperLimit)) then
            goto RedoRandom;
 
-        iMeshInput.MeshName := iTreeType.Model;
+        iMeshInput.MeshName := iTreeType.Mesh.Name;
         iMeshInput.PosX     := iPos.X;
         iMeshInput.PosY     := iHeight;
         iMeshInput.PosZ     := iPos.Z;
@@ -361,9 +351,7 @@ Begin
         iMeshInput.ScaleY   := iTreeType.StartScale + Random(Round(iTreeType.RandomScale));
         iMeshInput.ScaleZ   := iTreeType.StartScale + Random(Round(iTreeType.RandomScale));
 
-        iMeshCell := TGDMeshCell.Create();
-        iMeshCell.InitMeshCell( iMeshInput );
-        CellManager.Cells.Add( iMeshCell );
+        CellManager.Cells.Add( TGDMeshCell.Create(iMeshInput) );
       end
       else
         goto RedoRandom;

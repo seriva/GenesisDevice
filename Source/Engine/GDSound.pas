@@ -37,7 +37,7 @@ uses
   GDConsole,
   GDConstants,
   GDSettings,
-  contnrs,
+  GDResource,
   openal,
   mpg123;
 
@@ -65,17 +65,14 @@ Type
 {* Soundfile class                                                            *}
 {******************************************************************************}
 
-  TGDSoundFile = class (TObject)
+  TGDSoundFile = class (TGDResource)
   private
     FBuffer  : TALuint;
     FSource  : TALuint;
     FPlaying : boolean;
   public
-    constructor Create();
+    constructor Create(aFileName : String; aType : TGDSoundTypes );
     destructor  Destroy(); override;
-
-    function    InitSoundFile( aFileName : String; aType : TGDSoundTypes ) : boolean;
-    procedure   Clear();
 
     procedure   Play();
     procedure   Pause();
@@ -85,7 +82,6 @@ Type
 
 var
   Sound : TGDSound;
-  SoundList : TObjectList;
 
 implementation
 
@@ -170,26 +166,7 @@ end;
 {* Create                                                                     *}
 {******************************************************************************}
 
-constructor TGDSoundFile.Create();
-begin
-  inherited;
-end;
-
-{******************************************************************************}
-{* Destroy                                                                    *}
-{******************************************************************************}
-
-destructor  TGDSoundFile.Destroy();
-begin
-  inherited;
-  Clear();
-end;
-
-{******************************************************************************}
-{* Init sound                                                                 *}
-{******************************************************************************}
-
-function    TGDSoundFile.InitSoundFile( aFileName : String; aType : TGDSoundTypes ) : boolean;
+constructor TGDSoundFile.Create( aFileName : String; aType : TGDSoundTypes );
 var
   iError : string;
   iFormat: TALEnum;
@@ -197,13 +174,13 @@ var
   iFreq: TALSizei;
   iLoop: TALInt;
   iData: TALVoid;
+  iResult : boolean;
   iSourcePos: array [0..2] of TALfloat= ( 0.0, 0.0, 0.0 );
   iSourceVel: array [0..2] of TALfloat= ( 0.0, 0.0, 0.0 );
 begin
   Console.Write('Loading sound ' + aFileName + '...');
   try
-    Clear();
-    result := true;
+    iResult := true;
     FPlaying := false;
 
     //Buffer sound
@@ -231,19 +208,20 @@ begin
     on E: Exception do
     begin
       iError := E.Message;
-      result := false;
+      iResult := false;
     end;
   end;
 
-  Console.WriteOkFail(result, iError);
+  Console.WriteOkFail(iResult, iError);
 end;
 
 {******************************************************************************}
-{* Clear the sound                                                            *}
+{* Destroy                                                                    *}
 {******************************************************************************}
 
-procedure   TGDSoundFile.Clear();
+destructor  TGDSoundFile.Destroy();
 begin
+  inherited;
   AlDeleteBuffers(1, @FBuffer);
   AlDeleteSources(1, @FSource);
 end;

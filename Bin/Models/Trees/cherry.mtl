@@ -7,7 +7,7 @@
 
 newmtl Material__Material_cherry
 colormap chBarkCo.dds
-has_alpha true
+has_alpha false
 alpha_func 0.7
 do_bloom false
 

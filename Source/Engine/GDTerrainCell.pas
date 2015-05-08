@@ -52,13 +52,11 @@ type
     FEndPoint    : TPoint;
     FDisplayList : TGDGLDisplayList;
 
-    procedure CreateDisplayList();
     procedure CalculateBoundingBox();
   public
-    constructor Create();
+    constructor Create(aStartX, aStartY, aEndX, aEndY : Integer);
     destructor  Destroy(); override;
 
-    procedure InitTerrainCell(aStartX, aStartY, aEndX, aEndY : Integer);
     procedure RenderTerrainCell( aRenderAttribute : TGDRenderAttribute );
   end;
 
@@ -68,28 +66,7 @@ implementation
 {* Create the terraincell class                                               *}
 {******************************************************************************}
 
-constructor TGDTerrainCell.Create();
-begin
-  Inherited;
-  OjectType := SO_TERRAINCELL;
-  FDisplayList := TGDGLDisplayList.Create();
-end;
-
-{******************************************************************************}
-{* Destroy the terraincell class                                              *}
-{******************************************************************************}
-
-destructor  TGDTerrainCell.Destroy();
-begin
-  FreeAndNil(FDisplayList);
-  Inherited;
-end;
-
-{******************************************************************************}
-{* Create the terraincell displaylist                                         *}
-{******************************************************************************}
-
-procedure TGDTerrainCell.CreateDisplayList();
+constructor TGDTerrainCell.Create(aStartX, aStartY, aEndX, aEndY : Integer);
 var
   iX, iY: Integer;
 
@@ -106,6 +83,15 @@ begin
 end;
 
 begin
+  OjectType := SO_TERRAINCELL;
+  FDisplayList := TGDGLDisplayList.Create();
+  FStartPoint.X := aStartX;
+  FStartPoint.Y := aStartY;
+  FEndPoint.X   := aEndX;
+  FEndPoint.Y   := aEndY;
+
+  CalculateBoundingBox();
+
   FDisplayList.InitDisplayList();
   FDisplayList.StartList();
   for iY := (FStartPoint.Y-1) to FEndPoint.Y-2 do
@@ -124,6 +110,16 @@ begin
     glEnd();
   end;
   FDisplayList.EndList();
+end;
+
+{******************************************************************************}
+{* Destroy the terraincell class                                              *}
+{******************************************************************************}
+
+destructor  TGDTerrainCell.Destroy();
+begin
+  FreeAndNil(FDisplayList);
+  Inherited;
 end;
 
 {******************************************************************************}
@@ -154,20 +150,6 @@ begin
     end;
   end;
   BoundingBox.CalculateCenter();
-end;
-
-{******************************************************************************}
-{* Init the terraincell                                                       *}
-{******************************************************************************}
-
-procedure TGDTerrainCell.InitTerrainCell(aStartX, aStartY, aEndX, aEndY : Integer);
-begin
-  FStartPoint.X := aStartX;
-  FStartPoint.Y := aStartY;
-  FEndPoint.X   := aEndX;
-  FEndPoint.Y   := aEndY;
-  CalculateBoundingBox();
-  CreateDisplayList();
 end;
 
 {******************************************************************************}

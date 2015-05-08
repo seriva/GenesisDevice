@@ -193,7 +193,7 @@ begin
   Done := false;
 
   //do the mainloop
-  gdLoopMain();
+  gdEngineLoop();
 end;
 
 {******************************************************************************}

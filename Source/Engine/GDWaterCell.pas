@@ -48,15 +48,11 @@ type
   TGDWaterCell = class (TGDBaseCell)
   private
     FDisplayList : TGDGLDisplayList;
-
-    procedure CreateDisplayList(aStartU1, aStartV1, aStepU1, aStepV1,
-                                aStartU2, aStartV2, aStepU2, aStepV2 : Double );
   public
-    constructor Create();
+    constructor Create(aStartX, aStartY, aEndX, aEndY, aStartU1, aStartV1, aStepU1, aStepV1,
+                       aStartU2, aStartV2, aStepU2, aStepV2 : Double);
     destructor  Destroy(); override;
 
-    procedure InitWaterCell(aStartX, aStartY, aEndX, aEndY, aStartU1, aStartV1, aStepU1, aStepV1,
-                            aStartU2, aStartV2, aStepU2, aStepV2: Double );
     procedure RenderWaterCell( aRenderAttribute : TGDRenderAttribute );
   end;
 
@@ -67,34 +63,18 @@ implementation
 {******************************************************************************}
 
 constructor TGDWaterCell.Create();
-begin
-  Inherited;
-  OjectType := SO_WATERCELL;
-  FDisplayList := TGDGLDisplayList.Create();
-end;
-
-{******************************************************************************}
-{* Destroy the watercell class                                                *}
-{******************************************************************************}
-
-destructor  TGDWaterCell.Destroy();
-begin
-  FreeAndNil(FDisplayList);
-  Inherited;
-end;
-
-{******************************************************************************}
-{* Create the watercell displaylist                                           *}
-{******************************************************************************}
-
-procedure TGDWaterCell.CreateDisplayList( aStartU1, aStartV1, aStepU1, aStepV1,
-                                          aStartU2, aStartV2, aStepU2, aStepV2 : Double );
 var
  iI, iJ : Double;
  iStepX, iStepY : Double;
  iCurrentU1, iCurrentV1 : Double;
  iCurrentU2, iCurrentV2 : Double;
-Begin
+
+begin
+  OjectType := SO_WATERCELL;
+  FDisplayList := TGDGLDisplayList.Create();
+  BoundingBox.Min.Reset(aStartX, Water.WaterHeight, aStartY);
+  BoundingBox.Max.Reset(aEndX, Water.WaterHeight, aEndY);
+
   iStepX := (Water.BoundingBox.Max.X + Abs(Water.BoundingBox.Min.X)) / (Water.CellCountX * Water.CellDivX);
   iStepY := (Water.BoundingBox.Max.Z + Abs(Water.BoundingBox.Min.Z)) / (Water.CellCountY * Water.CellDivY);
 
@@ -142,15 +122,13 @@ Begin
 end;
 
 {******************************************************************************}
-{* Init the watercell                                                         *}
+{* Destroy the watercell class                                                *}
 {******************************************************************************}
 
-procedure TGDWaterCell.InitWaterCell(aStartX, aStartY, aEndX, aEndY, aStartU1, aStartV1, aStepU1, aStepV1,
-                       aStartU2, aStartV2, aStepU2, aStepV2 : Double );
+destructor  TGDWaterCell.Destroy();
 begin
-  BoundingBox.Min.Reset(aStartX, Water.WaterHeight, aStartY);
-  BoundingBox.Max.Reset(aEndX, Water.WaterHeight, aEndY);
-  CreateDisplayList( aStartU1, aStartV1, aStepU1, aStepV1, aStartU2, aStartV2, aStepU2, aStepV2 );
+  FreeAndNil(FDisplayList);
+  Inherited;
 end;
 
 {******************************************************************************}

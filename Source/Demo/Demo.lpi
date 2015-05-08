@@ -48,6 +48,7 @@
         <ComponentName Value="ViewPortForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
+        <UnitName Value="ViewPort"/>
       </Unit1>
       <Unit2>
         <Filename Value="Configuration.pas"/>
@@ -91,6 +92,7 @@
       <Unit10>
         <Filename Value="..\Engine\GDConsole.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="GDConsole"/>
       </Unit10>
       <Unit11>
         <Filename Value="..\Engine\GDConstants.pas"/>
@@ -99,6 +101,7 @@
       <Unit12>
         <Filename Value="..\Engine\GDFog.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="GDFog"/>
       </Unit12>
       <Unit13>
         <Filename Value="..\Engine\GDFrustum.pas"/>
@@ -136,6 +139,7 @@
       <Unit20>
         <Filename Value="..\Engine\GDMain.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="GDMain"/>
       </Unit20>
       <Unit21>
         <Filename Value="..\Engine\GDMap.pas"/>
@@ -227,6 +231,7 @@
       <Unit39>
         <Filename Value="..\Engine\GDStringParsing.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="GDStringParsing"/>
       </Unit39>
       <Unit40>
         <Filename Value="..\Engine\GDGenerics.pas"/>
@@ -239,6 +244,7 @@
       <Unit42>
         <Filename Value="..\Libraries\OpenAL\openal.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="openal"/>
       </Unit42>
       <Unit43>
         <Filename Value="..\Engine\GDResources.pas"/>
@@ -248,6 +254,7 @@
       <Unit44>
         <Filename Value="..\Engine\GDResource.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="GDResource"/>
       </Unit44>
       <Unit45>
         <Filename Value="..\Engine\GDMaterial.pas"/>

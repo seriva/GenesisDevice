@@ -44,8 +44,6 @@ uses
   dglOpenGL,
   GDTexture,
   GDConstants,
-  GDResources,
-  GDResource,
   GDTypes;
 
 const
@@ -352,6 +350,8 @@ var
 implementation
 
 uses
+  GDResources,
+  GDResource,
   GDConsole,
   GDRenderer,
   GDSettings;

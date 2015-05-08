@@ -80,15 +80,12 @@ type
     FScale       : TGDVector;
     FDPLS        : TObjectList;
     FNormalDPL   : TGDGLDisplayList;
-
-    procedure PrepareMeshCell();
   public
     property Mesh : TGDMesh read FMesh;
 
-    constructor Create();
+    constructor Create(aInput : TGDMeshCellInput);
     destructor  Destroy(); override;
 
-    procedure InitMeshCell( aInput : TGDMeshCellInput );
     procedure RenderMeshCell( aRenderAttribute : TGDRenderAttribute; aRenderFor : TGDRenderFor );
 
     function TriangleCount() : Integer;
@@ -101,31 +98,6 @@ implementation
 {******************************************************************************}
 
 constructor TGDMeshCell.Create();
-begin
-  Inherited;
-  FMesh := nil;
-  FDPLS       := TObjectList.Create();
-  FNormalDPL  := TGDGLDisplayList.Create();;
-  OjectType   := SO_MESHCELL;
-end;
-
-{******************************************************************************}
-{* Destroy the  meshcell class                                                *}
-{******************************************************************************}
-
-destructor  TGDMeshCell.Destroy();
-begin
-  Resources.RemoveResource(TGDResource(FMesh));
-  FreeAndNil(FDPLS);
-  FreeAndNil(FNormalDPL);
-  Inherited;
-end;
-
-{******************************************************************************}
-{* Prepare the meshcell                                                       *}
-{******************************************************************************}
-
-procedure TGDMeshCell.PrepareMeshCell();
 var
   iVertex, iNormal : TGDVector;
   iI : Integer;
@@ -147,6 +119,16 @@ begin
 end;
 
 begin
+  FMesh := nil;
+  FDPLS       := TObjectList.Create();
+  FNormalDPL  := TGDGLDisplayList.Create();;
+  OjectType   := SO_MESHCELL;
+
+  FMesh := Resources.LoadMesh(aInput.MeshName);
+  FPosition.Reset(aInput.PosX, aInput.PosY, aInput.PosZ);
+  FRotation.Reset(aInput.RotX, aInput.RotY, aInput.RotZ);
+  FScale.Reset( aInput.ScaleX, aInput.ScaleY, aInput.ScaleZ );
+
   //Create resources
   iVertices := TGDVectorList.Create();
   iNormals  := TGDVectorList.Create();
@@ -229,16 +211,16 @@ begin
 end;
 
 {******************************************************************************}
-{* Init the meshcell                                                          *}
+{* Destroy the  meshcell class                                                *}
 {******************************************************************************}
 
-procedure TGDMeshCell.InitMeshCell( aInput : TGDMeshCellInput );
+destructor  TGDMeshCell.Destroy();
 begin
-  FMesh := Resources.LoadMesh(aInput.MeshName);  ;
-  FPosition.Reset(aInput.PosX, aInput.PosY, aInput.PosZ);
-  FRotation.Reset(aInput.RotX, aInput.RotY, aInput.RotZ);
-  FScale.Reset( aInput.ScaleX, aInput.ScaleY, aInput.ScaleZ );
-  PrepareMeshCell();
+  Resources.RemoveResource(TGDResource(FMesh));
+  FMesh := nil;
+  FreeAndNil(FDPLS);
+  FreeAndNil(FNormalDPL);
+  Inherited;
 end;
 
 {******************************************************************************}

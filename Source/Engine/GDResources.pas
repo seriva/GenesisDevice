@@ -36,7 +36,9 @@ uses
   GDMesh,
   FileUtil,
   GDMaterial,
+  GDConsole,
   GDConstants,
+  GDSound,
   FGL;
 
 type
@@ -48,9 +50,12 @@ type
    TResources = specialize TFPGMap<String,TGDResource>;
    TGDResources = class (TResources)
    private
+     procedure AddResource(aName : String; aResource : TGDResource);
+     function  GetResource(aIndex : integer): TGDResource;
    public
      function  LoadTexture(aFileName : String; aDetail : TGDTextureDetail; aTextureFilter : TGDTextureFilter): TGDTexture;
      function  LoadMesh(aFileName : String): TGDMesh;
+     function  LoadSound(aFileName : String; aType : TGDSoundTypes): TGDSoundFile;
      procedure LoadMaterials(aFileName : String);
 
      procedure RemoveResource(var aResource : TGDResource);
@@ -72,18 +77,11 @@ var
   iResource : TGDResource;
 begin
   if Find(aFileName, iIdx) then
-  begin
-    iResource := Data[iIdx];
-    iResource.RefCount := iResource.RefCount;
-    result := iResource as TGDTexture;
-  end
+    result := GetResource(iIdx) as TGDTexture
   else
   begin
     result := TGDTexture.Create(aFileName, aDetail, aTextureFilter);
-    result.Name := aFileName;
-    result.RefCount := 1;
-    Add(aFileName, result);
-    Sort();
+    AddResource(aFileName, result);
   end;
 end;
 
@@ -97,18 +95,29 @@ var
   iResource : TGDResource;
 begin
   if Find(aFileName, iIdx) then
-  begin
-    iResource := Data[iIdx];
-    iResource.RefCount := iResource.RefCount;
-    result := iResource as TGDMesh;
-  end
+    result := GetResource(iIdx) as TGDMesh
   else
   begin
     result := TGDMesh.Create(aFileName);
-    result.Name := aFileName;
-    result.RefCount := 1;
-    Add(aFileName, result);
-    Sort();
+    AddResource(aFileName, result);
+  end;
+end;
+
+{******************************************************************************}
+{* Load a sound resource                                                      *}
+{******************************************************************************}
+
+function TGDResources.LoadSound(aFileName : String; aType : TGDSoundTypes): TGDSoundFile;
+var
+  iIdx : Integer;
+  iResource : TGDResource;
+begin
+  if Find(aFileName, iIdx) then
+    result := GetResource(iIdx) as TGDSoundFile
+  else
+  begin
+    result := TGDSoundFile.Create(aFileName, aType);
+    AddResource(aFileName, result);
   end;
 end;
 
@@ -138,17 +147,19 @@ begin
       if iStr = 'newmtl' then //read the material name
       begin
         iStr := GetNextToken(iFile);
+        if Find(iStr, iIdx) then
+        begin
+          iMat:= nil;
+          continue;
+        end;
         iMat := TGDMaterial.Create();
-        iMat.Name := iStr;
-        iMat.RefCount := 1;
-        self.Add(iStr, iMat);
-        self.Sort();
+        AddResource(iStr, iMat);
         continue;
       end
       else if iStr = 'colormap' then //load the material texture
       begin
         if iMat = nil then
-           raise Exception.Create('');
+          continue;
         iStr := GetNextToken(iFile);
         iMat.Texture := Resources.LoadTexture(ExtractFilePath(aFileName) + iStr ,Settings.TextureDetail,Settings.TextureFilter);
         continue;
@@ -156,7 +167,7 @@ begin
       else if iStr = 'has_alpha' then //read alpha
       begin
         if iMat = nil then
-           raise Exception.Create('');
+          continue;
         iStr := GetNextToken(iFile);
         iMat.HasAlpha:= iStr = 'true';
         continue;
@@ -164,7 +175,7 @@ begin
       else if iStr = 'do_bloom' then //read bloom
       begin
         if iMat = nil then
-           raise Exception.Create('');
+          continue;
         iStr := GetNextToken(iFile);
         iMat.DoBloom:= iStr = 'true';
         continue;
@@ -172,7 +183,7 @@ begin
       else if iStr = 'do_treeanim' then //read bloom
       begin
         if iMat = nil then
-           raise Exception.Create('');
+           continue;
         iStr := GetNextToken(iFile);
         iMat.DoTreeAnim:= iStr = 'true';
         continue;
@@ -180,7 +191,7 @@ begin
       else if iStr = 'alpha_func' then //read bloom
       begin
         if iMat = nil then
-          raise Exception.Create('');
+          continue;
         iStr := GetNextToken(iFile);
         iMat.AlphaFunc := StrToFloat(iStr);
         continue;
@@ -195,7 +206,29 @@ begin
 end;
 
 {******************************************************************************}
-{* Clear all resources                                                        *}
+{* Add a resources                                                            *}
+{******************************************************************************}
+
+procedure TGDResources.AddResource(aName : String; aResource : TGDResource);
+begin
+  aResource.Name := aName;
+  aResource.RefCount := 1;
+  Add(aName, aResource);
+  Sort();
+end;
+
+{******************************************************************************}
+{* Add a resources                                                            *}
+{******************************************************************************}
+
+function  TGDResources.GetResource(aIndex : integer): TGDResource;
+begin
+  result := Data[aIndex];
+  result.RefCount := result.RefCount-1;
+end;
+
+{******************************************************************************}
+{* Remove a resources                                                         *}
 {******************************************************************************}
 
 procedure TGDResources.RemoveResource(var aResource : TGDResource);
@@ -206,11 +239,12 @@ begin
   if Find(aResource.Name, iIdx) then
   begin
     aResource.RefCount := aResource.RefCount-1;
-    if aResource.RefCount = 0 then
+    if aResource.RefCount <= 0 then
     begin
-     self.Remove(aResource.Name);
-     FreeAndNil(aResource);
-     aResource := nil;
+      self.Delete(iIdx);
+      self.Remove(aResource.Name);
+      FreeAndNil(aResource);
+      aResource := nil;
     end;
   end
 end;
@@ -220,7 +254,11 @@ end;
 {******************************************************************************}
 
 procedure TGDResources.Clear();
+var
+  iK : Integer;
 begin
+  for ik := Count - 1 downto 0 do
+    Delete(ik);
 end;
 
 end.
