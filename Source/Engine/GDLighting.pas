@@ -83,9 +83,7 @@ implementation
 
 constructor TGDDirectionalLight.Create();
 begin
-  Direction.Reset(-1,-1,-1);
-  Ambient.reset(1.0, 1.0, 1.0, 1.0);
-  Diffuse.reset(1.0, 1.0, 1.0, 1.0);
+  Clear();
 end;
 
 {******************************************************************************}

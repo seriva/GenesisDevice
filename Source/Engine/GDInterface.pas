@@ -51,7 +51,6 @@ uses
   GDFoliage,
   GDFog,
   GDCellManager,
-  contnrs,
   GDResources,
   GDResource,
   GDLighting,
