@@ -12,7 +12,6 @@ varying vec3 V;
 
 void main(void)
 {
-	V = vec3(gl_ModelViewMatrix * gl_Vertex); 
 	if(I_FLIP_NORMAL == 0)	
 	{
 		N = normalize(gl_Normal);

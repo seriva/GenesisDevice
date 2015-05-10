@@ -9,7 +9,6 @@ uniform int I_UNDER_WATER;
 varying vec2 UV;
 varying float Fog;
 varying vec3 N;
-varying vec3 V;
 
 void main(void)
 {
