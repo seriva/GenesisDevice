@@ -100,12 +100,12 @@ implementation
 constructor TGDMeshCell.Create();
 var
   iVertex, iNormal : TGDVector;
-  iI : Integer;
-  iMX, iMY, iMZ : TGDMatrix;
-  iMS : TGDMaterialSegment;
+  iI   : Integer;
+  iM   : TGDMatrix;
+  iMS  : TGDMaterialSegment;
   iDPL : TGDGLDisplayList;
-  iJ  : Integer;
-  iPL : TGDMeshPolygon;
+  iJ   : Integer;
+  iPL  : TGDMeshPolygon;
   iVertices, iNormals : TGDVectorList;
   iTempPolygon : TGDMeshPolygon;
 
@@ -134,26 +134,22 @@ begin
   iNormals  := TGDVectorList.Create();
 
   //Rotate vertices and normals
-  iMY.CreateRotationY( FRotation.Y );
-  iMZ.CreateRotationZ( FRotation.Z );
-  iMX.CreateRotationX( -FRotation.X );
+  iM.CreateRotation(FRotation);
   For iI := 0 to FMesh.Vertices.Count - 1 do
   begin
     iVertex := FMesh.Vertices.Items[iI].Copy();
     iVertex.Multiply(FScale);
     iVertex.Devide(100);
-    iMY.ApplyToVector( iVertex );
-    iMZ.ApplyToVector( iVertex );
-    iMX.ApplyToVector( iVertex );
+
+    iM.ApplyToVector(iVertex);
+
     iVertex.Add( FPosition );
     iVertices.Add(iVertex)
   end;
   For iI := 0 to FMesh.Normals.Count - 1 do
   begin
     iNormal := FMesh.Normals.Items[iI].Copy();
-    iMY.ApplyToVector( iNormal );
-    iMZ.ApplyToVector( iNormal );
-    iMX.ApplyToVector( iNormal );
+    iM.ApplyToVector(iNormal);
     iNormals.Add( iNormal );
   end;
 

@@ -83,7 +83,7 @@ Constructor TGDCamera.Create();
 Begin
   FPosition.Reset(0,0,0);
   FUpvector.Reset(0,1,0);
-  FDirection.Reset(0,0,-1);
+  FDirection.Reset(-1,0,0);
   FRotation.Reset(0,0,0);
 end;
 
@@ -166,7 +166,7 @@ begin
   iV1.Y := iV1.Y + 90;
 
   iM.CreateRotation( iV1 );
-  iV2.Reset(0,0,-1);
+  iV2.Reset(-1,0,0);
   iM.ApplyToVector(iV2);
 
   iV.x := -iV2.x * aStep;
@@ -186,7 +186,7 @@ var
   iV : TGDVector;
 begin
   iM.CreateRotation( FRotation );
-  FDirection.Reset(0,0,-1);
+  Direction.Reset(-1,0,0);
   iM.ApplyToVector(FDirection);
 
   iV.x := FDirection.x * aStep;
@@ -212,15 +212,15 @@ begin
   FRotation.y := FRotation.y - dDeltaX / (10-aSensitivity);
 
   If aInvertMouse then
-    FRotation.x := FRotation.x + dDeltaY / (10-aSensitivity)
+    FRotation.z := FRotation.z - dDeltaY / (10-aSensitivity)
   else
-    FRotation.x := FRotation.x - dDeltaY / (10-aSensitivity);
+    FRotation.z := FRotation.z + dDeltaY / (10-aSensitivity);
 
-  if FRotation.x < -89.99 then FRotation.x := -89.999999;
-  if FRotation.x > 89.99 then FRotation.x :=   89.999999;
+  if FRotation.z < -89.99 then FRotation.z := -89.999999;
+  if FRotation.z > 89.99 then FRotation.z :=   89.999999;
 
   iM.CreateRotation( FRotation );
-  FDirection.Reset(0,0,-1);
+  FDirection.Reset(-1,0,0);
   iM.ApplyToVector(FDirection);
 end;
 
