@@ -427,12 +427,14 @@ procedure TGDRenderer.SetColor(aC : TGDColor);
 begin
   FTextureShader.SetFloat4('V_COLOR', aC.R, aC.G, aC.B, aC.A);
   FColorShader.SetFloat4('V_COLOR',  aC.R, aC.G, aC.B, aC.A);
+  FColorShader.SetInt('I_CUSTOM_TRANSLATE', 0);
 end;
 
 procedure TGDRenderer.SetColor(aR, aG, aB, aA : Single);
 begin
   FTextureShader.SetFloat4('V_COLOR', aR, aG, aB, aA);
   FColorShader.SetFloat4('V_COLOR', aR, aG, aB, aA);
+  FColorShader.SetInt('I_CUSTOM_TRANSLATE', 0);
 end;
 
 {******************************************************************************}

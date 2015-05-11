@@ -36,7 +36,6 @@ uses
   GDMesh,
   FileUtil,
   GDMaterial,
-  GDConsole,
   GDConstants,
   GDSound,
   FGL;
@@ -74,7 +73,6 @@ implementation
 function TGDResources.LoadTexture(aFileName : String; aDetail : TGDTextureDetail; aTextureFilter : TGDTextureFilter): TGDTexture;
 var
   iIdx : Integer;
-  iResource : TGDResource;
 begin
   if Find(aFileName, iIdx) then
     result := GetResource(iIdx) as TGDTexture
@@ -92,7 +90,6 @@ end;
 function TGDResources.Loadmesh(aFileName : String): TGDMesh;
 var
   iIdx : Integer;
-  iResource : TGDResource;
 begin
   if Find(aFileName, iIdx) then
     result := GetResource(iIdx) as TGDMesh
@@ -110,7 +107,6 @@ end;
 function TGDResources.LoadSound(aFileName : String; aType : TGDSoundTypes): TGDSoundFile;
 var
   iIdx : Integer;
-  iResource : TGDResource;
 begin
   if Find(aFileName, iIdx) then
     result := GetResource(iIdx) as TGDSoundFile
@@ -131,7 +127,6 @@ var
   iMat  : TGDMaterial;
   iStr  : String;
   iIdx : Integer;
-  iResource : TGDResource;
 begin
   try
     If Not(FileExistsUTF8(aFileName) ) then

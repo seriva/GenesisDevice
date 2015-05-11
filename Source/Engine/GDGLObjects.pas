@@ -40,6 +40,7 @@ uses
   FileUtil,
   dglOpenGL,
   GDConstants,
+  GDTypes,
   GDTexture;
 
 Type
@@ -70,6 +71,7 @@ Type
     procedure SetFloat2(aVariable : String; aV0, aV1 : Double);
     procedure SetFloat3(aVariable : String; aV0, aV1, aV2 : Double);
     procedure SetFloat4(aVariable : String; aV0, aV1, aV2, aV3 : Double);
+    procedure SetMatrix(aVariable : String; aMatrix : TGDMatrix);
   end;
 
 {******************************************************************************}
@@ -329,6 +331,15 @@ end;
 procedure TGDGLShader.SetFloat4(aVariable : String; aV0, aV1, aV2, aV3 : Double);
 begin
   glUniform4fARB( glGetUniformLocationARB(FProgramObject, @PAnsiChar(AnsiString(aVariable))[0]),aV0, aV1, aV2, aV3);
+end;
+
+{******************************************************************************}
+{* Pass matrix to the compiled shader program                                 *}
+{******************************************************************************}
+
+procedure TGDGLShader.SetMatrix(aVariable : String; aMatrix : TGDMatrix);
+begin
+  glUniformMatrix4fv( glGetUniformLocationARB(FProgramObject, @PAnsiChar(AnsiString(aVariable))[0]), 1, false, @aMatrix.data[0]);
 end;
 
 {******************************************************************************}

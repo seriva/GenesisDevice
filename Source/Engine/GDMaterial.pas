@@ -41,7 +41,6 @@ Uses
   FileUtil,
   GDResource,
   GDTiming,
-  GDConsole,
   GDStringParsing;
 
 Type

@@ -37,6 +37,7 @@ Uses
   GDTypes,
   GDConstants,
   GDMaterial,
+  GDGLObjects,
   Contnrs,
   FileUtil,
   GDGenerics,
@@ -111,8 +112,10 @@ Type
     FUV                  : TGDUVCoordList;
     FPolygons            : TObjectList;
     FMaterialSegmentList : TObjectList;
+    FDPLS                : TObjectList;
 
     procedure CreateMaterialSegmentLists();
+    procedure CreateDisplayLists();
   public
     property FileName      : String read FFileName;
     property Vertices      : TGDVectorList read FVertices;
@@ -120,6 +123,7 @@ Type
     property UV            : TGDUVCoordList read FUV;
     property Polygons      : TObjectList read FPolygons;
     property MaterialSegmentList : TObjectList read FMaterialSegmentList;
+    property DPLS          : TObjectList read FDPLS;
 
     constructor Create(aFileName : String);
     destructor  Destroy();override;
@@ -260,6 +264,7 @@ begin
     FUV                  := TGDUVCoordList.Create();
     FPolygons            := TObjectList.Create();
     FMaterialSegmentList := TObjectList.Create();
+    FDPLS                := TObjectList.Create();
 
     If Not(FileExistsUTF8(aFileName) ) then
       Raise Exception.Create('Mesh ' + aFileName + ' doesn`t excist!');
@@ -268,6 +273,7 @@ begin
     FFileName := aFileName;
     iFile := TMemoryStream.Create();
     iFile.LoadFromFile(aFileName);
+
     //set the comment string
     CommentString := '#';
     Console.Use:=false;
@@ -340,6 +346,7 @@ begin
   Console.WriteOkFail(iResult, iError);
 
   CreateMaterialSegmentLists();
+  CreateDisplayLists();
 end;
 
 {******************************************************************************}
@@ -358,6 +365,7 @@ begin
   FreeAndNil(FUV);
   FreeAndNil(FPolygons);
   FreeAndnil(FMaterialSegmentList);
+  FreeAndNil(FDPLS);
 end;
 
 {******************************************************************************}
@@ -407,6 +415,51 @@ begin
   end;
 
   EndMaterialSegment();
+end;
+
+{******************************************************************************}
+{* Create the mesh material segment lists                                     *}
+{******************************************************************************}
+
+procedure TGDMesh.CreateDisplayLists();
+var
+  iI   : Integer;
+  iMS  : TGDMaterialSegment;
+  iDPL : TGDGLDisplayList;
+  iJ   : Integer;
+  iPL  : TGDMeshPolygon;
+begin
+  //prepare the displaylists.
+  for iI := 0 to FMaterialSegmentList.Count - 1 do
+  begin
+    iMS := TGDMaterialSegment(FMaterialSegmentList.Items[iI]);
+    iDPL := TGDGLDisplayList.Create();
+    iDPL.InitDisplayList();
+    iDPL.StartList();
+
+    glBegin(GL_TRIANGLES);
+    for iJ := 0 to iMS.Polygons.Count-1 do
+    begin
+      glColor3f(0.75 + (Random(25)/100), 0.75 + (Random(25)/100), 0.75 + (Random(25)/100));
+      iPL := TGDMeshPolygon(iMS.Polygons.Items[iJ]);
+      //V1
+      glNormal3fv( FNormals.Items[ iPL.P1.NormalID ].ArrayPointer );
+      glTexCoord2fv( FUV.Items[ iPL.P1.UVID ].ArrayPointer );
+      glVertex3fv( FVertices.Items[ iPL.P1.VertexID ].ArrayPointer );
+      //V2
+      glNormal3fv( FNormals.Items[ iPL.P2.NormalID ].ArrayPointer );
+      glTexCoord2fv( FUV.Items[ iPL.P2.UVID ].ArrayPointer );
+      glVertex3fv( FVertices.Items[ iPL.P2.VertexID ].ArrayPointer );
+      //V3
+      glNormal3fv( FNormals.Items[ iPL.P3.NormalID ].ArrayPointer );
+      glTexCoord2fv( FUV.Items[ iPL.P3.UVID ].ArrayPointer );
+      glVertex3fv( FVertices.Items[ iPL.P3.VertexID ].ArrayPointer );
+    end;
+    glEnd();
+
+    iDPL.EndList();
+    FDPLS.Add(iDPL);
+  end;
 end;
 
 end.

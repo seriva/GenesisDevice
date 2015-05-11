@@ -166,6 +166,7 @@
       <Unit26>
         <Filename Value="..\Engine\GDRenderer.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="GDRenderer"/>
       </Unit26>
       <Unit27>
         <Filename Value="..\Engine\GDSettings.pas"/>
@@ -175,10 +176,12 @@
       <Unit28>
         <Filename Value="..\Engine\GDSkyDome.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="GDSkyDome"/>
       </Unit28>
       <Unit29>
         <Filename Value="..\Engine\GDSound.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="GDSound"/>
       </Unit29>
       <Unit30>
         <Filename Value="..\Engine\GDStatistics.pas"/>
