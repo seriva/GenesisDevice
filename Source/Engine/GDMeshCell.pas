@@ -140,9 +140,7 @@ begin
     iVertex := FMesh.Vertices.Items[iI].Copy();
     iVertex.Multiply(FScale);
     iVertex.Devide(100);
-
     iM.ApplyToVector(iVertex);
-
     iVertex.Add( FPosition );
     iVertices.Add(iVertex)
   end;

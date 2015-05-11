@@ -713,8 +713,8 @@ begin
   iMY.CreateRotationY(aV.y);
   iMZ.CreateRotationZ(aV.z);
 
-  iM.Multiply(iMY,iMX);
-  Multiply(iMZ,iM);
+  iM.Multiply(iMZ,iMY);
+  Multiply(iMX,iM);
 end;
 
 {******************************************************************************}
