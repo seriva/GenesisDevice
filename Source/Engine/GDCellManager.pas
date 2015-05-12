@@ -269,23 +269,27 @@ End;
 
 procedure TGDCellManager.GenerateCellsFromFoliage();
 var
- iI, iJ, iTreeCount : Integer;
+ iI, iJ, iTreeCount, iRockCount : Integer;
  iK, iL : Integer;
  iX, iY : Integer;
  iCellHasGrass : boolean;
  iStepX, iStepY : Integer;
  iTreeType : TGDTreeType;
+ iRockType : TGDRockType;
  iMeshInput : TGDMeshCellInput;
  iHeight : Double;
  iPos : TGDVector;
+ iMeshCell : TGDMeshCell;
 label
-  RedoRandom;
+  RedoRandomTrees;
+label
+  RedoRandomRocks;
 Begin
   Timing.Start();
   iStepX := Round((Terrain.TerrainWidth-1) / Foliage.GrassCellCountX);
   iStepY := Round((Terrain.TerrainHeight-1) / Foliage.GrassCellCountY);
 
-  GUI.LoadingScreen.SetupForUse('Generating foliage...', Round(Terrain.TerrainWidth/iStepX) + Foliage.TreeCount );
+  GUI.LoadingScreen.SetupForUse('Generating foliage...', Round(Terrain.TerrainWidth/iStepX) + Foliage.TreeCount + Foliage.RockCount );
 
   //create grasscells
   iI := 1;
@@ -326,7 +330,7 @@ Begin
     iTreeCount := Round(Foliage.TreeCount * iTreeType.CoverOfTotal) div 100;
     for iJ := 1 to iTreeCount do
     begin
-      RedoRandom:
+      RedoRandomTrees:
 
       iX := Random(Terrain.TerrainWidth-1);
       iY := Random(Terrain.TerrainHeight-1);
@@ -338,7 +342,7 @@ Begin
       begin
         iHeight := iHeight - 200;
         if not((iHeight > Foliage.TreeLowerLimit) and (iHeight < Foliage.TreeUpperLimit)) then
-           goto RedoRandom;
+           goto RedoRandomTrees;
 
         iMeshInput.MeshName := iTreeType.Mesh.Name;
         iMeshInput.PosX     := iPos.X;
@@ -350,11 +354,50 @@ Begin
         iMeshInput.ScaleX   := iTreeType.StartScale + Random(Round(iTreeType.RandomScale));
         iMeshInput.ScaleY   := iTreeType.StartScale + Random(Round(iTreeType.RandomScale));
         iMeshInput.ScaleZ   := iTreeType.StartScale + Random(Round(iTreeType.RandomScale));
-
         CellManager.Cells.Add( TGDMeshCell.Create(iMeshInput) );
       end
       else
-        goto RedoRandom;
+        goto RedoRandomTrees;
+
+      GUI.LoadingScreen.UpdateBar();
+    end;
+  end;
+
+  //create rocks
+  for iI := 0 to Foliage.RockTypes.Count-1 do
+  begin
+    iRockType  := Foliage.RockTypes.Items[iI] as TGDRockType;
+    iRockCount := Round(Foliage.RockCount * iRockType.CoverOfTotal) div 100;
+    for iJ := 1 to iRockCount do
+    begin
+      RedoRandomRocks:
+
+      iX := Random(Terrain.TerrainWidth-1);
+      iY := Random(Terrain.TerrainHeight-1);
+      iPos.Reset( Terrain.TerrainPoints[ iX, iY ].FVertex.X + (Terrain.TriangleSize div 2) ,
+                  0,
+                  Terrain.TerrainPoints[ iX, iY ].FVertex.Z + (Terrain.TriangleSize div 2) );
+
+      if Foliage.CheckRockMap(iX, iY) and Terrain.GetHeight(iPos.X, iPos.Z, iHeight) then
+      begin
+        iMeshInput.MeshName := iRockType.Mesh.Name;
+        iMeshInput.PosX     := iPos.X;
+        iMeshInput.PosY     := iHeight;
+        iMeshInput.PosZ     := iPos.Z;
+        iMeshInput.RotX     := 0;
+        iMeshInput.RotY     := Random(360);
+        iMeshInput.RotZ     := 0;
+        iMeshInput.ScaleX   := iRockType.StartScale + Random(Round(iRockType.RandomScale));
+        iMeshInput.ScaleY   := iRockType.StartScale + Random(Round(iRockType.RandomScale));
+        iMeshInput.ScaleZ   := iRockType.StartScale + Random(Round(iRockType.RandomScale));
+
+        iMeshCell := TGDMeshCell.Create(iMeshInput);
+        iMeshCell.MaxDistance := Settings.GrassDistance * R_GRASS_DISTANCE_STEP + (R_GRASS_DISTANCE_STEP * 10);
+        iMeshCell.ScaleDistance := R_ROCK_LOD_DISTANCE;
+        CellManager.Cells.Add( iMeshCell );
+      end
+      else
+        goto RedoRandomRocks;
 
       GUI.LoadingScreen.UpdateBar();
     end;

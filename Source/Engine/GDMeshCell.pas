@@ -41,14 +41,13 @@ uses
   GDModes,
   GDMesh,
   GDWater,
+  GDSettings,
   GDGLObjects,
   GDRenderer,
-  GDSettings,
   GDResource,
   GDResources,
   GDBaseCell,
-  GDGenerics,
-  Contnrs;
+  GDGenerics;
 
 type
 
@@ -75,7 +74,8 @@ type
 
   TGDMeshCell = class (TGDBaseCell)
   private
-    FMaxDistance : Single;
+    FScaleDistance : single;
+    FMaxDistance : single;
     FMatrix      : TGDMatrix;
     FMesh        : TGDMesh;
     FPosition    : TGDVector;
@@ -85,6 +85,7 @@ type
   public
     property Mesh : TGDMesh read FMesh;
     property MaxDistance : Single read FMaxDistance write FMaxDistance;
+    property ScaleDistance : Single read FScaleDistance write FScaleDistance;
 
     constructor Create(aInput : TGDMeshCellInput);
     destructor  Destroy(); override;
@@ -107,10 +108,11 @@ var
   iVertices : TGDVectorList;
 begin
   FMesh := nil;
-  FNormalDPL   := TGDGLDisplayList.Create();
-  iVertices    := TGDVectorList.Create();
-  OjectType    := SO_MESHCELL;
+  FNormalDPL  := TGDGLDisplayList.Create();
+  iVertices   := TGDVectorList.Create();
+  OjectType   := SO_MESHCELL;
   FMaxDistance := Settings.ViewDistance * R_VIEW_DISTANCE_STEP;
+  FScaleDistance := 0;
 
   FMesh := Resources.LoadMesh(aInput.MeshName);
   FPosition.Reset(aInput.PosX, aInput.PosY, aInput.PosZ);
@@ -156,6 +158,7 @@ var
   iNormals : TGDVectorList;
   iVertices : TGDVectorList;
   iTempPolygon : TGDMeshPolygon;
+  iDistanceScale : Single;
 
 procedure RenderNormal(aP : TGDMeshPoint);
 begin
@@ -167,7 +170,10 @@ begin
 end;
 
 begin
-
+  if Distance < (FMaxDistance - FScaleDistance) then
+    iDistanceScale := 1
+  else
+    iDistanceScale := 1 - ((Distance - (FMaxDistance - FScaleDistance)) / FScaleDistance);
 
   Case aRenderAttribute Of
     RA_NORMAL         : begin
@@ -180,15 +186,17 @@ begin
                               Renderer.SetColor(1.0,1.0,1.0,1.0);
                               Renderer.ColorShader.SetMatrix('M_ROTATION', FMatrix);
                               Renderer.ColorShader.SetFloat3('V_POSITION', FPosition.x, FPosition.y, FPosition.z);
-                              Renderer.ColorShader.SetFloat3('V_SCALE', FScale.x, FScale.y, FScale.z);
+                              Renderer.ColorShader.SetFloat3('V_SCALE', FScale.x * iDistanceScale, FScale.y * iDistanceScale, FScale.z * iDistanceScale);
                               Renderer.ColorShader.SetInt('I_CUSTOM_TRANSLATE', 1);
+
+                              (Mesh.DPLS.Items[iI] as TGDGLDisplayList).CallList();
                             end
                             else
                             begin
                               iMS.Material.ApplyMaterial();
                               Renderer.MeshShader.SetMatrix('M_ROTATION', FMatrix);
                               Renderer.MeshShader.SetFloat3('V_POSITION', FPosition.x, FPosition.y, FPosition.z);
-                              Renderer.MeshShader.SetFloat3('V_SCALE', FScale.x, FScale.y, FScale.z);
+                              Renderer.MeshShader.SetFloat3('V_SCALE', FScale.x * iDistanceScale, FScale.y * iDistanceScale, FScale.z * iDistanceScale);
                               Renderer.MeshShader.SetInt('I_DO_BLOOM', 1);
 
                               if aRenderFor = RF_BLOOM then
@@ -207,29 +215,31 @@ begin
                               begin
                                Renderer.MeshShader.SetInt('I_UNDER_WATER', 0);
                               end;
-                            end;
 
-                            Renderer.MeshShader.SetInt('I_FLIP_NORMAL', 0);
-                            iMS.Material.BindMaterialTextures();
+                              Renderer.MeshShader.SetInt('I_FLIP_NORMAL', 0);
+                              iMS.Material.BindMaterialTextures();
 
-                            (Mesh.DPLS.Items[iI] as TGDGLDisplayList).CallList();
-
-                            //fix for lighting with alha based surfaces
-                            if iMS.Material.HasAlpha then
-                            begin
-                              if (aRenderFor = RF_WATER) and Not(Water.UnderWater) then
-                                glCullFace(GL_BACK)
-                              else
-                                glCullFace(GL_FRONT);
-                              Renderer.MeshShader.SetInt('I_FLIP_NORMAL', 1);
                               (Mesh.DPLS.Items[iI] as TGDGLDisplayList).CallList();
-                              if (aRenderFor = RF_WATER) and Not(Water.UnderWater) then
-                                glCullFace(GL_FRONT)
-                              else
-                                glCullFace(GL_BACK);
-                            end;
 
-                            iMS.Material.DisableMaterial();
+                              //fix for lighting with alha based surfaces
+                              if iMS.Material.HasAlpha then
+                              begin
+                                if (aRenderFor = RF_WATER) and Not(Water.UnderWater) then
+                                  glCullFace(GL_BACK)
+                                else
+                                  glCullFace(GL_FRONT);
+                                Renderer.MeshShader.SetInt('I_FLIP_NORMAL', 1);
+                                (Mesh.DPLS.Items[iI] as TGDGLDisplayList).CallList();
+                                if (aRenderFor = RF_WATER) and Not(Water.UnderWater) then
+                                  glCullFace(GL_FRONT)
+                                else
+                                  glCullFace(GL_BACK);
+                              end;
+
+
+
+                              iMS.Material.DisableMaterial();
+                            end;
                           end;
                         end;
     RA_FRUSTUM_BOXES  : begin

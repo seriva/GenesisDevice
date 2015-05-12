@@ -70,15 +70,19 @@ Type
 
   TGDMeshPolygon = class (TObject)
   private
-    FMaterial   : TGDMaterial;
-    FPoint1     : TGDMeshPoint;
-    FPoint2     : TGDMeshPoint;
-    FPoint3     : TGDMeshPoint;
+    FPolygonType : TGDPolygonType;
+    FMaterial    : TGDMaterial;
+    FPoint1      : TGDMeshPoint;
+    FPoint2      : TGDMeshPoint;
+    FPoint3      : TGDMeshPoint;
+    FPoint4      : TGDMeshPoint;
   public
+    property PolygonType : TGDPolygonType read FPolygonType;
     property Material : TGDMaterial read FMaterial;
     property P1  : TGDMeshPoint read FPoint1;
     property P2  : TGDMeshPoint read FPoint2;
     property P3  : TGDMeshPoint read FPoint3;
+    property P4  : TGDMeshPoint read FPoint4;
 
     constructor Create();
     destructor  Destroy();override;
@@ -162,10 +166,12 @@ end;
 
 constructor TGDMeshPolygon.Create();
 begin
+  FPolygonType := PT_TRIANGLE;
   FMaterial := Nil;
   FPoint1   := TGDMeshPoint.Create();
   FPoint2   := TGDMeshPoint.Create();
   FPoint3   := TGDMeshPoint.Create();
+  FPoint4   := TGDMeshPoint.Create();
   Inherited;
 end;
 
@@ -179,6 +185,7 @@ begin
   FreeAndNil(FPoint1);
   FreeAndNil(FPoint2);
   FreeAndNil(FPoint3);
+  FreeAndNil(FPoint4);
   Inherited;
 end;
 
@@ -219,6 +226,7 @@ var
   iUV : TGDUVCoord;
   iMat : TGDMaterial;
   iResult : boolean;
+  iQuads : boolean;
   iPolygon : TGDMeshPolygon;
 
 procedure ParsePointSet(aStr : String; aPoint : TGDMeshPoint );
@@ -259,6 +267,7 @@ begin
   try
     iResult := true;
 
+    iQuads               := false;
     FVertices            := TGDVectorList.Create();
     FNormals             := TGDVectorList.Create();
     FUV                  := TGDUVCoordList.Create();
@@ -310,6 +319,11 @@ begin
         FNormals.Add(iNorm);
         continue;
       end
+      else if iStr = 'quads' then //read a normal
+      begin
+        iQuads := true;
+        continue;
+      end
       else if iStr = 'usemtl' then //read the current material for the faces
       begin
         iStr := GetNextToken(iFile);
@@ -329,6 +343,11 @@ begin
         ParsePointSet(GetNextToken(iFile), iPolygon.FPoint1);
         ParsePointSet(GetNextToken(iFile), iPolygon.FPoint2);
         ParsePointSet(GetNextToken(iFile), iPolygon.FPoint3);
+        if iQuads then
+        begin
+          iPolygon.FPolygonType := PT_QUAD;
+          ParsePointSet(GetNextToken(iFile), iPolygon.FPoint4);
+        end;
         FPolygons.Add(iPolygon);
         continue;
       end;
@@ -428,6 +447,7 @@ var
   iDPL : TGDGLDisplayList;
   iJ   : Integer;
   iPL  : TGDMeshPolygon;
+  iFirst : boolean;
 begin
   //prepare the displaylists.
   for iI := 0 to FMaterialSegmentList.Count - 1 do
@@ -436,12 +456,22 @@ begin
     iDPL := TGDGLDisplayList.Create();
     iDPL.InitDisplayList();
     iDPL.StartList();
+    iFirst := true;
 
-    glBegin(GL_TRIANGLES);
     for iJ := 0 to iMS.Polygons.Count-1 do
     begin
-      glColor3f(0.75 + (Random(25)/100), 0.75 + (Random(25)/100), 0.75 + (Random(25)/100));
       iPL := TGDMeshPolygon(iMS.Polygons.Items[iJ]);
+      if iFirst then
+      begin
+        if iPL.FPolygonType = PT_TRIANGLE then
+          glBegin(GL_TRIANGLES)
+        else
+          glBegin(GL_QUADS);
+        iFirst := false;
+      end;
+
+      glColor3f(0.75 + (Random(25)/100), 0.75 + (Random(25)/100), 0.75 + (Random(25)/100));
+
       //V1
       glNormal3fv( FNormals.Items[ iPL.P1.NormalID ].ArrayPointer );
       glTexCoord2fv( FUV.Items[ iPL.P1.UVID ].ArrayPointer );
@@ -454,6 +484,14 @@ begin
       glNormal3fv( FNormals.Items[ iPL.P3.NormalID ].ArrayPointer );
       glTexCoord2fv( FUV.Items[ iPL.P3.UVID ].ArrayPointer );
       glVertex3fv( FVertices.Items[ iPL.P3.VertexID ].ArrayPointer );
+
+      //V4
+      if iPL.FPolygonType = PT_QUAD then
+      begin
+        glNormal3fv( FNormals.Items[ iPL.P4.NormalID ].ArrayPointer );
+        glTexCoord2fv( FUV.Items[ iPL.P4.UVID ].ArrayPointer );
+        glVertex3fv( FVertices.Items[ iPL.P4.VertexID ].ArrayPointer );
+      end;
     end;
     glEnd();
 

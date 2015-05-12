@@ -49,6 +49,9 @@ type
   //static object types
   TGDStaticObjectType = (SO_NONE, SO_TERRAINCELL, SO_WATERCELL, SO_MESHCELL, SO_GRASSCELL );
 
+  //polygon type
+  TGDPolygonType = (PT_TRIANGLE, PT_QUAD);
+
   //base procedure callback
   TGDProcEngineCallback = procedure();
 
@@ -71,6 +74,7 @@ const
   R_WATER_DISTANCE_STEP  = 512;
   R_MIN_WATER_DISTANCE   = 512;
   R_MAX_WATER_DISTANCE   = 10240;
+  R_ROCK_LOD_DISTANCE    = 2000;
   R_GRASS_DISTANCE_STEP  = 768;
   R_CAUSTIC_TIME         = 50;
   R_NORMAL_LENGTH        = 32;

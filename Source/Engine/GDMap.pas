@@ -123,10 +123,9 @@ var
 
   //foliage
   iFoliageInput   : TGDFoliageInput;
-  iGrassTypeInput : TGDGrassTypesInput;
-  iGrassType      : TGDGrassType;
-  iTreeTypeInput  : TGDTreeTypesInput;
-  iTreeType       : TGDTreeType;
+  iGrassTypeInput : TGDGrassTypeInput;
+  iTreeTypeInput  : TGDTreeTypeInput;
+  iRockTypeInput  : TGDRockTypeInput;
 
   //mesh
   iMeshInput : TGDMeshCellInput;
@@ -208,17 +207,19 @@ begin
     Renderer.BloomStrengh := iIniFile.ReadFloat( 'Bloom', 'Strengh', 0.5 );
 
     //foliage
+    iFoliageInput.GrassMap              := iIniFile.ReadString( 'Foliage', 'GrassMap', 'grassmap.bmp' );
+    iFoliageInput.GrassCellCountX        := iIniFile.ReadInteger( 'Foliage', 'GrassCellCountX', 1 );
+    iFoliageInput.GrassCellCountY        := iIniFile.ReadInteger( 'Foliage', 'GrassCellCountY', 1 );
     iFoliageInput.GrassAnimationSpeed    := iIniFile.ReadFloat( 'Foliage', 'GrassAnimationSpeed', 1000 );
     iFoliageInput.GrassAnimationStrength := iIniFile.ReadFloat( 'Foliage', 'GrassAnimationStrength', 5 );
-    iFoliageInput.TreeAnimationSpeed    := iIniFile.ReadFloat( 'Foliage', 'TreeAnimationSpeed', 1000 );
-    iFoliageInput.TreeAnimationStrength := iIniFile.ReadFloat( 'Foliage', 'TreeAnimationStrength', 5 );
-    iFoliageInput.GrassMap        := iIniFile.ReadString( 'Foliage', 'GrassMap', 'grassmap.bmp' );
-    iFoliageInput.TreeMap        := iIniFile.ReadString( 'Foliage', 'TreeMap', 'treemap.bmp' );
-    iFoliageInput.GrassCellCountX   := iIniFile.ReadInteger( 'Foliage', 'GrassCellCountX', 1 );
-    iFoliageInput.GrassCellCountY   := iIniFile.ReadInteger( 'Foliage', 'GrassCellCountY', 1 );
-    iFoliageInput.TreeCount         := iIniFile.ReadInteger( 'Foliage', 'TreeCount', 0 );
-    iFoliageInput.TreeLowerLimit    := iIniFile.ReadInteger( 'Foliage', 'TreeLowerLimit', 0 );
-    iFoliageInput.TreeUpperLimit    := iIniFile.ReadInteger( 'Foliage', 'TreeUpperLimit', 0 );
+    iFoliageInput.TreeMap                := iIniFile.ReadString( 'Foliage', 'TreeMap', 'treemap.bmp' );
+    iFoliageInput.TreeCount              := iIniFile.ReadInteger( 'Foliage', 'TreeCount', 0 );
+    iFoliageInput.TreeLowerLimit         := iIniFile.ReadInteger( 'Foliage', 'TreeLowerLimit', 0 );
+    iFoliageInput.TreeUpperLimit         := iIniFile.ReadInteger( 'Foliage', 'TreeUpperLimit', 0 );
+    iFoliageInput.TreeAnimationSpeed     := iIniFile.ReadFloat( 'Foliage', 'TreeAnimationSpeed', 1000 );
+    iFoliageInput.TreeAnimationStrength  := iIniFile.ReadFloat( 'Foliage', 'TreeAnimationStrength', 5 );
+    iFoliageInput.RockMap                := iIniFile.ReadString( 'Foliage', 'RockMap', 'rockmap.bmp' );
+    iFoliageInput.RockCount              := iIniFile.ReadInteger( 'Foliage', 'RockCount', 0 );
 
     //directional light
     iDirectionalLightInput.DirX := iIniFile.ReadFloat('DirectionalLight', 'DirX', -1.0);
@@ -231,7 +232,7 @@ begin
     iDirectionalLightInput.DifG := iIniFile.ReadFloat('DirectionalLight', 'DiffuseB', 1.0);
     iDirectionalLightInput.DifB := iIniFile.ReadFloat('DirectionalLight', 'DiffuseG', 1.0);
     
-    GUI.LoadingScreen.SetupForUse('Loading ' + StringReplace( ExtractFileName(aFileName) , ExtractFileExt(aFileName), '',  [rfReplaceAll] ) + '...',12 );
+    GUI.LoadingScreen.SetupForUse('Loading ' + StringReplace( ExtractFileName(aFileName) , ExtractFileExt(aFileName), '',  [rfReplaceAll] ) + '...',13 );
     GUI.LoadingScreen.UpdateBar();
   except
     on E: Exception do
@@ -284,10 +285,7 @@ begin
       iGrassTypeInput.RandomScaleY := iIniFile.ReadFloat( iString, 'RandomScaleY', 100 );
       iGrassTypeInput.RandomScaleZ := iIniFile.ReadFloat( iString, 'RandomScaleZ', 100 );
       iGrassTypeInput.CoverOfTotal := iIniFile.ReadFloat( iString, 'CoverOfTotal', 100 );
-
-      iGrassType := TGDGrassType.Create();
-      iGrassType.InitGrassType( iGrassTypeInput );
-      Foliage.GrassTypes.Add(iGrassType);
+      Foliage.GrassTypes.Add( TGDGrassType.Create(iGrassTypeInput));
 
       iI := iI + 1;
     end;
@@ -307,10 +305,23 @@ begin
       iTreeTypeInput.RandomScale     := iIniFile.ReadFloat( iString, 'RandomScale', 0 );
       iTreeTypeInput.RandomRotationY := iIniFile.ReadFloat( iString, 'RandomRotationY', 0 );
       iTreeTypeInput.CoverOfTotal    := iIniFile.ReadFloat( iString, 'CoverOfTotal', 100 );
+      Foliage.TreeTypes.Add(TGDTreeType.Create(iTreeTypeInput));
 
-      iTreeType := TGDTreeType.Create();
-      iTreeType.InitTreeType( iTreeTypeInput );
-      Foliage.TreeTypes.Add(iTreeType);
+      iI := iI + 1;
+    end;
+    GUI.LoadingScreen.UpdateBar();
+
+    //rock types
+    iI := 1;
+    while(iIniFile.SectionExists('RockType' + IntToStr(iI))) do
+    begin
+      iString := 'RockType' + IntToStr(iI);
+
+      iRockTypeInput.Model           := iIniFile.ReadString( iString, 'Model', '');
+      iRockTypeInput.StartScale      := iIniFile.ReadFloat( iString, 'StartScale', 100 );
+      iRockTypeInput.RandomScale     := iIniFile.ReadFloat( iString, 'RandomScale', 0 );
+      iRockTypeInput.CoverOfTotal    := iIniFile.ReadFloat( iString, 'CoverOfTotal', 100 );
+      Foliage.RockTypes.Add(TGDRockType.Create(iRockTypeInput));
 
       iI := iI + 1;
     end;

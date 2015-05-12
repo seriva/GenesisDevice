@@ -40,9 +40,9 @@ uses
   GDCamera,
   GDRenderer,
   GDConstants,
+  GDMeshCell,
   GDSettings,
   GDBaseCell,
-  GDMeshCell,
   GDCellManager,
   GDModes;
 
@@ -254,7 +254,7 @@ end;
 
 procedure TGDOcTree.GetVisibleCells();
 var
-  iCell   : TGDBaseCell;
+  iCell     : TGDBaseCell;
   iMeshCell : TGDMeshCell;
   iI : Integer;
   iVertex : TGDVector;
@@ -277,7 +277,7 @@ begin
             VisibleWaterCells.Add(iCell);
 
           If (iCell.OjectType = SO_GRASSCELL) and Modes.RenderGrass then
-            If iCell .Distance < (Settings.GrassDistance * R_GRASS_DISTANCE_STEP + (R_GRASS_DISTANCE_STEP * 10)) then
+            If iCell.Distance < (Settings.GrassDistance * R_GRASS_DISTANCE_STEP + (R_GRASS_DISTANCE_STEP * 10)) then
               VisibleCells.Add(iCell);
 
           If (iCell.OjectType = SO_TERRAINCELL) and Modes.RenderTerrain then
@@ -286,8 +286,8 @@ begin
           If (iCell.OjectType = SO_MESHCELL) and Modes.RenderModels then
           begin
             iMeshCell := TGDMeshCell(iCell);
-            If iMeshCell .Distance < iMeshCell.MaxDistance then
-              VisibleCells.Add(iCell);
+            if iMeshCell.Distance < iMeshCell.MaxDistance then
+               VisibleCells.Add(iCell);
           end;
      end;
     end;
