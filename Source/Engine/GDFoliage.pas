@@ -78,7 +78,6 @@ type
     StartRotationY   : Single;
     StartRotationZ   : Single;
     RandomScale      : Single;
-    RandomRotationY  : Single;
     CoverOfTotal     : Single;
   end;
 
@@ -130,7 +129,6 @@ type
     property StartRotation : TGDVector read FStartRotation;
     property StartScale : Single read FStartScale;
     property RandomScale : Single read FRandomScale;
-    property RandomRotationY : Single read FRandomRotationY;
     property CoverOfTotal : Single read FCoverOfTotal;
 
     constructor Create(aInput : TGDTreeTypeInput);
@@ -274,7 +272,6 @@ begin
   FStartRotation.Reset(aInput.StartRotationX, aInput.StartRotationY, aInput.StartRotationZ);
   FStartScale := aInput.StartScale;
   FRandomScale := aInput.RandomScale;
-  FRandomRotationY := aInput.RandomRotationY;
   FCoverOfTotal := aInput.CoverOfTotal;
 end;
 

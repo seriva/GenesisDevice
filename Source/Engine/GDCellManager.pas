@@ -349,7 +349,7 @@ Begin
         iMeshInput.PosY     := iHeight;
         iMeshInput.PosZ     := iPos.Z;
         iMeshInput.RotX     := iTreeType.StartRotation.X;
-        iMeshInput.RotY     := iTreeType.StartRotation.Y + Random(Round(iTreeType.RandomRotationY));
+        iMeshInput.RotY     := iTreeType.StartRotation.Y + Random(Round(360));
         iMeshInput.RotZ     := iTreeType.StartRotation.Z;
         iMeshInput.ScaleX   := iTreeType.StartScale + Random(Round(iTreeType.RandomScale));
         iMeshInput.ScaleY   := iTreeType.StartScale + Random(Round(iTreeType.RandomScale));

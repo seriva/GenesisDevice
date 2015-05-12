@@ -303,7 +303,6 @@ begin
       iTreeTypeInput.StartRotationY  := iIniFile.ReadFloat( iString, 'StartRotationY', 0 );
       iTreeTypeInput.StartRotationZ  := iIniFile.ReadFloat( iString, 'StartRotationZ', 0 );
       iTreeTypeInput.RandomScale     := iIniFile.ReadFloat( iString, 'RandomScale', 0 );
-      iTreeTypeInput.RandomRotationY := iIniFile.ReadFloat( iString, 'RandomRotationY', 0 );
       iTreeTypeInput.CoverOfTotal    := iIniFile.ReadFloat( iString, 'CoverOfTotal', 100 );
       Foliage.TreeTypes.Add(TGDTreeType.Create(iTreeTypeInput));
 
