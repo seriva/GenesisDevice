@@ -42,6 +42,7 @@ uses
   GDConstants,
   GDSettings,
   GDBaseCell,
+  GDMeshCell,
   GDCellManager,
   GDModes;
 
@@ -254,6 +255,7 @@ end;
 procedure TGDOcTree.GetVisibleCells();
 var
   iCell   : TGDBaseCell;
+  iMeshCell : TGDMeshCell;
   iI : Integer;
   iVertex : TGDVector;
 begin
@@ -282,7 +284,11 @@ begin
             VisibleCells.Add(iCell);
 
           If (iCell.OjectType = SO_MESHCELL) and Modes.RenderModels then
-            VisibleCells.Add(iCell);
+          begin
+            iMeshCell := TGDMeshCell(iCell);
+            If iMeshCell .Distance < iMeshCell.MaxDistance then
+              VisibleCells.Add(iCell);
+          end;
      end;
     end;
   end;

@@ -43,6 +43,7 @@ uses
   GDWater,
   GDGLObjects,
   GDRenderer,
+  GDSettings,
   GDResource,
   GDResources,
   GDBaseCell,
@@ -74,6 +75,7 @@ type
 
   TGDMeshCell = class (TGDBaseCell)
   private
+    FMaxDistance : Single;
     FMatrix      : TGDMatrix;
     FMesh        : TGDMesh;
     FPosition    : TGDVector;
@@ -82,6 +84,7 @@ type
     FNormalDPL   : TGDGLDisplayList;
   public
     property Mesh : TGDMesh read FMesh;
+    property MaxDistance : Single read FMaxDistance write FMaxDistance;
 
     constructor Create(aInput : TGDMeshCellInput);
     destructor  Destroy(); override;
@@ -104,9 +107,10 @@ var
   iVertices : TGDVectorList;
 begin
   FMesh := nil;
-  FNormalDPL  := TGDGLDisplayList.Create();
-  iVertices   := TGDVectorList.Create();
-  OjectType   := SO_MESHCELL;
+  FNormalDPL   := TGDGLDisplayList.Create();
+  iVertices    := TGDVectorList.Create();
+  OjectType    := SO_MESHCELL;
+  FMaxDistance := Settings.ViewDistance * R_VIEW_DISTANCE_STEP;
 
   FMesh := Resources.LoadMesh(aInput.MeshName);
   FPosition.Reset(aInput.PosX, aInput.PosY, aInput.PosZ);
@@ -163,6 +167,8 @@ begin
 end;
 
 begin
+
+
   Case aRenderAttribute Of
     RA_NORMAL         : begin
                           for iI := 0 to Mesh.MaterialSegmentList.Count - 1 do

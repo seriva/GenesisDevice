@@ -55,7 +55,6 @@
         <ComponentName Value="ConfigurationForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="Configuration"/>
       </Unit2>
       <Unit3>
         <Filename Value="Main.pas"/>
@@ -80,7 +79,6 @@
       <Unit8>
         <Filename Value="..\Engine\GDCamera.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="GDCamera"/>
       </Unit8>
       <Unit9>
         <Filename Value="..\Engine\GDCellManager.pas"/>
@@ -90,7 +88,6 @@
       <Unit10>
         <Filename Value="..\Engine\GDConsole.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="GDConsole"/>
       </Unit10>
       <Unit11>
         <Filename Value="..\Engine\GDConstants.pas"/>
@@ -99,7 +96,6 @@
       <Unit12>
         <Filename Value="..\Engine\GDFog.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="GDFog"/>
       </Unit12>
       <Unit13>
         <Filename Value="..\Engine\GDFrustum.pas"/>
@@ -118,7 +114,6 @@
       <Unit16>
         <Filename Value="..\Engine\GDGUI.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="GDGUI"/>
       </Unit16>
       <Unit17>
         <Filename Value="..\Engine\GDInput.pas"/>
@@ -127,22 +122,18 @@
       <Unit18>
         <Filename Value="..\Engine\GDInterface.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="GDInterface"/>
       </Unit18>
       <Unit19>
         <Filename Value="..\Engine\GDLighting.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="GDLighting"/>
       </Unit19>
       <Unit20>
         <Filename Value="..\Engine\GDMain.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="GDMain"/>
       </Unit20>
       <Unit21>
         <Filename Value="..\Engine\GDMap.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="GDMap"/>
       </Unit21>
       <Unit22>
         <Filename Value="..\Engine\GDMesh.pas"/>
@@ -171,7 +162,6 @@
       <Unit27>
         <Filename Value="..\Engine\GDSettings.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="GDSettings"/>
       </Unit27>
       <Unit28>
         <Filename Value="..\Engine\GDSkyDome.pas"/>
@@ -186,7 +176,6 @@
       <Unit30>
         <Filename Value="..\Engine\GDStatistics.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="GDStatistics"/>
       </Unit30>
       <Unit31>
         <Filename Value="..\Engine\GDTerrain.pas"/>
@@ -195,7 +184,6 @@
       <Unit32>
         <Filename Value="..\Engine\GDTerrainCell.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="GDTerrainCell"/>
       </Unit32>
       <Unit33>
         <Filename Value="..\Engine\GDTexture.pas"/>
@@ -217,12 +205,10 @@
       <Unit37>
         <Filename Value="..\Engine\GDWaterCell.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="GDWaterCell"/>
       </Unit37>
       <Unit38>
         <Filename Value="..\Engine\GDFoliage.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="GDFoliage"/>
       </Unit38>
       <Unit39>
         <Filename Value="..\Engine\GDStringParsing.pas"/>
@@ -239,7 +225,6 @@
       <Unit42>
         <Filename Value="..\Libraries\OpenAL\openal.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="openal"/>
       </Unit42>
       <Unit43>
         <Filename Value="..\Engine\GDResources.pas"/>
@@ -282,7 +267,6 @@
     </Linking>
     <Other>
       <CustomOptions Value="-dBorland -dVer150 -dDelphi7 -dCompiler6_Up -dPUREPASCAL"/>
-      <CompilerPath Value="$(CompPath)"/>
     </Other>
   </CompilerOptions>
   <Debugging>
