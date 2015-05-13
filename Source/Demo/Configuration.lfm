@@ -1,7 +1,7 @@
 object ConfigurationForm: TConfigurationForm
-  Left = 0
+  Left = 1938
   Height = 380
-  Top = 0
+  Top = 305
   Width = 398
   BorderIcons = [biSystemMenu]
   BorderStyle = bsSingle
@@ -16,7 +16,7 @@ object ConfigurationForm: TConfigurationForm
   OnDestroy = FormDestroy
   OnShow = FormShow
   Position = poDefault
-  LCLVersion = '1.4.0.4'
+  LCLVersion = '1.2.6.0'
   object RunButton: TButton
     Left = 328
     Height = 26
@@ -46,16 +46,16 @@ object ConfigurationForm: TConfigurationForm
     TabOrder = 1
     object WindowTabSheet: TTabSheet
       Caption = 'Window'
-      ClientHeight = 311
+      ClientHeight = 308
       ClientWidth = 392
       object WindowPanel: TPanel
         Left = 0
-        Height = 311
+        Height = 308
         Top = 0
         Width = 392
         Align = alClient
         BevelOuter = bvNone
-        ClientHeight = 311
+        ClientHeight = 308
         ClientWidth = 392
         TabOrder = 0
         object ResolutionLabel: TLabel
@@ -84,10 +84,10 @@ object ConfigurationForm: TConfigurationForm
         end
         object ResolutionsComboBox: TComboBox
           Left = 134
-          Height = 21
+          Height = 24
           Top = 43
           Width = 245
-          ItemHeight = 13
+          ItemHeight = 16
           ParentShowHint = False
           ShowHint = True
           Style = csDropDownList
@@ -95,9 +95,9 @@ object ConfigurationForm: TConfigurationForm
         end
         object FullScreenCheckBox: TCheckBox
           Left = 6
-          Height = 20
+          Height = 23
           Top = 80
-          Width = 142
+          Width = 146
           Caption = 'Fullscreen                    '
           Font.Color = clWindowText
           Font.Height = -13
@@ -109,9 +109,9 @@ object ConfigurationForm: TConfigurationForm
         end
         object VerticalSyncCheckBox: TCheckBox
           Left = 6
-          Height = 20
+          Height = 23
           Top = 112
-          Width = 98
+          Width = 102
           Caption = 'Vertical Sync'
           Font.Color = clWindowText
           Font.Height = -13
@@ -147,10 +147,10 @@ object ConfigurationForm: TConfigurationForm
         end
         object MonitorComboBox: TComboBox
           Left = 134
-          Height = 21
+          Height = 24
           Top = 8
           Width = 245
-          ItemHeight = 13
+          ItemHeight = 16
           OnChange = MonitorComboBoxChange
           ParentShowHint = False
           ShowHint = True
@@ -161,17 +161,17 @@ object ConfigurationForm: TConfigurationForm
     end
     object RenderingTabSheet: TTabSheet
       Caption = 'Rendering'
-      ClientHeight = 311
+      ClientHeight = 308
       ClientWidth = 392
       ImageIndex = 1
       object RenderingPanel: TPanel
         Left = 0
-        Height = 311
+        Height = 308
         Top = 0
         Width = 392
         Align = alClient
         BevelOuter = bvNone
-        ClientHeight = 311
+        ClientHeight = 308
         ClientWidth = 392
         TabOrder = 0
         object WaterDetailLabel: TLabel
@@ -202,20 +202,20 @@ object ConfigurationForm: TConfigurationForm
           Left = 8
           Height = 16
           Top = 42
-          Width = 92
-          Caption = 'Grass Distance'
+          Width = 102
+          Caption = 'Foliage Distance'
           Font.Color = clWindowText
           Font.Height = -13
           Font.Name = 'MS Sans Serif'
           ParentColor = False
           ParentFont = False
         end
-        object GrassDensityLabel: TLabel
+        object FoliageDensityLabel: TLabel
           Left = 8
           Height = 16
           Top = 74
-          Width = 84
-          Caption = 'Grass Density'
+          Width = 94
+          Caption = 'Foliage Density'
           Font.Color = clWindowText
           Font.Height = -13
           Font.Name = 'MS Sans Serif'
@@ -269,7 +269,7 @@ object ConfigurationForm: TConfigurationForm
           TickStyle = tsNone
           TabOrder = 0
         end
-        object GrassDistanceTrackBar: TTrackBar
+        object FoliageDistanceTrackBar: TTrackBar
           Left = 126
           Height = 26
           Top = 38
@@ -280,7 +280,7 @@ object ConfigurationForm: TConfigurationForm
           TickStyle = tsNone
           TabOrder = 1
         end
-        object GrassDensityTrackBar: TTrackBar
+        object FoliageDensityTrackBar: TTrackBar
           Left = 126
           Height = 26
           Top = 70
@@ -293,14 +293,14 @@ object ConfigurationForm: TConfigurationForm
         end
         object TextureDetailComboBox: TComboBox
           Left = 136
-          Height = 21
+          Height = 24
           Top = 102
           Width = 247
           Font.Color = clWindowText
           Font.Height = -12
           Font.Name = 'MS Sans Serif'
           Font.Style = [fsBold]
-          ItemHeight = 13
+          ItemHeight = 16
           ParentFont = False
           ParentShowHint = False
           ShowHint = True
@@ -309,14 +309,14 @@ object ConfigurationForm: TConfigurationForm
         end
         object TextureFilterComboBox: TComboBox
           Left = 135
-          Height = 21
+          Height = 24
           Top = 137
           Width = 248
           Font.Color = clWindowText
           Font.Height = -12
           Font.Name = 'MS Sans Serif'
           Font.Style = [fsBold]
-          ItemHeight = 13
+          ItemHeight = 16
           Items.Strings = (
             ''
           )
@@ -328,14 +328,14 @@ object ConfigurationForm: TConfigurationForm
         end
         object WaterReflectionComboBox: TComboBox
           Left = 136
-          Height = 21
+          Height = 24
           Top = 174
           Width = 247
           Font.Color = clWindowText
           Font.Height = -12
           Font.Name = 'MS Sans Serif'
           Font.Style = [fsBold]
-          ItemHeight = 13
+          ItemHeight = 16
           Items.Strings = (
             ''
           )
@@ -345,14 +345,14 @@ object ConfigurationForm: TConfigurationForm
         end
         object WaterDetailComboBox: TComboBox
           Left = 135
-          Height = 21
+          Height = 24
           Top = 209
           Width = 248
           Font.Color = clWindowText
           Font.Height = -12
           Font.Name = 'MS Sans Serif'
           Font.Style = [fsBold]
-          ItemHeight = 13
+          ItemHeight = 16
           Items.Strings = (
             ''
           )
@@ -362,9 +362,9 @@ object ConfigurationForm: TConfigurationForm
         end
         object BloomCheckBox: TCheckBox
           Left = 8
-          Height = 20
+          Height = 23
           Top = 280
-          Width = 59
+          Width = 63
           Caption = 'Bloom'
           Font.Color = clWindowText
           Font.Height = -13
@@ -376,9 +376,9 @@ object ConfigurationForm: TConfigurationForm
         end
         object FXAACheckBox: TCheckBox
           Left = 8
-          Height = 20
+          Height = 23
           Top = 248
-          Width = 54
+          Width = 58
           Caption = 'FXAA'
           Font.Color = clWindowText
           Font.Height = -13
@@ -549,10 +549,10 @@ object ConfigurationForm: TConfigurationForm
         end
         object MapComboBox: TComboBox
           Left = 134
-          Height = 21
+          Height = 24
           Top = 5
           Width = 245
-          ItemHeight = 13
+          ItemHeight = 16
           ParentShowHint = False
           ShowHint = True
           Style = csDropDownList

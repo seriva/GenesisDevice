@@ -52,6 +52,9 @@ type
   //polygon type
   TGDPolygonType = (PT_TRIANGLE, PT_QUAD);
 
+    //polygon type
+  TGDMeshLODType = (LT_NONE, LT_FADE_IN, LT_STAGES);
+
   //base procedure callback
   TGDProcEngineCallback = procedure();
 
@@ -63,21 +66,25 @@ const
   TWaterReflection : array[1..2] of String  = ('Terrain Only', 'All');
 
   //engine constants
-  ENGINE_INFO     = '70 - 6 May 2015';
+  ENGINE_INFO     = '71 -13 May 2015';
 
   //renderer constants
-  R_HUDWIDTH             = 1600;
-  R_HUDHEIGHT            = 1200;
-  R_VIEW_DISTANCE_STEP   = 10240;
-  R_MIN_VIEW_DISTANCE    = 51200;
-  R_MAX_VIEW_DISTANCE    = 102400;
-  R_WATER_DISTANCE_STEP  = 512;
-  R_MIN_WATER_DISTANCE   = 512;
-  R_MAX_WATER_DISTANCE   = 10240;
-  R_ROCK_LOD_DISTANCE    = 2000;
-  R_GRASS_DISTANCE_STEP  = 1024;
-  R_CAUSTIC_TIME         = 50;
-  R_NORMAL_LENGTH        = 32;
+  R_HUDWIDTH              = 1600;
+  R_HUDHEIGHT             = 1200;
+  R_VIEW_DISTANCE_STEP    = 10240;
+  R_MIN_VIEW_DISTANCE     = 51200;
+  R_MAX_VIEW_DISTANCE     = 102400;
+  R_WATER_DISTANCE_STEP   = 512;
+  R_MIN_WATER_DISTANCE    = 512;
+  R_MAX_WATER_DISTANCE    = 10240;
+  R_FOLIAGE_LOD_DISTANCE  = 2000;
+  R_FOLIAGE_DISTANCE_STEP = 1024;
+  R_CAUSTIC_TIME          = 50;
+  R_NORMAL_LENGTH         = 32;
+
+  R_LOD0_DISTANCE         = 15;
+  R_LOD1_DISTANCE         = 50;
+  R_LOD2_DISTANCE         = 100;
 
   //minimum required settings constants
   MRS_TEXTURE_UNITS = 8;

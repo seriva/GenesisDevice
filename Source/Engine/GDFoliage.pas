@@ -73,6 +73,8 @@ type
 
   TGDTreeTypeInput = record
     Model            : String;
+    ModelLOD1        : String;
+    ModelLOD2        : String;
     StartScale       : Single;
     StartRotationX   : Single;
     StartRotationY   : Single;
@@ -119,13 +121,16 @@ type
   TGDTreeType = class(TObject)
   private
     FMesh            : TGDMesh;
+    FMeshLOD1        : TGDMesh;
+    FMeshLOD2        : TGDMesh;
     FStartRotation   : TGDVector;
     FStartScale      : Single;
     FRandomScale     : Single;
-    FRandomRotationY : Single;
     FCoverOfTotal    : Single;
   public
     property Mesh : TGDMesh read FMesh;
+    property MeshLOD1 : TGDMesh read FMeshLOD1;
+    property MeshLOD2 : TGDMesh read FMeshLOD2;
     property StartRotation : TGDVector read FStartRotation;
     property StartScale : Single read FStartScale;
     property RandomScale : Single read FRandomScale;
@@ -269,6 +274,8 @@ end;
 constructor TGDTreeType.Create(aInput : TGDTreeTypeInput );
 begin
   FMesh := Resources.Loadmesh(aInput.Model);
+  FMeshLOD1 := Resources.Loadmesh(aInput.ModelLOD1);
+  FMeshLOD2 := Resources.Loadmesh(aInput.ModelLOD2);
   FStartRotation.Reset(aInput.StartRotationX, aInput.StartRotationY, aInput.StartRotationZ);
   FStartScale := aInput.StartScale;
   FRandomScale := aInput.RandomScale;
@@ -282,6 +289,8 @@ end;
 destructor  TGDTreeType.Destroy();
 begin
   Resources.RemoveResource(TGDResource(FMesh));
+  Resources.RemoveResource(TGDResource(FMeshLOD1));
+  Resources.RemoveResource(TGDResource(FMeshLOD2));
   inherited
 end;
 

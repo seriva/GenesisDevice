@@ -279,7 +279,6 @@ var
  iMeshInput : TGDMeshCellInput;
  iHeight : Double;
  iPos : TGDVector;
- iMeshCell : TGDMeshCell;
 label
   RedoRandomTrees;
 label
@@ -289,7 +288,7 @@ Begin
   iStepX := Round((Terrain.TerrainWidth-1) / Foliage.GrassCellCountX);
   iStepY := Round((Terrain.TerrainHeight-1) / Foliage.GrassCellCountY);
 
-  GUI.LoadingScreen.SetupForUse('Generating foliage...', Round(Terrain.TerrainWidth/iStepX) + Foliage.TreeCount + Foliage.RockCount );
+  GUI.LoadingScreen.SetupForUse('Generating foliage...', Round(Terrain.TerrainWidth/iStepX) + Foliage.TreeTypes.Count + Foliage.RockTypes.Count );
 
   //create grasscells
   iI := 1;
@@ -344,23 +343,27 @@ Begin
         if not((iHeight > Foliage.TreeLowerLimit) and (iHeight < Foliage.TreeUpperLimit)) then
            goto RedoRandomTrees;
 
-        iMeshInput.MeshName := iTreeType.Mesh.Name;
-        iMeshInput.PosX     := iPos.X;
-        iMeshInput.PosY     := iHeight;
-        iMeshInput.PosZ     := iPos.Z;
-        iMeshInput.RotX     := iTreeType.StartRotation.X;
-        iMeshInput.RotY     := iTreeType.StartRotation.Y + Random(Round(360));
-        iMeshInput.RotZ     := iTreeType.StartRotation.Z;
-        iMeshInput.ScaleX   := iTreeType.StartScale + Random(Round(iTreeType.RandomScale));
-        iMeshInput.ScaleY   := iTreeType.StartScale + Random(Round(iTreeType.RandomScale));
-        iMeshInput.ScaleZ   := iTreeType.StartScale + Random(Round(iTreeType.RandomScale));
+        iMeshInput.Model        := iTreeType.Mesh.Name;
+        iMeshInput.ModelLOD1    := iTreeType.MeshLOD1.name;
+        iMeshInput.ModelLOD2    := iTreeType.MeshLOD2.name;
+        iMeshInput.PosX         := iPos.X;
+        iMeshInput.PosY         := iHeight;
+        iMeshInput.PosZ         := iPos.Z;
+        iMeshInput.RotX         := iTreeType.StartRotation.X;
+        iMeshInput.RotY         := iTreeType.StartRotation.Y + Random(Round(360));
+        iMeshInput.RotZ         := iTreeType.StartRotation.Z;
+        iMeshInput.ScaleX       := iTreeType.StartScale + Random(Round(iTreeType.RandomScale));
+        iMeshInput.ScaleY       := iTreeType.StartScale + Random(Round(iTreeType.RandomScale));
+        iMeshInput.ScaleZ       := iTreeType.StartScale + Random(Round(iTreeType.RandomScale));
+        iMeshInput.FadeDistance := 0;
+        iMeshInput.FadeScale    := 0;
+
         CellManager.Cells.Add( TGDMeshCell.Create(iMeshInput) );
       end
       else
         goto RedoRandomTrees;
-
-      GUI.LoadingScreen.UpdateBar();
     end;
+    GUI.LoadingScreen.UpdateBar();
   end;
 
   //create rocks
@@ -380,27 +383,28 @@ Begin
 
       if Foliage.CheckRockMap(iX, iY) and Terrain.GetHeight(iPos.X, iPos.Z, iHeight) then
       begin
-        iMeshInput.MeshName := iRockType.Mesh.Name;
-        iMeshInput.PosX     := iPos.X;
-        iMeshInput.PosY     := iHeight;
-        iMeshInput.PosZ     := iPos.Z;
-        iMeshInput.RotX     := 0;
-        iMeshInput.RotY     := Random(360);
-        iMeshInput.RotZ     := 0;
-        iMeshInput.ScaleX   := iRockType.StartScale + Random(Round(iRockType.RandomScale));
-        iMeshInput.ScaleY   := iRockType.StartScale + Random(Round(iRockType.RandomScale));
-        iMeshInput.ScaleZ   := iRockType.StartScale + Random(Round(iRockType.RandomScale));
-
-        iMeshCell := TGDMeshCell.Create(iMeshInput);
-        iMeshCell.MaxDistance := Settings.GrassDistance * R_GRASS_DISTANCE_STEP + (R_GRASS_DISTANCE_STEP * 10);
-        iMeshCell.ScaleDistance := R_ROCK_LOD_DISTANCE;
-        CellManager.Cells.Add( iMeshCell );
+        iMeshInput.Model     := iRockType.Mesh.Name;
+        iMeshInput.ModelLOD1 := '';
+        iMeshInput.ModelLOD2 := '';
+        iMeshInput.PosX      := iPos.X;
+        iMeshInput.PosY      := iHeight;
+        iMeshInput.PosZ      := iPos.Z;
+        iMeshInput.RotX      := 0;
+        iMeshInput.RotY      := Random(360);
+        iMeshInput.RotZ      := 0;
+        iMeshInput.ScaleX    := iRockType.StartScale + Random(Round(iRockType.RandomScale));
+        iMeshInput.ScaleY    := iRockType.StartScale + Random(Round(iRockType.RandomScale));
+        iMeshInput.ScaleZ    := iRockType.StartScale + Random(Round(iRockType.RandomScale));
+        iMeshInput.FadeDistance := Settings.FoliageDistance * R_FOLIAGE_DISTANCE_STEP + (R_FOLIAGE_DISTANCE_STEP * 10);
+        iMeshInput.FadeScale    := R_FOLIAGE_LOD_DISTANCE;
+        CellManager.Cells.Add( TGDMeshCell.Create(iMeshInput) );
       end
       else
         goto RedoRandomRocks;
 
-      GUI.LoadingScreen.UpdateBar();
+
     end;
+    GUI.LoadingScreen.UpdateBar();
   end;
   Timing.Stop();
   Console.Write('......Generated foliage (' + Timing.TimeInSeconds + ' Sec)');
@@ -504,18 +508,18 @@ begin
       if Modes.RenderGrass then
       begin
         iGrassCell := TGDBaseCell(FVisibleCells.Items[ iI ]) As TGDGrassCell;
-        iDistance  := Settings.GrassDistance * R_GRASS_DISTANCE_STEP;
+        iDistance  := Settings.FoliageDistance * R_FOLIAGE_DISTANCE_STEP;
         if iGrassCell.Distance < iDistance then iAlphaFunction := 0.0 else
-        if iGrassCell.Distance < (iDistance + (R_GRASS_DISTANCE_STEP * 1)) then iAlphaFunction := 0.05 else
-        if iGrassCell.Distance < (iDistance + (R_GRASS_DISTANCE_STEP * 2)) then iAlphaFunction := 0.1 else
-        if iGrassCell.Distance < (iDistance + (R_GRASS_DISTANCE_STEP * 3)) then iAlphaFunction := 0.15 else
-        if iGrassCell.Distance < (iDistance + (R_GRASS_DISTANCE_STEP * 4)) then iAlphaFunction := 0.2 else
-        if iGrassCell.Distance < (iDistance + (R_GRASS_DISTANCE_STEP * 5)) then iAlphaFunction := 0.25 else
-        if iGrassCell.Distance < (iDistance + (R_GRASS_DISTANCE_STEP * 6)) then iAlphaFunction := 0.3 else
-        if iGrassCell.Distance < (iDistance + (R_GRASS_DISTANCE_STEP * 7)) then iAlphaFunction := 0.35 else
-        if iGrassCell.Distance < (iDistance + (R_GRASS_DISTANCE_STEP * 8)) then iAlphaFunction := 0.40 else
-        if iGrassCell.Distance < (iDistance + (R_GRASS_DISTANCE_STEP * 9)) then iAlphaFunction := 0.45 else
-        if iGrassCell.Distance < (iDistance + (R_GRASS_DISTANCE_STEP * 10)) then iAlphaFunction := 0.5;
+        if iGrassCell.Distance < (iDistance + (R_FOLIAGE_DISTANCE_STEP * 1)) then iAlphaFunction := 0.05 else
+        if iGrassCell.Distance < (iDistance + (R_FOLIAGE_DISTANCE_STEP * 2)) then iAlphaFunction := 0.1 else
+        if iGrassCell.Distance < (iDistance + (R_FOLIAGE_DISTANCE_STEP * 3)) then iAlphaFunction := 0.15 else
+        if iGrassCell.Distance < (iDistance + (R_FOLIAGE_DISTANCE_STEP * 4)) then iAlphaFunction := 0.2 else
+        if iGrassCell.Distance < (iDistance + (R_FOLIAGE_DISTANCE_STEP * 5)) then iAlphaFunction := 0.25 else
+        if iGrassCell.Distance < (iDistance + (R_FOLIAGE_DISTANCE_STEP * 6)) then iAlphaFunction := 0.3 else
+        if iGrassCell.Distance < (iDistance + (R_FOLIAGE_DISTANCE_STEP * 7)) then iAlphaFunction := 0.35 else
+        if iGrassCell.Distance < (iDistance + (R_FOLIAGE_DISTANCE_STEP * 8)) then iAlphaFunction := 0.40 else
+        if iGrassCell.Distance < (iDistance + (R_FOLIAGE_DISTANCE_STEP * 9)) then iAlphaFunction := 0.45 else
+        if iGrassCell.Distance < (iDistance + (R_FOLIAGE_DISTANCE_STEP * 10)) then iAlphaFunction := 0.5;
         Foliage.StartRenderingGrass( aRenderAttribute, iAlphaFunction );
         iGrassCell.RenderGrassCell( aRenderAttribute );
         Foliage.EndRenderingGrass();

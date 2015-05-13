@@ -55,6 +55,7 @@
         <ComponentName Value="ConfigurationForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
+        <UnitName Value="Configuration"/>
       </Unit2>
       <Unit3>
         <Filename Value="Main.pas"/>
@@ -110,6 +111,7 @@
       <Unit15>
         <Filename Value="..\Engine\GDGrassCell.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="GDGrassCell"/>
       </Unit15>
       <Unit16>
         <Filename Value="..\Engine\GDGUI.pas"/>
@@ -268,6 +270,7 @@
     </Linking>
     <Other>
       <CustomOptions Value="-dBorland -dVer150 -dDelphi7 -dCompiler6_Up -dPUREPASCAL"/>
+      <CompilerPath Value="$(CompPath)"/>
     </Other>
   </CompilerOptions>
   <Debugging>

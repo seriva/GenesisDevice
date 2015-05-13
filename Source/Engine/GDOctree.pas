@@ -277,7 +277,7 @@ begin
             VisibleWaterCells.Add(iCell);
 
           If (iCell.OjectType = SO_GRASSCELL) and Modes.RenderGrass then
-            If iCell.Distance < (Settings.GrassDistance * R_GRASS_DISTANCE_STEP + (R_GRASS_DISTANCE_STEP * 10)) then
+            If iCell.Distance < (Settings.FoliageDistance * R_FOLIAGE_DISTANCE_STEP + (R_FOLIAGE_DISTANCE_STEP * 10)) then
               VisibleCells.Add(iCell);
 
           If (iCell.OjectType = SO_TERRAINCELL) and Modes.RenderTerrain then
@@ -286,8 +286,13 @@ begin
           If (iCell.OjectType = SO_MESHCELL) and Modes.RenderModels then
           begin
             iMeshCell := TGDMeshCell(iCell);
-            if iMeshCell.Distance < iMeshCell.MaxDistance then
-               VisibleCells.Add(iCell);
+            if iMeshCell.LODType = LT_FADE_IN then
+            begin
+              if iMeshCell.Distance < iMeshCell.FadeDistance then
+                 VisibleCells.Add(iMeshCell);
+            end
+            else
+              VisibleCells.Add(iMeshCell);
           end;
      end;
     end;

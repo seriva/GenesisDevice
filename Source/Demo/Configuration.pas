@@ -86,13 +86,13 @@ type
     WaterDetailLabel: TLabel;
     ViewDistanceLabel: TLabel;
     GrassDistanceLabel: TLabel;
-    GrassDensityLabel: TLabel;
+    FoliageDensityLabel: TLabel;
     TextureDetailLabel: TLabel;
     TextureFilteringLabel: TLabel;
     WaterReflectionLabel: TLabel;
     ViewDistanceTrackBar: TTrackBar;
-    GrassDistanceTrackBar: TTrackBar;
-    GrassDensityTrackBar: TTrackBar;
+    FoliageDistanceTrackBar: TTrackBar;
+    FoliageDensityTrackBar: TTrackBar;
     TextureDetailComboBox: TComboBox;
     TextureFilterComboBox: TComboBox;
     WaterReflectionComboBox: TComboBox;
@@ -309,8 +309,8 @@ begin
 
   //rendering settings
   ViewDistanceTrackBar.Position := iSettings.ViewDistance;
-  GrassDistanceTrackBar.Position := iSettings.GrassDistance;
-  GrassDensityTrackBar.Position := iSettings.GrassDensity;
+  FoliageDistanceTrackBar.Position := iSettings.FoliageDistance;
+  FoliageDensityTrackBar.Position := iSettings.FoliageDensity;
   For  iI := 0 to TextureDetailComboBox.Items.Count-1 do
     if  TextureDetailComboBox.Items[iI] = iSettings.TextureDetail then
       TextureDetailComboBox.ItemIndex := iI;
@@ -371,8 +371,8 @@ begin
 
   //rendering
   iSettings.ViewDistance     := ViewDistanceTrackBar.Position;
-  iSettings.GrassDistance    := GrassDistanceTrackBar.Position;
-  iSettings.GrassDensity     := GrassDensityTrackBar.Position;
+  iSettings.FoliageDistance  := FoliageDistanceTrackBar.Position;
+  iSettings.FoliageDensity   := FoliageDensityTrackBar.Position;
   iSettings.TextureDetail    := TextureDetailComboBox.Text;
   iSettings.TextureFilter    := TextureFilterComboBox.Text;
   iSettings.WaterDetail      := WaterDetailComboBox.Text;

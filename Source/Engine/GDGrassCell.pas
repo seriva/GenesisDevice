@@ -161,7 +161,7 @@ begin
   //create temp arrays
   SetLength( iParticalCount, Foliage.GrassTypes.Count);
   For iI := 0 to Length(iParticalCount)-1 do
-    iParticalCount[iI] :=  Round( (Settings.GrassDensity * TGDGrassType( Foliage.GrassTypes.Items[iI] ).CoverOfTotal) / 100 );
+    iParticalCount[iI] :=  Round( (Settings.FoliageDensity * TGDGrassType( Foliage.GrassTypes.Items[iI] ).CoverOfTotal) / 100 );
 
   SetLength( iParticalLists, Foliage.GrassTypes.Count);
   for iY := (FStartPoint.Y-1) to FEndPoint.Y-2 do

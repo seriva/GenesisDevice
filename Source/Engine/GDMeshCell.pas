@@ -41,9 +41,9 @@ uses
   GDModes,
   GDMesh,
   GDWater,
-  GDSettings,
   GDGLObjects,
   GDRenderer,
+  GDSettings,
   GDResource,
   GDResources,
   GDBaseCell,
@@ -56,7 +56,11 @@ type
 {******************************************************************************}
 
   TGDMeshCellInput = record
-    MeshName : String;
+    Model        : String;
+    ModelLOD1    : String;
+    ModelLOD2    : String;
+    FadeScale    : Double;
+    FadeDistance : Double;
     PosX   : Double;
     PosY   : Double;
     PosZ   : Double;
@@ -74,18 +78,21 @@ type
 
   TGDMeshCell = class (TGDBaseCell)
   private
-    FScaleDistance : single;
-    FMaxDistance : single;
-    FMatrix      : TGDMatrix;
-    FMesh        : TGDMesh;
-    FPosition    : TGDVector;
-    FRotation    : TGDVector;
-    FScale       : TGDVector;
-    FNormalDPL   : TGDGLDisplayList;
+    FLODType       : TGDMeshLODType;
+    FMesh          : TGDMesh;
+    FMeshLOD1      : TGDMesh;
+    FMeshLOD2      : TGDMesh;
+    FFadeScale     : single;
+    FFadeDistance  : single;
+
+    FPosition      : TGDVector;
+    FRotation      : TGDVector;
+    FScale         : TGDVector;
+    FMatrix        : TGDMatrix;
   public
-    property Mesh : TGDMesh read FMesh;
-    property MaxDistance : Single read FMaxDistance write FMaxDistance;
-    property ScaleDistance : Single read FScaleDistance write FScaleDistance;
+    property LODType : TGDMeshLODType read FLODType write FLODType;
+    property FadeDistance : Single read FFadeDistance write FFadeDistance;
+    property FadeScale : Single read FFadeScale write FFadeScale;
 
     constructor Create(aInput : TGDMeshCellInput);
     destructor  Destroy(); override;
@@ -101,25 +108,38 @@ implementation
 {* Create the meshcell class                                                  *}
 {******************************************************************************}
 
-constructor TGDMeshCell.Create();
+constructor TGDMeshCell.Create(aInput : TGDMeshCellInput);
 var
   iVertex : TGDVector;
   iI   : Integer;
   iVertices : TGDVectorList;
 begin
-  FMesh := nil;
-  FNormalDPL  := TGDGLDisplayList.Create();
-  iVertices   := TGDVectorList.Create();
   OjectType   := SO_MESHCELL;
-  FMaxDistance := Settings.ViewDistance * R_VIEW_DISTANCE_STEP;
-  FScaleDistance := 0;
+  FLODType    := LT_NONE;
+  FMesh       := Resources.LoadMesh(aInput.Model);
 
-  FMesh := Resources.LoadMesh(aInput.MeshName);
+  //set posible LOD types.
+  if ((aInput.ModelLOD1 <> '') and (aInput.ModelLOD2 <> ''))then
+  begin
+    FLODType  := LT_STAGES;
+    FMeshLOD1 := Resources.LoadMesh(aInput.ModelLOD1);
+    FMeshLOD2 := Resources.LoadMesh(aInput.ModelLOD2);
+  end
+  else if ((aInput.FadeScale <> 0) and (aInput.FadeDistance <> 0)) then
+  begin
+    FLODType := LT_FADE_IN;
+    FFadeScale    := aInput.FadeScale;
+    FFadeDistance := aInput.FadeDistance;
+  end;
+
+  //set translation
   FPosition.Reset(aInput.PosX, aInput.PosY, aInput.PosZ);
   FRotation.Reset(aInput.RotX, aInput.RotY, aInput.RotZ);
   FScale.Reset( aInput.ScaleX, aInput.ScaleY, aInput.ScaleZ );
   FMatrix.CreateRotation(FRotation);
 
+  //calculate boundingbox
+  iVertices   := TGDVectorList.Create();
   For iI := 0 to FMesh.Vertices.Count - 1 do
   begin
     iVertex := FMesh.Vertices.Items[iI].Copy();
@@ -130,7 +150,6 @@ begin
     iVertices.Add(iVertex)
   end;
   BoundingBox := iVertices.GenerateBoundingBox();
-
   FreeAndNil(iVertices);
 end;
 
@@ -142,7 +161,6 @@ destructor  TGDMeshCell.Destroy();
 begin
   Resources.RemoveResource(TGDResource(FMesh));
   FMesh := nil;
-  FreeAndNil(FNormalDPL);
   Inherited;
 end;
 
@@ -158,7 +176,8 @@ var
   iNormals : TGDVectorList;
   iVertices : TGDVectorList;
   iTempPolygon : TGDMeshPolygon;
-  iDistanceScale : Single;
+  iFadeDistanceScale : Single;
+  iMesh : TGDMesh;
 
 procedure RenderNormal(aP : TGDMeshPoint);
 begin
@@ -169,34 +188,52 @@ begin
   glVertex3fv( iVertex.ArrayPointer );
 end;
 
+procedure SetMeshPositioning(aShader : TGDGLShader);
 begin
-  if Distance < (FMaxDistance - FScaleDistance) then
-    iDistanceScale := 1
-  else
-    iDistanceScale := 1 - ((Distance - (FMaxDistance - FScaleDistance)) / FScaleDistance);
+  aShader.SetMatrix('M_ROTATION', FMatrix);
+  aShader.SetFloat3('V_POSITION', FPosition.x, FPosition.y, FPosition.z);
+  aShader.SetFloat3('V_SCALE', FScale.x * iFadeDistanceScale, FScale.y * iFadeDistanceScale, FScale.z * iFadeDistanceScale);
+end;
+
+begin
+  //Determine LOD settings for meshcell.
+  iMesh := FMesh;
+  iFadeDistanceScale := 1;
+  Case FLODType of
+    LT_NONE    : ;
+    LT_FADE_IN : begin
+                  if Distance < (FFadeDistance - FFadeScale) then
+                    iFadeDistanceScale := 1
+                  else
+                    iFadeDistanceScale := 1 - ((Distance - (FFadeDistance - FFadeScale)) / FFadeScale);
+                 end;
+    LT_STAGES  :begin
+                  if ((Distance >= 0) and (Distance < Settings.LOD0)) then
+                    iMesh := FMesh
+                  else if ((Distance >= Settings.LOD0) and (Distance <= Settings.LOD1)) then
+                    iMesh := FMeshLOD1
+                  else if ((Distance >= Settings.LOD1) and (Distance <= Settings.LOD2)) then
+                    iMesh := FMeshLOD2;
+                end;
+  end;
 
   Case aRenderAttribute Of
     RA_NORMAL         : begin
-                          for iI := 0 to Mesh.MaterialSegmentList.Count - 1 do
+                          for iI := 0 to iMesh.MaterialSegmentList.Count - 1 do
                           begin
-                            iMS := TGDMaterialSegment(Mesh.MaterialSegmentList.Items[iI]);
+                            iMS := TGDMaterialSegment(iMesh.MaterialSegmentList.Items[iI]);
 
                             if Modes.RenderWireframe then
                             begin
                               Renderer.SetColor(1.0,1.0,1.0,1.0);
-                              Renderer.ColorShader.SetMatrix('M_ROTATION', FMatrix);
-                              Renderer.ColorShader.SetFloat3('V_POSITION', FPosition.x, FPosition.y, FPosition.z);
-                              Renderer.ColorShader.SetFloat3('V_SCALE', FScale.x * iDistanceScale, FScale.y * iDistanceScale, FScale.z * iDistanceScale);
+                              SetMeshPositioning(Renderer.ColorShader);
                               Renderer.ColorShader.SetInt('I_CUSTOM_TRANSLATE', 1);
-
-                              (Mesh.DPLS.Items[iI] as TGDGLDisplayList).CallList();
+                              (iMesh.DPLS.Items[iI] as TGDGLDisplayList).CallList();
                             end
                             else
                             begin
                               iMS.Material.ApplyMaterial();
-                              Renderer.MeshShader.SetMatrix('M_ROTATION', FMatrix);
-                              Renderer.MeshShader.SetFloat3('V_POSITION', FPosition.x, FPosition.y, FPosition.z);
-                              Renderer.MeshShader.SetFloat3('V_SCALE', FScale.x * iDistanceScale, FScale.y * iDistanceScale, FScale.z * iDistanceScale);
+                              SetMeshPositioning(Renderer.MeshShader);
                               Renderer.MeshShader.SetInt('I_DO_BLOOM', 1);
 
                               if aRenderFor = RF_BLOOM then
@@ -219,7 +256,7 @@ begin
                               Renderer.MeshShader.SetInt('I_FLIP_NORMAL', 0);
                               iMS.Material.BindMaterialTextures();
 
-                              (Mesh.DPLS.Items[iI] as TGDGLDisplayList).CallList();
+                              (iMesh.DPLS.Items[iI] as TGDGLDisplayList).CallList();
 
                               //fix for lighting with alha based surfaces
                               if iMS.Material.HasAlpha then
@@ -229,14 +266,12 @@ begin
                                 else
                                   glCullFace(GL_FRONT);
                                 Renderer.MeshShader.SetInt('I_FLIP_NORMAL', 1);
-                                (Mesh.DPLS.Items[iI] as TGDGLDisplayList).CallList();
+                                (iMesh.DPLS.Items[iI] as TGDGLDisplayList).CallList();
                                 if (aRenderFor = RF_WATER) and Not(Water.UnderWater) then
                                   glCullFace(GL_FRONT)
                                 else
                                   glCullFace(GL_BACK);
                               end;
-
-
 
                               iMS.Material.DisableMaterial();
                             end;
@@ -251,26 +286,26 @@ begin
                           iNormals  := TGDVectorList.Create();
                           iVertices := TGDVectorList.Create();
 
-                          For iI := 0 to FMesh.Vertices.Count - 1 do
+                          For iI := 0 to iMesh.Vertices.Count - 1 do
                           begin
-                            iVertex := FMesh.Vertices.Items[iI].Copy();
+                            iVertex := iMesh.Vertices.Items[iI].Copy();
                             iVertex.Multiply(FScale);
                             iVertex.Devide(100);
                             FMatrix.ApplyToVector(iVertex);
                             iVertex.Add( FPosition );
                             iVertices.Add(iVertex)
                           end;
-                          For iI := 0 to FMesh.Normals.Count - 1 do
+                          For iI := 0 to iMesh.Normals.Count - 1 do
                           begin
-                            iNormal := FMesh.Normals.Items[iI].Copy();
+                            iNormal := iMesh.Normals.Items[iI].Copy();
                             FMatrix.ApplyToVector(iNormal);
                             iNormals.Add( iNormal );
                           end;
 
                           glBegin(GL_LINES);
-                          for iI := 0 to FMesh.Polygons.Count - 1 do
+                          for iI := 0 to iMesh.Polygons.Count - 1 do
                           begin
-                            iTempPolygon := TGDMeshPolygon(FMesh.Polygons.Items[iI]);
+                            iTempPolygon := TGDMeshPolygon(iMesh.Polygons.Items[iI]);
                             RenderNormal(iTempPolygon.P1);
                             RenderNormal(iTempPolygon.P2);
                             RenderNormal(iTempPolygon.P3);
@@ -290,6 +325,15 @@ end;
 function TGDMeshCell.TriangleCount() : Integer;
 begin
   result := FMesh.Polygons.Count;
+  if FLODType = LT_STAGES then
+  begin
+    if ((Distance >= 0) and (Distance < Settings.LOD0)) then
+      result := FMesh.Polygons.Count
+    else if ((Distance >= Settings.LOD0) and (Distance <= Settings.LOD1)) then
+      result := FMeshLOD1.Polygons.Count
+    else if ((Distance >= Settings.LOD1) and (Distance <= Settings.LOD2)) then
+      result := FMeshLOD2.Polygons.Count;
+  end;
 end;
 
 end.

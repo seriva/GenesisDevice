@@ -54,8 +54,8 @@ type
 
     //render settings
     ViewDistance     : Integer;
-    GrassDistance    : Integer;
-    GrassDensity     : Integer;
+    FoliageDistance  : Integer;
+    FoliageDensity   : Integer;
     TextureDetail    : String;
     WaterDetail      : String;
     WaterReflection  : String;
@@ -90,8 +90,8 @@ type
 
     //render settings
     FViewDistance     : Integer;
-    FGrassDistance    : Integer;
-    FGrassDensity     : Integer;
+    FFoliageDistance  : Integer;
+    FFoliageDensity   : Integer;
     FTextureDetail    : TGDTextureDetail;
     FWaterDetail      : TGDWaterDetail;
     FWaterReflection  : TGDWaterReflection;
@@ -108,6 +108,9 @@ type
     FMusicVolume : Double;
     FSoundVolume : Double;
 
+    //Model global LOD settings.
+    FLOD0, FLOD1, FLOD2 : Single;
+
     procedure SetTextureDetail(aStr : String);
     function  GetTextureDetail() : String;
     procedure SetWaterDetail(aStr : String);
@@ -116,6 +119,7 @@ type
     function  GetWaterReflectionDetail() : String;
     procedure SetTextureFilter(aStr : String);
     function  GetTextureFilter() : String;
+    procedure SetViewDistance(aDistance : Integer);
   public
     //viewport settings
     property Top : Integer read FTop write FTop;
@@ -125,11 +129,14 @@ type
     property FullScreen : Boolean read FFullScreen write FFullScreen;
     property VerticalSync : Boolean read FVerticalSync write FVerticalSync;
     property Gamma : Single read FGamma write FGamma;
+    property LOD0: Single read FLOD0;
+    property LOD1: Single read FLOD1;
+    property LOD2: Single read FLOD2;
 
     //render settings
-    property ViewDistance : Integer read FViewDistance write FViewDistance;
-    property GrassDistance : Integer read FGrassDistance write FGrassDistance;
-    property GrassDensity : Integer read FGrassDensity write FGrassDensity;
+    property ViewDistance : Integer read FViewDistance write SetViewDistance;
+    property FoliageDistance : Integer read FFoliageDistance write FFoliageDistance;
+    property FoliageDensity : Integer read FFoliageDensity write FFoliageDensity;
     property WaterDetail : TGDWaterDetail read FWaterDetail write FWaterDetail;
     property WaterReflection : TGDWaterReflection read FWaterReflection write FWaterReflection;
     property TextureDetail : TGDTextureDetail read FTextureDetail write FTextureDetail;
@@ -176,9 +183,9 @@ begin
   FVerticalSync     := false;
 
   //renderer
-  FViewDistance     := 5;
-  FGrassDistance    := 1;
-  FGrassDensity     := 10;
+  ViewDistance     := 5;
+  FFoliageDistance  := 1;
+  FFoliageDensity   := 10;
   FTextureDetail    := TD_LOW;
   FWaterDetail      := WD_LOW;
   FWaterReflection  := WR_TERRAIN_ONLY;
@@ -235,9 +242,9 @@ begin
   FGamma :=        iIniFile.ReadFloat('ViewPort', 'Gamma', 0.60);
 
   //render settings
-  FViewDistance  := iIniFile.ReadInteger('Renderer', 'ViewDistance', 5);
-  FGrassDistance := iIniFile.ReadInteger('Renderer', 'GrassDistance', 1);
-  FGrassDensity := iIniFile.ReadInteger('Renderer',  'GrassDensity', 5);
+  ViewDistance  := iIniFile.ReadInteger('Renderer', 'ViewDistance', 5);
+  FFoliageDistance := iIniFile.ReadInteger('Renderer', 'FoliageDistance', 1);
+  FFoliageDensity := iIniFile.ReadInteger('Renderer',  'FoliageDensity', 5);
   iStr := iIniFile.ReadString('Renderer', 'TextureDetail', TGDTextureDetailStrings[1]);
   SetTextureDetail( iStr );
   iStr := iIniFile.ReadString('Renderer', 'TextureFilter', TGDTextureFilterStrings[1]);
@@ -280,8 +287,8 @@ begin
 
   //render settings
   iIniFile.WriteInteger('Renderer', 'ViewDistance', FViewDistance);
-  iIniFile.WriteInteger('Renderer', 'GrassDistance', FGrassDistance);
-  iIniFile.WriteInteger('Renderer', 'GrassDensity', FGrassDensity);
+  iIniFile.WriteInteger('Renderer', 'FoliageDistance', FFoliageDistance);
+  iIniFile.WriteInteger('Renderer', 'FoliageDensity', FFoliageDensity);
   iIniFile.WriteString('Renderer', 'TextureDetail', GetTextureDetail());
   iIniFile.WriteString('Renderer', 'TextureFilter', GetTextureFilter());
   iIniFile.WriteString('Renderer', 'WaterDetail', GetWaterDetail());
@@ -316,8 +323,8 @@ begin
 
   //render settings
   Result.ViewDistance     := FViewDistance;
-  Result.GrassDistance    := FGrassDistance;
-  Result.GrassDensity     := FGrassDensity;
+  Result.FoliageDistance  := FFoliageDistance;
+  Result.FoliageDensity   := FFoliageDensity;
   Result.TextureDetail    := GetTextureDetail();
   Result.WaterDetail      := GetWaterDetail();
   Result.WaterReflection  := GetWaterReflectionDetail();
@@ -350,8 +357,8 @@ begin
 
   //render settings
   FViewDistance     := aSettings.ViewDistance;
-  FGrassDistance    := aSettings.GrassDistance;
-  FGrassDensity     := aSettings.GrassDensity;
+  FFoliageDistance  := aSettings.FoliageDistance;
+  FFoliageDensity   := aSettings.FoliageDensity;
   SetTextureDetail( aSettings.TextureDetail );
   SetWaterDetail( aSettings.WaterDetail );
   SetWaterReflectionDetail( aSettings.WaterReflection );
@@ -367,6 +374,23 @@ begin
   FMuteSound   := aSettings.MuteSound;
   FMusicVolume := aSettings.MusicVolume;
   FSoundVolume := aSettings.SoundVolume;
+end;
+
+{******************************************************************************}
+{* Set view distance                                                          *}
+{******************************************************************************}
+
+procedure TGDSettings.SetViewDistance(aDistance : Integer);
+var
+  iStep : Single;
+begin
+  FViewDistance := aDistance;
+
+  //set the new LOD levels.
+  iStep := (FViewDistance * R_VIEW_DISTANCE_STEP) / 100;
+  FLOD0 := iStep * R_LOD0_DISTANCE;
+  FLOD1 := iStep * R_LOD1_DISTANCE;
+  FLOD2 := iStep * R_LOD2_DISTANCE;
 end;
 
 {******************************************************************************}
