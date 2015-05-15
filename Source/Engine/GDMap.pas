@@ -38,7 +38,6 @@ uses
   GDTypes,
   GDConsole,
   GDGUI,
-  GDOctree,
   GDFoliage,
   GDSettings,
   GDConstants,
@@ -46,6 +45,7 @@ uses
   GDWater,
   GDFog,
   GDTiming,
+  GDCellManager,
   GDMeshCell;
 
 type
@@ -63,11 +63,13 @@ type
     FLightAmbient    : TGDColor;
     FLightDiffuse    : TGDColor;
 
-    FTerrain : TGDTerrain;
-    FWater   : TGDWater;
-    FFoliage : TGDFoliage;
-    FSkyDome : TGDSkyDome;
-    FFog     : TGDFog;
+    FTerrain         : TGDTerrain;
+    FWater           : TGDWater;
+    FFoliage         : TGDFoliage;
+    FSkyDome         : TGDSkyDome;
+    FFog             : TGDFog;
+
+    FCellManager     : TGDCellManager;
   public
     property PlayerStart : TGDVector read FPlayerStart;
     property PlayerViewAngle : TGDVector read FPlayerViewAngle;
@@ -75,12 +77,12 @@ type
     property LightDirection : TGDVector read FLightDirection;
     property LightAmbient   : TGDColor read FLightAmbient;
     property LightDiffuse   : TGDColor read FLightDiffuse;
+    property Fog            : TGDFog read FFog;
 
-    property Terrain : TGDTerrain read FTerrain;
-    property Water   : TGDWater read FWater;
-    property Foliage : TGDFoliage read FFoliage;
-    property SkyDome : TGDSkyDome read FSkyDome;
-    property Fog     : TGDFog read FFog;
+    property Terrain     : TGDTerrain read FTerrain;
+    property Water       : TGDWater read FWater;
+    property Foliage     : TGDFoliage read FFoliage;
+    property SkyDome     : TGDSkyDome read FSkyDome;
 
     constructor Create();
     destructor  Destroy(); override;
@@ -88,7 +90,12 @@ type
     function  InitMap( aFileName : String ) : boolean;
     procedure Clear();
 
+    function  ObjectCount(): integer;
+    function  TriangleCount(): integer;
+
     procedure Update();
+    procedure DetectVisibleCells();
+    procedure RenderVisibleCells(aRenderAttribute : TGDRenderAttribute; aRenderFor : TGDRenderFor);
   end;
 
 var
@@ -97,8 +104,7 @@ var
 implementation
 
 uses
-  GDRenderer,
-  GDCellManager;
+  GDRenderer;
 
 {******************************************************************************}
 {* Create map class                                                           *}
@@ -112,6 +118,7 @@ begin
   FFoliage := TGDFoliage.Create();
   FSkyDome := TGDSkyDome.Create();
   FFog     := TGDFog.Create();
+  FCellManager := TGDCellManager.Create();
 end;
 
 {******************************************************************************}
@@ -126,6 +133,7 @@ begin
   FreeAndNil(FFoliage);
   FreeAndNil(FSkyDome);
   FreeAndNil(FFog);
+  FreeAndNil(FCellManager);
 end;
 
 {******************************************************************************}
@@ -277,7 +285,7 @@ begin
   begin
 
     //init terrain
-    Terrain.InitTerrain(iTerrainInput);
+    FTerrain.InitTerrain(iTerrainInput);
 
     //init fog
     Fog.InitDistanceFog( iDFR,iDFG,iDFB,iDFA, Settings.ViewDistance );
@@ -373,7 +381,7 @@ begin
       iMeshInput.ScaleZ       := iIniFile.ReadFloat( iString, 'ScaleZ', 100);
       iMeshInput.FadeDistance := 0;
       iMeshInput.FadeScale    := 0;
-      CellManager.AllCells.Add( TGDMeshCell.Create(iMeshInput)   );
+      FCellManager.AddMeshCell( TGDMeshCell.Create(iMeshInput)   );
 
       iI := iI + 1;
     end;
@@ -383,7 +391,7 @@ begin
   FreeAndNil(iIniFile);
   Console.Write('......Done loading map (' + Timing.TimeInSeconds + ' Sec)');
 
-  CellManager.GenerateCells();
+  FCellManager.GenerateCells(FTerrain, FWater, FFoliage);
 end;
 
 {******************************************************************************}
@@ -404,7 +412,25 @@ begin
   FSkyDome.Clear();
   FFog.Clear();
 
-  CellManager.Clear();
+  FCellManager.Clear();
+end;
+
+{******************************************************************************}
+{* Get visible object count                                                   *}
+{******************************************************************************}
+
+function TGDMap.ObjectCount(): integer;
+begin
+  result := FCellManager.ObjectCount();
+end;
+
+{******************************************************************************}
+{* Get visible triangle count                                                 *}
+{******************************************************************************}
+
+function TGDMap.TriangleCount(): integer;
+begin
+  result := FCellManager.TriangleCount + FSkyDome.TriangleCount;
 end;
 
 {******************************************************************************}
@@ -416,5 +442,23 @@ begin
   FWater.Update();
 end;
 
+{******************************************************************************}
+{* Detect visible cells                                                       *}
+{******************************************************************************}
+
+procedure TGDMap.DetectVisibleCells();
+begin
+  FCellManager.DetectVisibleCells();
+end;
+
+{******************************************************************************}
+{* Render visible cells                                                       *}
+{******************************************************************************}
+
+procedure TGDMap.RenderVisibleCells(aRenderAttribute : TGDRenderAttribute; aRenderFor : TGDRenderFor);
+begin
+  FCellManager.RenderVisibleCells(aRenderAttribute, aRenderFor,
+                                  FTerrain, FWater, FFoliage);
+end;
 
 end.

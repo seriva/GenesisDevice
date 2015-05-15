@@ -138,8 +138,6 @@ uses
   GDCellManager,
   GDStatistics,
   GDGUI,
-  GDFog,
-  GDOctree,
   GDMap;
 
 {******************************************************************************}
@@ -721,9 +719,9 @@ begin
   glLoadIdentity();
   Camera.Translate();
   RenderState( RS_COLOR );
-  If Modes.RenderNormals     then CellManager.RenderVisibleCells( RA_NORMALS, RF_NORMAL );
-  If Modes.RenderObjectBoxes then CellManager.RenderVisibleCells( RA_FRUSTUM_BOXES, RF_NORMAL );
-  If Modes.RenderNodeBoxes   then CellManager.Octree.RenderTreeBoxes();
+  If Modes.RenderNormals     then Map.RenderVisibleCells( RA_NORMALS, RF_NORMAL );
+  If Modes.RenderObjectBoxes then Map.RenderVisibleCells( RA_FRUSTUM_BOXES, RF_NORMAL );
+  If Modes.RenderNodeBoxes   then Map.RenderVisibleCells( RA_NODE_BOXES, RF_NORMAL );
 end;
 
 {******************************************************************************}
@@ -740,8 +738,8 @@ begin
     Map.Water.StartReflection();
     If Modes.RenderSky then Map.SkyDome.Render();
     Camera.CalculateFrustum();
-    CellManager.DetectVisibleCells();
-    CellManager.RenderVisibleCells( RA_NORMAL, RF_WATER );
+    Map.DetectVisibleCells();
+    Map.RenderVisibleCells( RA_NORMAL, RF_WATER );
     Map.Water.EndReflection();
   end;
 end;
@@ -767,16 +765,16 @@ end;
 
 Procedure RenderStaticGeometry();
 begin
- //Render sky
- Map.Fog.UseDistanceFog();
- Map.SkyDome.Render();
+  //Render sky
+  Map.Fog.UseDistanceFog();
+  Map.SkyDome.Render();
 
- //Set the right fog type
- If not(Camera.Position.Y > Map.Water.WaterHeight) then
-   Map.Fog.UseWaterFog();
+  //Set the right fog type
+  If not(Camera.Position.Y > Map.Water.WaterHeight) then
+    Map.Fog.UseWaterFog();
 
- //Render other cells.
- CellManager.RenderVisibleCells( RA_NORMAL, RF_NORMAL );
+  //Render other cells.
+  Map.RenderVisibleCells( RA_NORMAL, RF_NORMAL );
 end;
 
 {******************************************************************************}
@@ -843,7 +841,7 @@ begin
   glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT);
 
   If Modes.RenderSky then Map.SkyDome.Render();
-  CellManager.RenderVisibleCells( RA_NORMAL, RF_BLOOM );
+  Map.RenderVisibleCells( RA_NORMAL, RF_BLOOM );
 
   FFrameBuffer.UnBind();
   ApplyBlurToImage( FBloomImage, 1.5 );
@@ -915,7 +913,7 @@ begin
   //detect the visibel objects
   glLoadIdentity();
   Camera.Translate();
-  CellManager.DetectVisibleCells();
+  Map.DetectVisibleCells();
 
   //set the current rendermode
   if not(Modes.RenderWireframe) then
@@ -945,7 +943,7 @@ begin
     StartFrame();
     Camera.Translate();
     Map.SkyDome.Render();
-    CellManager.RenderVisibleCells( RA_NORMAL, RF_NORMAL );
+    Map.RenderVisibleCells( RA_NORMAL, RF_NORMAL );
   end;
 
   //render debug and ortho stuff

@@ -31,7 +31,7 @@ interface
 type
   //render types
   TGDRenderState     = (RS_COLOR, RS_WIREFRAME, RS_TEXTS, RS_TEXTURE);
-  TGDRenderAttribute = (RA_NORMAL, RA_FRUSTUM_BOXES, RA_NORMALS);
+  TGDRenderAttribute = (RA_NORMAL, RA_FRUSTUM_BOXES, RA_NODE_BOXES, RA_NORMALS);
   TGDRenderFor       = (RF_NORMAL, RF_WATER, RF_BLOOM);
 
   //settings types

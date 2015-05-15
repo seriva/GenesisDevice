@@ -35,6 +35,7 @@ uses
   Types,
   dglOpenGL,
   GDConstants,
+  GDTerrain,
   GDRenderer,
   GDGLObjects,
   GDBaseCell;
@@ -47,34 +48,32 @@ type
 
   TGDTerrainCell = class (TGDBaseCell)
   private
+    FTerrain     : TGDTerrain;
     FStartPoint  : TPoint;
     FEndPoint    : TPoint;
     FDisplayList : TGDGLDisplayList;
 
     procedure CalculateBoundingBox();
   public
-    constructor Create(aStartX, aStartY, aEndX, aEndY : Integer);
+    constructor Create( aTerrain : TGDTerrain; aStartX, aStartY, aEndX, aEndY : Integer);
     destructor  Destroy(); override;
 
-    procedure RenderTerrainCell( aRenderAttribute : TGDRenderAttribute );
+    procedure RenderTerrainCell(aRenderAttribute : TGDRenderAttribute );
   end;
 
 implementation
-
-uses
-  GDMap;
 
 {******************************************************************************}
 {* Create the terraincell class                                               *}
 {******************************************************************************}
 
-constructor TGDTerrainCell.Create(aStartX, aStartY, aEndX, aEndY : Integer);
+constructor TGDTerrainCell.Create( aTerrain : TGDTerrain; aStartX, aStartY, aEndX, aEndY : Integer);
 var
   iX, iY: Integer;
 
 procedure SendTerrainPoint(aX,aY : integer);
 begin
-  With Map.Terrain do
+  With FTerrain do
   begin
     glMultiTexCoord2fv(GL_TEXTURE0, TerrainPoints[aX,aY].FColorUVCoords.ArrayPointer );
     glMultiTexCoord2fv(GL_TEXTURE1, TerrainPoints[aX,aY].FDetailUVCoords.ArrayPointer );
@@ -85,8 +84,10 @@ begin
 end;
 
 begin
-  OjectType := SO_TERRAINCELL;
+  OjectType    := SO_TERRAINCELL;
+  FTerrain     := aTerrain;
   FDisplayList := TGDGLDisplayList.Create();
+
   FStartPoint.X := aStartX;
   FStartPoint.Y := aStartY;
   FEndPoint.X   := aEndX;
@@ -132,12 +133,12 @@ procedure TGDTerrainCell.CalculateBoundingBox();
 var
   iX,iY : Integer;
 begin
-  BoundingBox.Min.Reset(  Map.Terrain.TerrainPoints[ FStartPoint.X-1, FStartPoint.Y-1 ].FVertex.X,
+  BoundingBox.Min.Reset(  FTerrain.TerrainPoints[ FStartPoint.X-1, FStartPoint.Y-1 ].FVertex.X,
                          999999999999999,
-                         Map.Terrain.TerrainPoints[ FStartPoint.X-1, FStartPoint.Y-1 ].FVertex.Z);
-  BoundingBox.Max.Reset( Map.Terrain.TerrainPoints[ FEndPoint.X-1, FEndPoint.Y-1 ].FVertex.X,
+                         FTerrain.TerrainPoints[ FStartPoint.X-1, FStartPoint.Y-1 ].FVertex.Z);
+  BoundingBox.Max.Reset( FTerrain.TerrainPoints[ FEndPoint.X-1, FEndPoint.Y-1 ].FVertex.X,
                          -999999999999999,
-                         Map.Terrain.TerrainPoints[ FEndPoint.X-1, FEndPoint.Y-1 ].FVertex.Z);
+                         FTerrain.TerrainPoints[ FEndPoint.X-1, FEndPoint.Y-1 ].FVertex.Z);
 
 
   for iY := (FStartPoint.Y-1) to FEndPoint.Y-1 do
@@ -145,10 +146,10 @@ begin
     iX := (FStartPoint.X-1);
     for iX := (FStartPoint.X-1) to FEndPoint.X-1 do
     begin
-      If Map.Terrain.TerrainPoints[ iX,iY  ].FVertex.Y > BoundingBox.Max.Y then
-        BoundingBox.Max.setY(Map.Terrain.TerrainPoints[ iX,iY  ].FVertex.Y);
-      If Map.Terrain.TerrainPoints[ iX,iY  ].FVertex.Y < BoundingBox.Min.Y then
-        BoundingBox.Min.setY(Map.Terrain.TerrainPoints[ iX,iY  ].FVertex.Y);
+      If FTerrain.TerrainPoints[ iX,iY  ].FVertex.Y > BoundingBox.Max.Y then
+        BoundingBox.Max.setY(FTerrain.TerrainPoints[ iX,iY  ].FVertex.Y);
+      If FTerrain.TerrainPoints[ iX,iY  ].FVertex.Y < BoundingBox.Min.Y then
+        BoundingBox.Min.setY(FTerrain.TerrainPoints[ iX,iY  ].FVertex.Y);
     end;
   end;
   BoundingBox.CalculateCenter();
@@ -172,7 +173,7 @@ begin
                         end;
     RA_NORMALS        : begin
                           Renderer.SetColor(1,0.5,0.25,1);
-                          With Map.Terrain do
+                          With FTerrain do
                           begin
                             for iY := (FStartPoint.Y-1) to FEndPoint.Y-1 do
                             begin

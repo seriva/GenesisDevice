@@ -36,7 +36,6 @@ uses
   SysUtils,
   dglOpenGL,
   GDConstants,
-  GDCamera,
   GDTypes,
   GDModes,
   GDMesh,
@@ -244,15 +243,6 @@ begin
                                  Renderer.MeshShader.SetInt('I_DO_BLOOM', 1)
                                else
                                  Renderer.MeshShader.SetInt('I_DO_BLOOM', 0);
-                              end;
-
-                              If Map.Water.WaterHeight > Camera.Position.Y then
-                              begin
-                               Renderer.MeshShader.SetInt('I_UNDER_WATER', 1);
-                              end
-                              else
-                              begin
-                               Renderer.MeshShader.SetInt('I_UNDER_WATER', 0);
                               end;
 
                               Renderer.MeshShader.SetInt('I_FLIP_NORMAL', 0);

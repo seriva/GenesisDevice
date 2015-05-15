@@ -43,7 +43,6 @@ uses
   GDSettings,
   GDConstants,
   GDResource,
-  GDCamera,
   GDResources,
   GDModes;
 

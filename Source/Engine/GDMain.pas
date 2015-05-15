@@ -46,8 +46,6 @@ uses
   GDMap,
   GDResources,
   GDSound,
-  GDOctree,
-  GDCellManager,
   GDModes,
   GDStatistics;
 

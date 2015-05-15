@@ -42,9 +42,7 @@ uses
   GDTypes,
   GDGUI,
   GDCamera,
-  GDOctree,
   GDMap,
-  GDCellManager,
   GDResources,
   GDResource,
   GDStatistics,
@@ -153,7 +151,6 @@ begin
   Map              := TGDMap.Create();
   Statistics       := TGDStatistics.Create();
   Modes            := TGDModes.Create();
-  CellManager      := TGDCellManager.Create();
   GUI              := TGDGUI.Create();
 
   result := true;
@@ -173,13 +170,11 @@ begin
   FreeAndNil(GUI);
   FreeAndNil(Map);
   FreeAndNil(Timing);
-  FreeAndNil(CellManager);
   FreeAndNil(Main);
   FreeAndNil(Settings);
   FreeAndNil(Statistics);
   FreeAndNil(Modes);
   FreeAndNil(Console);
-
   FreeAndNil(Resources)
 end;
 

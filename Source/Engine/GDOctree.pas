@@ -29,6 +29,7 @@ interface
 uses
   dglOpenGL,
   SysUtils,
+  Contnrs,
   GDTypes,
   GDCamera,
   GDRenderer,
@@ -41,6 +42,18 @@ uses
 type
 
 {******************************************************************************}
+{* Visibility query                                                           *}
+{******************************************************************************}
+
+TGDVisibilityQuery = record
+  Cells               : TObjectList;
+  VisibleTerrainCells : TObjectList;
+  VisibleGrassCells   : TObjectList;
+  VisibleMeshCells    : TObjectList;
+  VisibleWaterCells   : TObjectList;
+end;
+
+{******************************************************************************}
 {* Octree class                                                               *}
 {******************************************************************************}
 
@@ -48,23 +61,20 @@ type
   private
     FCellIndexes : array of integer;
     FBoundingBox : TGDBoundingBox;
-    FSubNodes    : array[0..7] of TGDOcTree;
-    procedure InitSubOCTreeNodes();
+    FSubNodes    : array[0..7] of TGDOctree;
+    procedure InitSubOCTreeNodes(aCells : TObjectList);
   public
     constructor Create();
     destructor  Destroy(); override;
 
-    procedure InitOcTree();
+    procedure InitOcTree(aCells : TObjectList);
     procedure Clear();
 
-    procedure GetVisibleCells();
+    procedure GetVisibleCells(aQueryData : TGDVisibilityQuery);
     procedure RenderTreeBoxes();
   end;
 
 implementation
-
-uses
-  GDCellManager;
 
 {******************************************************************************}
 {* Create octree class                                                        *}
@@ -89,7 +99,7 @@ end;
 {* Init the octree`s subnodes                                                 *}
 {******************************************************************************}
 
-procedure TGDOctree.InitSubOCTreeNodes();
+procedure TGDOctree.InitSubOCTreeNodes(aCells : TObjectList);
 
 procedure SetupNode(iNode : integer);
 var
@@ -100,7 +110,7 @@ begin
   iI := 0;
   while(iI <= (length(FCellIndexes)-1)) do
   begin
-    If FSubNodes[iNode].FBoundingBox.BoxInsideBox( TGDBaseCell( CellManager.AllCells.Items[ FCellIndexes[iI] ]).BoundingBox ) then
+    If FSubNodes[iNode].FBoundingBox.BoxInsideBox( TGDBaseCell( aCells.Items[ FCellIndexes[iI] ]).BoundingBox ) then
     begin
       SetLength(iTempMeshIndexes,length(iTempMeshIndexes)+1);
       iTempMeshIndexes[length(iTempMeshIndexes)-1] := FCellIndexes[iI];
@@ -117,7 +127,7 @@ begin
     setlength(FSubNodes[iNode].FCellIndexes, length(iTempMeshIndexes));
     for iI := 0 to length(iTempMeshIndexes)-1 do
       FSubNodes[iNode].FCellIndexes[iI] := iTempMeshIndexes[iI];
-    FSubNodes[iNode].InitSubOCTreeNodes();
+    FSubNodes[iNode].InitSubOCTreeNodes(aCells);
   end
 end;
 
@@ -175,43 +185,42 @@ end;
 {* Init the octree                                                            *}
 {******************************************************************************}
 
-procedure TGDOctree.InitOcTree();
+procedure TGDOctree.InitOcTree(aCells : TObjectList);
 var
   iI    : Integer;
   iCell : TGDBaseCell;
 begin
   FBoundingBox.Min.Reset( 9999999999, 9999999999, 9999999999);
   FBoundingBox.Max.Reset(-9999999999,-9999999999,-9999999999);
-  With CellManager do
+
+  for iI := 0 to aCells.Count-1 do
   begin
-    for iI := 0 to AllCells.Count-1 do
-    begin
-      iCell :=  TGDBaseCell( AllCells.Items[  iI ]);
+    iCell :=  TGDBaseCell( aCells.Items[  iI ]);
 
-      If (iCell.BoundingBox.Min.X < FBoundingBox.Min.x) then
-        FBoundingBox.Min.setX(iCell.BoundingBox.Min.X);
+    If (iCell.BoundingBox.Min.X < FBoundingBox.Min.x) then
+      FBoundingBox.Min.setX(iCell.BoundingBox.Min.X);
 
-      If (iCell.BoundingBox.Min.Y < FBoundingBox.Min.Y) then
-        FBoundingBox.Min.SetY(iCell.BoundingBox.Min.y);
+    If (iCell.BoundingBox.Min.Y < FBoundingBox.Min.Y) then
+      FBoundingBox.Min.SetY(iCell.BoundingBox.Min.y);
 
-      If (iCell.BoundingBox.Min.Z < FBoundingBox.Min.Z) then
-        FBoundingBox.Min.SetZ(iCell.BoundingBox.Min.Z);
+    If (iCell.BoundingBox.Min.Z < FBoundingBox.Min.Z) then
+      FBoundingBox.Min.SetZ(iCell.BoundingBox.Min.Z);
 
-      If (iCell.BoundingBox.Max.X > FBoundingBox.Max.x) then
-        FBoundingBox.Max.Setx(iCell.BoundingBox.Max.X);
+    If (iCell.BoundingBox.Max.X > FBoundingBox.Max.x) then
+      FBoundingBox.Max.Setx(iCell.BoundingBox.Max.X);
 
-      If (iCell.BoundingBox.Max.Y > FBoundingBox.Max.Y) then
-        FBoundingBox.Max.Sety(iCell.BoundingBox.Max.y);
+    If (iCell.BoundingBox.Max.Y > FBoundingBox.Max.Y) then
+      FBoundingBox.Max.Sety(iCell.BoundingBox.Max.y);
 
-      If (iCell.BoundingBox.Max.Z > FBoundingBox.Max.Z) then
-        FBoundingBox.Max.SetZ(iCell.BoundingBox.Max.Z);
+    If (iCell.BoundingBox.Max.Z > FBoundingBox.Max.Z) then
+      FBoundingBox.Max.SetZ(iCell.BoundingBox.Max.Z);
 
-      SetLength(FCellIndexes,Length(FCellIndexes) + 1);
-      FCellIndexes[Length(FCellIndexes)-1] := iI;
-    end;
+    SetLength(FCellIndexes,Length(FCellIndexes) + 1);
+    FCellIndexes[Length(FCellIndexes)-1] := iI;
   end;
+
   FBoundingBox.CalculateCenter();
-  InitSubOCTreeNodes();
+  InitSubOctreeNodes(aCells);
 end;
 
 {******************************************************************************}
@@ -234,55 +243,52 @@ end;
 {* Get the visible objects                                                    *}
 {******************************************************************************}
 
-procedure TGDOctree.GetVisibleCells();
+procedure TGDOctree.GetVisibleCells(aQueryData : TGDVisibilityQuery);
 var
   iCell     : TGDBaseCell;
   iMeshCell : TGDMeshCell;
-  iI : Integer;
-  iVertex : TGDVector;
+  iI        : Integer;
+  iVertex   : TGDVector;
 begin
   If Not(Camera.BoxInView(FBoundingBox)) then
     exit;
-                                              
-  With CellManager do
+
+  for iI := 0 to length(FCellIndexes)-1 do
   begin
-    for iI := 0 to length(FCellIndexes)-1 do
+    If Camera.BoxInView( TGDBaseCell( aQueryData.Cells.Items[  FCellIndexes[iI] ] ).BoundingBox ) then
     begin
-      If Camera.BoxInView( TGDBaseCell( AllCells.Items[  FCellIndexes[iI] ] ).BoundingBox ) then
+      iCell := TGDBaseCell( aQueryData.Cells.Items[  FCellIndexes[iI] ] );
+      iVertex := TGDBaseCell( aQueryData.Cells.Items[  FCellIndexes[iI] ] ).BoundingBox.Center.Copy();
+      iVertex.Substract(Camera.Position.Copy());
+      iCell.Distance := iVertex.Magnitude();
+
+      If (iCell.OjectType = SO_WATERCELL) and Modes.RenderWater then
+        aQueryData.VisibleWaterCells.Add(iCell);
+
+      If (iCell.OjectType = SO_GRASSCELL) and Modes.RenderGrass then
+        If iCell.Distance < (Settings.FoliageDistance * R_FOLIAGE_DISTANCE_STEP + (R_FOLIAGE_DISTANCE_STEP * 10)) then
+          aQueryData.VisibleGrassCells.Add(iCell);
+
+      If (iCell.OjectType = SO_TERRAINCELL) and Modes.RenderTerrain then
+        aQueryData.VisibleTerrainCells.Add(iCell);
+
+      If (iCell.OjectType = SO_MESHCELL) and Modes.RenderModels then
       begin
-          iCell := TGDBaseCell( AllCells.Items[  FCellIndexes[iI] ] );
-          iVertex := TGDBaseCell( AllCells.Items[  FCellIndexes[iI] ] ).BoundingBox.Center.Copy();
-          iVertex.Substract(Camera.Position.Copy());
-          iCell.Distance := iVertex.Magnitude();
-
-          If (iCell.OjectType = SO_WATERCELL) and Modes.RenderWater then
-            WaterCells.Add(iCell);
-
-          If (iCell.OjectType = SO_GRASSCELL) and Modes.RenderGrass then
-            If iCell.Distance < (Settings.FoliageDistance * R_FOLIAGE_DISTANCE_STEP + (R_FOLIAGE_DISTANCE_STEP * 10)) then
-              GrassCells.Add(iCell);
-
-          If (iCell.OjectType = SO_TERRAINCELL) and Modes.RenderTerrain then
-            TerrainCells.Add(iCell);
-
-          If (iCell.OjectType = SO_MESHCELL) and Modes.RenderModels then
-          begin
-            iMeshCell := TGDMeshCell(iCell);
-            if iMeshCell.LODType = LT_FADE_IN then
-            begin
-              if iMeshCell.Distance < iMeshCell.FadeDistance then
-                 MeshCells.Add(iMeshCell);
-            end
-            else
-              MeshCells.Add(iMeshCell);
-          end;
-     end;
+        iMeshCell := TGDMeshCell(iCell);
+        if iMeshCell.LODType = LT_FADE_IN then
+        begin
+          if iMeshCell.Distance < iMeshCell.FadeDistance then
+             aQueryData.VisibleMeshCells.Add(iMeshCell);
+        end
+        else
+          aQueryData.VisibleMeshCells.Add(iMeshCell);
+      end;
     end;
   end;
 
   for iI := 0 to 7 do
     If FSubNodes[iI] <> nil then
-      FSubNodes[iI].GetVisibleCells();
+      FSubNodes[iI].GetVisibleCells(aQueryData);
 end;
 
 {******************************************************************************}

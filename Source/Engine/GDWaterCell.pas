@@ -33,6 +33,7 @@ interface
 uses
   SysUtils,
   dglOpenGL,
+  GDWater,
   GDConstants,
   GDGLObjects,
   GDRenderer,
@@ -48,7 +49,7 @@ type
   private
     FDisplayList : TGDGLDisplayList;
   public
-    constructor Create(aStartX, aStartY, aEndX, aEndY, aStartU1, aStartV1, aStepU1, aStepV1,
+    constructor Create(aWater : TGDWater; aStartX, aStartY, aEndX, aEndY, aStartU1, aStartV1, aStepU1, aStepV1,
                        aStartU2, aStartV2, aStepU2, aStepV2 : Double);
     destructor  Destroy(); override;
 
@@ -57,14 +58,12 @@ type
 
 implementation
 
-uses
-  GDMap;
-
 {******************************************************************************}
 {* Create the watercell class                                                 *}
 {******************************************************************************}
 
-constructor TGDWaterCell.Create();
+constructor TGDWaterCell.Create(aWater : TGDWater; aStartX, aStartY, aEndX, aEndY, aStartU1, aStartV1, aStepU1, aStepV1,
+                       aStartU2, aStartV2, aStepU2, aStepV2 : Double);
 var
  iI, iJ : Double;
  iStepX, iStepY : Double;
@@ -74,11 +73,11 @@ var
 begin
   OjectType := SO_WATERCELL;
   FDisplayList := TGDGLDisplayList.Create();
-  BoundingBox.Min.Reset(aStartX, Map.Water.WaterHeight, aStartY);
-  BoundingBox.Max.Reset(aEndX, Map.Water.WaterHeight, aEndY);
+  BoundingBox.Min.Reset(aStartX, aWater.WaterHeight, aStartY);
+  BoundingBox.Max.Reset(aEndX, aWater.WaterHeight, aEndY);
 
-  iStepX := (Map.Water.BoundingBox.Max.X + Abs(Map.Water.BoundingBox.Min.X)) / (Map.Water.CellCountX * Map.Water.CellDivX);
-  iStepY := (Map.Water.BoundingBox.Max.Z + Abs(Map.Water.BoundingBox.Min.Z)) / (Map.Water.CellCountY * Map.Water.CellDivY);
+  iStepX := (aWater.BoundingBox.Max.X + Abs(aWater.BoundingBox.Min.X)) / (aWater.CellCountX * aWater.CellDivX);
+  iStepY := (aWater.BoundingBox.Max.Z + Abs(aWater.BoundingBox.Min.Z)) / (aWater.CellCountY * aWater.CellDivY);
 
   FDisplayList.InitDisplayList();
   FDisplayList.StartList();
@@ -95,19 +94,19 @@ begin
 
     glMultiTexCoord2f(GL_TEXTURE0, iCurrentU1 + aStepU1, iCurrentV1 );
     glMultiTexCoord2f(GL_TEXTURE1, iCurrentU2 + aStepU2, iCurrentV2 );
-    glVertex3f(iI + iStepX, Map.Water.WaterHeight, iJ);
+    glVertex3f(iI + iStepX, aWater.WaterHeight, iJ);
     glMultiTexCoord2f(GL_TEXTURE0, iCurrentU1, iCurrentV1 );
     glMultiTexCoord2f(GL_TEXTURE1, iCurrentU2, iCurrentV2 );
-    glVertex3f(iI, Map.Water.WaterHeight, iJ);
+    glVertex3f(iI, aWater.WaterHeight, iJ);
 
     while (iJ <= (BoundingBox.Max.Z)) do
     begin
       glMultiTexCoord2f(GL_TEXTURE0, iCurrentU1 + aStepU1, iCurrentV1  );
       glMultiTexCoord2f(GL_TEXTURE1, iCurrentU2 + aStepU2, iCurrentV2  );
-      glVertex3f(iI + iStepX, Map.Water.WaterHeight, iJ);
+      glVertex3f(iI + iStepX, aWater.WaterHeight, iJ);
       glMultiTexCoord2f(GL_TEXTURE0, iCurrentU1, iCurrentV1  );
       glMultiTexCoord2f(GL_TEXTURE1, iCurrentU2, iCurrentV2  );
-      glVertex3f(iI, Map.Water.WaterHeight, iJ);
+      glVertex3f(iI, aWater.WaterHeight, iJ);
 
       iJ := iJ + iStepY;
       iCurrentV1 := iCurrentV1 + aStepV1;

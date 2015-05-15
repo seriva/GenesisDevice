@@ -31,11 +31,11 @@ unit GDStatistics;
 interface
 
 uses
-  LCLIntf, LCLType,
+  LCLIntf,
+  LCLType,
   SysUtils,
   dglOpenGL,
   GDRenderer,
-  GDCellManager,
   GDMap,
   GDConstants,
   GDCamera,
@@ -54,14 +54,10 @@ type
     FLastTime         : Integer;
     FFrameCount       : integer;
     FFpsCount         : Integer;
-    FTriangleCount    : integer;
-    FOBJCount         : integer;
     FFrameTimeSlice   : String;
   public
     property FrameCount       : integer read FFrameCount write FFrameCount;
     property FpsCount         : integer read FFpsCount write FFpsCount;
-    property TriangleCount    : integer read FTriangleCount write FTriangleCount;
-    property OBJCount         : integer read FOBJCount write FOBJCount;
     property FrameTimeSlice   : string read FFrameTimeSlice write FFrameTimeSlice;
 
     constructor Create();
@@ -108,8 +104,6 @@ begin
   FLastTime         := Timing.GetTime();
   FFrameCount       := 0;
   FFpsCount         := 0;
-  FTriangleCount    := 0;
-  FOBJCount         := 0;
   FFrameTimeSlice   := '0.000';
 end;
 
@@ -157,10 +151,6 @@ end;
 
 procedure TGDStatistics.Render();
 begin
-  FTriangleCount := Map.SkyDome.TriangleCount + CellManager.TriangleCount;
-  FOBJCount := CellManager.WaterCells.Count + CellManager.TerrainCells.Count +
-               CellManager.MeshCells.Count + CellManager.GrassCells.Count;
-
   RenderFlatQuad(20, 20, 375, 195);
   Renderer.RenderState( RS_TEXTS );
   GUI.Font.Color := GUI.FontColor.Copy();
@@ -172,8 +162,8 @@ begin
   GUI.Font.Render(25,90-32,0.4,'Y');
   GUI.Font.Render(25,65-32,0.4,'Z');
   GUI.Font.Render(150,215-32,0.4,': ' + IntToStr(FFpsCount));
-  GUI.Font.Render(150,190-32,0.4,': ' + IntToStr(FTriangleCount));
-  GUI.Font.Render(150,165-32,0.4,': ' + IntToStr(FOBJCount));
+  GUI.Font.Render(150,190-32,0.4,': ' + IntToStr(Map.TriangleCount()));
+  GUI.Font.Render(150,165-32,0.4,': ' + IntToStr(Map.ObjectCount()));
   GUI.Font.Render(150,140-32,0.4,': ' + FFrameTimeSlice + ' ms' );;
   GUI.Font.Render(150,115-32,0.4,': ' + IntToStr( Round(Camera.Position.X) ));
   GUI.Font.Render(150,90-32,0.4,': ' + IntToStr( Round(Camera.Position.Y) ));

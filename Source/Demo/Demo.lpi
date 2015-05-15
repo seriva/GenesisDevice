@@ -191,6 +191,7 @@
       <Unit30>
         <Filename Value="..\Engine\GDTexture.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="GDTexture"/>
       </Unit30>
       <Unit31>
         <Filename Value="..\Engine\GDTiming.pas"/>

@@ -115,6 +115,11 @@ begin
   Renderer.MeshShader.SetFloat('F_ANIMATION_SPEED', Timing.ElapsedTime / Map.Foliage.TreeAnimationSpeed);
   Renderer.MeshShader.SetFloat('F_ANIMATION_STRENGTH', Map.Foliage.TreeAnimationStrength);
 
+  If Map.Water.UnderWater() then
+   Renderer.MeshShader.SetInt('I_UNDER_WATER', 1)
+  else
+   Renderer.MeshShader.SetInt('I_UNDER_WATER', 0);
+
   FTexture.BindTexture( GL_TEXTURE0 );
   if FHasAlpha then
   begin
