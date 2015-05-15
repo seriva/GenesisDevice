@@ -8,6 +8,6 @@ varying vec4 Light;
 void main(void)
 {
       vec4 GrassColor = texture2D(T_GRASSTEX, GrassUV);
-      gl_FragColor    = mix(GrassColor * Light , V_FOG_COLOR, Fog);  
+      gl_FragColor    = mix(GrassColor * Light , V_FOG_COLOR, Fog);
 }
 

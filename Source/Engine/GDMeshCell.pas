@@ -40,9 +40,7 @@ uses
   GDTypes,
   GDModes,
   GDMesh,
-  GDWater,
   GDGLObjects,
-  GDRenderer,
   GDSettings,
   GDResource,
   GDResources,
@@ -103,6 +101,10 @@ type
   end;
 
 implementation
+
+uses
+  GDMap,
+  GDRenderer;
 
 {******************************************************************************}
 {* Create the meshcell class                                                  *}
@@ -244,7 +246,7 @@ begin
                                  Renderer.MeshShader.SetInt('I_DO_BLOOM', 0);
                               end;
 
-                              If Water.WaterHeight > Camera.Position.Y then
+                              If Map.Water.WaterHeight > Camera.Position.Y then
                               begin
                                Renderer.MeshShader.SetInt('I_UNDER_WATER', 1);
                               end
@@ -254,20 +256,19 @@ begin
                               end;
 
                               Renderer.MeshShader.SetInt('I_FLIP_NORMAL', 0);
-                              iMS.Material.BindMaterialTextures();
 
                               (iMesh.DPLS.Items[iI] as TGDGLDisplayList).CallList();
 
                               //fix for lighting with alha based surfaces
                               if iMS.Material.HasAlpha then
                               begin
-                                if (aRenderFor = RF_WATER) and Not(Water.UnderWater) then
+                                if (aRenderFor = RF_WATER) and Not(Map.Water.UnderWater) then
                                   glCullFace(GL_BACK)
                                 else
                                   glCullFace(GL_FRONT);
                                 Renderer.MeshShader.SetInt('I_FLIP_NORMAL', 1);
                                 (iMesh.DPLS.Items[iI] as TGDGLDisplayList).CallList();
-                                if (aRenderFor = RF_WATER) and Not(Water.UnderWater) then
+                                if (aRenderFor = RF_WATER) and Not(Map.Water.UnderWater) then
                                   glCullFace(GL_FRONT)
                                 else
                                   glCullFace(GL_BACK);

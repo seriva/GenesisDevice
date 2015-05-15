@@ -56,7 +56,7 @@ type
   TGDMeshLODType = (LT_NONE, LT_FADE_IN, LT_STAGES);
 
   //base procedure callback
-  TGDProcEngineCallback = procedure();
+  TGDCallback = procedure();
 
 const
   //settings strings

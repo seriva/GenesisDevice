@@ -36,7 +36,7 @@ uses
   dglOpenGL,
   GDRenderer,
   GDCellManager,
-  GDSkyDome,
+  GDMap,
   GDConstants,
   GDCamera,
   GDGUI,
@@ -157,8 +157,9 @@ end;
 
 procedure TGDStatistics.Render();
 begin
-  FTriangleCount := SkyDome.TriangleCount + CellManager.TriangleCount;
-  FOBJCount := CellManager.VisibleCells.Count + CellManager.VisibleWaterCells.Count;
+  FTriangleCount := Map.SkyDome.TriangleCount + CellManager.TriangleCount;
+  FOBJCount := CellManager.WaterCells.Count + CellManager.TerrainCells.Count +
+               CellManager.MeshCells.Count + CellManager.GrassCells.Count;
 
   RenderFlatQuad(20, 20, 375, 195);
   Renderer.RenderState( RS_TEXTS );

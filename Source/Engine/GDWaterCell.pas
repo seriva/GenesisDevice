@@ -35,7 +35,6 @@ uses
   dglOpenGL,
   GDConstants,
   GDGLObjects,
-  GDWater,
   GDRenderer,
   GDBaseCell;
 
@@ -58,6 +57,9 @@ type
 
 implementation
 
+uses
+  GDMap;
+
 {******************************************************************************}
 {* Create the watercell class                                                 *}
 {******************************************************************************}
@@ -72,11 +74,11 @@ var
 begin
   OjectType := SO_WATERCELL;
   FDisplayList := TGDGLDisplayList.Create();
-  BoundingBox.Min.Reset(aStartX, Water.WaterHeight, aStartY);
-  BoundingBox.Max.Reset(aEndX, Water.WaterHeight, aEndY);
+  BoundingBox.Min.Reset(aStartX, Map.Water.WaterHeight, aStartY);
+  BoundingBox.Max.Reset(aEndX, Map.Water.WaterHeight, aEndY);
 
-  iStepX := (Water.BoundingBox.Max.X + Abs(Water.BoundingBox.Min.X)) / (Water.CellCountX * Water.CellDivX);
-  iStepY := (Water.BoundingBox.Max.Z + Abs(Water.BoundingBox.Min.Z)) / (Water.CellCountY * Water.CellDivY);
+  iStepX := (Map.Water.BoundingBox.Max.X + Abs(Map.Water.BoundingBox.Min.X)) / (Map.Water.CellCountX * Map.Water.CellDivX);
+  iStepY := (Map.Water.BoundingBox.Max.Z + Abs(Map.Water.BoundingBox.Min.Z)) / (Map.Water.CellCountY * Map.Water.CellDivY);
 
   FDisplayList.InitDisplayList();
   FDisplayList.StartList();
@@ -93,19 +95,19 @@ begin
 
     glMultiTexCoord2f(GL_TEXTURE0, iCurrentU1 + aStepU1, iCurrentV1 );
     glMultiTexCoord2f(GL_TEXTURE1, iCurrentU2 + aStepU2, iCurrentV2 );
-    glVertex3f(iI + iStepX, Water.WaterHeight, iJ);
+    glVertex3f(iI + iStepX, Map.Water.WaterHeight, iJ);
     glMultiTexCoord2f(GL_TEXTURE0, iCurrentU1, iCurrentV1 );
     glMultiTexCoord2f(GL_TEXTURE1, iCurrentU2, iCurrentV2 );
-    glVertex3f(iI, Water.WaterHeight, iJ);
+    glVertex3f(iI, Map.Water.WaterHeight, iJ);
 
     while (iJ <= (BoundingBox.Max.Z)) do
     begin
       glMultiTexCoord2f(GL_TEXTURE0, iCurrentU1 + aStepU1, iCurrentV1  );
       glMultiTexCoord2f(GL_TEXTURE1, iCurrentU2 + aStepU2, iCurrentV2  );
-      glVertex3f(iI + iStepX, Water.WaterHeight, iJ);
+      glVertex3f(iI + iStepX, Map.Water.WaterHeight, iJ);
       glMultiTexCoord2f(GL_TEXTURE0, iCurrentU1, iCurrentV1  );
       glMultiTexCoord2f(GL_TEXTURE1, iCurrentU2, iCurrentV2  );
-      glVertex3f(iI, Water.WaterHeight, iJ);
+      glVertex3f(iI, Map.Water.WaterHeight, iJ);
 
       iJ := iJ + iStepY;
       iCurrentV1 := iCurrentV1 + aStepV1;

@@ -41,8 +41,6 @@ uses
   GDRenderer,
   GDFoliage,
   GDTypes,
-  GDTerrain,
-  GDWater,
   GDSettings,
   GDBaseCell;
 
@@ -84,6 +82,9 @@ type
   end;
 
 implementation
+
+uses
+  GDMap;
 
 {******************************************************************************}
 {* Init the grasspartical                                                     *}
@@ -159,27 +160,27 @@ begin
   CalculateBoundingBox();
 
   //create temp arrays
-  SetLength( iParticalCount, Foliage.GrassTypes.Count);
+  SetLength( iParticalCount, Map.Foliage.GrassTypes.Count);
   For iI := 0 to Length(iParticalCount)-1 do
-    iParticalCount[iI] :=  Round( (Settings.FoliageDensity * TGDGrassType( Foliage.GrassTypes.Items[iI] ).CoverOfTotal) / 100 );
+    iParticalCount[iI] :=  Round( (Settings.FoliageDensity * TGDGrassType( Map.Foliage.GrassTypes.Items[iI] ).CoverOfTotal) / 100 );
 
-  SetLength( iParticalLists, Foliage.GrassTypes.Count);
+  SetLength( iParticalLists, Map.Foliage.GrassTypes.Count);
   for iY := (FStartPoint.Y-1) to FEndPoint.Y-2 do
   begin
     iX := (FStartPoint.X-1);
     for iX := (FStartPoint.X-1) to FEndPoint.X-2 do
     begin
-      If Foliage.GrassMap[iX,iY] then
+      If Map.Foliage.GrassMap[iX,iY] then
       begin
-        for iI := 0 to Foliage.GrassTypes.Count-1 do
+        for iI := 0 to Map.Foliage.GrassTypes.Count-1 do
         begin
-          iTempGrassType := TGDGrassType(Foliage.GrassTypes.Items[iI]);
+          iTempGrassType := TGDGrassType(Map.Foliage.GrassTypes.Items[iI]);
           for iJ := 0 to iParticalCount[iI]-1 do
           begin
             //position
-            iPos.Reset( Terrain.TerrainPoints[ iX, iY ].FVertex.X + random(Terrain.TriangleSize) , 0,
-                        Terrain.TerrainPoints[ iX, iY ].FVertex.Z + random(Terrain.TriangleSize) );
-            Terrain.GetHeight(iPos.X, iPos.Z, iHeight  );
+            iPos.Reset( Map.Terrain.TerrainPoints[ iX, iY ].FVertex.X + random(Map.Terrain.TriangleSize) , 0,
+                        Map.Terrain.TerrainPoints[ iX, iY ].FVertex.Z + random(Map.Terrain.TriangleSize) );
+            Map.Terrain.GetHeight(iPos.X, iPos.Z, iHeight  );
 
             iRandomHeightScale := iTempGrassType.Scale.Y + Random( Round( iTempGrassType.RandomScale.Y ) );
             iPos.Y := iHeight + ((50 * iRandomHeightScale) / 100 );
@@ -190,10 +191,10 @@ begin
                           iTempGrassType.Scale.Z + random( Round( iTempGrassType.RandomScale.Z )) );
 
             //rotation
-            Terrain.GetRotation( iPos.X, iPos.Z, iRot );
+            Map.Terrain.GetRotation( iPos.X, iPos.Z, iRot );
 
             //create partical
-            If iHeight > Water.WaterHeight then
+            If iHeight > Map.Water.WaterHeight then
             begin
               SetLength(iParticalLists[iI], Length(iParticalLists[iI]) + 1 );
               iParticalLists[iI,Length(iParticalLists[iI])-1].InitGrassPartical( iPos, iScale, iRot );
@@ -211,7 +212,7 @@ begin
   FDisplayList.StartList();
   For iI := 0 to Length(iParticalLists)-1 do
   begin
-    TGDGrassType(Foliage.GrassTypes.Items[iI]).Texture.BindTexture( GL_TEXTURE0 );
+    TGDGrassType(Map.Foliage.GrassTypes.Items[iI]).Texture.BindTexture( GL_TEXTURE0 );
     for iJ := 0 to Length( iParticalLists[iI] )-1 do
     begin
       iRandomR := 0.75 + (Random(25)/100);
@@ -249,23 +250,23 @@ procedure TGDGrassCell.CalculateBoundingBox();
 var
   iX,iY : Integer;
 begin
-  BoundingBox.Min.Reset( Terrain.TerrainPoints[ FStartPoint.X-1, FStartPoint.Y-1 ].FVertex.X,
+  BoundingBox.Min.Reset( Map.Terrain.TerrainPoints[ FStartPoint.X-1, FStartPoint.Y-1 ].FVertex.X,
                          999999999999999,
-                         Terrain.TerrainPoints[ FStartPoint.X-1, FStartPoint.Y-1 ].FVertex.Z);
+                         Map.Terrain.TerrainPoints[ FStartPoint.X-1, FStartPoint.Y-1 ].FVertex.Z);
 
-  BoundingBox.Max.Reset( Terrain.TerrainPoints[ FEndPoint.X-1, FEndPoint.Y-1 ].FVertex.X,
+  BoundingBox.Max.Reset( Map.Terrain.TerrainPoints[ FEndPoint.X-1, FEndPoint.Y-1 ].FVertex.X,
                          -999999999999999,
-                         Terrain.TerrainPoints[ FEndPoint.X-1, FEndPoint.Y-1 ].FVertex.Z);
+                         Map.Terrain.TerrainPoints[ FEndPoint.X-1, FEndPoint.Y-1 ].FVertex.Z);
 
   for iY := (FStartPoint.Y-1) to FEndPoint.Y-1 do
   begin
     iX := (FStartPoint.X-1);
     for iX := (FStartPoint.X-1) to FEndPoint.X-1 do
     begin
-      If Terrain.TerrainPoints[ iX,iY  ].FVertex.Y > BoundingBox.Max.Y then
-        BoundingBox.Max.setY( Terrain.TerrainPoints[ iX,iY  ].FVertex.Y);
-      If Terrain.TerrainPoints[ iX,iY  ].FVertex.Y < BoundingBox.Min.Y then
-        BoundingBox.Min.setY( Terrain.TerrainPoints[ iX,iY  ].FVertex.Y);
+      If Map.Terrain.TerrainPoints[ iX,iY  ].FVertex.Y > BoundingBox.Max.Y then
+        BoundingBox.Max.setY( Map.Terrain.TerrainPoints[ iX,iY  ].FVertex.Y);
+      If Map.Terrain.TerrainPoints[ iX,iY  ].FVertex.Y < BoundingBox.Min.Y then
+        BoundingBox.Min.setY( Map.Terrain.TerrainPoints[ iX,iY  ].FVertex.Y);
     end;
   end;
   BoundingBox.Max.SetY( BoundingBox.Max.Y+150 );

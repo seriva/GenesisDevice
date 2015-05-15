@@ -37,13 +37,13 @@ uses
   GDBaseCell,
   GDSettings,
   GDGUI,
-  GDWater,
   GDWaterCell,
   GDFoliage,
   GDGrassCell,
   GDTerrain,
   GDTerrainCell,
   GDTiming,
+  GDOctree,
   GDConsole,
   GDTypes,
   GDMeshCell,
@@ -56,30 +56,33 @@ type
 {* Cellmanager class                                                         *}
 {******************************************************************************}
 
-  TGDCellManager = class (TObject)
+  TGDCellManager = class
   private
-    FCells               : TObjectList;
-    FVisibleCells        : TObjectList;
-    FVisibleWaterCells   : TObjectList;
-    FSortVisibleCells    : boolean;
-    FTriangleCount       : Integer;
-
-    procedure QuickSortCells( aCells : TObjectList; aLo, aHi: Integer);
-  public
-    property TriangleCount     : Integer read FTriangleCount write FTriangleCount;
-    property Cells             : TObjectList read FCells write FCells;
-    property VisibleCells      : TObjectList read FVisibleCells write FVisibleCells;
-    property VisibleWaterCells : TObjectList read FVisibleWaterCells write FVisibleWaterCells;
-    property SortVisibleCells  : boolean read FSortVisibleCells write FSortVisibleCells;
-
-    constructor Create();
-    destructor  Destroy(); override;
+    FTriangleCount : Integer;
+    FAllCells         : TObjectList;
+    FTerrainCells  : TObjectList;
+    FGrassCells    : TObjectList;
+    FMeshCells     : TObjectList;
+    FWaterCells    : TObjectList;
+    FOctree        : TGDOctree;
 
     procedure GenerateCellsFromTerrain();
     procedure GenerateCellsFromWater();
     procedure GenerateCellsFromFoliage();
-    procedure GenerateAllCells();
-    procedure RemoveCells( aType : TGDStaticObjectType  );
+  public
+    property TriangleCount     : Integer read FTriangleCount write FTriangleCount;
+    property AllCells          : TObjectList read FAllCells;
+    property TerrainCells      : TObjectList read FTerrainCells;
+    property GrassCells        : TObjectList read FGrassCells;
+    property MeshCells         : TObjectList read FMeshCells;
+    property WaterCells        : TObjectList read FWaterCells;
+    property Octree            : TGDOctree read FOctree;
+
+    constructor Create();
+    destructor  Destroy(); override;
+
+
+    procedure GenerateCells();
     procedure Clear();
 
     procedure DetectVisibleCells();
@@ -92,39 +95,7 @@ var
 implementation
 
 uses
-  GDOctree;
-
-{******************************************************************************}
-{* Quicksort a staticobject via distance                                      *}
-{******************************************************************************}
-
-procedure TGDCellManager.QuickSortCells( aCells : TObjectList; aLo, aHi: Integer);
-var
-  iLo, iHi : Integer;
-  iMid : Double;
-  iOC1, iOC2 : TGDBaseCell;
-begin
-  iLo := aLo;
-  iHi := aHi;
-  iMid :=  TGDBaseCell(aCells.Items[ (iLo + iHi) div 2 ]).Distance;
-  repeat
-    while TGDBaseCell( aCells.Items[ iLo ] ).Distance < iMid do Inc(iLo);
-    while TGDBaseCell( aCells.Items[ iHi ] ).Distance > iMid do Dec(iHi);
-    if iLo <= iHi then
-    begin
-      iOC1 := nil;
-      iOC2 := nil;
-      iOC1 := TGDBaseCell( aCells.Items[ iLo ] );
-      iOC2 := TGDBaseCell( aCells.Items[ iHi ] );
-      aCells.Items[iLo] := iOC2;
-      aCells.Items[iHi] := iOC1;
-      Inc(iLo);
-      Dec(iHi);
-    end;
-  until iLo > iHi;
-  if iHi > aLo then QuickSortCells( aCells, aLo, iHi );
-  if iLo < aHi then QuickSortCells( aCells, iLo, aHi);
-end;
+  GDMap;
 
 {******************************************************************************}
 {* Create the cell manager class                                              *}
@@ -132,13 +103,12 @@ end;
 
 constructor TGDCellManager.Create();
 begin
-  FCells               := TObjectList.Create();
-  FVisibleCells        := TObjectList.Create();
-  FVisibleWaterCells   := TObjectList.Create();
-  FVisibleCells.OwnsObjects        := false;
-  FVisibleWaterCells.OwnsObjects   := false;
-  FSortVisibleCells := true;
-  Console.AddCommand('CellSort', '0,1 : Enable or disable object depth sorting', CT_BOOLEAN, @FSortVisibleCells);
+  FAllCells     := TObjectList.Create();
+  FTerrainCells := TObjectList.Create(false);
+  FGrassCells   := TObjectList.Create(false);
+  FMeshCells    := TObjectList.Create(false);
+  FWaterCells   := TObjectList.Create(false);
+  FOctree       := TGDOctree.Create();
 end;
 
 {******************************************************************************}
@@ -147,9 +117,12 @@ end;
 
 destructor  TGDCellManager.Destroy();
 begin
-  FreeAndNil(FCells);
-  FreeAndNil(FVisibleCells);
-  FreeAndNil(FVisibleWaterCells);
+  FreeAndNil(FAllCells);
+  FreeAndNil(FTerrainCells);
+  FreeAndNil(FGrassCells);
+  FreeAndNil(FMeshCells);
+  FreeAndNil(FWaterCells);
+  FreeAndNil(FOctree);
 end;
 
 {******************************************************************************}
@@ -158,9 +131,12 @@ end;
 
 procedure TGDCellManager.Clear();
 begin
-  FCells.Clear();
-  FVisibleCells.Clear();
-  FVisibleWaterCells.Clear();
+  FAllCells.Clear();
+  FTerrainCells.Clear();
+  FGrassCells.Clear();
+  FMeshCells.Clear();
+  FWaterCells.Clear();
+  FOctree.Clear();
 end;
 
 {******************************************************************************}
@@ -171,16 +147,16 @@ procedure TGDCellManager.GenerateCellsFromTerrain();
 var
  iI, iJ : Integer;
 Begin
-  If Not(Terrain.TerrainLoaded) then
+  If Not(Map.Terrain.TerrainLoaded) then
     exit;
 
   iI := 1;
-  while (iI <= (Terrain.TerrainWidth-CELLSIZE)) do
+  while (iI <= (Map.Terrain.TerrainWidth-CELLSIZE)) do
   begin
     iJ := 1;
-    while (iJ <= (Terrain.TerrainHeight-CELLSIZE)) do
+    while (iJ <= (Map.Terrain.TerrainHeight-CELLSIZE)) do
     begin
-      FCells.Add( TGDTerrainCell.Create(iI, iJ, iI+CELLSIZE, iJ+CELLSIZE) );
+      FAllCells.Add( TGDTerrainCell.Create(iI, iJ, iI+CELLSIZE, iJ+CELLSIZE) );
       iJ := iJ + CELLSIZE
     end;
     iI := iI + CELLSIZE
@@ -204,29 +180,29 @@ var
  iCellNotAboveTerrain : Boolean;
  iHeight : Double;
 Begin
-  If Not(Water.WaterLoaded) then
+  If Not(Map.Water.WaterLoaded) then
     exit;
 
-  iStepX1 := (Water.BoundingBox.Max.X + Abs(Water.BoundingBox.Min.X)) / Water.CellCountX;
-  iStepY1 := (Water.BoundingBox.Max.Z + Abs(Water.BoundingBox.Min.Z)) / Water.CellCountY;
-  iStepX2 := (Water.BoundingBox.Max.X + Abs(Water.BoundingBox.Min.X)) / (Water.CellCountX * Water.CellDivX);
-  iStepY2 := (Water.BoundingBox.Max.Z + Abs(Water.BoundingBox.Min.Z)) / (Water.CellCountY * Water.CellDivY);
-  iStepU1 := Water.WaterU / (Water.CellCountX * Water.CellDivX);
-  iStepV1 := Water.WaterV / (Water.CellCountY * Water.CellDivY);
-  iStepU2 := 1 / (Water.CellCountX * Water.CellDivX);
-  iStepV2 := 1 / (Water.CellCountY * Water.CellDivY);
+  iStepX1 := (Map.Water.BoundingBox.Max.X + Abs(Map.Water.BoundingBox.Min.X)) / Map.Water.CellCountX;
+  iStepY1 := (Map.Water.BoundingBox.Max.Z + Abs(Map.Water.BoundingBox.Min.Z)) / Map.Water.CellCountY;
+  iStepX2 := (Map.Water.BoundingBox.Max.X + Abs(Map.Water.BoundingBox.Min.X)) / (Map.Water.CellCountX * Map.Water.CellDivX);
+  iStepY2 := (Map.Water.BoundingBox.Max.Z + Abs(Map.Water.BoundingBox.Min.Z)) / (Map.Water.CellCountY * Map.Water.CellDivY);
+  iStepU1 := Map.Water.WaterU / (Map.Water.CellCountX * Map.Water.CellDivX);
+  iStepV1 := Map.Water.WaterV / (Map.Water.CellCountY * Map.Water.CellDivY);
+  iStepU2 := 1 / (Map.Water.CellCountX * Map.Water.CellDivX);
+  iStepV2 := 1 / (Map.Water.CellCountY * Map.Water.CellDivY);
 
-  iI := Water.BoundingBox.Min.X-iStepX1;
+  iI := Map.Water.BoundingBox.Min.X-iStepX1;
   iCurrentU1 := 0;
   iCurrentU2 := 0;
   iCountX := 0;
-  while (iI < (Water.BoundingBox.Max.X)) do
+  while (iI < (Map.Water.BoundingBox.Max.X)) do
   begin
-    iJ := Water.BoundingBox.Min.Z-iStepY1;
+    iJ := Map.Water.BoundingBox.Min.Z-iStepY1;
     iCurrentV1 := 0;
     iCurrentV2 := 0;
     iCountY := 0;
-    while (iJ < (Water.BoundingBox.Max.Z)) do
+    while (iJ < (Map.Water.BoundingBox.Max.Z)) do
     begin
       iCellNotAboveTerrain := true;
 
@@ -237,11 +213,11 @@ Begin
         while ((iL <= ((iJ+iStepY1))) and iCellNotAboveTerrain) do
         begin
           iHeight := 0;
-          If Terrain.GetHeight(iK, iL, iHeight) then
+          If Map.Terrain.GetHeight(iK, iL, iHeight) then
           begin
-            if iHeight <= Water.WaterHeight then
+            if iHeight <= Map.Water.WaterHeight then
             begin
-              FCells.Add( TGDWaterCell.Create(iI, iJ, iI+iStepX1, iJ+iStepY1, iCurrentU1, iCurrentV1, iStepU1, iStepV1,
+              FAllCells.Add( TGDWaterCell.Create(iI, iJ, iI+iStepX1, iJ+iStepY1, iCurrentU1, iCurrentV1, iStepU1, iStepV1,
                                                                         iCurrentU2, iCurrentV2, iStepU2, iStepV2) );
               iCellNotAboveTerrain := false;
             end;
@@ -251,13 +227,13 @@ Begin
         iK := iK + iStepX2;
       end;
 
-      iCurrentV1 := iCountY * Water.CellDivY * iStepV1;
-      iCurrentV2 := iCountY * Water.CellDivY * iStepV2;
+      iCurrentV1 := iCountY * Map.Water.CellDivY * iStepV1;
+      iCurrentV2 := iCountY * Map.Water.CellDivY * iStepV2;
       iJ := iJ + iStepY1;
       iCountY := iCountY + 1;
     end;
-    iCurrentU1 := iCountX * Water.CellDivX * iStepU1;
-    iCurrentU2 := iCountX * Water.CellDivX * iStepU2;
+    iCurrentU1 := iCountX * Map.Water.CellDivX * iStepU1;
+    iCurrentU2 := iCountX * Map.Water.CellDivX * iStepU2;
     iI := iI + iStepX1;
     iCountX := iCountX + 1;
   end;
@@ -285,17 +261,17 @@ label
   RedoRandomRocks;
 Begin
   Timing.Start();
-  iStepX := Round((Terrain.TerrainWidth-1) / Foliage.GrassCellCountX);
-  iStepY := Round((Terrain.TerrainHeight-1) / Foliage.GrassCellCountY);
+  iStepX := Round((Map.Terrain.TerrainWidth-1) / Map.Foliage.GrassCellCountX);
+  iStepY := Round((Map.Terrain.TerrainHeight-1) / Map.Foliage.GrassCellCountY);
 
-  GUI.LoadingScreen.SetupForUse('Generating foliage...', Round(Terrain.TerrainWidth/iStepX) + Foliage.TreeTypes.Count + Foliage.RockTypes.Count );
+  GUI.LoadingScreen.SetupForUse('Generating foliage...', Round(Map.Terrain.TerrainWidth/iStepX) + Map.Foliage.TreeTypes.Count + Map.Foliage.RockTypes.Count );
 
   //create grasscells
   iI := 1;
-  while (iI <= (Terrain.TerrainWidth-iStepX)) do
+  while (iI <= (Map.Terrain.TerrainWidth-iStepX)) do
   begin
     iJ := 1;
-    while (iJ <= (Terrain.TerrainHeight-iStepY)) do
+    while (iJ <= (Map.Terrain.TerrainHeight-iStepY)) do
     begin
 
       iCellHasGrass := false;
@@ -305,7 +281,7 @@ Begin
         iL := iJ-1;
         while ((iL <= (iJ-2+iStepY)) and Not(iCellHasGrass)  )  do
         begin
-          iCellHasGrass := Foliage.GrassMap[iK,iL];
+          iCellHasGrass := Map.Foliage.GrassMap[iK,iL];
           iL := iL+1;
         end;
         iK := iK+1;
@@ -313,7 +289,7 @@ Begin
 
       If iCellHasGrass then
       begin
-        FCells.Add( TGDGrassCell.Create(iI, iJ, iI+iStepX, iJ+iStepY) );
+        FAllCells.Add( TGDGrassCell.Create(iI, iJ, iI+iStepX, iJ+iStepY) );
       end;
 
       iJ := iJ + iStepY;
@@ -323,24 +299,24 @@ Begin
   end;
 
   //create treecells
-  for iI := 0 to Foliage.TreeTypes.Count-1 do
+  for iI := 0 to Map.Foliage.TreeTypes.Count-1 do
   begin
-    iTreeType := Foliage.TreeTypes.Items[iI] as TGDTreeType;
-    iTreeCount := Round(Foliage.TreeCount * iTreeType.CoverOfTotal) div 100;
+    iTreeType := Map.Foliage.TreeTypes.Items[iI] as TGDTreeType;
+    iTreeCount := Round(Map.Foliage.TreeCount * iTreeType.CoverOfTotal) div 100;
     for iJ := 1 to iTreeCount do
     begin
       RedoRandomTrees:
 
-      iX := Random(Terrain.TerrainWidth-1);
-      iY := Random(Terrain.TerrainHeight-1);
-      iPos.Reset( Terrain.TerrainPoints[ iX, iY ].FVertex.X + (Terrain.TriangleSize div 2) ,
+      iX := Random(Map.Terrain.TerrainWidth-1);
+      iY := Random(Map.Terrain.TerrainHeight-1);
+      iPos.Reset( Map.Terrain.TerrainPoints[ iX, iY ].FVertex.X + (Map.Terrain.TriangleSize div 2) ,
                   0,
-                  Terrain.TerrainPoints[ iX, iY ].FVertex.Z + (Terrain.TriangleSize div 2) );
+                  Map.Terrain.TerrainPoints[ iX, iY ].FVertex.Z + (Map.Terrain.TriangleSize div 2) );
 
-      if Foliage.CheckTreeMap(iX, iY) and Terrain.GetHeight(iPos.X, iPos.Z, iHeight) then
+      if Map.Foliage.CheckTreeMap(iX, iY) and Map.Terrain.GetHeight(iPos.X, iPos.Z, iHeight) then
       begin
         iHeight := iHeight - 200;
-        if not((iHeight > Foliage.TreeLowerLimit) and (iHeight < Foliage.TreeUpperLimit)) then
+        if not((iHeight > Map.Foliage.TreeLowerLimit) and (iHeight < Map.Foliage.TreeUpperLimit)) then
            goto RedoRandomTrees;
 
         iMeshInput.Model        := iTreeType.Mesh.Name;
@@ -358,7 +334,7 @@ Begin
         iMeshInput.FadeDistance := 0;
         iMeshInput.FadeScale    := 0;
 
-        CellManager.Cells.Add( TGDMeshCell.Create(iMeshInput) );
+        FAllCells.Add( TGDMeshCell.Create(iMeshInput) );
       end
       else
         goto RedoRandomTrees;
@@ -367,21 +343,21 @@ Begin
   end;
 
   //create rocks
-  for iI := 0 to Foliage.RockTypes.Count-1 do
+  for iI := 0 to Map.Foliage.RockTypes.Count-1 do
   begin
-    iRockType  := Foliage.RockTypes.Items[iI] as TGDRockType;
-    iRockCount := Round(Foliage.RockCount * iRockType.CoverOfTotal) div 100;
+    iRockType  := Map.Foliage.RockTypes.Items[iI] as TGDRockType;
+    iRockCount := Round(Map.Foliage.RockCount * iRockType.CoverOfTotal) div 100;
     for iJ := 1 to iRockCount do
     begin
       RedoRandomRocks:
 
-      iX := Random(Terrain.TerrainWidth-1);
-      iY := Random(Terrain.TerrainHeight-1);
-      iPos.Reset( Terrain.TerrainPoints[ iX, iY ].FVertex.X + (Terrain.TriangleSize div 2) ,
+      iX := Random(Map.Terrain.TerrainWidth-1);
+      iY := Random(Map.Terrain.TerrainHeight-1);
+      iPos.Reset( Map.Terrain.TerrainPoints[ iX, iY ].FVertex.X + (Map.Terrain.TriangleSize div 2) ,
                   0,
-                  Terrain.TerrainPoints[ iX, iY ].FVertex.Z + (Terrain.TriangleSize div 2) );
+                  Map.Terrain.TerrainPoints[ iX, iY ].FVertex.Z + (Map.Terrain.TriangleSize div 2) );
 
-      if Foliage.CheckRockMap(iX, iY) and Terrain.GetHeight(iPos.X, iPos.Z, iHeight) then
+      if Map.Foliage.CheckRockMap(iX, iY) and Map.Terrain.GetHeight(iPos.X, iPos.Z, iHeight) then
       begin
         iMeshInput.Model     := iRockType.Mesh.Name;
         iMeshInput.ModelLOD1 := '';
@@ -397,7 +373,7 @@ Begin
         iMeshInput.ScaleZ    := iRockType.StartScale + Random(Round(iRockType.RandomScale));
         iMeshInput.FadeDistance := Settings.FoliageDistance * R_FOLIAGE_DISTANCE_STEP + (R_FOLIAGE_DISTANCE_STEP * 10);
         iMeshInput.FadeScale    := R_FOLIAGE_LOD_DISTANCE;
-        CellManager.Cells.Add( TGDMeshCell.Create(iMeshInput) );
+        FAllCells.Add( TGDMeshCell.Create(iMeshInput) );
       end
       else
         goto RedoRandomRocks;
@@ -414,30 +390,12 @@ End;
 {* Generate all the cell                                                      *}
 {******************************************************************************}
 
-procedure TGDCellManager.GenerateAllCells();
+procedure TGDCellManager.GenerateCells();
 Begin
   GenerateCellsFromTerrain();
   GenerateCellsFromWater();
   GenerateCellsFromFoliage();
-End;
-
-{******************************************************************************}
-{* Remove cells of a certain type                                             *}
-{******************************************************************************}
-
-procedure TGDCellManager.RemoveCells( aType : TGDStaticObjectType  );
-var
-  iI : Integer;
-Begin
-  iI := 0;
-  while (iI <  FCells.Count) do
-  begin
-
-    If TGDBaseCell( FCells.Items[ iI ]).OjectType = aType then
-       FCells.Delete( iI )
-    else
-      iI := iI + 1;
-  end;
+  FOctree.InitOcTree();
 End;
 
 {******************************************************************************}
@@ -449,22 +407,11 @@ var
  iK : Integer;
 Begin
   //clear all the list
-  FVisibleCells.Clear();
-  FVisibleWaterCells.Clear();
+  FTerrainCells.Clear();
+  FGrassCells.Clear();
+  FMeshCells.Clear();
+  FWaterCells.Clear();
   Octree.GetVisibleCells();
-
-  //sort the list list
-  If FSortVisibleCells then
-  begin
-    If (FVisibleWaterCells.Count > 1) then
-      QuickSortCells( FVisibleWaterCells, 0, FVisibleWaterCells.Count-1 );
-
-    If (FVisibleCells.Count > 1) then
-      QuickSortCells( FVisibleCells, 0, FVisibleCells.Count-1 );
-  end;
-
-  //add the water cells to the main list
-  for iK := 0 to FVisibleWaterCells.Count - 1 do FVisibleCells.Add( FVisibleWaterCells.Items[iK] );
 End;
 
 {******************************************************************************}
@@ -475,91 +422,61 @@ procedure TGDCellManager.RenderVisibleCells( aRenderAttribute : TGDRenderAttribu
                                              aRenderFor : TGDRenderFor );
 var
   iI : Integer;
-  iDistance : Double;
-  iAlphaFunction : Double;
   iTerrainCell : TGDTerrainCell;
   iGrassCell   : TGDGrassCell;
   iWaterCell   : TGDWaterCell;
   iMeshCell    : TGDMeshCell;
-
-procedure RenderObject();
-begin
-  Case TGDBaseCell(FVisibleCells.Items[ iI ]).OjectType of
-    SO_NONE :
-    Begin
-      //do nothing
-    End;
-
-    SO_TERRAINCELL :
-    Begin
-      if Modes.RenderTerrain then
-      begin
-        Terrain.StartRendering( aRenderAttribute, aRenderFor );
-        iTerrainCell := TGDBaseCell(FVisibleCells.Items[ iI ]) As TGDTerrainCell;
-        iTerrainCell.RenderTerrainCell( aRenderAttribute );
-        Terrain.EndRendering();
-        TriangleCount := TriangleCount + TRISINCELL;
-      end;
-    end;
-
-    SO_GRASSCELL :
-    Begin
-      If (aRenderFor = RF_WATER) or (aRenderFor = RF_BLOOM) then exit;
-      if Modes.RenderGrass then
-      begin
-        iGrassCell := TGDBaseCell(FVisibleCells.Items[ iI ]) As TGDGrassCell;
-        iDistance  := Settings.FoliageDistance * R_FOLIAGE_DISTANCE_STEP;
-        if iGrassCell.Distance < iDistance then iAlphaFunction := 0.0 else
-        if iGrassCell.Distance < (iDistance + (R_FOLIAGE_DISTANCE_STEP * 1)) then iAlphaFunction := 0.05 else
-        if iGrassCell.Distance < (iDistance + (R_FOLIAGE_DISTANCE_STEP * 2)) then iAlphaFunction := 0.1 else
-        if iGrassCell.Distance < (iDistance + (R_FOLIAGE_DISTANCE_STEP * 3)) then iAlphaFunction := 0.15 else
-        if iGrassCell.Distance < (iDistance + (R_FOLIAGE_DISTANCE_STEP * 4)) then iAlphaFunction := 0.2 else
-        if iGrassCell.Distance < (iDistance + (R_FOLIAGE_DISTANCE_STEP * 5)) then iAlphaFunction := 0.25 else
-        if iGrassCell.Distance < (iDistance + (R_FOLIAGE_DISTANCE_STEP * 6)) then iAlphaFunction := 0.3 else
-        if iGrassCell.Distance < (iDistance + (R_FOLIAGE_DISTANCE_STEP * 7)) then iAlphaFunction := 0.35 else
-        if iGrassCell.Distance < (iDistance + (R_FOLIAGE_DISTANCE_STEP * 8)) then iAlphaFunction := 0.40 else
-        if iGrassCell.Distance < (iDistance + (R_FOLIAGE_DISTANCE_STEP * 9)) then iAlphaFunction := 0.45 else
-        if iGrassCell.Distance < (iDistance + (R_FOLIAGE_DISTANCE_STEP * 10)) then iAlphaFunction := 0.5;
-        Foliage.StartRenderingGrass( aRenderAttribute, iAlphaFunction );
-        iGrassCell.RenderGrassCell( aRenderAttribute );
-        Foliage.EndRenderingGrass();
-        TriangleCount := TriangleCount + iGrassCell.TrisCount;
-      end;
-    end;
-
-    SO_WATERCELL :
-    Begin
-      If Not(aRenderFor = RF_WATER) then
-      begin
-        Water.StartRendering( aRenderAttribute, aRenderFor );
-        iWaterCell := TGDBaseCell(FVisibleCells.Items[ iI ]) As TGDWaterCell;
-        iWaterCell.RenderWaterCell( aRenderAttribute );
-        TriangleCount := TriangleCount + (Water.CellDivX * Water.CellDivY * 2);
-        Water.EndRendering();
-      end;
-    end;
-
-    SO_MESHCELL :
-    Begin
-      If (aRenderFor = RF_WATER) and (Settings.WaterReflection = WR_TERRAIN_ONLY) then exit;
-      if Modes.RenderModels then
-      begin
-        iMeshCell := TGDBaseCell(FVisibleCells.Items[ iI ]) As TGDMeshCell;
-        iMeshCell.RenderMeshCell( aRenderAttribute, aRenderFor );
-        TriangleCount := TriangleCount + iMeshCell.TriangleCount();
-      end;
-    end;
-  end;
-
-end;
-
 Begin
   If (aRenderFor = RF_NORMAL) then TriangleCount := 0;
 
-  //render the visible cells
-  for iI := 0 to FVisibleCells.Count - 1 do
+  //render the visible terrain cells
+  if Modes.RenderTerrain then
   begin
-      RenderObject();
+    Map.Terrain.StartRendering( aRenderAttribute, aRenderFor );
+    for iI := 0 to FTerrainCells.Count - 1 do
+    begin
+      iTerrainCell := TGDTerrainCell(FTerrainCells.Items[ iI ]);
+      iTerrainCell.RenderTerrainCell( aRenderAttribute );
+      TriangleCount := TriangleCount + TRISINCELL;
+    end;
+    Map.Terrain.EndRendering();
+  end;
+
+  //render the visible grass cells
+  if (Modes.RenderGrass) and (aRenderFor <> RF_WATER) and (aRenderFor <> RF_BLOOM) then
+  begin
+    Map.Foliage.StartRenderingGrass( aRenderAttribute );
+    for iI := 0 to FGrassCells.Count - 1 do
+    begin
+      iGrassCell := TGDGrassCell(FGrassCells.Items[ iI ]);
+      iGrassCell.RenderGrassCell( aRenderAttribute );
+      TriangleCount := TriangleCount + iGrassCell.TrisCount;
+    end;
+    Map.Foliage.EndRenderingGrass();
+  end;
+
+  //render the visible mesh cells
+  if (Modes.RenderModels) then
+  begin
+    for iI := 0 to FMeshCells.Count - 1 do
+    begin
+      If (aRenderFor = RF_WATER) and (Settings.WaterReflection = WR_TERRAIN_ONLY) then break;
+      iMeshCell := TGDMeshCell(FMeshCells.Items[ iI ]);
+      iMeshCell.RenderMeshCell( aRenderAttribute, aRenderFor );
+      TriangleCount := TriangleCount + iMeshCell.TriangleCount();
+    end;
+  end;
+
+  If (Modes.RenderWater) and(aRenderFor <> RF_WATER) then
+  begin
+    Map.Water.StartRendering( aRenderAttribute, aRenderFor );
+    for iI := 0 to FWaterCells.Count - 1 do
+    begin
+      iWaterCell := TGDWaterCell(FWaterCells.Items[ iI ]);
+      iWaterCell.RenderWaterCell( aRenderAttribute );
+      TriangleCount := TriangleCount + (Map.Water.CellDivX * Map.Water.CellDivY * 2);
+    end;
+    Map.Water.EndRendering();
   end;
 End;
 

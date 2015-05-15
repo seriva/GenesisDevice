@@ -37,7 +37,6 @@ uses
   GDConstants,
   GDRenderer,
   GDGLObjects,
-  GDTerrain,
   GDBaseCell;
 
 type
@@ -62,6 +61,9 @@ type
 
 implementation
 
+uses
+  GDMap;
+
 {******************************************************************************}
 {* Create the terraincell class                                               *}
 {******************************************************************************}
@@ -72,7 +74,7 @@ var
 
 procedure SendTerrainPoint(aX,aY : integer);
 begin
-  With Terrain do
+  With Map.Terrain do
   begin
     glMultiTexCoord2fv(GL_TEXTURE0, TerrainPoints[aX,aY].FColorUVCoords.ArrayPointer );
     glMultiTexCoord2fv(GL_TEXTURE1, TerrainPoints[aX,aY].FDetailUVCoords.ArrayPointer );
@@ -130,12 +132,12 @@ procedure TGDTerrainCell.CalculateBoundingBox();
 var
   iX,iY : Integer;
 begin
-  BoundingBox.Min.Reset(  Terrain.TerrainPoints[ FStartPoint.X-1, FStartPoint.Y-1 ].FVertex.X,
+  BoundingBox.Min.Reset(  Map.Terrain.TerrainPoints[ FStartPoint.X-1, FStartPoint.Y-1 ].FVertex.X,
                          999999999999999,
-                         Terrain.TerrainPoints[ FStartPoint.X-1, FStartPoint.Y-1 ].FVertex.Z);
-  BoundingBox.Max.Reset( Terrain.TerrainPoints[ FEndPoint.X-1, FEndPoint.Y-1 ].FVertex.X,
+                         Map.Terrain.TerrainPoints[ FStartPoint.X-1, FStartPoint.Y-1 ].FVertex.Z);
+  BoundingBox.Max.Reset( Map.Terrain.TerrainPoints[ FEndPoint.X-1, FEndPoint.Y-1 ].FVertex.X,
                          -999999999999999,
-                         Terrain.TerrainPoints[ FEndPoint.X-1, FEndPoint.Y-1 ].FVertex.Z);
+                         Map.Terrain.TerrainPoints[ FEndPoint.X-1, FEndPoint.Y-1 ].FVertex.Z);
 
 
   for iY := (FStartPoint.Y-1) to FEndPoint.Y-1 do
@@ -143,10 +145,10 @@ begin
     iX := (FStartPoint.X-1);
     for iX := (FStartPoint.X-1) to FEndPoint.X-1 do
     begin
-      If Terrain.TerrainPoints[ iX,iY  ].FVertex.Y > BoundingBox.Max.Y then
-        BoundingBox.Max.setY(Terrain.TerrainPoints[ iX,iY  ].FVertex.Y);
-      If Terrain.TerrainPoints[ iX,iY  ].FVertex.Y < BoundingBox.Min.Y then
-        BoundingBox.Min.setY(Terrain.TerrainPoints[ iX,iY  ].FVertex.Y);
+      If Map.Terrain.TerrainPoints[ iX,iY  ].FVertex.Y > BoundingBox.Max.Y then
+        BoundingBox.Max.setY(Map.Terrain.TerrainPoints[ iX,iY  ].FVertex.Y);
+      If Map.Terrain.TerrainPoints[ iX,iY  ].FVertex.Y < BoundingBox.Min.Y then
+        BoundingBox.Min.setY(Map.Terrain.TerrainPoints[ iX,iY  ].FVertex.Y);
     end;
   end;
   BoundingBox.CalculateCenter();
@@ -170,7 +172,7 @@ begin
                         end;
     RA_NORMALS        : begin
                           Renderer.SetColor(1,0.5,0.25,1);
-                          With Terrain do
+                          With Map.Terrain do
                           begin
                             for iY := (FStartPoint.Y-1) to FEndPoint.Y-1 do
                             begin

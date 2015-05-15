@@ -13,7 +13,7 @@ varying float Fog;
 varying vec3 N;
 varying vec3 V;
 
-vec3 transformNormal(vec3 n, mat4 mat){
+vec3 transformVector(vec3 n, mat4 mat){
   vec3 newNorm;
   newNorm.x = n.x * mat[0][0] + n.y * mat[1][0] + n.z * mat[2][0] + mat[3][0];
   newNorm.y = n.x * mat[0][1] + n.y * mat[1][1] + n.z * mat[2][1] + mat[3][1];
@@ -25,16 +25,16 @@ void main(void)
 {
 	if(I_FLIP_NORMAL == 0)	
 	{
-        N = normalize(transformNormal(gl_Normal, M_ROTATION));
+        N = normalize(transformVector(gl_Normal, M_ROTATION));
 	}
     else
     {
-        N = normalize(transformNormal(-gl_Normal, M_ROTATION));
+        N = normalize(transformVector(-gl_Normal, M_ROTATION));
     }
 	
     vec4 Eye     = gl_Vertex;
     Eye.xyz = (gl_Vertex.xyz * V_SCALE) / 100.0;
-    Eye.xyz = transformNormal(Eye.xyz, M_ROTATION);
+    Eye.xyz = transformVector(Eye.xyz, M_ROTATION);
     Eye.xyz = Eye.xyz + V_POSITION;   
     if(I_DO_TREE_ANIM == 1){
         Eye.x        += cos(F_ANIMATION_SPEED * gl_Color.r)*F_ANIMATION_STRENGTH * gl_Color.g;

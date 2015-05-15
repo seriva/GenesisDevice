@@ -24,18 +24,11 @@ unit GDOctree;
 
 {$MODE Delphi}
 
-{******************************************************************************}
-{* The octree unit is the main spacial patitioning system in the engine. It   *}
-{* uses staticobjectbase oriented objects and it`s AABB to create an octree   *}
-{* for visibility culling                                                     *}
-{******************************************************************************}
-
 interface
 
 uses
   dglOpenGL,
   SysUtils,
-  GDFrustum,
   GDTypes,
   GDCamera,
   GDRenderer,
@@ -43,18 +36,7 @@ uses
   GDMeshCell,
   GDSettings,
   GDBaseCell,
-  GDCellManager,
   GDModes;
-
-Const
-  TOP_LEFT_FRONT     = 0;
-  TOP_LEFT_BACK      = 1;
-  TOP_RIGHT_BACK     = 2;
-  TOP_RIGHT_FRONT    = 3;
-  BOTTOM_LEFT_FRONT  = 4;
-  BOTTOM_LEFT_BACK   = 5;
-  BOTTOM_RIGHT_BACK  = 6;
-  BOTTOM_RIGHT_FRONT = 7;
 
 type
 
@@ -62,7 +44,7 @@ type
 {* Octree class                                                               *}
 {******************************************************************************}
 
-  TGDOcTree = class
+  TGDOctree = class
   private
     FCellIndexes : array of integer;
     FBoundingBox : TGDBoundingBox;
@@ -79,16 +61,16 @@ type
     procedure RenderTreeBoxes();
   end;
 
-Var
-  Octree : TGDOcTree;
-
 implementation
+
+uses
+  GDCellManager;
 
 {******************************************************************************}
 {* Create octree class                                                        *}
 {******************************************************************************}
 
-constructor TGDOcTree.Create();
+constructor TGDOctree.Create();
 begin
   SetLength(FCellIndexes,0);
 end;
@@ -97,7 +79,7 @@ end;
 {* Destroy octree class                                                       *}
 {******************************************************************************}
 
-destructor TGDOcTree.Destroy();
+destructor TGDOctree.Destroy();
 begin
   Clear();
   inherited;
@@ -107,7 +89,7 @@ end;
 {* Init the octree`s subnodes                                                 *}
 {******************************************************************************}
 
-procedure TGDOcTree.InitSubOCTreeNodes();
+procedure TGDOctree.InitSubOCTreeNodes();
 
 procedure SetupNode(iNode : integer);
 var
@@ -118,7 +100,7 @@ begin
   iI := 0;
   while(iI <= (length(FCellIndexes)-1)) do
   begin
-    If FSubNodes[iNode].FBoundingBox.BoxInsideBox( TGDBaseCell( CellManager.Cells.Items[ FCellIndexes[iI] ]).BoundingBox ) then
+    If FSubNodes[iNode].FBoundingBox.BoxInsideBox( TGDBaseCell( CellManager.AllCells.Items[ FCellIndexes[iI] ]).BoundingBox ) then
     begin
       SetLength(iTempMeshIndexes,length(iTempMeshIndexes)+1);
       iTempMeshIndexes[length(iTempMeshIndexes)-1] := FCellIndexes[iI];
@@ -140,60 +122,60 @@ begin
 end;
 
 begin
-  FSubNodes[TOP_LEFT_FRONT] := TGDOcTree.Create();
-  FSubNodes[TOP_LEFT_FRONT].FBoundingBox.Max.Reset(FBoundingBox.max.x, FBoundingBox.max.y, FBoundingBox.max.z);
-  FSubNodes[TOP_LEFT_FRONT].FBoundingBox.Min.Reset(FBoundingBox.Center.x, FBoundingBox.Center.y, FBoundingBox.Center.z);
-  FSubNodes[TOP_LEFT_FRONT].FBoundingBox.CalculateCenter();
-  SetupNode(TOP_LEFT_FRONT);
+  FSubNodes[0] := TGDOcTree.Create();
+  FSubNodes[0].FBoundingBox.Max.Reset(FBoundingBox.max.x, FBoundingBox.max.y, FBoundingBox.max.z);
+  FSubNodes[0].FBoundingBox.Min.Reset(FBoundingBox.Center.x, FBoundingBox.Center.y, FBoundingBox.Center.z);
+  FSubNodes[0].FBoundingBox.CalculateCenter();
+  SetupNode(0);
 
-  FSubNodes[TOP_LEFT_BACK] := TGDOcTree.Create();
-  FSubNodes[TOP_LEFT_BACK].FBoundingBox.Max.Reset(FBoundingBox.max.x, FBoundingBox.max.y, FBoundingBox.Center.z);
-  FSubNodes[TOP_LEFT_BACK].FBoundingBox.Min.Reset(FBoundingBox.Center.x, FBoundingBox.Center.y, FBoundingBox.min.z);
-  FSubNodes[TOP_LEFT_BACK].FBoundingBox.CalculateCenter();
-  SetupNode(TOP_LEFT_BACK);
+  FSubNodes[1] := TGDOcTree.Create();
+  FSubNodes[1].FBoundingBox.Max.Reset(FBoundingBox.max.x, FBoundingBox.max.y, FBoundingBox.Center.z);
+  FSubNodes[1].FBoundingBox.Min.Reset(FBoundingBox.Center.x, FBoundingBox.Center.y, FBoundingBox.min.z);
+  FSubNodes[1].FBoundingBox.CalculateCenter();
+  SetupNode(1);
 
-  FSubNodes[TOP_RIGHT_BACK] := TGDOcTree.Create();
-  FSubNodes[TOP_RIGHT_BACK].FBoundingBox.Max.Reset(FBoundingBox.Center.x, FBoundingBox.max.y, FBoundingBox.max.z);
-  FSubNodes[TOP_RIGHT_BACK].FBoundingBox.Min.Reset(FBoundingBox.min.x, FBoundingBox.Center.y, FBoundingBox.Center.z);
-  FSubNodes[TOP_RIGHT_BACK].FBoundingBox.CalculateCenter();
-  SetupNode(TOP_RIGHT_BACK);
+  FSubNodes[2] := TGDOcTree.Create();
+  FSubNodes[2].FBoundingBox.Max.Reset(FBoundingBox.Center.x, FBoundingBox.max.y, FBoundingBox.max.z);
+  FSubNodes[2].FBoundingBox.Min.Reset(FBoundingBox.min.x, FBoundingBox.Center.y, FBoundingBox.Center.z);
+  FSubNodes[2].FBoundingBox.CalculateCenter();
+  SetupNode(2);
 
-  FSubNodes[TOP_RIGHT_FRONT] := TGDOcTree.Create();
-  FSubNodes[TOP_RIGHT_FRONT].FBoundingBox.Max.Reset(FBoundingBox.Center.x, FBoundingBox.max.y, FBoundingBox.Center.z);
-  FSubNodes[TOP_RIGHT_FRONT].FBoundingBox.Min.Reset(FBoundingBox.min.x, FBoundingBox.Center.y, FBoundingBox.min.z);
-  FSubNodes[TOP_RIGHT_FRONT].FBoundingBox.CalculateCenter();
-  SetupNode(TOP_RIGHT_FRONT);
+  FSubNodes[3] := TGDOcTree.Create();
+  FSubNodes[3].FBoundingBox.Max.Reset(FBoundingBox.Center.x, FBoundingBox.max.y, FBoundingBox.Center.z);
+  FSubNodes[3].FBoundingBox.Min.Reset(FBoundingBox.min.x, FBoundingBox.Center.y, FBoundingBox.min.z);
+  FSubNodes[3].FBoundingBox.CalculateCenter();
+  SetupNode(3);
 
-  FSubNodes[BOTTOM_LEFT_FRONT] := TGDOcTree.Create();
-  FSubNodes[BOTTOM_LEFT_FRONT].FBoundingBox.Max.Reset(FBoundingBox.max.x, FBoundingBox.Center.y, FBoundingBox.max.z);
-  FSubNodes[BOTTOM_LEFT_FRONT].FBoundingBox.Min.Reset(FBoundingBox.Center.x, FBoundingBox.min.y, FBoundingBox.Center.z);
-  FSubNodes[BOTTOM_LEFT_FRONT].FBoundingBox.CalculateCenter();
-  SetupNode(BOTTOM_LEFT_FRONT);
+  FSubNodes[4] := TGDOcTree.Create();
+  FSubNodes[4].FBoundingBox.Max.Reset(FBoundingBox.max.x, FBoundingBox.Center.y, FBoundingBox.max.z);
+  FSubNodes[4].FBoundingBox.Min.Reset(FBoundingBox.Center.x, FBoundingBox.min.y, FBoundingBox.Center.z);
+  FSubNodes[4].FBoundingBox.CalculateCenter();
+  SetupNode(4);
 
-  FSubNodes[BOTTOM_LEFT_BACK] := TGDOcTree.Create();
-  FSubNodes[BOTTOM_LEFT_BACK].FBoundingBox.Max.Reset(FBoundingBox.max.x, FBoundingBox.Center.y, FBoundingBox.Center.z);
-  FSubNodes[BOTTOM_LEFT_BACK].FBoundingBox.Min.Reset(FBoundingBox.Center.x, FBoundingBox.min.y, FBoundingBox.min.z);
-  FSubNodes[BOTTOM_LEFT_BACK].FBoundingBox.CalculateCenter();
-  SetupNode(BOTTOM_LEFT_BACK);
+  FSubNodes[5] := TGDOcTree.Create();
+  FSubNodes[5].FBoundingBox.Max.Reset(FBoundingBox.max.x, FBoundingBox.Center.y, FBoundingBox.Center.z);
+  FSubNodes[5].FBoundingBox.Min.Reset(FBoundingBox.Center.x, FBoundingBox.min.y, FBoundingBox.min.z);
+  FSubNodes[5].FBoundingBox.CalculateCenter();
+  SetupNode(5);
 
-  FSubNodes[BOTTOM_RIGHT_BACK] := TGDOcTree.Create();
-  FSubNodes[BOTTOM_RIGHT_BACK].FBoundingBox.Max.Reset(FBoundingBox.Center.x, FBoundingBox.Center.y, FBoundingBox.max.z);
-  FSubNodes[BOTTOM_RIGHT_BACK].FBoundingBox.Min.Reset(FBoundingBox.min.x, FBoundingBox.min.y, FBoundingBox.Center.z);
-  FSubNodes[BOTTOM_RIGHT_BACK].FBoundingBox.CalculateCenter();
-  SetupNode(BOTTOM_RIGHT_BACK);
+  FSubNodes[6] := TGDOcTree.Create();
+  FSubNodes[6].FBoundingBox.Max.Reset(FBoundingBox.Center.x, FBoundingBox.Center.y, FBoundingBox.max.z);
+  FSubNodes[6].FBoundingBox.Min.Reset(FBoundingBox.min.x, FBoundingBox.min.y, FBoundingBox.Center.z);
+  FSubNodes[6].FBoundingBox.CalculateCenter();
+  SetupNode(6);
 
-  FSubNodes[BOTTOM_RIGHT_FRONT] := TGDOcTree.Create();
-  FSubNodes[BOTTOM_RIGHT_FRONT].FBoundingBox.Max.Reset(FBoundingBox.Center.x, FBoundingBox.Center.y, FBoundingBox.Center.z);
-  FSubNodes[BOTTOM_RIGHT_FRONT].FBoundingBox.Min.Reset(FBoundingBox.min.x, FBoundingBox.min.y, FBoundingBox.min.z);
-  FSubNodes[BOTTOM_RIGHT_FRONT].FBoundingBox.CalculateCenter();
-  SetupNode(BOTTOM_RIGHT_FRONT);
+  FSubNodes[7] := TGDOcTree.Create();
+  FSubNodes[7].FBoundingBox.Max.Reset(FBoundingBox.Center.x, FBoundingBox.Center.y, FBoundingBox.Center.z);
+  FSubNodes[7].FBoundingBox.Min.Reset(FBoundingBox.min.x, FBoundingBox.min.y, FBoundingBox.min.z);
+  FSubNodes[7].FBoundingBox.CalculateCenter();
+  SetupNode(7);
 end;
 
 {******************************************************************************}
 {* Init the octree                                                            *}
 {******************************************************************************}
 
-procedure TGDOcTree.InitOcTree();
+procedure TGDOctree.InitOcTree();
 var
   iI    : Integer;
   iCell : TGDBaseCell;
@@ -202,9 +184,9 @@ begin
   FBoundingBox.Max.Reset(-9999999999,-9999999999,-9999999999);
   With CellManager do
   begin
-    for iI := 0 to Cells.Count-1 do
+    for iI := 0 to AllCells.Count-1 do
     begin
-      iCell :=  TGDBaseCell( Cells.Items[  iI ]);
+      iCell :=  TGDBaseCell( AllCells.Items[  iI ]);
 
       If (iCell.BoundingBox.Min.X < FBoundingBox.Min.x) then
         FBoundingBox.Min.setX(iCell.BoundingBox.Min.X);
@@ -236,7 +218,7 @@ end;
 {* Clear the octree                                                           *}
 {******************************************************************************}
 
-procedure TGDOcTree.Clear();
+procedure TGDOctree.Clear();
 var
   iI : Integer;
 begin
@@ -252,36 +234,36 @@ end;
 {* Get the visible objects                                                    *}
 {******************************************************************************}
 
-procedure TGDOcTree.GetVisibleCells();
+procedure TGDOctree.GetVisibleCells();
 var
   iCell     : TGDBaseCell;
   iMeshCell : TGDMeshCell;
   iI : Integer;
   iVertex : TGDVector;
 begin
-  If Not(Frustum.BoxInFrustum(FBoundingBox)) then
+  If Not(Camera.BoxInView(FBoundingBox)) then
     exit;
                                               
   With CellManager do
   begin
     for iI := 0 to length(FCellIndexes)-1 do
     begin
-      If Frustum.BoxInFrustum( TGDBaseCell( Cells.Items[  FCellIndexes[iI] ] ).BoundingBox ) then
+      If Camera.BoxInView( TGDBaseCell( AllCells.Items[  FCellIndexes[iI] ] ).BoundingBox ) then
       begin
-          iCell := TGDBaseCell( Cells.Items[  FCellIndexes[iI] ] );
-          iVertex := TGDBaseCell( Cells.Items[  FCellIndexes[iI] ] ).BoundingBox.Center.Copy();
+          iCell := TGDBaseCell( AllCells.Items[  FCellIndexes[iI] ] );
+          iVertex := TGDBaseCell( AllCells.Items[  FCellIndexes[iI] ] ).BoundingBox.Center.Copy();
           iVertex.Substract(Camera.Position.Copy());
           iCell.Distance := iVertex.Magnitude();
 
           If (iCell.OjectType = SO_WATERCELL) and Modes.RenderWater then
-            VisibleWaterCells.Add(iCell);
+            WaterCells.Add(iCell);
 
           If (iCell.OjectType = SO_GRASSCELL) and Modes.RenderGrass then
             If iCell.Distance < (Settings.FoliageDistance * R_FOLIAGE_DISTANCE_STEP + (R_FOLIAGE_DISTANCE_STEP * 10)) then
-              VisibleCells.Add(iCell);
+              GrassCells.Add(iCell);
 
           If (iCell.OjectType = SO_TERRAINCELL) and Modes.RenderTerrain then
-            VisibleCells.Add(iCell);
+            TerrainCells.Add(iCell);
 
           If (iCell.OjectType = SO_MESHCELL) and Modes.RenderModels then
           begin
@@ -289,10 +271,10 @@ begin
             if iMeshCell.LODType = LT_FADE_IN then
             begin
               if iMeshCell.Distance < iMeshCell.FadeDistance then
-                 VisibleCells.Add(iMeshCell);
+                 MeshCells.Add(iMeshCell);
             end
             else
-              VisibleCells.Add(iMeshCell);
+              MeshCells.Add(iMeshCell);
           end;
      end;
     end;
@@ -307,11 +289,11 @@ end;
 {* Render the treeboxes                                                       *}
 {******************************************************************************}
 
-procedure TGDOcTree.RenderTreeBoxes();
+procedure TGDOctree.RenderTreeBoxes();
 var
   iI : Integer;
 begin
- if Not(Frustum.BoxInFrustum(FBoundingBox)) then
+ if Not(Camera.BoxInView(FBoundingBox)) then
   exit;
 
  Renderer.SetColor(1,1,0,1);

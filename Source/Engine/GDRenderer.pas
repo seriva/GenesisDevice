@@ -113,6 +113,7 @@ type
 
     procedure   SetColor(aC : TGDColor); overload;
     procedure   SetColor(aR, aG, aB, aA : Single); overload;
+    procedure   SetJoinedParams(aShader : TGDGLShader);
     procedure   RenderState( aState : TGDRenderState );
 
     procedure   StartFrame();
@@ -134,14 +135,12 @@ uses
   GDConsole,
   GDMain,
   GDCamera,
-  GDWater,
   GDCellManager,
-  GDSkyDome,
-  GDFrustum,
   GDStatistics,
   GDGUI,
   GDFog,
-  GDOctree;
+  GDOctree,
+  GDMap;
 
 {******************************************************************************}
 {* Create the renderer class                                                  *}
@@ -423,6 +422,10 @@ begin
   ResizeFrameBuffers();
 end;
 
+{******************************************************************************}
+{* Set color                                                                  *}
+{******************************************************************************}
+
 procedure TGDRenderer.SetColor(aC : TGDColor);
 begin
   FTextureShader.SetFloat4('V_COLOR', aC.R, aC.G, aC.B, aC.A);
@@ -435,6 +438,29 @@ begin
   FTextureShader.SetFloat4('V_COLOR', aR, aG, aB, aA);
   FColorShader.SetFloat4('V_COLOR', aR, aG, aB, aA);
   FColorShader.SetInt('I_CUSTOM_TRANSLATE', 0);
+end;
+
+{******************************************************************************}
+{* Set joined paramters of shaders.                                           *}
+{******************************************************************************}
+
+procedure TGDRenderer.SetJoinedParams(aShader : TGDGLShader);
+begin
+  aShader.Enable();
+  aShader.SetFloat3('V_LIGHT_DIR',  Map.LightDirection.X,
+                                    Map.LightDirection.Y,
+                                    Map.LightDirection.Z);
+  aShader.SetFloat4('V_LIGHT_AMB',  Map.LightAmbient.R,
+                                    Map.LightAmbient.G,
+                                    Map.LightAmbient.B,
+                                    Map.LightAmbient.A);
+  aShader.SetFloat4('V_LIGHT_DIFF', Map.LightDiffuse.R,
+                                    Map.LightDiffuse.G,
+                                    Map.LightDiffuse.B,
+                                    Map.LightDiffuse.A);
+  aShader.SetFloat('F_MIN_VIEW_DISTANCE', Map.Fog.MinDistance);
+  aShader.SetFloat('F_MAX_VIEW_DISTANCE', Map.Fog.MaxDistance);
+  aShader.SetFloat4('V_FOG_COLOR', Map.Fog.Color.R, Map.Fog.Color.G, Map.Fog.Color.B, Map.Fog.Color.A);
 end;
 
 {******************************************************************************}
@@ -697,7 +723,7 @@ begin
   RenderState( RS_COLOR );
   If Modes.RenderNormals     then CellManager.RenderVisibleCells( RA_NORMALS, RF_NORMAL );
   If Modes.RenderObjectBoxes then CellManager.RenderVisibleCells( RA_FRUSTUM_BOXES, RF_NORMAL );
-  If Modes.RenderNodeBoxes   then Octree.RenderTreeBoxes();
+  If Modes.RenderNodeBoxes   then CellManager.Octree.RenderTreeBoxes();
 end;
 
 {******************************************************************************}
@@ -706,17 +732,17 @@ end;
 
 procedure RenderWaterReflection();
 begin
-  If (Modes.RenderWireframe = false) and Water.Visible() then
+  If (Modes.RenderWireframe = false) and Map.Water.Visible() then
   begin
     //render reflection texture
     StartFrame();
     Camera.Translate();
-    Water.StartReflection();
-    If Modes.RenderSky then SkyDome.Render();
-    Frustum.CalculateFrustum();
+    Map.Water.StartReflection();
+    If Modes.RenderSky then Map.SkyDome.Render();
+    Camera.CalculateFrustum();
     CellManager.DetectVisibleCells();
     CellManager.RenderVisibleCells( RA_NORMAL, RF_WATER );
-    Water.EndReflection();
+    Map.Water.EndReflection();
   end;
 end;
 
@@ -727,7 +753,7 @@ end;
 procedure RenderGUI();
 begin
   SwitchToOrtho();
-    If Modes.RenderWireframe = false then Water.RenderUnderWater();
+    If Modes.RenderWireframe = false then Map.Water.RenderUnderWater();
     GUI.RenderScreens();
     If Modes.RenderStats then Statistics.Render();
     Console.Render();
@@ -742,12 +768,12 @@ end;
 Procedure RenderStaticGeometry();
 begin
  //Render sky
- FogManager.UseDistanceFog();
- SkyDome.Render();
+ Map.Fog.UseDistanceFog();
+ Map.SkyDome.Render();
 
  //Set the right fog type
- If not(Camera.Position.Y > Water.WaterHeight) then
-   FogManager.UseWaterFog();
+ If not(Camera.Position.Y > Map.Water.WaterHeight) then
+   Map.Fog.UseWaterFog();
 
  //Render other cells.
  CellManager.RenderVisibleCells( RA_NORMAL, RF_NORMAL );
@@ -816,7 +842,7 @@ begin
   FFrameBuffer.Status();
   glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT);
 
-  If Modes.RenderSky then SkyDome.Render();
+  If Modes.RenderSky then Map.SkyDome.Render();
   CellManager.RenderVisibleCells( RA_NORMAL, RF_BLOOM );
 
   FFrameBuffer.UnBind();
@@ -861,7 +887,7 @@ begin
   FinalShader.SetFloat2('V_SCREEN_SIZE',Settings.Width, Settings.Height);
   FinalShader.SetFloat('I_GAMMA',Settings.Gamma);
 
-  if Water.UnderWater then
+  if Map.Water.UnderWater then
   begin
     FSourceImage2.BindTexture( GL_TEXTURE0 );
   end
@@ -889,16 +915,13 @@ begin
   //detect the visibel objects
   glLoadIdentity();
   Camera.Translate();
-  Frustum.CalculateFrustum();
   CellManager.DetectVisibleCells();
 
   //set the current rendermode
   if not(Modes.RenderWireframe) then
   begin
-    FogManager.FogShader.ApplyFog();
-
     //check if where underwater
-    if Water.UnderWater() then
+    if Map.Water.UnderWater() then
     begin
       //render the underwater source image
       RenderUnderWaterSourceImage();
@@ -921,7 +944,7 @@ begin
     RenderState( RS_WIREFRAME );
     StartFrame();
     Camera.Translate();
-    SkyDome.Render();
+    Map.SkyDome.Render();
     CellManager.RenderVisibleCells( RA_NORMAL, RF_NORMAL );
   end;
 

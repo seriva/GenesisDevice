@@ -55,9 +55,9 @@ unit openal;
 interface
 
 uses
-  Classes
-  , SysUtils
-  {$IFDEF Win32},LCLIntf, LCLType, Windows,{$ENDIF}  LMessages;
+  Classes,
+  SysUtils
+  {$IFDEF Win32},LCLIntf, LCLType, Windows{$ENDIF};
 
 { $ DEFINE ALUT} //define ALUT to use alut.dll
 

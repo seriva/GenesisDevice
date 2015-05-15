@@ -24,11 +24,6 @@ unit GDFog;
 
 {$MODE Delphi}
 
-{******************************************************************************}
-{* Holds the classes dealing with distance fog. Normal opengl fog and         *}
-{* shader based opengl fog                                                    *}
-{******************************************************************************}
-
 interface
 
 uses
@@ -42,224 +37,112 @@ uses
   GDSettings;
 
 Type
-
 {******************************************************************************}
-{* Shader based fog class                                                     *}
+{* Fog for distance and water.                                                *}
 {******************************************************************************}
 
-  TGDFogShader = class
+  TGDFog = class
   private
     FColor : TGDColor;
     FMinDistance : double;
     FMaxDistance : double;
-
-    procedure SetColor(aColor : TGDColor);
-    procedure SetMinDistance( aMinDistance : Double );
-    procedure SetMaxDistance( aMaxDistance : Double );
-  public
-    Property Color : TGDColor read FColor write SetColor;
-    Property MinDistance : Double read FMinDistance write SetMinDistance;
-    Property MaxDistance : Double read FMaxDistance write SetMaxDistance;
-
-    constructor Create();
-    destructor  Destroy(); override;
-
-    procedure InitFog( aR, aG, aB, aA : Double; aMinDistance, aMaxDistance : double );
-    procedure Clear();
-
-    procedure ApplyFog();
-  end;
-
-{******************************************************************************}
-{* Fog manager for distance and water fog.                                    *}
-{******************************************************************************}
-
-  TGDFogManager = class
-  private
-    FFogShader : TGDFogShader;
-
     FDistanceFog   : Integer;
     FDistanceColor : TGDColor;
-
     FWaterFog      : Integer;
     FWaterColor    : TGDColor;
   public
-    Property FogShader : TGDFogShader read FFogShader;
+    Property Color       : TGDColor read FColor;
+    Property MinDistance : Double read FMinDistance;
+    Property MaxDistance : Double read FMaxDistance ;
 
     constructor Create();
     destructor  Destroy(); override;
 
     procedure InitDistanceFog(aR, aG, aB, aA : Double; aDistance : Integer);
-    procedure UseDistanceFog();
-
     procedure InitWaterFog(aR, aG, aB, aA : Double; aDistance : Integer);
-    procedure UseWaterFog();
-
     procedure Clear();
-  end;
 
-var
-  FogManager : TGDFogManager;
+    procedure UseDistanceFog();
+    procedure UseWaterFog();
+  end;
 
 implementation
 
 {******************************************************************************}
-{* Set the fog color                                                          *}
+{* Create fog                                                                 *}
 {******************************************************************************}
 
-procedure TGDFogShader.SetColor(aColor : TGDColor);
-begin
-  FColor := aColor.Copy();
-  ApplyFog();
-end;
-
-{******************************************************************************}
-{* Set the near distance for the fog                                          *}
-{******************************************************************************}
-
-procedure TGDFogShader.SetMinDistance( aMinDistance : Double );
-begin
-  FMinDistance := aMinDistance;
-  ApplyFog();
-end;
-
-{******************************************************************************}
-{* Set the far distance for the fog                                           *}
-{******************************************************************************}
-
-procedure TGDFogShader.SetMaxDistance( aMaxDistance : Double );
-begin
-  FMaxDistance := aMaxDistance;
-  ApplyFog();
-end;
-
-{******************************************************************************}
-{* Create the fogshader class                                                 *}
-{******************************************************************************}
-
-constructor TGDFogShader.Create();
-begin
-  FColor.Reset(0.5,0.5,0.5,1);
-  FMinDistance := (((Settings.ViewDistance * R_VIEW_DISTANCE_STEP) / 10) *5);
-  FMaxDistance := (((Settings.ViewDistance * R_VIEW_DISTANCE_STEP) / 10) *8);
-end;
-
-{******************************************************************************}
-{* Destroy the fogshader class                                                *}
-{******************************************************************************}
-
-destructor  TGDFogShader.Destroy();
-begin
-  inherited;
-end;
-
-{******************************************************************************}
-{* Init the fogshader                                                         *}
-{******************************************************************************}
-
-procedure TGDFogShader.InitFog(aR, aG, aB, aA : Double; aMinDistance, aMaxDistance : double  );
+constructor TGDFog.Create();
 begin
   Clear();
-  FColor.Reset(aR, aG, aB, aA );
-  FMinDistance := aMinDistance;
-  FMaxDistance := aMaxDistance;
-  ApplyFog();
 end;
 
 {******************************************************************************}
-{* Clear the fogshader                                                        *}
+{* Destroy fog                                                                *}
 {******************************************************************************}
 
-procedure TGDFogShader.Clear();
+destructor TGDFog.Destroy();
 begin
-  FColor.Reset(0.5,0.5,0.5,1);
-  FMinDistance := (((Settings.ViewDistance * R_VIEW_DISTANCE_STEP) / 10) *5);
-  FMaxDistance := (((Settings.ViewDistance * R_VIEW_DISTANCE_STEP) / 10) *7);
-end;
-
-{******************************************************************************}
-{* Apply the fogshader                                                        *}
-{******************************************************************************}
-
-procedure TGDFogShader.ApplyFog();
-begin
-  glClearColor( FColor.R, FColor.G, FColor.B, FColor.A);
-end;
-
-{******************************************************************************}
-{* Create fog manager                                                         *}
-{******************************************************************************}
-
-constructor TGDFogManager.Create();
-begin
-  FFogShader := TGDFogShader.Create();
-  FDistanceFog   := 5;
-  FWaterFog      := 1;
-end;
-
-{******************************************************************************}
-{* Destroy fog manager                                                        *}
-{******************************************************************************}
-
-destructor TGDFogManager.Destroy();
-begin
-  FreeAndNil(FFogShader);
+  inherited
 end;
 
 {******************************************************************************}
 {* Init the distance fog                                                      *}
 {******************************************************************************}
 
-procedure TGDFogManager.InitDistanceFog(aR, aG, aB, aA : Double; aDistance : Integer);
+procedure TGDFog.InitDistanceFog(aR, aG, aB, aA : Double; aDistance : Integer);
 begin
   FDistanceColor.Reset( aR, aG, aB, aA );
   FDistanceFog := aDistance;
-end;
-
-
-{******************************************************************************}
-{* Use the distance fog                                                       *}
-{******************************************************************************}
-
-procedure TGDFogManager.UseDistanceFog();
-begin
-  FFogShader.InitFog( FDistanceColor.R,FDistanceColor.G, FDistanceColor.B, FDistanceColor.A,
-                      (((FDistanceFog * R_VIEW_DISTANCE_STEP) / 10) *5),
-                      (((FDistanceFog * R_VIEW_DISTANCE_STEP) / 10) *7.5) );
 end;
 
 {******************************************************************************}
 {* Init the water fog                                                         *}
 {******************************************************************************}
 
-procedure TGDFogManager.InitWaterFog(aR, aG, aB, aA : Double; aDistance : Integer);
+procedure TGDFog.InitWaterFog(aR, aG, aB, aA : Double; aDistance : Integer);
 begin
   FWaterColor.Reset( aR, aG, aB, aA );
   FWaterFog := aDistance;
-end;
-
-
-{******************************************************************************}
-{* Use the water fog                                                          *}
-{******************************************************************************}
-
-procedure TGDFogManager.UseWaterFog();
-begin
-  FFogShader.InitFog( FWaterColor.R,FWaterColor.G, FWaterColor.B, FWaterColor.A,
-                      (((FWaterFog * R_WATER_DISTANCE_STEP) / 20) *5),
-                      (((FWaterFog * R_WATER_DISTANCE_STEP) / 20) *20) );
 end;
 
 {******************************************************************************}
 {* Clear fog                                                                  *}
 {******************************************************************************}
 
-procedure TGDFogManager.Clear();
+procedure TGDFog.Clear();
 begin
+  FColor.Reset(0.5,0.5,0.5,1);
+  FMinDistance := (((Settings.ViewDistance * R_VIEW_DISTANCE_STEP) / 10) *5);
+  FMaxDistance := (((Settings.ViewDistance * R_VIEW_DISTANCE_STEP) / 10) *8);
   FWaterColor.Reset( 0.5, 0.5, 0.5, 0.5 );
   FWaterFog := 1;
   FDistanceColor.Reset( 0.5, 0.5, 0.5, 0.5 );
   FDistanceFog := 5;
+end;
+
+{******************************************************************************}
+{* Use the distance fog                                                       *}
+{******************************************************************************}
+
+procedure TGDFog.UseDistanceFog();
+begin
+  FColor       := FDistanceColor.Copy();
+  FMinDistance := (((FDistanceFog * R_VIEW_DISTANCE_STEP) / 10) * 5);
+  FMaxDistance := (((FDistanceFog * R_VIEW_DISTANCE_STEP) / 10) * 7.5);
+  glClearColor( FColor.R, FColor.G, FColor.B, FColor.A);
+end;
+
+{******************************************************************************}
+{* Use the water fog                                                          *}
+{******************************************************************************}
+
+procedure TGDFog.UseWaterFog();
+begin
+  FColor       := FWaterColor.Copy();
+  FMinDistance := (((FWaterFog * R_WATER_DISTANCE_STEP) / 20) * 5);
+  FMaxDistance := (((FWaterFog * R_WATER_DISTANCE_STEP) / 20) * 20);
+  glClearColor( FColor.R, FColor.G, FColor.B, FColor.A);
 end;
 
 end.

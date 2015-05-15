@@ -34,10 +34,8 @@ Uses
   Classes,
   SysUtils,
   dglOpenGL,
-  GDRenderer,
   GDTexture,
   GDConstants,
-  GDFog,
   FileUtil,
   GDResource,
   GDTiming,
@@ -70,15 +68,14 @@ Type
 
     procedure   ApplyMaterial();
     procedure   DisableMaterial();
-    procedure   BindMaterialTextures();
   end;
   
 implementation
 
 uses
-  GDResources,
-  GDLighting,
-  GDFoliage;
+  GDMap,
+  GDRenderer,
+  GDResources;
 
 {******************************************************************************}
 {* Create material                                                            *}
@@ -109,31 +106,16 @@ end;
 procedure   TGDMaterial.ApplyMaterial();
 begin
   Renderer.MeshShader.Enable();
-  Renderer.MeshShader.SetFloat3('V_LIGHT_DIR', DirectionalLight.Direction.X,
-                                               DirectionalLight.Direction.Y,
-                                               DirectionalLight.Direction.Z);
-  Renderer.MeshShader.SetFloat4('V_LIGHT_AMB', DirectionalLight.Ambient.R,
-                                               DirectionalLight.Ambient.G,
-                                               DirectionalLight.Ambient.B,
-                                               DirectionalLight.Ambient.A);
-  Renderer.MeshShader.SetFloat4('V_LIGHT_DIFF', DirectionalLight.Diffuse.R,
-                                                DirectionalLight.Diffuse.G,
-                                                DirectionalLight.Diffuse.B,
-                                                DirectionalLight.Diffuse.A);
-  Renderer.MeshShader.SetFloat('F_MIN_VIEW_DISTANCE', FogManager.FogShader.MinDistance);
-  Renderer.MeshShader.SetFloat('F_MAX_VIEW_DISTANCE', FogManager.FogShader.MaxDistance);
-  Renderer.MeshShader.SetFloat4('V_FOG_COLOR', FogManager.FogShader.Color.R,
-                                               FogManager.FogShader.Color.G, FogManager.FogShader.Color.B,
-                                               FogManager.FogShader.Color.A);
+  Renderer.SetJoinedParams(Renderer.MeshShader);
   Renderer.MeshShader.SetInt('T_COLORMAP', 0);
-
   if DoTreeAnim then
     Renderer.MeshShader.SetInt('I_DO_TREE_ANIM', 1)
   else
     Renderer.MeshShader.SetInt('I_DO_TREE_ANIM', 0);
-  Renderer.MeshShader.SetFloat('F_ANIMATION_SPEED', Timing.ElapsedTime / Foliage.TreeAnimationSpeed);
-  Renderer.MeshShader.SetFloat('F_ANIMATION_STRENGTH', Foliage.TreeAnimationStrength);
+  Renderer.MeshShader.SetFloat('F_ANIMATION_SPEED', Timing.ElapsedTime / Map.Foliage.TreeAnimationSpeed);
+  Renderer.MeshShader.SetFloat('F_ANIMATION_STRENGTH', Map.Foliage.TreeAnimationStrength);
 
+  FTexture.BindTexture( GL_TEXTURE0 );
   if FHasAlpha then
   begin
     glEnable(GL_ALPHA_TEST);
@@ -154,15 +136,6 @@ begin
     glDisable(GL_ALPHA_TEST);
     glDisable(GL_BLEND);
   end;
-end;
-
-{******************************************************************************}
-{* Bind the material textures                                                 *}
-{******************************************************************************}
-
-procedure   TGDMaterial.BindMaterialTextures();
-begin
-  FTexture.BindTexture( GL_TEXTURE0 );
 end;
 
 end.

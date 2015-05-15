@@ -213,7 +213,7 @@ end;
 {* Beforce render callback                                                    *}
 {******************************************************************************}
 
-procedure BeforeRender();
+procedure Loop();
 begin
   //do soms sound stuff
   if Player.PlayerUnderWater() then
@@ -283,7 +283,7 @@ begin
   gdInputUseMouseLook(false);
 
   //main callback functions
-  gdCallBackSetBeforeRender( @BeforeRender );
+  gdEngineLoopCallback( @Loop );
 
   //input funtions
   gdInputRegisterAction(IT_SINGLE,VK_ESCAPE,@ExitCallback, false );
@@ -311,7 +311,6 @@ begin
   gdSoundRemove(AmbientId);
   gdSoundRemove(UnderWaterId);
   //gdSoundRemove(MusicId);
-  gdCallBackSetBeforeRender( nil );
 end;
 
 end.

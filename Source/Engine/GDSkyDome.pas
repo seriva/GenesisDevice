@@ -36,13 +36,10 @@ uses
   dglOpenGL,
   GDTexture,
   GDTypes,
-  GDRenderer,
   GDGLObjects,
   GDConstants,
-  GDFog,
   GDCamera,
   GDSettings,
-  GDWater,
   GDModes,
   GDResources,
   GDResource,
@@ -73,10 +70,11 @@ type
     Procedure Render();
   end;
 
-var
-  SkyDome : TGDSkyDome;
-
 implementation
+
+uses
+  GDMap,
+  GDRenderer;
 
 Const
   COMPLEXITY = 64;
@@ -217,13 +215,9 @@ begin
   else
   begin
     Renderer.SkyShader.Enable();
+    Renderer.SetJoinedParams(Renderer.SkyShader);
     Renderer.SkyShader.SetInt('T_SKYTEX', 0);
-    Renderer.SkyShader.SetFloat('F_MIN_VIEW_DISTANCE', FogManager.FogShader.MinDistance);
-    Renderer.SkyShader.SetFloat('F_MAX_VIEW_DISTANCE', FogManager.FogShader.MaxDistance);
-    Renderer.SkyShader.SetFloat4('V_FOG_COLOR', FogManager.FogShader.Color.R,
-                           FogManager.FogShader.Color.G, FogManager.FogShader.Color.B,
-                           FogManager.FogShader.Color.A);
-    If Water.UnderWater() then
+    If Map.Water.UnderWater() then
      Renderer.SkyShader.SetInt('I_UNDER_WATER', 1)
     else
      Renderer.SkyShader.SetInt('I_UNDER_WATER', 0);

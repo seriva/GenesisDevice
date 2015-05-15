@@ -49,7 +49,6 @@ uses
   GDOctree,
   GDCellManager,
   GDModes,
-  GDCallBack,
   GDStatistics;
 
 type
@@ -61,6 +60,8 @@ type
   TGDMain  = Class
   private
   public
+    LoopCallBack : TGDCallback;
+
     constructor Create();
     destructor  Destroy(); override;
 
@@ -81,6 +82,7 @@ implementation
 
 constructor TGDMain.Create();
 begin
+  LoopCallBack := nil;
 end;
 
 {******************************************************************************}
@@ -116,10 +118,9 @@ end;
 
 procedure TGDMain.ClearBaseResources();
 begin
+  LoopCallBack := nil;
   Input.ClearInputActions();
   Console.Clear();
-  Octree.Clear();
-  CellManager.Clear();
   GUI.Clear();
   Map.Clear();
   Resources.Clear();
@@ -138,7 +139,7 @@ begin
   Input.ExecuteInput();
   Sound.Update();
   Map.Update();
-  CallBack.BeforeRender();
+  if assigned(LoopCallBack) then LoopCallBack();
   Renderer.Render();
 
   //end timing

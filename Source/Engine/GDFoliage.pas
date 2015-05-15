@@ -40,11 +40,8 @@ uses
   GDConsole,
   GDSettings,
   GDConstants,
-  GDFog,
   GDMesh,
-  GDRenderer,
   GDTiming,
-  GDLighting,
   Contnrs,
   GDResources,
   GDResource,
@@ -232,7 +229,7 @@ type
     Function  InitFoliage( aInput : TGDFoliageInput ) : boolean;
     procedure Clear();
 
-    procedure StartRenderingGrass( aRenderAttribute : TGDRenderAttribute; aAlphaFunction : Single );
+    procedure StartRenderingGrass( aRenderAttribute : TGDRenderAttribute );
     procedure EndRenderingGrass();
 
     Function CheckTreeMap( aX, aY : Integer ) : Boolean;
@@ -240,10 +237,10 @@ type
     Function CheckRockMap( aX, aY : Integer ) : Boolean;
   end;
 
-var
-  Foliage : TGDFoliage;
-
 implementation
+
+uses
+  GDRenderer;
 
 {******************************************************************************}
 {* Create the grasstype class                                                 *}
@@ -451,7 +448,7 @@ end;
 {* Start the rendering of a grasscell                                         *}
 {******************************************************************************}
 
-procedure TGDFoliage.StartRenderingGrass( aRenderAttribute : TGDRenderAttribute; aAlphaFunction : Single );
+procedure TGDFoliage.StartRenderingGrass( aRenderAttribute : TGDRenderAttribute );
 begin
   if Not(aRenderAttribute = RA_NORMAL) then exit;
 
@@ -462,29 +459,16 @@ begin
   end
   else
   begin
-    glAlphaFunc(GL_GREATER, 0.75 + aAlphaFunction);
     glEnable(GL_ALPHA_TEST);
+    glAlphaFunc(GL_GREATER, 0.7);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glEnable(GL_BLEND);
     glDisable(GL_CULL_FACE);
     Renderer.GrassShader.Enable();
-    Renderer.GrassShader.SetFloat3('V_LIGHT_DIR', DirectionalLight.Direction.X,
-                                                   DirectionalLight.Direction.Y,
-                                                   DirectionalLight.Direction.Z);
-    Renderer.GrassShader.SetFloat4('V_LIGHT_AMB', DirectionalLight.Ambient.R,
-                                                   DirectionalLight.Ambient.G,
-                                                   DirectionalLight.Ambient.B,
-                                                   DirectionalLight.Ambient.A);
-    Renderer.GrassShader.SetFloat4('V_LIGHT_DIFF', DirectionalLight.Diffuse.R,
-                                                    DirectionalLight.Diffuse.G,
-                                                    DirectionalLight.Diffuse.B,
-                                                    DirectionalLight.Diffuse.A);
+    Renderer.SetJoinedParams(Renderer.GrassShader);
     Renderer.GrassShader.SetInt('T_GRASSTEX', 0);
     Renderer.GrassShader.SetFloat('F_ANIMATION_SPEED', Timing.ElapsedTime / FGrassAnimationSpeed);
     Renderer.GrassShader.SetFloat('F_ANIMATION_STRENGTH', FGrassAnimationStrength);
-    Renderer.GrassShader.SetFloat('F_MIN_VIEW_DISTANCE', FogManager.FogShader.MinDistance);
-    Renderer.GrassShader.SetFloat('F_MAX_VIEW_DISTANCE', FogManager.FogShader.MaxDistance);
-    Renderer.GrassShader.SetFloat4('V_FOG_COLOR', FogManager.FogShader.Color.R,
-                                  FogManager.FogShader.Color.G, FogManager.FogShader.Color.B,
-                                  FogManager.FogShader.Color.A);
   end;
 end;
 
@@ -495,6 +479,7 @@ end;
 procedure TGDFoliage.EndRenderingGrass();
 begin
   glDisable(GL_ALPHA_TEST);
+  glDisable(GL_BLEND);
   glEnable(GL_CULL_FACE);
 end;
 

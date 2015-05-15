@@ -38,6 +38,7 @@ uses
   GDTypes,
   GDConsole,
   GDGUI,
+  GDOctree,
   GDFoliage,
   GDSettings,
   GDConstants,
@@ -45,9 +46,7 @@ uses
   GDWater,
   GDFog,
   GDTiming,
-  GDMeshCell,
-  GDRenderer,
-  GDLighting;
+  GDMeshCell;
 
 type
 
@@ -57,11 +56,31 @@ type
 
   TGDMap = class
   private
-    FPlayerStart       : TGDVector;
-    FPlayerViewAngle   : TGDVector;
+    FPlayerStart     : TGDVector;
+    FPlayerViewAngle : TGDVector;
+
+    FLightDirection  : TGDVector;
+    FLightAmbient    : TGDColor;
+    FLightDiffuse    : TGDColor;
+
+    FTerrain : TGDTerrain;
+    FWater   : TGDWater;
+    FFoliage : TGDFoliage;
+    FSkyDome : TGDSkyDome;
+    FFog     : TGDFog;
   public
     property PlayerStart : TGDVector read FPlayerStart;
     property PlayerViewAngle : TGDVector read FPlayerViewAngle;
+
+    property LightDirection : TGDVector read FLightDirection;
+    property LightAmbient   : TGDColor read FLightAmbient;
+    property LightDiffuse   : TGDColor read FLightDiffuse;
+
+    property Terrain : TGDTerrain read FTerrain;
+    property Water   : TGDWater read FWater;
+    property Foliage : TGDFoliage read FFoliage;
+    property SkyDome : TGDSkyDome read FSkyDome;
+    property Fog     : TGDFog read FFog;
 
     constructor Create();
     destructor  Destroy(); override;
@@ -78,6 +97,7 @@ var
 implementation
 
 uses
+  GDRenderer,
   GDCellManager;
 
 {******************************************************************************}
@@ -87,6 +107,11 @@ uses
 constructor TGDMap.Create();
 begin
   inherited;
+  FTerrain := TGDTerrain.Create();
+  FWater   := TGDWater.Create();
+  FFoliage := TGDFoliage.Create();
+  FSkyDome := TGDSkyDome.Create();
+  FFog     := TGDFog.Create();
 end;
 
 {******************************************************************************}
@@ -96,6 +121,11 @@ end;
 destructor  TGDMap.Destroy();
 begin
   inherited;
+  FreeAndNil(FTerrain);
+  FreeAndNil(FWater);
+  FreeAndNil(FFoliage);
+  FreeAndNil(FSkyDome);
+  FreeAndNil(FFog);
 end;
 
 {******************************************************************************}
@@ -129,9 +159,6 @@ var
 
   //mesh
   iMeshInput : TGDMeshCellInput;
-
-  //directional light
-  iDirectionalLightInput : TGDDirectionalLightInput;
 begin
   Timing.Start();
   iIniFile := TIniFile.Create(aFileName);
@@ -222,17 +249,19 @@ begin
     iFoliageInput.RockCount              := iIniFile.ReadInteger( 'Foliage', 'RockCount', 0 );
 
     //directional light
-    iDirectionalLightInput.DirX := iIniFile.ReadFloat('DirectionalLight', 'DirX', -1.0);
-    iDirectionalLightInput.DirY := iIniFile.ReadFloat('DirectionalLight', 'DirY', -1.0);
-    iDirectionalLightInput.DirZ := iIniFile.ReadFloat('DirectionalLight', 'DirZ', -1.0);
-    iDirectionalLightInput.AmbR := iIniFile.ReadFloat('DirectionalLight', 'AmbientR', 1.0);
-    iDirectionalLightInput.AmbG := iIniFile.ReadFloat('DirectionalLight', 'AmbientG', 1.0);
-    iDirectionalLightInput.AmbB := iIniFile.ReadFloat('DirectionalLight', 'AmbientB', 1.0);
-    iDirectionalLightInput.DifR := iIniFile.ReadFloat('DirectionalLight', 'DiffuseR', 1.0);
-    iDirectionalLightInput.DifG := iIniFile.ReadFloat('DirectionalLight', 'DiffuseB', 1.0);
-    iDirectionalLightInput.DifB := iIniFile.ReadFloat('DirectionalLight', 'DiffuseG', 1.0);
-    
-    GUI.LoadingScreen.SetupForUse('Loading ' + StringReplace( ExtractFileName(aFileName) , ExtractFileExt(aFileName), '',  [rfReplaceAll] ) + '...',13 );
+    FLightDirection.X := iIniFile.ReadFloat('DirectionalLight', 'DirX', -1.0);
+    FLightDirection.Y := iIniFile.ReadFloat('DirectionalLight', 'DirY', -1.0);
+    FLightDirection.Z := iIniFile.ReadFloat('DirectionalLight', 'DirZ', -1.0);
+    FLightAmbient.R   := iIniFile.ReadFloat('DirectionalLight', 'AmbientR', 1.0);
+    FLightAmbient.G   := iIniFile.ReadFloat('DirectionalLight', 'AmbientG', 1.0);
+    FLightAmbient.B   := iIniFile.ReadFloat('DirectionalLight', 'AmbientB', 1.0);
+    FLightAmbient.A   := 1;
+    FLightDiffuse.R   := iIniFile.ReadFloat('DirectionalLight', 'DiffuseR', 1.0);
+    FLightDiffuse.G   := iIniFile.ReadFloat('DirectionalLight', 'DiffuseB', 1.0);
+    FLightDiffuse.B   := iIniFile.ReadFloat('DirectionalLight', 'DiffuseG', 1.0);
+    FLightDiffuse.A   := 1;
+
+    GUI.LoadingScreen.SetupForUse('Loading ' + StringReplace( ExtractFileName(aFileName) , ExtractFileExt(aFileName), '',  [rfReplaceAll] ) + '...',12 );
     GUI.LoadingScreen.UpdateBar();
   except
     on E: Exception do
@@ -251,8 +280,8 @@ begin
     Terrain.InitTerrain(iTerrainInput);
 
     //init fog
-    FogManager.InitDistanceFog( iDFR,iDFG,iDFB,iDFA, Settings.ViewDistance );
-    FogManager.UseDistanceFog();
+    Fog.InitDistanceFog( iDFR,iDFG,iDFB,iDFA, Settings.ViewDistance );
+    Fog.UseDistanceFog();
 
     //init sky
     Skydome.InitSkyDome(iSkyDomeTexture,(Settings.ViewDistance * R_VIEW_DISTANCE_STEP));
@@ -260,15 +289,11 @@ begin
 
     //init water
     Water.InitWater( iWaterInput );
-    FogManager.InitWaterFog( iWaterInput.UnderWaterColorR,iWaterInput.UnderWaterColorG,iWaterInput.UnderWaterColorB,iWaterInput.UnderWaterColorA, iWaterInput.Visibility );
+    Fog.InitWaterFog( iWaterInput.UnderWaterColorR,iWaterInput.UnderWaterColorG,iWaterInput.UnderWaterColorB,iWaterInput.UnderWaterColorA, iWaterInput.Visibility );
     GUI.LoadingScreen.UpdateBar();
 
     //foliage
     Foliage.InitFoliage( iFoliageInput );
-    GUI.LoadingScreen.UpdateBar();
-
-    //ambientmainlight
-    DirectionalLight.InitDirectionalLight( iDirectionalLightInput );
     GUI.LoadingScreen.UpdateBar();
 
     //grass types
@@ -348,7 +373,7 @@ begin
       iMeshInput.ScaleZ       := iIniFile.ReadFloat( iString, 'ScaleZ', 100);
       iMeshInput.FadeDistance := 0;
       iMeshInput.FadeScale    := 0;
-      CellManager.Cells.Add( TGDMeshCell.Create(iMeshInput)   );
+      CellManager.AllCells.Add( TGDMeshCell.Create(iMeshInput)   );
 
       iI := iI + 1;
     end;
@@ -357,6 +382,8 @@ begin
   Timing.Stop();
   FreeAndNil(iIniFile);
   Console.Write('......Done loading map (' + Timing.TimeInSeconds + ' Sec)');
+
+  CellManager.GenerateCells();
 end;
 
 {******************************************************************************}
@@ -365,15 +392,19 @@ end;
 
 procedure TGDMap.Clear();
 begin
-  Terrain.Clear();
-  SkyDome.Clear();
-  Water.Clear();
-  Foliage.Clear();
-  FogManager.Clear();
   FPlayerStart.Reset(0,0,0);
   FPlayerViewAngle.Reset(0,0,0);
+  FLightDirection.Reset(-1,-1,-1);
+  FLightAmbient.Reset(1, 1, 1, 1);
+  FLightDiffuse.Reset(1, 1, 1, 1);
+
+  FTerrain.Clear();
+  FWater.Clear();
+  FFoliage.Clear();
+  FSkyDome.Clear();
+  FFog.Clear();
+
   CellManager.Clear();
-  DirectionalLight.Clear();
 end;
 
 {******************************************************************************}
@@ -382,7 +413,7 @@ end;
 
 procedure TGDMap.Update();
 begin
-  Water.Update();
+  FWater.Update();
 end;
 
 

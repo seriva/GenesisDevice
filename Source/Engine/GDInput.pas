@@ -57,14 +57,14 @@ type
   TGDInputAction = class(TObject)
   private
     FKey             : integer;
-    FAction          : TGDProcEngineCallback;
+    FAction          : TGDCallback;
     FConsoleDisabled : boolean;
     FCanExecute      : boolean;
   public
     property Key : integer read FKey;
     property CanExecute : boolean read FCanExecute write FCanExecute;
 
-    Constructor Create(aKey: integer; aAction : TGDProcEngineCallback;  aConsoleDisabled : boolean);
+    Constructor Create(aKey: integer; aAction : TGDCallback;  aConsoleDisabled : boolean);
     Destructor  Destroy(); override;
 
     procedure Execute();
@@ -103,7 +103,7 @@ type
     procedure CalculateMousePosStart();
     procedure SetMouseStartPos();
 
-    procedure RegisterInputAction(aType : TGDInputTypes; aKey : integer; aAction : TGDProcEngineCallback;  aConsoleDisabled : boolean );
+    procedure RegisterInputAction(aType : TGDInputTypes; aKey : integer; aAction : TGDCallback;  aConsoleDisabled : boolean );
     procedure ClearInputActions();
   end;
 
@@ -119,7 +119,7 @@ uses
 {* Create inputaction class                                                   *}
 {******************************************************************************}
 
-Constructor TGDInputAction.Create(aKey: integer; aAction : TGDProcEngineCallback;  aConsoleDisabled : boolean);
+Constructor TGDInputAction.Create(aKey: integer; aAction : TGDCallback;  aConsoleDisabled : boolean);
 begin
   FKey := aKey;
   FAction := aAction;
@@ -321,7 +321,7 @@ end;
 {* Register an input action                                                   *}
 {******************************************************************************}
 
-procedure TGDInput.RegisterInputAction(aType : TGDInputTypes; aKey : integer; aAction : TGDProcEngineCallback; aConsoleDisabled : boolean );
+procedure TGDInput.RegisterInputAction(aType : TGDInputTypes; aKey : integer; aAction : TGDCallback; aConsoleDisabled : boolean );
 var
   iTempAction : TGDInputAction;
 begin

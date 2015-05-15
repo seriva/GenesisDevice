@@ -43,26 +43,19 @@ uses
   GDGUI,
   GDCamera,
   GDOctree,
-  GDFrustum,
   GDMap,
-  GDTerrain,
-  GDSkyDome,
-  GDWater,
-  GDFoliage,
-  GDFog,
   GDCellManager,
   GDResources,
   GDResource,
-  GDLighting,
   GDStatistics,
-  GDModes,
-  GDCallBack;
+  GDModes;
 
 //Engine Functions
 function  gdEngineInit() : Boolean;
 procedure gdEngineShutDown(); 
 function  gdEngineBuildInfo() : String;
 procedure gdEngineLoop();
+procedure gdEngineLoopCallBack( aFunction : TGDCallback );
 
 //settings functions
 procedure gdSettingsLoad();
@@ -83,9 +76,6 @@ function  gdTimingInSeconds() : String;
 function  gdTimingInMilliSeconds() : String;
 function  gdTimingFrameTime() : Integer;
 
-//callback functions
-procedure gdCallBackSetBeforeRender( aFunction : TGDProcEngineCallback );
-
 //renderer functions
 function  gdRendererInitViewPort( aWnd  : HWND ) : boolean;
 function  gdRendererShutDownViewPort() : boolean;
@@ -103,7 +93,7 @@ procedure gdSoundStop( aPointer  : pointer );
 //input functions
 procedure gdInputEnable( aEnable : boolean );
 procedure gdInputUseMouseLook( aUse : boolean );
-procedure gdInputRegisterAction(aType : TGDInputTypes; aKey : Integer ; aAction : TGDProcEngineCallback;  aConsoleDisabled : boolean );
+procedure gdInputRegisterAction(aType : TGDInputTypes; aKey : Integer ; aAction : TGDCallback;  aConsoleDisabled : boolean );
 
 //gui functions
 procedure gdGUIMouseCursorShow(aShow : boolean); 
@@ -160,20 +150,11 @@ begin
   //Create engine classes
   Resources        := TGDResources.Create();
   Camera           := TGDCamera.Create();
-  Frustum          := TGDFrustum.Create();
   Map              := TGDMap.Create();
-  Terrain          := TGDTerrain.Create();
-  SkyDome          := TGDSkyDome.Create();
-  Water            := TGDWater.Create();
-  Octree           := TGDOcTree.Create();
-  Foliage          := TGDFoliage.Create();
   Statistics       := TGDStatistics.Create();
   Modes            := TGDModes.Create();
-  CallBack         := TGDCallBack.Create();
-  FogManager       := TGDFogManager.Create();
   CellManager      := TGDCellManager.Create();
   GUI              := TGDGUI.Create();
-  DirectionalLight := TGDDirectionalLight.Create();
 
   result := true;
 end;
@@ -190,21 +171,12 @@ begin
   FreeAndNil(Renderer);
   FreeAndNil(Sound);
   FreeAndNil(GUI);
-  FreeAndNil(Frustum);
   FreeAndNil(Map);
-  FreeAndNil(Terrain);
   FreeAndNil(Timing);
-  FreeAndNil(Foliage);
-  FreeAndNil(SkyDome);
-  FreeAndNil(Water);
-  FreeAndNil(FogManager);
   FreeAndNil(CellManager);
-  FreeAndNil(Octree);
   FreeAndNil(Main);
   FreeAndNil(Settings);
   FreeAndNil(Statistics);
-  FreeAndNil(CallBack);
-  FreeAndNil(DirectionalLight);
   FreeAndNil(Modes);
   FreeAndNil(Console);
 
@@ -233,9 +205,9 @@ end;
 {* Sets the beforerender callback function                                    *}
 {******************************************************************************}
 
-procedure gdCallBackSetBeforeRender( aFunction : TGDProcEngineCallback );
+procedure gdEngineLoopCallBack( aFunction : TGDCallback );
 begin
-  BeforeRenderCallBack := aFunction;
+  Main.LoopCallBack := aFunction;
 end;
 
 {******************************************************************************}
@@ -339,7 +311,7 @@ end;
 {* Register a keyaction                                                       *}
 {******************************************************************************}
 
-procedure gdInputRegisterAction(aType : TGDInputTypes; aKey : Integer ; aAction : TGDProcEngineCallback;  aConsoleDisabled : boolean );
+procedure gdInputRegisterAction(aType : TGDInputTypes; aKey : Integer ; aAction : TGDCallback;  aConsoleDisabled : boolean );
 begin
   Input.RegisterInputAction(aType, aKey, aAction, aConsoleDisabled );
 end;
@@ -603,11 +575,7 @@ end;
 function gdMapLoad( aFileName : String ) : boolean; 
 begin
   result := false;
-  Octree.Clear();
-  CellManager.Cells.Clear();
   result := Map.InitMap( aFileName );
-  CellManager.GenerateAllCells();
-  Octree.InitOcTree();
   Camera.Position := Map.PlayerStart.Copy();
   Camera.Rotation := Map.PlayerViewAngle.Copy();
   Camera.MouseLook(0,0,1,1,0,False);
@@ -620,8 +588,6 @@ end;
 procedure gdMapClear(); 
 begin
   Map.Clear();
-  CellManager.Clear();
-  Octree.Clear();
 end;
 
 {******************************************************************************}
@@ -632,7 +598,7 @@ function gdMapTerrainHeight(aX, aZ  : Double) : Double;
 var
   iHeight : Double;
 begin
-  Terrain.GetHeight( aX, aZ, iHeight );
+  Map.Terrain.GetHeight( aX, aZ, iHeight );
   result := iHeight;
 end;
 
@@ -644,7 +610,7 @@ function  gdMapTerrainRotation(aX, aZ : Double) : TGDVector;
 var
   iRotation : TGDVector;
 begin
-  Terrain.GetRotation( aX, aZ, iRotation );
+  Map.Terrain.GetRotation( aX, aZ, iRotation );
   result := iRotation;
 end;
 
@@ -654,7 +620,7 @@ end;
 
 function gdMapWaterHeight(): Double; 
 begin
-  result := Water.WaterHeight;
+  result := Map.Water.WaterHeight;
 end;
 
 end.
