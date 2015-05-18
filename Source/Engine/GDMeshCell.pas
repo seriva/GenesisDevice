@@ -77,9 +77,8 @@ type
     FFadeDistance  : single;
 
     FPosition      : TGDVector;
-    FRotation      : TGDVector;
     FScale         : TGDVector;
-    FMatrix        : TGDMatrix;
+    FRotation      : TGDMatrix;
   public
     property LODType : TGDMeshLODType read FLODType write FLODType;
     property FadeDistance : Single read FFadeDistance write FFadeDistance;
@@ -129,9 +128,8 @@ begin
 
   //set translation
   FPosition := aInput.Position.Copy();
-  FRotation := aInput.Rotation.Copy();
   FScale    := aInput.Scale.Copy();
-  FMatrix.CreateRotation(FRotation);
+  FRotation.CreateRotation(aInput.Rotation);
 
   //calculate boundingbox
   iVertices   := TGDVectorList.Create();
@@ -140,7 +138,7 @@ begin
     iVertex := FMesh.Vertices.Items[iI].Copy();
     iVertex.Multiply(FScale);
     iVertex.Devide(100);
-    FMatrix.ApplyToVector(iVertex);
+    FRotation.ApplyToVector(iVertex);
     iVertex.Add( FPosition );
     iVertices.Add(iVertex)
   end;
@@ -185,7 +183,7 @@ end;
 
 procedure SetMeshPositioning(aShader : TGDGLShader);
 begin
-  aShader.SetMatrix('M_ROTATION', FMatrix);
+  aShader.SetMatrix('M_ROTATION', FRotation);
   aShader.SetFloat3('V_POSITION', FPosition.x, FPosition.y, FPosition.z);
   aShader.SetFloat3('V_SCALE', FScale.x * iFadeDistanceScale, FScale.y * iFadeDistanceScale, FScale.z * iFadeDistanceScale);
 end;
@@ -276,14 +274,14 @@ begin
                             iVertex := iMesh.Vertices.Items[iI].Copy();
                             iVertex.Multiply(FScale);
                             iVertex.Devide(100);
-                            FMatrix.ApplyToVector(iVertex);
+                            FRotation.ApplyToVector(iVertex);
                             iVertex.Add( FPosition );
                             iVertices.Add(iVertex)
                           end;
                           For iI := 0 to iMesh.Normals.Count - 1 do
                           begin
                             iNormal := iMesh.Normals.Items[iI].Copy();
-                            FMatrix.ApplyToVector(iNormal);
+                            FRotation.ApplyToVector(iNormal);
                             iNormals.Add( iNormal );
                           end;
 
