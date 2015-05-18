@@ -58,8 +58,8 @@ Type
     constructor Create();
     destructor  Destroy(); override;
 
-    procedure InitDistanceFog(aR, aG, aB, aA : Double; aDistance : Integer);
-    procedure InitWaterFog(aR, aG, aB, aA : Double; aDistance : Integer);
+    procedure InitDistanceFog(aColor : TGDColor; aDistance : Integer);
+    procedure InitWaterFog(aColor : TGDColor; aDistance : Integer);
     procedure Clear();
 
     procedure UseDistanceFog();
@@ -90,9 +90,9 @@ end;
 {* Init the distance fog                                                      *}
 {******************************************************************************}
 
-procedure TGDFog.InitDistanceFog(aR, aG, aB, aA : Double; aDistance : Integer);
+procedure TGDFog.InitDistanceFog(aColor : TGDColor; aDistance : Integer);
 begin
-  FDistanceColor.Reset( aR, aG, aB, aA );
+  FDistanceColor := aColor.Copy();
   FDistanceFog := aDistance;
 end;
 
@@ -100,9 +100,9 @@ end;
 {* Init the water fog                                                         *}
 {******************************************************************************}
 
-procedure TGDFog.InitWaterFog(aR, aG, aB, aA : Double; aDistance : Integer);
+procedure TGDFog.InitWaterFog(aColor : TGDColor;aDistance : Integer);
 begin
-  FWaterColor.Reset( aR, aG, aB, aA );
+  FWaterColor := aColor.Copy();
   FWaterFog := aDistance;
 end;
 

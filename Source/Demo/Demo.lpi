@@ -220,6 +220,7 @@
       <Unit36>
         <Filename Value="..\Engine\GDStringParsing.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="GDStringParsing"/>
       </Unit36>
       <Unit37>
         <Filename Value="..\Engine\GDGenerics.pas"/>

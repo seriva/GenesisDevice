@@ -30,6 +30,8 @@ uses
   LCLIntf,
   LCLType,
   Classes,
+  GDTypes,
+  IniFiles,
   SysUtils,
   FileUtil;
 
@@ -39,6 +41,8 @@ Var
 
 function CharacterIsWhiteSpace(const aChar : AnsiChar ): boolean;
 function GetNextToken(const aFile : TMemoryStream): String;
+function ReadColor(const aIniFile : TIniFile; aSection, aSubName : String): TGDColor;
+function ReadVector(const aIniFile : TIniFile; aSection, aSubName : String): TGDVector;
 
 implementation
 
@@ -108,6 +112,37 @@ begin
       //recursively read the next token
       result := GetNextToken(aFile);
     end;
+  end;
+end;
+
+function ReadColor(const aIniFile : TIniFile; aSection, aSubName : String): TGDColor;
+var
+  lStr : String;
+  lSplit : TStringList;
+begin
+  lSplit := TStringList.create;
+  try
+    lStr := aIniFile.ReadString(aSection, aSubName, '1,1,1,1' );
+    ExtractStrings([','], [], PChar(lStr), lSplit);
+    result.Reset(StrToFloat(lSplit.Strings[0]), StrToFloat(lSplit.Strings[1]),
+                 StrToFloat(lSplit.Strings[2]), StrToFloat(lSplit.Strings[3]));
+  finally
+    lSplit.free;
+  end;
+end;
+
+function ReadVector(const aIniFile : TIniFile; aSection, aSubName : String): TGDVector;
+var
+  lStr : String;
+  lSplit : TStringList;
+begin
+  lSplit := TStringList.create;
+  try
+    lStr := aIniFile.ReadString(aSection, aSubName, '1,1,1' );
+    ExtractStrings([','], [], PChar(lStr), lSplit);
+    result.Reset(StrToFloat(lSplit.Strings[0]), StrToFloat(lSplit.Strings[1]), StrToFloat(lSplit.Strings[2]));
+  finally
+    lSplit.free;
   end;
 end;
 

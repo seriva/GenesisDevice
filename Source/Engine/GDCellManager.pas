@@ -250,11 +250,10 @@ var
  iX, iY : Integer;
  iCellHasGrass : boolean;
  iStepX, iStepY : Integer;
- iTreeType : TGDTreeType;
- iRockType : TGDRockType;
+ iMeshType : TGDMeshType;
  iMeshInput : TGDMeshCellInput;
  iHeight : Double;
- iPos : TGDVector;
+ iPos, iRot : TGDVector;
 label
   RedoRandomTrees;
 label
@@ -301,8 +300,8 @@ Begin
   //create treecells
   for iI := 0 to aFoliage.TreeTypes.Count-1 do
   begin
-    iTreeType := aFoliage.TreeTypes.Items[iI] as TGDTreeType;
-    iTreeCount := Round(aFoliage.TreeCount * iTreeType.CoverOfTotal) div 100;
+    iMeshType := aFoliage.TreeTypes.Items[iI] as TGDMeshType;
+    iTreeCount := Round(aFoliage.TreeCount * iMeshType.CoverOfTotal) div 100;
     for iJ := 1 to iTreeCount do
     begin
       RedoRandomTrees:
@@ -319,18 +318,18 @@ Begin
         if not((iHeight > aFoliage.TreeLowerLimit) and (iHeight < aFoliage.TreeUpperLimit)) then
            goto RedoRandomTrees;
 
-        iMeshInput.Model        := iTreeType.Mesh.Name;
-        iMeshInput.ModelLOD1    := iTreeType.MeshLOD1.name;
-        iMeshInput.ModelLOD2    := iTreeType.MeshLOD2.name;
+        iMeshInput.Model        := iMeshType.Mesh.Name;
+        iMeshInput.ModelLOD1    := iMeshType.MeshLOD1.name;
+        iMeshInput.ModelLOD2    := iMeshType.MeshLOD2.name;
         iMeshInput.PosX         := iPos.X;
         iMeshInput.PosY         := iHeight;
         iMeshInput.PosZ         := iPos.Z;
-        iMeshInput.RotX         := iTreeType.StartRotation.X;
-        iMeshInput.RotY         := iTreeType.StartRotation.Y + Random(Round(360));
-        iMeshInput.RotZ         := iTreeType.StartRotation.Z;
-        iMeshInput.ScaleX       := iTreeType.StartScale + Random(Round(iTreeType.RandomScale));
-        iMeshInput.ScaleY       := iTreeType.StartScale + Random(Round(iTreeType.RandomScale));
-        iMeshInput.ScaleZ       := iTreeType.StartScale + Random(Round(iTreeType.RandomScale));
+        iMeshInput.RotX         := iMeshType.StartRotation.X;
+        iMeshInput.RotY         := iMeshType.StartRotation.Y + Random(Round(360));
+        iMeshInput.RotZ         := iMeshType.StartRotation.Z;
+        iMeshInput.ScaleX       := iMeshType.Scale + Random(Round(iMeshType.RandomScale));
+        iMeshInput.ScaleY       := iMeshType.Scale + Random(Round(iMeshType.RandomScale));
+        iMeshInput.ScaleZ       := iMeshType.Scale + Random(Round(iMeshType.RandomScale));
         iMeshInput.FadeDistance := 0;
         iMeshInput.FadeScale    := 0;
 
@@ -345,8 +344,8 @@ Begin
   //create rocks
   for iI := 0 to aFoliage.RockTypes.Count-1 do
   begin
-    iRockType  := aFoliage.RockTypes.Items[iI] as TGDRockType;
-    iRockCount := Round(aFoliage.RockCount * iRockType.CoverOfTotal) div 100;
+    iMeshType  := aFoliage.RockTypes.Items[iI] as TGDMeshType;
+    iRockCount := Round(aFoliage.RockCount * iMeshType.CoverOfTotal) div 100;
     for iJ := 1 to iRockCount do
     begin
       RedoRandomRocks:
@@ -359,18 +358,19 @@ Begin
 
       if aFoliage.CheckRockMap(iX, iY) and aTerrain.GetHeight(iPos.X, iPos.Z, iHeight) then
       begin
-        iMeshInput.Model     := iRockType.Mesh.Name;
+        aTerrain.GetRotation(iPos.X, iPos.Z, iRot );
+        iMeshInput.Model     := iMeshType.Mesh.Name;
         iMeshInput.ModelLOD1 := '';
         iMeshInput.ModelLOD2 := '';
         iMeshInput.PosX      := iPos.X;
         iMeshInput.PosY      := iHeight;
         iMeshInput.PosZ      := iPos.Z;
-        iMeshInput.RotX      := 0;
-        iMeshInput.RotY      := Random(360);
-        iMeshInput.RotZ      := 0;
-        iMeshInput.ScaleX    := iRockType.StartScale + Random(Round(iRockType.RandomScale));
-        iMeshInput.ScaleY    := iRockType.StartScale + Random(Round(iRockType.RandomScale));
-        iMeshInput.ScaleZ    := iRockType.StartScale + Random(Round(iRockType.RandomScale));
+        iMeshInput.RotX      := iRot.x;
+        iMeshInput.RotY      := iRot.y;
+        iMeshInput.RotZ      := iRot.z;
+        iMeshInput.ScaleX    := iMeshType.Scale + Random(Round(iMeshType.RandomScale));
+        iMeshInput.ScaleY    := iMeshType.Scale + Random(Round(iMeshType.RandomScale));
+        iMeshInput.ScaleZ    := iMeshType.Scale + Random(Round(iMeshType.RandomScale));
         iMeshInput.FadeDistance := Settings.FoliageDistance * R_FOLIAGE_DISTANCE_STEP + (R_FOLIAGE_DISTANCE_STEP * 10);
         iMeshInput.FadeScale    := R_FOLIAGE_LOD_DISTANCE;
         FCells.Add( TGDMeshCell.Create(iMeshInput) );

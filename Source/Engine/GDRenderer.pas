@@ -135,7 +135,6 @@ uses
   GDConsole,
   GDMain,
   GDCamera,
-  GDCellManager,
   GDStatistics,
   GDGUI,
   GDMap;

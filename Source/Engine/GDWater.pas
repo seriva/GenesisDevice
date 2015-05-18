@@ -55,31 +55,31 @@ type
 {******************************************************************************}
 
   TGDWaterInput = record
-    NumberOfWaterText : integer;
-    WaterPath         : String;
-    WaterPrefix       : String;
-    WaterExtension    : String;
-    WaterDepthMap     : String;
-    Height            : Double;
-    X1                : Double;
-    Z1                : Double;
-    X2                : Double;
-    Z2                : Double;
-    U                 : Double;
-    V                 : Double;
-    WaveSpeed         : Double;
-    WaveStrength      : Double;
-    UnderWaterColorR,UnderWaterColorG,UnderWaterColorB,UnderWaterColorA : Double;
-    WaterColorCorrectionR,WaterColorCorrectionG,WaterColorCorrectionB,WaterColorCorrectionA : Double;
-    CellCountX        : Integer;
-    CellCountY        : Integer;
-    CellDivX          : Integer;
-    CellDivY          : Integer;
-    Visibility        : Integer;
+    NumberOfWaterText    : integer;
+    WaterPath            : String;
+    WaterPrefix          : String;
+    WaterExtension       : String;
+    WaterDepthMap        : String;
+    Height               : Double;
+    X1                   : Double;
+    Z1                   : Double;
+    X2                   : Double;
+    Z2                   : Double;
+    U                    : Double;
+    V                    : Double;
+    WaveSpeed            : Double;
+    WaveStrength         : Double;
+    CellCountX           : Integer;
+    CellCountY           : Integer;
+    CellDivX             : Integer;
+    CellDivY             : Integer;
+    Visibility           : Integer;
     NumberOfCausticsText : integer;
-    CausticsPath      : String;
-    CausticsPrefix    : String;
-    CausticsExtension : String;
+    CausticsPath         : String;
+    CausticsPrefix       : String;
+    CausticsExtension    : String;
+    UnderWaterColor      : TGDColor;
+    WaterColorCorrection : TGDColor;
   end;
 
 {******************************************************************************}
@@ -219,12 +219,12 @@ begin
     FCellCountY := aInput.CellCountY;
     FCellDivX   := aInput.CellDivX;
     FCellDivY   := aInput.CellDivY;
-    FUnderWaterColor.Reset(aInput.UnderWaterColorR,aInput.UnderWaterColorG,aInput.UnderWaterColorB,aInput.UnderWaterColorA);
-    FWaterColorCorrection.Reset(aInput.WaterColorCorrectionR,aInput.WaterColorCorrectionG,aInput.WaterColorCorrectionB,aInput.WaterColorCorrectionA);
+    FUnderWaterColor := aInput.UnderWaterColor.Copy();
+    FWaterColorCorrection:= aInput.WaterColorCorrection.Copy();
     FBoundingBox.Max.Reset(aInput.X1,aInput.Height,aInput.Z1);
     FBoundingBox.Min.Reset(aInput.X2,aInput.Height,aInput.Z2);
-    FWaterU        := aInput.U;
-    FWaterV        := aInput.V;
+    FWaterU := aInput.U;
+    FWaterV := aInput.V;
     Resize();
     FWaterTextures.Clear();
     FCausticTextures.Clear();

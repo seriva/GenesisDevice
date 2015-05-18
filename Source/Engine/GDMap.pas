@@ -46,6 +46,7 @@ uses
   GDFog,
   GDTiming,
   GDCellManager,
+  GDStringparsing,
   GDMeshCell;
 
 type
@@ -151,7 +152,7 @@ var
   iTerrainInput : TGDTerrainInput;
 
   //distance fog
-  iDFR,iDFG,iDFB,iDFA : Double;
+  iFogColor : TGDColor;
 
   //skydome
   iSkyDomeTexture : String;
@@ -162,8 +163,7 @@ var
   //foliage
   iFoliageInput   : TGDFoliageInput;
   iGrassTypeInput : TGDGrassTypeInput;
-  iTreeTypeInput  : TGDTreeTypeInput;
-  iRockTypeInput  : TGDRockTypeInput;
+  iMeshTypeInput  : TGDMeshTypeInput;
 
   //mesh
   iMeshInput : TGDMeshCellInput;
@@ -177,12 +177,8 @@ begin
     result := true;
 
     //spawnpoint
-    FPlayerStart.x     := iIniFile.ReadFloat(  'SpawnPoint', 'PosX', 0 );
-    FPlayerStart.y     := iIniFile.ReadFloat(  'SpawnPoint', 'PosY', 0 );
-    FPlayerStart.z     := iIniFile.ReadFloat(  'SpawnPoint', 'PosZ', 0 );
-    FPlayerViewAngle.x := iIniFile.ReadFloat(  'SpawnPoint', 'ViewAngleX', 0 );
-    FPlayerViewAngle.Y := iIniFile.ReadFloat(  'SpawnPoint', 'ViewAngleY', 0 );
-    FPlayerViewAngle.z := iIniFile.ReadFloat(  'SpawnPoint', 'ViewAngleZ', 0 );
+    FPlayerStart := ReadVector(iIniFile, 'SpawnPoint', 'Position');
+    FPlayerViewAngle := ReadVector(iIniFile, 'SpawnPoint', 'ViewAngle');
 
     //terrain
     iTerrainInput.HeightMap      := iIniFile.ReadString( 'Terrain', 'HeightMap', 'heightmap.bmp' );
@@ -197,52 +193,43 @@ begin
     iTerrainInput.DetailLookup   := iIniFile.ReadString( 'Terrain', 'DetailDistribution', 'detaillookup.jpg');
 
     //distance fog
-    iDFR := iIniFile.ReadFloat( 'Fog', 'DFR', 0.5 );
-    iDFG := iIniFile.ReadFloat( 'Fog', 'DFG', 0.5 );
-    iDFB := iIniFile.ReadFloat( 'Fog', 'DFB', 0.5 );
-    iDFA := iIniFile.ReadFloat( 'Fog', 'DFA', 0.5 );
+    iFogColor := ReadColor(iIniFile, 'Fog', 'Color');
 
     //sky
     iSkyDomeTexture  := iIniFile.ReadString( 'Sky', 'TextureMap', 'sky.jpg' );
 
     //water
-    iWaterInput.NumberOfWaterText := iIniFile.ReadInteger('Water', 'WaterTexturesCount', 10 );
-    iWaterInput.WaterPath      := iIniFile.ReadString( 'Water', 'WaterMapPath', 'textures\water\');
-    iWaterInput.WaterPrefix    := iIniFile.ReadString( 'Water', 'WaterMapPrefix', 'water');
-    iWaterInput.WaterExtension := iIniFile.ReadString( 'Water', 'WaterMapExtension', 'bmp');
-    iWaterInput.WaterDepthMap  := iIniFile.ReadString( 'Water', 'DepthMap', 'bmp');
-    iWaterInput.Height := iIniFile.ReadFloat( 'Water', 'Height', 0 );
-    iWaterInput.X1     := iIniFile.ReadFloat( 'Water', 'X1', 0 );
-    iWaterInput.Z1     := iIniFile.ReadFloat( 'Water', 'Z1', 0 );
-    iWaterInput.X2     := iIniFile.ReadFloat( 'Water', 'X2', 0 );
-    iWaterInput.Z2     := iIniFile.ReadFloat( 'Water', 'Z2', 0 );
-    iWaterInput.U      := iIniFile.ReadFloat( 'Water', 'WaterU', 1 );
-    iWaterInput.V      := iIniFile.ReadFloat( 'Water', 'WaterV', 1 );
-    iWaterInput.CellCountX   := iIniFile.ReadInteger('Water', 'CellCountX', 1 );
-    iWaterInput.CellCountY   := iIniFile.ReadInteger('Water', 'CellCountY', 1 );
-    iWaterInput.CellDivX     := iIniFile.ReadInteger('Water', 'CellDivX', 1 );
-    iWaterInput.CellDivY     := iIniFile.ReadInteger('Water', 'CellDivY', 1 );
-    iWaterInput.UnderWaterColorR := iIniFile.ReadFloat( 'Water', 'UnderWaterColorR', 1 );
-    iWaterInput.UnderWaterColorG := iIniFile.ReadFloat( 'Water', 'UnderWaterColorG', 1 );
-    iWaterInput.UnderWaterColorB := iIniFile.ReadFloat( 'Water', 'UnderWaterColorB', 1 );
-    iWaterInput.UnderWaterColorA := iIniFile.ReadFloat( 'Water', 'UnderWaterColorA', 1 );
-    iWaterInput.WaterColorCorrectionR := iIniFile.ReadFloat( 'Water', 'WaterColorCorrectionR', 1 );
-    iWaterInput.WaterColorCorrectionG := iIniFile.ReadFloat( 'Water', 'WaterColorCorrectionG', 1 );
-    iWaterInput.WaterColorCorrectionB := iIniFile.ReadFloat( 'Water', 'WaterColorCorrectionB', 1 );
-    iWaterInput.WaterColorCorrectionA := iIniFile.ReadFloat( 'Water', 'WaterColorCorrectionA', 1 );
-    iWaterInput.WaveSpeed    := iIniFile.ReadFloat( 'Water', 'WaveSpeed', 1000 );
-    iWaterInput.WaveStrength := iIniFile.ReadFloat( 'Water', 'WaveStrength', 18 );
-    iWaterInput.Visibility   := iIniFile.ReadInteger('Water', 'Visibility', 8 );
-    iWaterInput.NumberOfCausticsText     := iIniFile.ReadInteger('Water', 'CausticTexturesCount', 10 );
-    iWaterInput.CausticsPath      := iIniFile.ReadString( 'Water', 'CausticsMapPath', 'textures\water\');
-    iWaterInput.CausticsPrefix    := iIniFile.ReadString( 'Water', 'CausticsMapPrefix', 'caust');
-    iWaterInput.CausticsExtension := iIniFile.ReadString( 'Water', 'CausticsMapExtension', 'bmp');
+    iWaterInput.NumberOfWaterText    := iIniFile.ReadInteger('Water', 'WaterTexturesCount', 10 );
+    iWaterInput.WaterPath            := iIniFile.ReadString( 'Water', 'WaterMapPath', 'textures\water\');
+    iWaterInput.WaterPrefix          := iIniFile.ReadString( 'Water', 'WaterMapPrefix', 'water');
+    iWaterInput.WaterExtension       := iIniFile.ReadString( 'Water', 'WaterMapExtension', 'bmp');
+    iWaterInput.WaterDepthMap        := iIniFile.ReadString( 'Water', 'DepthMap', 'bmp');
+    iWaterInput.Height               := iIniFile.ReadFloat( 'Water', 'Height', 0 );
+    iWaterInput.X1                   := iIniFile.ReadFloat( 'Water', 'X1', 0 );
+    iWaterInput.Z1                   := iIniFile.ReadFloat( 'Water', 'Z1', 0 );
+    iWaterInput.X2                   := iIniFile.ReadFloat( 'Water', 'X2', 0 );
+    iWaterInput.Z2                   := iIniFile.ReadFloat( 'Water', 'Z2', 0 );
+    iWaterInput.U                    := iIniFile.ReadFloat( 'Water', 'WaterU', 1 );
+    iWaterInput.V                    := iIniFile.ReadFloat( 'Water', 'WaterV', 1 );
+    iWaterInput.CellCountX           := iIniFile.ReadInteger('Water', 'CellCountX', 1 );
+    iWaterInput.CellCountY           := iIniFile.ReadInteger('Water', 'CellCountY', 1 );
+    iWaterInput.CellDivX             := iIniFile.ReadInteger('Water', 'CellDivX', 1 );
+    iWaterInput.CellDivY             := iIniFile.ReadInteger('Water', 'CellDivY', 1 );
+    iWaterInput.UnderWaterColor      := ReadColor(iIniFile, 'Water', 'UnderWaterColor');
+    iWaterInput.WaterColorCorrection := ReadColor(iIniFile, 'Water', 'WaterColorCorrection');
+    iWaterInput.WaveSpeed            := iIniFile.ReadFloat( 'Water', 'WaveSpeed', 1000 );
+    iWaterInput.WaveStrength         := iIniFile.ReadFloat( 'Water', 'WaveStrength', 18 );
+    iWaterInput.Visibility           := iIniFile.ReadInteger('Water', 'Visibility', 8 );
+    iWaterInput.NumberOfCausticsText := iIniFile.ReadInteger('Water', 'CausticTexturesCount', 10 );
+    iWaterInput.CausticsPath         := iIniFile.ReadString( 'Water', 'CausticsMapPath', 'textures\water\');
+    iWaterInput.CausticsPrefix       := iIniFile.ReadString( 'Water', 'CausticsMapPrefix', 'caust');
+    iWaterInput.CausticsExtension    := iIniFile.ReadString( 'Water', 'CausticsMapExtension', 'bmp');
 
     //bloom
     Renderer.BloomStrengh := iIniFile.ReadFloat( 'Bloom', 'Strengh', 0.5 );
 
     //foliage
-    iFoliageInput.GrassMap              := iIniFile.ReadString( 'Foliage', 'GrassMap', 'grassmap.bmp' );
+    iFoliageInput.GrassMap               := iIniFile.ReadString( 'Foliage', 'GrassMap', 'grassmap.bmp' );
     iFoliageInput.GrassCellCountX        := iIniFile.ReadInteger( 'Foliage', 'GrassCellCountX', 1 );
     iFoliageInput.GrassCellCountY        := iIniFile.ReadInteger( 'Foliage', 'GrassCellCountY', 1 );
     iFoliageInput.GrassAnimationSpeed    := iIniFile.ReadFloat( 'Foliage', 'GrassAnimationSpeed', 1000 );
@@ -257,17 +244,9 @@ begin
     iFoliageInput.RockCount              := iIniFile.ReadInteger( 'Foliage', 'RockCount', 0 );
 
     //directional light
-    FLightDirection.X := iIniFile.ReadFloat('DirectionalLight', 'DirX', -1.0);
-    FLightDirection.Y := iIniFile.ReadFloat('DirectionalLight', 'DirY', -1.0);
-    FLightDirection.Z := iIniFile.ReadFloat('DirectionalLight', 'DirZ', -1.0);
-    FLightAmbient.R   := iIniFile.ReadFloat('DirectionalLight', 'AmbientR', 1.0);
-    FLightAmbient.G   := iIniFile.ReadFloat('DirectionalLight', 'AmbientG', 1.0);
-    FLightAmbient.B   := iIniFile.ReadFloat('DirectionalLight', 'AmbientB', 1.0);
-    FLightAmbient.A   := 1;
-    FLightDiffuse.R   := iIniFile.ReadFloat('DirectionalLight', 'DiffuseR', 1.0);
-    FLightDiffuse.G   := iIniFile.ReadFloat('DirectionalLight', 'DiffuseB', 1.0);
-    FLightDiffuse.B   := iIniFile.ReadFloat('DirectionalLight', 'DiffuseG', 1.0);
-    FLightDiffuse.A   := 1;
+    FLightDirection := ReadVector(iIniFile, 'DirectionalLight', 'Direction');
+    FLightAmbient := ReadColor(iIniFile, 'DirectionalLight', 'Ambient');
+    FLightDiffuse := ReadColor(iIniFile, 'DirectionalLight', 'Diffuse');
 
     GUI.LoadingScreen.SetupForUse('Loading ' + StringReplace( ExtractFileName(aFileName) , ExtractFileExt(aFileName), '',  [rfReplaceAll] ) + '...',12 );
     GUI.LoadingScreen.UpdateBar();
@@ -288,7 +267,7 @@ begin
     FTerrain.InitTerrain(iTerrainInput);
 
     //init fog
-    Fog.InitDistanceFog( iDFR,iDFG,iDFB,iDFA, Settings.ViewDistance );
+    Fog.InitDistanceFog( iFogColor, Settings.ViewDistance );
     Fog.UseDistanceFog();
 
     //init sky
@@ -297,7 +276,7 @@ begin
 
     //init water
     Water.InitWater( iWaterInput );
-    Fog.InitWaterFog( iWaterInput.UnderWaterColorR,iWaterInput.UnderWaterColorG,iWaterInput.UnderWaterColorB,iWaterInput.UnderWaterColorA, iWaterInput.Visibility );
+    Fog.InitWaterFog( iWaterInput.UnderWaterColor, iWaterInput.Visibility );
     GUI.LoadingScreen.UpdateBar();
 
     //foliage
@@ -309,14 +288,9 @@ begin
     while(iIniFile.SectionExists('GrassType' + IntToStr(iI))) do
     begin
       iString := 'GrassType' + IntToStr(iI);
-
       iGrassTypeInput.Texture      := iIniFile.ReadString( iString, 'Texture', '');
-      iGrassTypeInput.ScaleX       := iIniFile.ReadFloat( iString, 'ScaleX', 100 );
-      iGrassTypeInput.ScaleY       := iIniFile.ReadFloat( iString, 'ScaleY', 100 );
-      iGrassTypeInput.ScaleZ       := iIniFile.ReadFloat( iString, 'ScaleZ', 100 );
-      iGrassTypeInput.RandomScaleX := iIniFile.ReadFloat( iString, 'RandomScaleX', 100 );
-      iGrassTypeInput.RandomScaleY := iIniFile.ReadFloat( iString, 'RandomScaleY', 100 );
-      iGrassTypeInput.RandomScaleZ := iIniFile.ReadFloat( iString, 'RandomScaleZ', 100 );
+      iGrassTypeInput.Scale        := ReadVector(iIniFile, iString, 'Scale');
+      iGrassTypeInput.RandomScale  := ReadVector(iIniFile, iString, 'RandomScale');
       iGrassTypeInput.CoverOfTotal := iIniFile.ReadFloat( iString, 'CoverOfTotal', 100 );
       Foliage.GrassTypes.Add( TGDGrassType.Create(iGrassTypeInput));
 
@@ -330,16 +304,14 @@ begin
     begin
       iString := 'TreeType' + IntToStr(iI);
 
-      iTreeTypeInput.Model           := iIniFile.ReadString( iString, 'Model', '');
-      iTreeTypeInput.ModelLOD1       := iIniFile.ReadString( iString, 'ModelLOD1', '' );
-      iTreeTypeInput.ModelLOD2        := iIniFile.ReadString( iString, 'ModelLOD2', '' );
-      iTreeTypeInput.StartScale      := iIniFile.ReadFloat( iString, 'StartScale', 100 );
-      iTreeTypeInput.StartRotationX  := iIniFile.ReadFloat( iString, 'StartRotationX', 0 );
-      iTreeTypeInput.StartRotationY  := iIniFile.ReadFloat( iString, 'StartRotationY', 0 );
-      iTreeTypeInput.StartRotationZ  := iIniFile.ReadFloat( iString, 'StartRotationZ', 0 );
-      iTreeTypeInput.RandomScale     := iIniFile.ReadFloat( iString, 'RandomScale', 0 );
-      iTreeTypeInput.CoverOfTotal    := iIniFile.ReadFloat( iString, 'CoverOfTotal', 100 );
-      Foliage.TreeTypes.Add(TGDTreeType.Create(iTreeTypeInput));
+      iMeshTypeInput.Model         := iIniFile.ReadString( iString, 'Model', '');
+      iMeshTypeInput.ModelLOD1     := iIniFile.ReadString( iString, 'ModelLOD1', '' );
+      iMeshTypeInput.ModelLOD2     := iIniFile.ReadString( iString, 'ModelLOD2', '' );
+      iMeshTypeInput.Scale         := iIniFile.ReadFloat( iString, 'Scale', 100 );
+      iMeshTypeInput.RandomScale   := iIniFile.ReadFloat( iString, 'RandomScale', 0 );
+      iMeshTypeInput.StartRotation := ReadVector(iIniFile, iString, 'StartRotation');
+      iMeshTypeInput.CoverOfTotal  := iIniFile.ReadFloat( iString, 'CoverOfTotal', 100 );
+      Foliage.TreeTypes.Add(TGDMeshType.Create(iMeshTypeInput));
 
       iI := iI + 1;
     end;
@@ -351,11 +323,11 @@ begin
     begin
       iString := 'RockType' + IntToStr(iI);
 
-      iRockTypeInput.Model           := iIniFile.ReadString( iString, 'Model', '');
-      iRockTypeInput.StartScale      := iIniFile.ReadFloat( iString, 'StartScale', 100 );
-      iRockTypeInput.RandomScale     := iIniFile.ReadFloat( iString, 'RandomScale', 0 );
-      iRockTypeInput.CoverOfTotal    := iIniFile.ReadFloat( iString, 'CoverOfTotal', 100 );
-      Foliage.RockTypes.Add(TGDRockType.Create(iRockTypeInput));
+      iMeshTypeInput.Model        := iIniFile.ReadString( iString, 'Model', '');
+      iMeshTypeInput.Scale        := iIniFile.ReadFloat( iString, 'Scale', 100 );
+      iMeshTypeInput.RandomScale  := iIniFile.ReadFloat( iString, 'RandomScale', 0 );
+      iMeshTypeInput.CoverOfTotal := iIniFile.ReadFloat( iString, 'CoverOfTotal', 100 );
+      Foliage.RockTypes.Add(TGDMeshType.Create(iMeshTypeInput));
 
       iI := iI + 1;
     end;

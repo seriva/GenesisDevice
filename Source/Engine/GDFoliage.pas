@@ -55,39 +55,22 @@ type
 
   TGDGrassTypeInput = record
     Texture       : String;
-    ScaleX        : Double;
-    ScaleY        : Double;
-    ScaleZ        : Single;
-    RandomScaleX  : Single;
-    RandomScaleY  : Single;
-    RandomScaleZ  : Single;
+    Scale         : TGDVector;
+    RandomScale   : TGDVector;
     CoverOfTotal  : Single;
   end;
 
 {******************************************************************************}
-{* Treetype input record                                                      *}
+{* Meshtype input record                                                      *}
 {******************************************************************************}
 
-  TGDTreeTypeInput = record
+  TGDMeshTypeInput = record
     Model            : String;
     ModelLOD1        : String;
     ModelLOD2        : String;
-    StartScale       : Single;
-    StartRotationX   : Single;
-    StartRotationY   : Single;
-    StartRotationZ   : Single;
+    Scale            : Single;
     RandomScale      : Single;
-    CoverOfTotal     : Single;
-  end;
-
-{******************************************************************************}
-{* Rocktype input record                                                      *}
-{******************************************************************************}
-
-  TGDRockTypeInput = record
-    Model            : String;
-    StartScale       : Single;
-    RandomScale      : Single;
+    StartRotation    : TGDVector;
     CoverOfTotal     : Single;
   end;
 
@@ -115,50 +98,30 @@ type
 {* Treetype class                                                             *}
 {******************************************************************************}
 
-  TGDTreeType = class(TObject)
+  TGDMeshType = class(TObject)
   private
-    FMesh            : TGDMesh;
-    FMeshLOD1        : TGDMesh;
-    FMeshLOD2        : TGDMesh;
-    FStartRotation   : TGDVector;
-    FStartScale      : Single;
-    FRandomScale     : Single;
-    FCoverOfTotal    : Single;
+    FMesh          : TGDMesh;
+    FMeshLOD1      : TGDMesh;
+    FMeshLOD2      : TGDMesh;
+    FStartRotation : TGDVector;
+    FScale         : Single;
+    FRandomScale   : Single;
+    FCoverOfTotal  : Single;
   public
     property Mesh : TGDMesh read FMesh;
     property MeshLOD1 : TGDMesh read FMeshLOD1;
     property MeshLOD2 : TGDMesh read FMeshLOD2;
     property StartRotation : TGDVector read FStartRotation;
-    property StartScale : Single read FStartScale;
+    property Scale : Single read FScale;
     property RandomScale : Single read FRandomScale;
     property CoverOfTotal : Single read FCoverOfTotal;
 
-    constructor Create(aInput : TGDTreeTypeInput);
+    constructor Create(aInput : TGDMeshTypeInput);
     destructor  Destroy(); override;
   end;
 
 {******************************************************************************}
-{* Rocktype class                                                             *}
-{******************************************************************************}
-
-  TGDRockType = class(TObject)
-  private
-    FMesh            : TGDMesh;
-    FStartScale      : Single;
-    FRandomScale     : Single;
-    FCoverOfTotal    : Single;
-  public
-    property Mesh : TGDMesh read FMesh;
-    property StartScale : Single read FStartScale;
-    property RandomScale : Single read FRandomScale;
-    property CoverOfTotal : Single read FCoverOfTotal;
-
-    constructor Create(aInput : TGDRockTypeInput);
-    destructor  Destroy(); override;
-  end;
-
-{******************************************************************************}
-{* Foliage input record                                                         *}
+{* Foliage input record                                                       *}
 {******************************************************************************}
 
   TGDFoliageInput = record
@@ -249,8 +212,8 @@ uses
 constructor TGDGrassType.Create(aInput : TGDGrassTypeInput);
 begin
   FTexture := Resources.LoadTexture(aInput.Texture ,TD_HIGH,Settings.TextureFilter);
-  FScale.Reset(aInput.ScaleX, aInput.ScaleY, aInput.ScaleZ);
-  FRandomScale.Reset(aInput.RandomScaleX, aInput.RandomScaleY, aInput.RandomScaleZ);
+  FScale := aInput.Scale.Copy();
+  FRandomScale :=aInput.RandomScale.Copy();
   FCoverOfTotal := aInput.CoverOfTotal;
 end;
 
@@ -268,13 +231,13 @@ end;
 {* Create the treetype class                                                  *}
 {******************************************************************************}
 
-constructor TGDTreeType.Create(aInput : TGDTreeTypeInput );
+constructor TGDMeshType.Create(aInput : TGDMeshTypeInput );
 begin
   FMesh := Resources.Loadmesh(aInput.Model);
   FMeshLOD1 := Resources.Loadmesh(aInput.ModelLOD1);
   FMeshLOD2 := Resources.Loadmesh(aInput.ModelLOD2);
-  FStartRotation.Reset(aInput.StartRotationX, aInput.StartRotationY, aInput.StartRotationZ);
-  FStartScale := aInput.StartScale;
+  FStartRotation := aInput.StartRotation.Copy();
+  FScale := aInput.Scale;
   FRandomScale := aInput.RandomScale;
   FCoverOfTotal := aInput.CoverOfTotal;
 end;
@@ -283,33 +246,11 @@ end;
 {* Destroy the treetype                                                       *}
 {******************************************************************************}
 
-destructor  TGDTreeType.Destroy();
+destructor  TGDMeshType.Destroy();
 begin
   Resources.RemoveResource(TGDResource(FMesh));
   Resources.RemoveResource(TGDResource(FMeshLOD1));
   Resources.RemoveResource(TGDResource(FMeshLOD2));
-  inherited
-end;
-
-{******************************************************************************}
-{* Create the rocktype class                                                  *}
-{******************************************************************************}
-
-constructor TGDRockType.Create(aInput : TGDRockTypeInput );
-begin
-  FMesh := Resources.Loadmesh(aInput.Model);
-  FStartScale := aInput.StartScale;
-  FRandomScale := aInput.RandomScale;
-  FCoverOfTotal := aInput.CoverOfTotal;
-end;
-
-{******************************************************************************}
-{* Destroy the rocktype                                                       *}
-{******************************************************************************}
-
-destructor  TGDRockType.Destroy();
-begin
-  Resources.RemoveResource(TGDResource(FMesh));
   inherited
 end;
 
@@ -320,8 +261,8 @@ end;
 constructor TGDFoliage.Create();
 begin
   FGrassTypes := TObjectList.Create();
-  FTreeTypes := TObjectList.Create();
-  FRockTypes := TObjectList.Create();
+  FTreeTypes  := TObjectList.Create();
+  FRockTypes  := TObjectList.Create();
 end;
 
 {******************************************************************************}
