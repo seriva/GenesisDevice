@@ -342,15 +342,9 @@ begin
       iMeshInput.Model        := iIniFile.ReadString( iString, 'Model', '' );
       iMeshInput.ModelLOD1    := iIniFile.ReadString( iString, 'ModelLOD1', '' );
       iMeshInput.ModelLOD2    := iIniFile.ReadString( iString, 'ModelLOD2', '' );
-      iMeshInput.PosX         := iIniFile.ReadFloat( iString, 'PositionX', 0);
-      iMeshInput.PosY         := iIniFile.ReadFloat( iString, 'PositionY', 0);
-      iMeshInput.PosZ         := iIniFile.ReadFloat( iString, 'PositionZ', 0);
-      iMeshInput.RotX         := iIniFile.ReadFloat( iString, 'RotationX', 0);
-      iMeshInput.RotY         := iIniFile.ReadFloat( iString, 'RotationY', 0);
-      iMeshInput.RotZ         := iIniFile.ReadFloat( iString, 'RotationZ', 0);
-      iMeshInput.ScaleX       := iIniFile.ReadFloat( iString, 'ScaleX', 100);
-      iMeshInput.ScaleY       := iIniFile.ReadFloat( iString, 'ScaleY', 100);
-      iMeshInput.ScaleZ       := iIniFile.ReadFloat( iString, 'ScaleZ', 100);
+      iMeshInput.Position     := ReadVector(iIniFile, iString, 'Position');
+      iMeshInput.Rotation     := ReadVector(iIniFile, iString, 'Rotation');
+      iMeshInput.Scale        := ReadVector(iIniFile, iString, 'Scale');
       iMeshInput.FadeDistance := 0;
       iMeshInput.FadeScale    := 0;
       FCellManager.AddMeshCell( TGDMeshCell.Create(iMeshInput)   );

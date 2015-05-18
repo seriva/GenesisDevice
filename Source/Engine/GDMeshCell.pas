@@ -58,15 +58,9 @@ type
     ModelLOD2    : String;
     FadeScale    : Double;
     FadeDistance : Double;
-    PosX   : Double;
-    PosY   : Double;
-    PosZ   : Double;
-    RotX   : Double;
-    RotY   : Double;
-    RotZ   : Double;
-    ScaleX : Double;
-    ScaleY : Double;
-    ScaleZ : Double;
+    Position     : TGDVector;
+    Rotation     : TGDVector;
+    Scale        : TGDVector;
   end;
 
 {******************************************************************************}
@@ -134,9 +128,9 @@ begin
   end;
 
   //set translation
-  FPosition.Reset(aInput.PosX, aInput.PosY, aInput.PosZ);
-  FRotation.Reset(aInput.RotX, aInput.RotY, aInput.RotZ);
-  FScale.Reset( aInput.ScaleX, aInput.ScaleY, aInput.ScaleZ );
+  FPosition := aInput.Position.Copy();
+  FRotation := aInput.Rotation.Copy();
+  FScale    := aInput.Scale.Copy();
   FMatrix.CreateRotation(FRotation);
 
   //calculate boundingbox
