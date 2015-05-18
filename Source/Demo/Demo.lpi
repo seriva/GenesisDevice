@@ -88,6 +88,7 @@
       <Unit10>
         <Filename Value="..\Engine\GDConstants.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="GDConstants"/>
       </Unit10>
       <Unit11>
         <Filename Value="..\Engine\GDFog.pas"/>
@@ -126,6 +127,7 @@
       <Unit19>
         <Filename Value="..\Engine\GDMesh.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="GDMesh"/>
       </Unit19>
       <Unit20>
         <Filename Value="..\Engine\GDMeshCell.pas"/>
