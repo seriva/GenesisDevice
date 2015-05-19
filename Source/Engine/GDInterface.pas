@@ -81,12 +81,12 @@ procedure gdRendererResizeViewPort(aTop, aLeft, aWidth, aHeight : integer);
 procedure gdRendererState(aState : TGDRenderState);
 
 //sound functions
-function  gdSoundLoad( aFileName : String; aType : TGDSoundTypes ) : pointer;
+function  gdSoundLoad( aFileName : String) : pointer;
 procedure gdSoundRemove( aPointer : pointer );
-procedure gdSoundPlay( aPointer : pointer );
-procedure gdSoundPause( aPointer : pointer );
-procedure gdSoundResume( aPointer  : pointer );
-procedure gdSoundStop( aPointer  : pointer );
+function  gdSoundPlay( aPointer  : pointer; aLoop : boolean ) : integer;
+procedure gdSoundPause( aIndex : Integer );
+procedure gdSoundResume( aIndex : Integer  );
+procedure gdSoundStop( aIndex : Integer  );
 
 //input functions
 procedure gdInputEnable( aEnable : boolean );
@@ -139,7 +139,7 @@ begin
   Renderer         := TGDRenderer.Create();
 
   //Check if subsystems where initialized properly.
-  If not(Sound.Initialized) or not(Input.Initialized) then
+  If not(Sound.Initialized) or not(Input.Initialized) or not(Renderer.Initialized) then
   begin
      result := false;
      exit;
@@ -250,9 +250,9 @@ end;
 {* Init a soundfile                                                           *}
 {******************************************************************************}
 
-function  gdSoundLoad( aFileName : String;  aType : TGDSoundTypes  ) : pointer;
+function  gdSoundLoad( aFileName : String) : pointer;
 begin
-  result := Resources.LoadSound(aFileName,aType );
+  result := Resources.LoadSound(aFileName);
 end;
 
 {******************************************************************************}
@@ -269,37 +269,36 @@ end;
 {* Play a sound                                                               *}
 {******************************************************************************}
 
-procedure gdSoundPlay( aPointer  : pointer );
+function gdSoundPlay( aPointer  : pointer; aLoop : boolean ) : integer;
 begin
-  TGDSoundFile(aPointer).Play();
+  result := Sound.Play(TGDSoundBuffer(aPointer), aLoop);
 end;
 
 {******************************************************************************}
 {* Pause a sound                                                              *}
 {******************************************************************************}
 
-procedure gdSoundPause( aPointer  : pointer );
-
+procedure gdSoundPause( aIndex : Integer );
 begin
-  TGDSoundFile(aPointer).Pause();
+  Sound.Pause(aIndex);
 end;
 
 {******************************************************************************}
 {* Resume a sound                                                             *}
 {******************************************************************************}
 
-procedure gdSoundResume( aPointer  : pointer );
+procedure gdSoundResume( aIndex : Integer );
 begin
-  TGDSoundFile(aPointer).Resume();
+  Sound.Resume(aIndex);
 end;
 
 {******************************************************************************}
 {* Stop a sound                                                               *}
 {******************************************************************************}
 
-procedure gdSoundStop( aPointer  : pointer );
+procedure gdSoundStop( aIndex : Integer );
 begin
-  TGDSoundFile(aPointer).Stop();
+  Sound.Stop(aIndex);
 end;
 
 {******************************************************************************}

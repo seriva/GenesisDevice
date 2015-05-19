@@ -26,22 +26,52 @@ unit GDSound;
 {$MODE Delphi}
 
 {******************************************************************************}
-{* Holds everything related to sound. It`s a wrapper for the FMOD sound       *}
-{* library.                                                                   *}
+{* Simple sound system based on OpenAL. Plays back WAV files and later MP3    *}
+{* streaming will be added. For now playback can only be on 16 sources and    *}
+{* there is no support for 3D sound positioning.                              *}
 {******************************************************************************}
 
 interface
 
 uses
+  Contnrs,
   SysUtils,
   GDConsole,
   GDConstants,
   GDSettings,
   GDResource,
   openal,
+  GDTiming,
   mpg123;
 
 Type
+
+{******************************************************************************}
+{* Sound source class                                                         *}
+{******************************************************************************}
+
+  TGDSoundBuffer = class (TGDResource)
+  private
+    FBuffer  : TALuint;
+  public
+    constructor Create(aFileName : String);
+    destructor  Destroy(); override;
+  end;
+
+{******************************************************************************}
+{* Sound source class                                                         *}
+{******************************************************************************}
+
+  TGDSoundSource = class (TObject)
+  private
+    FSource  : TALuint;
+    FBuffer  : TGDSoundBuffer;
+  public
+    constructor Create();
+    destructor  Destroy(); override;
+
+    function IsFree(): boolean;
+  end;
 
 {******************************************************************************}
 {* Sound class                                                                *}
@@ -52,6 +82,7 @@ Type
     FInitialized : boolean;
     FContext     : PALCcontext;
     FDevice      : PALCdevice;
+    FSources     : TObjectList;
   public
     property Initialized : boolean read FInitialized;
 
@@ -59,25 +90,11 @@ Type
     destructor  Destroy(); override;
 
     procedure   Update();
-  end;
 
-{******************************************************************************}
-{* Soundfile class                                                            *}
-{******************************************************************************}
-
-  TGDSoundFile = class (TGDResource)
-  private
-    FBuffer  : TALuint;
-    FSource  : TALuint;
-    FPlaying : boolean;
-  public
-    constructor Create(aFileName : String; aType : TGDSoundTypes );
-    destructor  Destroy(); override;
-
-    procedure   Play();
-    procedure   Pause();
-    procedure   Resume();
-    procedure   Stop();
+    function  Play(aBuffer : TGDSoundBuffer; aLoop : boolean): integer;
+    procedure Stop(aIndex : Integer);
+    procedure Pause(aIndex : Integer);
+    procedure Resume(aIndex : Integer);
   end;
 
 var
@@ -86,35 +103,152 @@ var
 implementation
 
 {******************************************************************************}
+{* Create buffer class                                                        *}
+{******************************************************************************}
+
+constructor TGDSoundBuffer.Create( aFileName : String);
+var
+  iError : string;
+  iFormat: TALEnum;
+  iSize: TALSizei;
+  iFreq: TALSizei;
+  iLoop: TALInt;
+  iData: TALVoid;
+  iResult : boolean;
+begin
+  Console.Write('Loading sound ' + aFileName + '...');
+  try
+    iResult := true;
+    AlGenBuffers(1, @FBuffer);
+    AlutLoadWavFile(aFileName, iFormat, iData, iSize, iFreq, iLoop);
+    AlBufferData(FBuffer, iFormat, iData, iSize, iFreq);
+    AlutUnloadWav(iFormat, iData, iSize, iFreq);
+  except
+    on E: Exception do
+    begin
+      iError := E.Message;
+      iResult := false;
+    end;
+  end;
+  Console.WriteOkFail(iResult, iError);
+end;
+
+{******************************************************************************}
+{* Destroy buffer class                                                       *}
+{******************************************************************************}
+
+destructor  TGDSoundBuffer.Destroy();
+begin
+  inherited;
+  AlDeleteBuffers(1, @FBuffer);
+end;
+
+{******************************************************************************}
+{* Create source class                                                        *}
+{******************************************************************************}
+
+constructor TGDSoundSource.Create();
+var
+  iSourcePos: array [0..2] of TALfloat= ( 0.0, 0.0, 0.0 );
+  iSourceVel: array [0..2] of TALfloat= ( 0.0, 0.0, 0.0 );
+begin
+  FBuffer := nil;
+  AlGenSources(1, @FSource);
+  AlSourcef( FSource, AL_PITCH, 1.0 );
+  AlSourcef( FSource, AL_GAIN, Settings.SoundVolume);
+  AlSourcefv( FSource, AL_POSITION, @iSourcePos);
+  AlSourcefv( FSource, AL_VELOCITY, @iSourceVel);
+end;
+
+{******************************************************************************}
+{* Destroy source class                                                       *}
+{******************************************************************************}
+
+destructor TGDSoundSource.Destroy();
+begin
+  AlDeleteSources(1, @FSource);
+end;
+
+{******************************************************************************}
+{* Check if this source is playing a sound                                    *}
+{******************************************************************************}
+
+function TGDSoundSource.IsFree(): boolean;
+var
+  iState : TALCint;
+begin
+  if FBuffer = nil then
+  begin
+    result := true;
+    exit;
+  end;
+
+  alGetSourcei(FSource, AL_SOURCE_STATE, @iState);
+  if (iState = AL_PLAYING) or (iState = AL_PAUSED) then
+    result := false
+  else
+    result := true;
+end;
+
+{******************************************************************************}
 {* Create sound class                                                         *}
 {******************************************************************************}
 
 constructor TGDSound.Create();
 var
-  iError    : string;
+  iError, iV : string;
+  iALInt1, iALInt2 : TALCint;
+  iI : Integer;
 begin
-  Console.Write('Initializing sound...');
+  Timing.Start();
+  Console.Write('......Initializing sound');
   try
     FInitialized := true;
-    InitOpenAL();
-    FDevice := alcOpenDevice(nil);
+    if not(InitOpenAL()) then
+      Raise Exception.Create('Error initializing OpenAL! Is OpenAL installed?');
+    FDevice := alcOpenDevice(nil); //for now only default device.
     if not(alGetError() = AL_NO_ERROR) then
-      Raise Exception.Create('Error initializing device!');
+      Raise Exception.Create('Error initializing sound device!');
     FContext := alcCreateContext(FDevice,nil);
     if not(alGetError() = AL_NO_ERROR) then
-      Raise Exception.Create('Error initializing context!');
+      Raise Exception.Create('Error initializing sound context!');
     alcMakeContextCurrent(FContext);
     if not(alGetError() = AL_NO_ERROR) then
-      Raise Exception.Create('Error making the context current!');
+      Raise Exception.Create('Error making the sound context current!');
+
+    //Print specs
+    Console.Write('Vendor: ' + String(AnsiString(alGetString(AL_VENDOR))));
+    Console.Write('Renderer: ' + String(AnsiString(alGetString(AL_RENDERER))));
+    Console.Write('Version: ' + String(AnsiString(alGetString(AL_VERSION))));
+
+    //Check requirements
+    //Version
+    alcGetIntegerv(FDevice, ALC_MAJOR_VERSION, 1, @iALInt1);
+    alcGetIntegerv(FDevice, ALC_MINOR_VERSION, 1, @iALInt2);
+    iV := IntToStr(MRS_OPENAL_MAJOR_VERSION) + '.' + IntToStr(MRS_OPENAL_MINOR_VERSION);
+    if iALInt1 < MRS_OPENAL_MAJOR_VERSION then
+      Raise Exception.Create('To low OpenAL version! Minimal version ' + iV + ' needed.');
+    if iALInt2 < MRS_OPENAL_MINOR_VERSION then
+      Raise Exception.Create('To low OpenAL version! Minimal version ' + iV + ' needed.');
+
+    //Create the sources.
+    FSources := TObjectList.Create(true);
+    for iI := 0 to S_MAX_SOURCES-1 do
+      FSources.Add(TGDSoundSource.Create());
   except
     on E: Exception do
     begin
       iError := E.Message;
       FInitialized := false;
+      Console.Write('Failed to initialize sound: ' + iError);
     end;
   end;
 
-  Console.WriteOkFail(FInitialized, iError);
+  If FInitialized then
+  begin
+    Timing.Stop();
+    Console.Write('......Done initializing sound (' + Timing.TimeInSeconds + ' Sec)');
+  end;
 end;
 
 {******************************************************************************}
@@ -130,6 +264,7 @@ begin
   Console.Write('Shutting down sound...');
   try
     iResult := true;
+    FreeAndNil(FSources);
     alcDestroyContext(FContext);
     if not(alGetError() = AL_NO_ERROR) then
       Raise Exception.Create('Error destroying contect!');
@@ -156,116 +291,99 @@ var
   iListenerVel : array [0..2] of TALfloat= ( 0.0, 0.0, 0.0);
   iListenerOri : array [0..5] of TALfloat= ( 0.0, 0.0, -1.0, 0.0, 1.0, 0.0);
 begin
-  //TODO: add player data here later.
+  //TODO: add positional sounds
   AlListenerfv ( AL_POSITION, @iListenerPos);
   AlListenerfv ( AL_VELOCITY, @iListenerVel);
   AlListenerfv ( AL_ORIENTATION, @iListenerOri);
 end;
 
 {******************************************************************************}
-{* Create                                                                     *}
+{* Play                                                                       *}
 {******************************************************************************}
 
-constructor TGDSoundFile.Create( aFileName : String; aType : TGDSoundTypes );
+function TGDSound.Play(aBuffer : TGDSoundBuffer; aLoop : boolean): integer;
 var
-  iError : string;
-  iFormat: TALEnum;
-  iSize: TALSizei;
-  iFreq: TALSizei;
-  iLoop: TALInt;
-  iData: TALVoid;
-  iResult : boolean;
-  iSourcePos: array [0..2] of TALfloat= ( 0.0, 0.0, 0.0 );
-  iSourceVel: array [0..2] of TALfloat= ( 0.0, 0.0, 0.0 );
+  iI : Integer;
+  iSource : TGDSoundSource;
 begin
-  Console.Write('Loading sound ' + aFileName + '...');
-  try
-    iResult := true;
-    FPlaying := false;
-
-    //Buffer sound
-    AlGenBuffers(1, @FBuffer);
-    AlutLoadWavFile(aFileName, iFormat, iData, iSize, iFreq, iLoop);
-    AlBufferData(FBuffer, iFormat, iData, iSize, iFreq);
-    AlutUnloadWav(iFormat, iData, iSize, iFreq);
-
-    //Create Sources
-    AlGenSources(1, @FSource);
-    AlSourcei ( FSource, AL_BUFFER, FBuffer);
-    AlSourcef ( FSource, AL_PITCH, 1.0 );
-    AlSourcef ( FSource, AL_GAIN, Settings.SoundVolume);
-
-    //TODO: Add positional sound.
-    AlSourcefv ( FSource, AL_POSITION, @iSourcePos);
-    AlSourcefv ( FSource, AL_VELOCITY, @iSourceVel);
-
-    //Loop the file?
-    case aType of
-      ST_SINGLE : AlSourcei ( FSource, AL_LOOPING, AL_FALSE );
-      ST_LOOP   : AlSourcei ( FSource, AL_LOOPING, AL_TRUE );
-    end;
-  except
-    on E: Exception do
-    begin
-      iError := E.Message;
-      iResult := false;
-    end;
-  end;
-
-  Console.WriteOkFail(iResult, iError);
-end;
-
-{******************************************************************************}
-{* Destroy                                                                    *}
-{******************************************************************************}
-
-destructor  TGDSoundFile.Destroy();
-begin
-  inherited;
-  AlDeleteBuffers(1, @FBuffer);
-  AlDeleteSources(1, @FSource);
-end;
-
-{******************************************************************************}
-{* Pause play                                                                 *}
-{******************************************************************************}
-
-procedure   TGDSoundFile.Play();
-begin
+  result := -1;
   If Not(Settings.MuteSound) then
   begin
-    if FPlaying = false then
-      AlSourcePlay(FSource);
-    FPlaying := true;
+    //find a free source for playing
+    for iI := 0 to S_MAX_SOURCES-1 do
+    begin
+      iSource := FSources.Items[iI] as TGDSoundSource;
+      if iSource.IsFree() then
+      begin
+        result := iI;
+        break;
+      end
+      else
+        iSource := nil;
+    end;
+
+    if iSource <> nil then
+    begin
+      if aLoop then
+        AlSourcei ( iSource.FSource, AL_LOOPING, AL_TRUE)
+      else
+        AlSourcei ( iSource.FSource, AL_LOOPING, AL_FALSE);
+      AlSourcei(iSource.FSource, AL_BUFFER, aBuffer.FBuffer);
+      AlSourcePlay(iSource.FSource);
+      iSource.FBuffer := aBuffer;
+    end
+    else
+      Console.WriteOkFail(false, 'Failed to find free source to play sound: ' + aBuffer.Name, false);
   end;
 end;
 
 {******************************************************************************}
-{* Pause play                                                                 *}
+{* Pause                                                                      *}
 {******************************************************************************}
 
-procedure TGDSoundFile.Pause();
+procedure TGDSound.Pause(aIndex : Integer);
+var
+  iSource : TGDSoundSource;
+  iState : TALCint;
 begin
-  FPlaying := false;
-  AlSourcePause(FSource);
+  if (aIndex < 0) or (aIndex > S_MAX_SOURCES-1) then exit;
+  iSource := (FSources.Items[aIndex] as TGDSoundSource);
+  alGetSourcei(iSource.FSource, AL_SOURCE_STATE, @iState);
+  if (iState = AL_PLAYING) then
+    AlSourcePause(iSource.FSource);
 end;
 
 {******************************************************************************}
-{* Resume play                                                                *}
+{* Resume                                                                     *}
 {******************************************************************************}
 
-procedure TGDSoundFile.Resume();
+procedure TGDSound.Resume(aIndex : Integer);
+var
+  iSource : TGDSoundSource;
+  iState : TALCint;
 begin
-  Play();
+  if (aIndex < 0) or (aIndex > S_MAX_SOURCES-1) then exit;
+  iSource := (FSources.Items[aIndex] as TGDSoundSource);
+  alGetSourcei(iSource.FSource, AL_SOURCE_STATE, @iState);
+  if (iState = AL_PAUSED) then
+    AlSourcePlay(iSource.FSource);
 end;
 
 {******************************************************************************}
-{* Stop play the soundfile                                                  *}
+{* Stop                                                                       *}
 {******************************************************************************}
 
-procedure TGDSoundFile.Stop();
+procedure TGDSound.Stop(aIndex : Integer);
+var
+  iSource : TGDSoundSource;
+  iState : TALCint;
 begin
-  AlSourceStop(FSource);
+  if (aIndex < 0) or (aIndex > S_MAX_SOURCES-1) then exit;
+  iSource := (FSources.Items[aIndex] as TGDSoundSource);
+  alGetSourcei(iSource.FSource, AL_SOURCE_STATE, @iState);
+  if (iState = AL_PLAYING) or (iState = AL_PAUSED) then
+    AlSourceStop(iSource.FSource);
+  iSource.FBuffer := nil;
 end;
 
 end.

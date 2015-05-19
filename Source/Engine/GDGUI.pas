@@ -43,6 +43,7 @@ uses
   SysUtils,
   dglOpenGL,
   GDTexture,
+  GDStringParsing,
   GDConstants,
   GDTypes;
 
@@ -266,7 +267,7 @@ type
   TGDLoadingInput = record
     X : integer;
     Y : integer;
-    BarR, BarG, BarB, BarA : Double;
+    Bar : TGDColor;
   end;
 
 {******************************************************************************}
@@ -736,7 +737,7 @@ begin
   FX := aInput.X;
   FY := aInput.Y;
   FBarOnly := false;
-  FBarColor.Reset( aInput.BarR,  aInput.BarG,  aInput.BarB,  aInput.BarA);
+  FBarColor := aInput.Bar.Copy();
 end;
 
 {******************************************************************************}
@@ -865,18 +866,9 @@ begin
   iIniFile := TIniFile.Create( FP_INITS + GUI_INI );
 
   //Default colors
-  FFontColor.R := iIniFile.ReadFloat('DefaultColors', 'FontR', 1);
-  FFontColor.G := iIniFile.ReadFloat('DefaultColors', 'FontG', 1);
-  FFontColor.B := iIniFile.ReadFloat('DefaultColors', 'FontB', 1);
-  FFontColor.A := iIniFile.ReadFloat('DefaultColors', 'FontA', 1);
-  FOutlineColor.R := iIniFile.ReadFloat('DefaultColors', 'OutlineR', 1);
-  FOutlineColor.G := iIniFile.ReadFloat('DefaultColors', 'OutlineG', 1);
-  FOutlineColor.B := iIniFile.ReadFloat('DefaultColors', 'OutlineB', 1);
-  FOutlineColor.A := iIniFile.ReadFloat('DefaultColors', 'OutlineA', 1);
-  FFillColor.R := iIniFile.ReadFloat('DefaultColors', 'FillR', 1);
-  FFillColor.G := iIniFile.ReadFloat('DefaultColors', 'FillG', 1);
-  FFillColor.B := iIniFile.ReadFloat('DefaultColors', 'FillB', 1);
-  FFillColor.A := iIniFile.ReadFloat('DefaultColors', 'FillA', 1);
+  FFontColor    := ReadColor(iIniFile,'DefaultColors', 'Font');
+  FOutlineColor := ReadColor(iIniFile, 'DefaultColors', 'Outline');
+  FFillColor    := ReadColor(iIniFile, 'DefaultColors', 'Fill');
 
   //Font
   Font.InitFont( iIniFile.ReadString('Font', 'Texture', 'console.fnt') );
@@ -886,12 +878,9 @@ begin
                              iIniFile.ReadInteger('Mouse', 'Size', 40) );
 
   //Loading
-  iLoadingInput.X := iIniFile.ReadInteger('Loading', 'X', 1); ;
-  iLoadingInput.Y := iIniFile.ReadInteger('Loading', 'Y', 1); ;
-  iLoadingInput.BarR := iIniFile.ReadFloat('Loading', 'BarR', 1);
-  iLoadingInput.BarG := iIniFile.ReadFloat('Loading', 'BarG', 1);
-  iLoadingInput.BarB := iIniFile.ReadFloat('Loading', 'BarB', 1);
-  iLoadingInput.BarA := iIniFile.ReadFloat('Loading', 'BarA', 1);
+  iLoadingInput.X := iIniFile.ReadInteger('Loading', 'X', 1);
+  iLoadingInput.Y := iIniFile.ReadInteger('Loading', 'Y', 1);
+  iLoadingInput.Bar := ReadColor(iIniFile, 'Loading', 'Bar');
   GUI.LoadingScreen.InitLoadingScreen( iLoadingInput );
 
   FreeAndNil(iIniFile);

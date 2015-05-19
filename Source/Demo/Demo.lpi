@@ -89,6 +89,7 @@
       <Unit9>
         <Filename Value="..\Engine\GDConsole.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="GDConsole"/>
       </Unit9>
       <Unit10>
         <Filename Value="..\Engine\GDConstants.pas"/>
@@ -112,6 +113,7 @@
       <Unit14>
         <Filename Value="..\Engine\GDGUI.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="GDGUI"/>
       </Unit14>
       <Unit15>
         <Filename Value="..\Engine\GDInput.pas"/>
@@ -229,6 +231,7 @@
       <Unit38>
         <Filename Value="..\Libraries\OpenAL\mpg123.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="mpg123"/>
       </Unit38>
       <Unit39>
         <Filename Value="..\Libraries\OpenAL\openal.pas"/>

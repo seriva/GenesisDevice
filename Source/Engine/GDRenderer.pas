@@ -61,6 +61,7 @@ type
     FViewPortRC         : HGLRC;
     FCanResize          : boolean;
     FState              : TGDRenderState;
+    FInitialized        : boolean;
     
     FTerrainShader      : TGDGLShader;
     FSkyShader          : TGDGLShader;
@@ -90,6 +91,9 @@ type
     procedure ClearFrameBuffers();
     Procedure ResizeFrameBuffers();
   public
+    property    Initialized : boolean read FInitialized;
+    property    BloomStrengh : Single read FBloomStrengh write FBloomStrengh;
+
     property    TerrainShader  : TGDGLShader read FTerrainShader;
     property    SkyShader      : TGDGLShader read FSkyShader;
     property    WaterShader    : TGDGLShader read FWaterShader;
@@ -101,8 +105,6 @@ type
     property    FinalShader    : TGDGLShader read FFinalShader;
     property    ColorShader    : TGDGLShader read FColorShader;
     property    TextureShader  : TGDGLShader read FTextureShader;
-
-    property    BloomStrengh : Single read FBloomStrengh write FBloomStrengh;
 
     Constructor Create();
     Destructor  Destroy();override;
@@ -145,14 +147,13 @@ uses
 
 constructor TGDRenderer.Create();
 var
-  iResult     : boolean;
   iError      : string;
   iWndClass   : TWndClass;
   iDWStyle    : DWORD;
   iDWExStyle  : DWORD;
   iInstance   : HINST;
-  iStr        : String;
-  iGLInt      : GLInt;
+  iStr, iV    : String;
+  iGLInt1, iGLInt2 : GLInt;
   iGLFLoat    : GLFLoat;
 
 function WndProc(aWnd: HWND; aMsg: UINT;  aWParam: WPARAM;  aLParam: LPARAM): LRESULT; stdcall;
@@ -163,10 +164,10 @@ end;
 begin
   Inherited;
   FCanResize := false;
-
-  Console.Write('Initializing renderer...');
+  Timing.Start();
+  Console.Write('......Initializing renderer');
   try
-    iResult := true;
+    FInitialized := true;
     iInstance := GetModuleHandle(nil);
     ZeroMemory(@iWndClass, SizeOf(wndClass));
 
@@ -215,19 +216,41 @@ begin
     ReadExtensions;
     ReadImplementationProperties;
 
-    //Check requirements.
-    glGetIntegerv(GL_MAX_TEXTURE_UNITS_ARB, @iGLInt);
-    if iGLInt < MRS_TEXTURE_UNITS then
-      Raise Exception.Create('Not ennough texture units!');
+    //Print specs
+    Console.Write('Vendor: ' + String(AnsiString(glGetString(GL_VENDOR))));
+    Console.Write('Renderer: ' + String(AnsiString(glGetString(GL_RENDERER))));
+    Console.Write('Version: ' + String(AnsiString(glGetString(GL_VERSION))));
+    Console.Write('GLSL Version: ' + String(AnsiString(glGetString(GL_SHADING_LANGUAGE_VERSION))));
 
+    //Check requirements
+    //Version
+    glGetIntegerv(GL_MAJOR_VERSION, @iGLInt1);
+    glGetIntegerv(GL_MINOR_VERSION, @iGLInt2);
+    iV := IntToStr(MRS_OPENGL_MAJOR_VERSION) + '.' + IntToStr(MRS_OPENGL_MINOR_VERSION);
+    if iGLInt1 < MRS_OPENGL_MAJOR_VERSION then
+      Raise Exception.Create('To low OpenGL version! Minimal version ' + iV + ' needed.');
+    if iGLInt2 < MRS_OPENGL_MINOR_VERSION then
+      Raise Exception.Create('To low OpenGL version! Minimal version ' + iV + ' needed.');
+
+    //Texture units
+    glGetIntegerv(GL_MAX_TEXTURE_UNITS_ARB, @iGLInt1);
+    Console.Write('Texture units: ' + IntToStr(iGLInt1));
+    if iGLInt1 < MRS_TEXTURE_UNITS then
+      Raise Exception.Create('Not ennough texture units! Minimal of ' + IntToStr(MRS_TEXTURE_UNITS) + ' needed.');
+
+    //Anisotropic filtering
     glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, @iGLFLoat);
+    Console.Write('Anisotropic filtering: ' + FormatFloat('#####', iGLFLoat));
     if iGLFLoat < MRS_ANISOTROPIC_FILTERING then
-      Raise Exception.Create('To low anisotropic filtering!');
+      Raise Exception.Create('To low anisotropic filtering! Minimal of ' + IntToStr(MRS_ANISOTROPIC_FILTERING) + ' needed.');
 
+    //Texture size
     glGetFloatv(GL_MAX_TEXTURE_SIZE, @iGLFLoat);
+    Console.Write('Texture size: ' + FormatFloat('#####',iGLFLoat));
     if iGLFLoat < MRS_TEXTURE_SIZE then
-      Raise Exception.Create('To low texture size!');
+      Raise Exception.Create('To low texture size! Minimal of ' + IntToStr(MRS_TEXTURE_SIZE) + ' needed.');
 
+    //Shading language extension
     iStr := glGetString(GL_EXTENSIONS);
     If ((Pos('GL_ARB_shader_objects', iStr) <= 0) or
        (Pos('GL_ARB_fragment_program', iStr) <= 0) or
@@ -236,6 +259,7 @@ begin
        (Pos('GL_ARB_vertex_shader', iStr) <= 0)) then
       Raise Exception.Create('Opengl Shading Language not supported!');
 
+    //Framebuffer extension
     if Pos('GL_EXT_framebuffer_object', iStr) <= 0 then
       Raise Exception.Create('Frame Buffer Objects not supported!');
 
@@ -272,14 +296,17 @@ begin
     on E: Exception do
     begin
       iError := E.Message;
-      iResult := false;
+      FInitialized := false;
+      Console.Write('Failed to initialize renderer: ' + iError);
     end;
   end;
 
-  Console.WriteOkFail(iResult, iError);
-
-  If iResult then
+  If FInitialized then
+  begin
+    Timing.Stop();
+    Console.Write('......Done initializing renderer (' + Timing.TimeInSeconds + ' Sec)');
     InitShaders();
+  end;
 end;
 
 {******************************************************************************}

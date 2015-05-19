@@ -54,7 +54,7 @@ type
    public
      function  LoadTexture(aFileName : String; aDetail : TGDTextureDetail; aTextureFilter : TGDTextureFilter): TGDTexture;
      function  LoadMesh(aFileName : String): TGDMesh;
-     function  LoadSound(aFileName : String; aType : TGDSoundTypes): TGDSoundFile;
+     function  LoadSound(aFileName : String): TGDSoundBuffer;
      procedure LoadMaterials(aFileName : String);
 
      procedure RemoveResource(var aResource : TGDResource);
@@ -104,15 +104,15 @@ end;
 {* Load a sound resource                                                      *}
 {******************************************************************************}
 
-function TGDResources.LoadSound(aFileName : String; aType : TGDSoundTypes): TGDSoundFile;
+function TGDResources.LoadSound(aFileName : String): TGDSoundBuffer;
 var
   iIdx : Integer;
 begin
   if Find(aFileName, iIdx) then
-    result := GetResource(iIdx) as TGDSoundFile
+    result := GetResource(iIdx) as TGDSoundBuffer
   else
   begin
-    result := TGDSoundFile.Create(aFileName, aType);
+    result := TGDSoundBuffer.Create(aFileName);
     AddResource(aFileName, result);
   end;
 end;

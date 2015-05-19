@@ -53,12 +53,15 @@ var
   Player     : TPlayer;
 
   //Sounds
-  AmbientId    : pointer;
-  UnderWaterId : pointer;
-  MusicId      : pointer;
+  AmbientBuffer    : pointer;
+  AmbientSource    : integer;
+  UnderWaterBuffer : pointer;
+  UnderWaterSource : integer;
+  MusicBuffer      : pointer;
+  MusicSource      : integer;
 
   //Screens
-  IntroId    : pointer;
+  IntroScreen    : pointer;
 
 procedure InitGame();
 procedure ClearGame();
@@ -83,7 +86,7 @@ end;
 
 procedure PlayerForward();
 begin
-  if not(gdGUIScreenGetVisible(IntroId)) then
+  if not(gdGUIScreenGetVisible(IntroScreen)) then
     Player.MoveForward();
 end;
 
@@ -93,7 +96,7 @@ end;
 
 procedure PlayerBackward();
 begin
-  if not(gdGUIScreenGetVisible(IntroId)) then
+  if not(gdGUIScreenGetVisible(IntroScreen)) then
     Player.MoveBackWard();
 end;
 
@@ -103,7 +106,7 @@ end;
 
 procedure PlayerRight();
 begin
-  if not(gdGUIScreenGetVisible(IntroId)) then
+  if not(gdGUIScreenGetVisible(IntroScreen)) then
     Player.MoveRight();
 end;
 
@@ -113,7 +116,7 @@ end;
 
 procedure PlayerLeft();
 begin
-  if not(gdGUIScreenGetVisible(IntroId)) then
+  if not(gdGUIScreenGetVisible(IntroScreen)) then
     Player.MoveLeft();
 end;
 
@@ -123,7 +126,7 @@ end;
 
 procedure SetWalk();
 begin
-  if not(gdGUIScreenGetVisible(IntroId)) then
+  if not(gdGUIScreenGetVisible(IntroScreen)) then
     Player.Walk();
 end;
 
@@ -133,7 +136,7 @@ end;
 
 procedure SetRun();
 begin
-  if not(gdGUIScreenGetVisible(IntroId)) then
+  if not(gdGUIScreenGetVisible(IntroScreen)) then
     PLayer.Run();
 end;
 
@@ -204,9 +207,9 @@ end;
 
 procedure ToggleIntroText();
 begin
-  gdGUIScreenSetVisible(IntroId, not(gdGUIScreenGetVisible(IntroId)));
-  gdInputUseMouseLook(not(gdGUIScreenGetVisible(IntroId)));
-  gdGUIMouseCursorShow(gdGUIScreenGetVisible(IntroId));
+  gdGUIScreenSetVisible(IntroScreen, not(gdGUIScreenGetVisible(IntroScreen)));
+  gdInputUseMouseLook(not(gdGUIScreenGetVisible(IntroScreen)));
+  gdGUIMouseCursorShow(gdGUIScreenGetVisible(IntroScreen));
 end;
 
 {******************************************************************************}
@@ -218,13 +221,13 @@ begin
   //do soms sound stuff
   if Player.PlayerUnderWater() then
   begin
-    gdSoundResume( UnderWaterID );
-    gdSoundPause( AmbientId);
+    gdSoundResume( UnderWaterSource );
+    gdSoundPause( AmbientSource );
   end
   else
   begin
-    gdSoundPause( UnderWaterID);
-    gdSoundResume( AmbientID);
+    gdSoundPause( UnderWaterSource );
+    gdSoundResume( AmbientSource  );
   end;
 
   If (ViewPortForm.Focused = False) or (ViewPortForm.WindowState = wsMinimized) then
@@ -253,18 +256,18 @@ begin
   gdConsoleLog('......Initializing game resources');
 
   //sounds
-  AmbientId    := gdSoundLoad( 'Sounds\ambient.wav', ST_LOOP);
-  UnderWaterId := gdSoundLoad( 'Sounds\underwater.wav', ST_LOOP);
-  //MusicId     := gdSoundLoad( 'Sounds\music.mp3', ST_LOOP);
-  gdSoundPlay(AmbientId);
-  gdSoundPause(AmbientId);
-  gdSoundPlay(UnderWaterId);
-  gdSoundPause(UnderWaterId);
-  //gdSoundPlay( FMusicId );
+  AmbientBuffer    := gdSoundLoad( 'Sounds\ambient.wav');
+  UnderWaterBuffer := gdSoundLoad( 'Sounds\underwater.wav');
+  //MusicBuffer    := gdSoundLoad( 'Sounds\music.mp3');
+  AmbientSource := gdSoundPlay(AmbientBuffer, true);
+  gdSoundPause(AmbientSource);
+  UnderWaterSource := gdSoundPlay(UnderWaterBuffer, true);
+  gdSoundPause(UnderWaterSource);
+  //gdSoundPlay( MusicBuffer, true );
   gdGUILoadingScreenUpdate();
 
   //intro
-  IntroId := gdGUIInitScreen('Ini\Intro.ini');
+  IntroScreen := gdGUIInitScreen('Ini\Intro.ini');
   gdGUILoadingScreenUpdate();
 
   //player
@@ -277,7 +280,7 @@ begin
   gdMapLoad( PChar( 'Maps\' + ConfigurationForm.Map + '\map.ini') );
 
   //final settings.
-  gdGUIScreenSetVisible(IntroId, true);
+  gdGUIScreenSetVisible(IntroScreen, true);
   gdInputEnable(true);
   gdGUIMouseCursorShow(true);
   gdInputUseMouseLook(false);
@@ -308,9 +311,11 @@ end;
 procedure ClearGame();
 begin
   FreeAndNil(Player);
-  gdSoundRemove(AmbientId);
-  gdSoundRemove(UnderWaterId);
-  //gdSoundRemove(MusicId);
+  gdSoundStop(AmbientSource);
+  gdSoundStop(UnderWaterSource);
+  gdSoundRemove(AmbientBuffer);
+  gdSoundRemove(UnderWaterBuffer);
+  //gdSoundRemove(MusicBuffer);
 end;
 
 end.

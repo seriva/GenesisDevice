@@ -48,9 +48,6 @@ uses
   ExtCtrls;
 
 type
-
-  { TViewPortForm }
-
   TViewPortForm = class(TForm)
     ApplicationEvents: TApplicationProperties;
     procedure FormCreate(Sender: TObject);

@@ -43,16 +43,13 @@ type
   //input types
   TGDInputTypes = (IT_SINGLE, IT_DIRECT, IT_DOWN, IT_UP);
 
-  //sound types
-  TGDSoundTypes = (ST_SINGLE, ST_LOOP);
-
   //static object types
   TGDStaticObjectType = (SO_NONE, SO_TERRAINCELL, SO_WATERCELL, SO_MESHCELL, SO_GRASSCELL );
 
   //polygon type
   TGDPolygonType = (PT_TRIANGLE, PT_QUAD);
 
-    //polygon type
+  //Mesh LOD type
   TGDMeshLODType = (LT_NONE, LT_FADE_IN, LT_STAGES);
 
   //base procedure callback
@@ -66,7 +63,7 @@ const
   TWaterReflection : array[1..2] of String  = ('Terrain Only', 'All');
 
   //engine constants
-  ENGINE_INFO     = '71 -13 May 2015';
+  ENGINE_INFO     = '72 -19 May 2015';
 
   //renderer constants
   R_HUDWIDTH              = 1600;
@@ -81,15 +78,21 @@ const
   R_FOLIAGE_DISTANCE_STEP = 1024;
   R_CAUSTIC_TIME          = 50;
   R_NORMAL_LENGTH         = 32;
-
   R_LOD0_DISTANCE         = 15;
   R_LOD1_DISTANCE         = 50;
   R_LOD2_DISTANCE         = 100;
 
+  //sound constants
+  S_MAX_SOURCES = 16;
+
   //minimum required settings constants
-  MRS_TEXTURE_UNITS = 8;
+  MRS_OPENGL_MAJOR_VERSION  = 2;
+  MRS_OPENGL_MINOR_VERSION  = 0;
+  MRS_TEXTURE_UNITS         = 8;
   MRS_ANISOTROPIC_FILTERING = 16;
-  MRS_TEXTURE_SIZE = 4096;
+  MRS_TEXTURE_SIZE          = 4096;
+  MRS_OPENAL_MAJOR_VERSION  = 1;
+  MRS_OPENAL_MINOR_VERSION  = 1;
 
   //filepaths constants
   FP_MAPS         = 'Maps\';
