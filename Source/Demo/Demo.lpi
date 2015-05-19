@@ -106,6 +106,7 @@
       <Unit13>
         <Filename Value="..\Engine\GDGrassCell.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="GDGrassCell"/>
       </Unit13>
       <Unit14>
         <Filename Value="..\Engine\GDGUI.pas"/>
@@ -115,6 +116,7 @@
       <Unit15>
         <Filename Value="..\Engine\GDInput.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="GDInput"/>
       </Unit15>
       <Unit16>
         <Filename Value="..\Engine\GDInterface.pas"/>
@@ -178,6 +180,7 @@
       <Unit29>
         <Filename Value="..\Engine\GDTerrainCell.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="GDTerrainCell"/>
       </Unit29>
       <Unit30>
         <Filename Value="..\Engine\GDTexture.pas"/>
@@ -201,6 +204,7 @@
       <Unit34>
         <Filename Value="..\Engine\GDWaterCell.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="GDWaterCell"/>
       </Unit34>
       <Unit35>
         <Filename Value="..\Engine\GDFoliage.pas"/>

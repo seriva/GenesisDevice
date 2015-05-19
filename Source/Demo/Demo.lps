@@ -8,10 +8,10 @@
       <Unit0>
         <Filename Value="Demo.lpr"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="6"/>
+        <EditorIndex Value="1"/>
         <WindowIndex Value="1"/>
         <TopLine Value="1"/>
-        <CursorPos X="5" Y="29"/>
+        <CursorPos X="3" Y="29"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -23,12 +23,10 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="ViewPort"/>
-        <EditorIndex Value="4"/>
         <WindowIndex Value="1"/>
         <TopLine Value="34"/>
         <CursorPos X="5" Y="50"/>
         <UsageCount Value="200"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit1>
       <Unit2>
@@ -38,24 +36,20 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="Configuration"/>
-        <EditorIndex Value="12"/>
         <WindowIndex Value="1"/>
         <TopLine Value="481"/>
         <CursorPos X="103" Y="502"/>
         <UsageCount Value="200"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit2>
       <Unit3>
         <Filename Value="Main.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="Main"/>
-        <EditorIndex Value="11"/>
         <WindowIndex Value="1"/>
         <TopLine Value="150"/>
         <CursorPos X="82" Y="275"/>
         <UsageCount Value="200"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit3>
       <Unit4>
@@ -98,34 +92,32 @@
         <Filename Value="..\Engine\GDCellManager.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="GDCellManager"/>
+        <EditorIndex Value="5"/>
         <WindowIndex Value="1"/>
-        <TopLine Value="340"/>
-        <CursorPos X="73" Y="373"/>
+        <TopLine Value="333"/>
+        <CursorPos X="52" Y="357"/>
         <UsageCount Value="200"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit8>
       <Unit9>
         <Filename Value="..\Engine\GDConsole.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="GDConsole"/>
-        <EditorIndex Value="9"/>
         <WindowIndex Value="1"/>
         <TopLine Value="321"/>
         <CursorPos X="33" Y="338"/>
         <UsageCount Value="200"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit9>
       <Unit10>
         <Filename Value="..\Engine\GDConstants.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="GDConstants"/>
-        <EditorIndex Value="8"/>
         <WindowIndex Value="1"/>
         <TopLine Value="46"/>
         <CursorPos X="13" Y="52"/>
         <UsageCount Value="200"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit10>
       <Unit11>
@@ -150,30 +142,32 @@
       <Unit13>
         <Filename Value="..\Engine\GDGrassCell.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="GDGrassCell"/>
+        <EditorIndex Value="3"/>
         <WindowIndex Value="1"/>
-        <TopLine Value="64"/>
-        <CursorPos X="90" Y="80"/>
+        <TopLine Value="234"/>
+        <CursorPos X="81" Y="258"/>
         <UsageCount Value="200"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit13>
       <Unit14>
         <Filename Value="..\Engine\GDGUI.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="GDGUI"/>
-        <EditorIndex Value="1"/>
         <WindowIndex Value="1"/>
         <TopLine Value="474"/>
         <CursorPos X="46" Y="555"/>
         <UsageCount Value="200"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit14>
       <Unit15>
         <Filename Value="..\Engine\GDInput.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="GDInput"/>
         <WindowIndex Value="1"/>
-        <TopLine Value="206"/>
-        <CursorPos X="73" Y="232"/>
+        <TopLine Value="62"/>
+        <CursorPos X="106" Y="112"/>
         <UsageCount Value="200"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit15>
@@ -181,12 +175,10 @@
         <Filename Value="..\Engine\GDInterface.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="GDInterface"/>
-        <EditorIndex Value="10"/>
         <WindowIndex Value="1"/>
         <TopLine Value="574"/>
         <CursorPos X="42" Y="595"/>
         <UsageCount Value="200"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit16>
       <Unit17>
@@ -202,10 +194,10 @@
         <Filename Value="..\Engine\GDMap.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="GDMap"/>
-        <EditorIndex Value="3"/>
+        <EditorIndex Value="0"/>
         <WindowIndex Value="1"/>
-        <TopLine Value="188"/>
-        <CursorPos X="61" Y="218"/>
+        <TopLine Value="346"/>
+        <CursorPos X="36" Y="227"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -252,12 +244,10 @@
         <Filename Value="..\Engine\GDRenderer.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="GDRenderer"/>
-        <EditorIndex Value="7"/>
         <WindowIndex Value="1"/>
         <TopLine Value="8"/>
         <CursorPos X="20" Y="220"/>
         <UsageCount Value="200"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit23>
       <Unit24>
@@ -282,13 +272,10 @@
         <Filename Value="..\Engine\GDSound.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="GDSound"/>
-        <IsVisibleTab Value="True"/>
-        <EditorIndex Value="0"/>
         <WindowIndex Value="1"/>
-        <TopLine Value="348"/>
-        <CursorPos X="27" Y="375"/>
+        <TopLine Value="19"/>
+        <CursorPos X="126" Y="165"/>
         <UsageCount Value="200"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit26>
       <Unit27>
@@ -304,31 +291,34 @@
         <Filename Value="..\Engine\GDTerrain.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="GDTerrain"/>
+        <EditorIndex Value="2"/>
         <WindowIndex Value="1"/>
-        <TopLine Value="6"/>
-        <CursorPos X="14" Y="45"/>
+        <TopLine Value="66"/>
+        <CursorPos X="68" Y="353"/>
         <UsageCount Value="200"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit28>
       <Unit29>
         <Filename Value="..\Engine\GDTerrainCell.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="GDTerrainCell"/>
+        <EditorIndex Value="4"/>
         <WindowIndex Value="1"/>
-        <TopLine Value="127"/>
-        <CursorPos X="18" Y="151"/>
+        <TopLine Value="152"/>
+        <CursorPos X="99" Y="184"/>
         <UsageCount Value="200"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit29>
       <Unit30>
         <Filename Value="..\Engine\GDTexture.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="GDTexture"/>
-        <EditorIndex Value="2"/>
         <WindowIndex Value="1"/>
         <TopLine Value="164"/>
         <CursorPos X="10" Y="185"/>
         <UsageCount Value="200"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit30>
       <Unit31>
@@ -354,19 +344,25 @@
         <Filename Value="..\Engine\GDWater.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="GDWater"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="6"/>
         <WindowIndex Value="1"/>
-        <TopLine Value="199"/>
-        <CursorPos X="100" Y="214"/>
+        <TopLine Value="363"/>
+        <CursorPos X="149" Y="373"/>
         <UsageCount Value="200"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit33>
       <Unit34>
         <Filename Value="..\Engine\GDWaterCell.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="GDWaterCell"/>
+        <EditorIndex Value="7"/>
         <WindowIndex Value="1"/>
-        <TopLine Value="51"/>
-        <CursorPos X="39" Y="87"/>
+        <TopLine Value="57"/>
+        <CursorPos X="82" Y="79"/>
         <UsageCount Value="200"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit34>
       <Unit35>
@@ -395,31 +391,27 @@
         <WindowIndex Value="1"/>
         <TopLine Value="19"/>
         <CursorPos Y="40"/>
-        <UsageCount Value="194"/>
+        <UsageCount Value="196"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit37>
       <Unit38>
         <Filename Value="..\Libraries\OpenAL\mpg123.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="mpg123"/>
-        <EditorIndex Value="13"/>
         <WindowIndex Value="1"/>
         <TopLine Value="407"/>
         <CursorPos X="1" Y="473"/>
-        <UsageCount Value="170"/>
-        <Loaded Value="True"/>
+        <UsageCount Value="172"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit38>
       <Unit39>
         <Filename Value="..\Libraries\OpenAL\openal.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="openal"/>
-        <EditorIndex Value="5"/>
         <WindowIndex Value="1"/>
         <TopLine Value="314"/>
         <CursorPos X="3" Y="335"/>
-        <UsageCount Value="170"/>
-        <Loaded Value="True"/>
+        <UsageCount Value="172"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit39>
       <Unit40>
@@ -428,7 +420,7 @@
         <WindowIndex Value="1"/>
         <TopLine Value="134"/>
         <CursorPos X="51" Y="107"/>
-        <UsageCount Value="151"/>
+        <UsageCount Value="153"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit40>
       <Unit41>
@@ -436,7 +428,7 @@
         <IsPartOfProject Value="True"/>
         <WindowIndex Value="1"/>
         <CursorPos X="42" Y="27"/>
-        <UsageCount Value="150"/>
+        <UsageCount Value="152"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit41>
       <Unit42>
@@ -445,7 +437,7 @@
         <WindowIndex Value="1"/>
         <TopLine Value="96"/>
         <CursorPos X="51" Y="121"/>
-        <UsageCount Value="140"/>
+        <UsageCount Value="142"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit42>
       <Unit43>
@@ -1173,129 +1165,73 @@
       </Unit155>
     </Units>
     <General>
-      <ActiveWindowIndexAtStart Value="1"/>
+      <ActiveWindowIndexAtStart Value="0"/>
     </General>
-    <JumpHistory Count="30" HistoryIndex="29">
+    <JumpHistory Count="16" HistoryIndex="15">
       <Position1>
-        <Filename Value="..\Engine\GDGUI.pas"/>
-        <Caret Line="739" Column="34" TopLine="718"/>
+        <Filename Value="..\Engine\GDWaterCell.pas"/>
+        <Caret Line="87" Column="39" TopLine="51"/>
       </Position1>
       <Position2>
-        <Filename Value="..\Engine\GDGUI.pas"/>
-        <Caret Line="738" Column="31" TopLine="718"/>
+        <Filename Value="..\Engine\GDWater.pas"/>
+        <Caret Line="137" Column="21" TopLine="120"/>
       </Position2>
       <Position3>
-        <Filename Value="..\Engine\GDGUI.pas"/>
-        <Caret Line="269" Column="8" TopLine="245"/>
+        <Filename Value="..\Engine\GDWater.pas"/>
+        <Caret Line="225" Column="11" TopLine="188"/>
       </Position3>
       <Position4>
-        <Filename Value="..\Engine\GDGUI.pas"/>
-        <Caret Line="46" Column="19" TopLine="19"/>
+        <Filename Value="..\Engine\GDMap.pas"/>
+        <Caret Line="227" Column="36" TopLine="227"/>
       </Position4>
       <Position5>
-        <Filename Value="..\Engine\GDTexture.pas"/>
-        <Caret Line="211" Column="47" TopLine="133"/>
+        <Filename Value="..\Engine\GDGrassCell.pas"/>
+        <Caret Line="80" Column="90" TopLine="64"/>
       </Position5>
       <Position6>
-        <Filename Value="..\Engine\GDTexture.pas"/>
-        <Caret Line="185" Column="10" TopLine="164"/>
+        <Filename Value="..\Engine\GDGrassCell.pas"/>
+        <Caret Line="181" Column="58" TopLine="86"/>
       </Position6>
       <Position7>
-        <Filename Value="Configuration.pas"/>
-        <Caret Line="146" Column="80" TopLine="109"/>
+        <Filename Value="..\Engine\GDGrassCell.pas"/>
+        <Caret Line="268" Column="64" TopLine="230"/>
       </Position7>
       <Position8>
-        <Filename Value="..\Engine\GDGUI.pas"/>
-        <Caret Line="883" Column="60" TopLine="863"/>
+        <Filename Value="..\Engine\GDTerrainCell.pas"/>
+        <Caret Line="151" Column="18" TopLine="127"/>
       </Position8>
       <Position9>
-        <Filename Value="..\Engine\GDGUI.pas"/>
-        <Caret Line="869" Column="1" TopLine="860"/>
+        <Filename Value="..\Engine\GDTerrainCell.pas"/>
+        <Caret Line="82" Column="39" TopLine="56"/>
       </Position9>
       <Position10>
-        <Filename Value="..\Engine\GDGUI.pas"/>
-        <Caret Line="870" Column="1" TopLine="860"/>
+        <Filename Value="..\Engine\GDTerrainCell.pas"/>
+        <Caret Line="150" Column="63" TopLine="114"/>
       </Position10>
       <Position11>
-        <Filename Value="..\Engine\GDGUI.pas"/>
-        <Caret Line="871" Column="1" TopLine="860"/>
+        <Filename Value="..\Engine\GDTerrainCell.pas"/>
+        <Caret Line="187" Column="119" TopLine="152"/>
       </Position11>
       <Position12>
-        <Filename Value="..\Engine\GDGUI.pas"/>
-        <Caret Line="874" Column="1" TopLine="860"/>
+        <Filename Value="..\Engine\GDCellManager.pas"/>
+        <Caret Line="373" Column="73" TopLine="340"/>
       </Position12>
       <Position13>
-        <Filename Value="..\Engine\GDGUI.pas"/>
-        <Caret Line="869" Column="1" TopLine="860"/>
+        <Filename Value="..\Engine\GDCellManager.pas"/>
+        <Caret Line="313" Column="52" TopLine="290"/>
       </Position13>
       <Position14>
-        <Filename Value="..\Engine\GDGUI.pas"/>
-        <Caret Line="870" Column="1" TopLine="860"/>
+        <Filename Value="..\Engine\GDTerrain.pas"/>
+        <Caret Line="306" Column="3" TopLine="282"/>
       </Position14>
       <Position15>
-        <Filename Value="..\Engine\GDGUI.pas"/>
-        <Caret Line="871" Column="1" TopLine="860"/>
+        <Filename Value="..\Engine\GDTerrain.pas"/>
+        <Caret Line="260" Column="30" TopLine="232"/>
       </Position15>
       <Position16>
-        <Filename Value="..\Engine\GDGUI.pas"/>
-        <Caret Line="874" Column="1" TopLine="860"/>
+        <Filename Value="..\Engine\GDTerrain.pas"/>
+        <Caret Line="343" Column="38" TopLine="318"/>
       </Position16>
-      <Position17>
-        <Filename Value="..\Engine\GDGUI.pas"/>
-        <Caret Line="869" Column="1" TopLine="860"/>
-      </Position17>
-      <Position18>
-        <Filename Value="..\Engine\GDGUI.pas"/>
-        <Caret Line="870" Column="1" TopLine="860"/>
-      </Position18>
-      <Position19>
-        <Filename Value="..\Engine\GDGUI.pas"/>
-        <Caret Line="871" Column="1" TopLine="860"/>
-      </Position19>
-      <Position20>
-        <Filename Value="..\Engine\GDSound.pas"/>
-        <Caret Line="222" Column="24" TopLine="206"/>
-      </Position20>
-      <Position21>
-        <Filename Value="..\Engine\GDGUI.pas"/>
-        <Caret Line="869" Column="1" TopLine="860"/>
-      </Position21>
-      <Position22>
-        <Filename Value="..\Engine\GDInterface.pas"/>
-        <Caret Line="284" Column="1" TopLine="266"/>
-      </Position22>
-      <Position23>
-        <Filename Value="..\Engine\GDInterface.pas"/>
-        <Caret Line="595" Column="42" TopLine="574"/>
-      </Position23>
-      <Position24>
-        <Filename Value="Configuration.pas"/>
-        <Caret Line="493" Column="78" TopLine="481"/>
-      </Position24>
-      <Position25>
-        <Filename Value="..\Engine\GDInterface.pas"/>
-        <Caret Line="607" Column="46" TopLine="578"/>
-      </Position25>
-      <Position26>
-        <Filename Value="..\Engine\GDGUI.pas"/>
-        <Caret Line="691" Column="23" TopLine="670"/>
-      </Position26>
-      <Position27>
-        <Filename Value="..\Engine\GDSound.pas"/>
-        <Caret Line="85" Column="61" TopLine="52"/>
-      </Position27>
-      <Position28>
-        <Filename Value="..\Engine\GDSound.pas"/>
-        <Caret Line="267" Column="32" TopLine="253"/>
-      </Position28>
-      <Position29>
-        <Filename Value="..\Engine\GDSound.pas"/>
-        <Caret Line="261" Column="16" TopLine="242"/>
-      </Position29>
-      <Position30>
-        <Filename Value="..\Engine\GDSound.pas"/>
-        <Caret Line="316" Column="31" TopLine="298"/>
-      </Position30>
     </JumpHistory>
   </ProjectSession>
   <Debugging>

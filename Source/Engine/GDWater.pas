@@ -117,17 +117,14 @@ type
   public
     Property BoundingBox : TGDBoundingBox read FBoundingBox;
     Property WaterHeight : Double read GetHeight;
-    property Reflection : TGDTexture read FReflection;
+    property Reflection  : TGDTexture read FReflection;
     property CellDivX : Integer read FCellDivX;
     property CellDivY : Integer read FCellDivY;
     property CellCountX : Integer read FCellCountX;
     property CellCountY : Integer read FCellCountY;
     property WaterU : Double read FWaterU;
     property WaterV : Double read FWaterV;
-    property WaveSpeed : Double read FWaveSpeed;
-    property WaveStrength : Double read FWaveStrength;
     property WaterLoaded : Boolean read FWaterLoaded;
-    property WaterCounter : Integer read FWaterCounter;
     property UnderWaterColor : TGDColor read FUnderWaterColor;
     property CausticTextures : TObjectList read FCausticTextures;
     property CausticCounter : Integer read FCausticCounter;
@@ -291,8 +288,8 @@ begin
   FreeAndNil(FFrameBuffer);
   FreeAndNil(FReflection);
   FRenderBuffer := TGDGLRenderBufferObject.Create(FWidth,FHeight,GL_DEPTH_COMPONENT24);
-  FFrameBuffer := TGDGLFrameBufferObject.Create();
-  FReflection := TGDTexture.Create(GL_RGBA, FWidth,FHeight);
+  FFrameBuffer  := TGDGLFrameBufferObject.Create();
+  FReflection   := TGDTexture.Create(GL_RGBA, FWidth,FHeight);
 end;
 
 {******************************************************************************}

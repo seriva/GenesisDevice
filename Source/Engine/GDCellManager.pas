@@ -308,9 +308,9 @@ Begin
 
       iX := Random(aTerrain.TerrainWidth-1);
       iY := Random(aTerrain.TerrainHeight-1);
-      iPos.Reset( aTerrain.TerrainPoints[ iX, iY ].FVertex.X + (aTerrain.TriangleSize div 2) ,
+      iPos.Reset( aTerrain.TerrainPoints[ iX, iY ].Vertex.X + (aTerrain.TriangleSize div 2) ,
                   0,
-                  aTerrain.TerrainPoints[ iX, iY ].FVertex.Z + (aTerrain.TriangleSize div 2) );
+                  aTerrain.TerrainPoints[ iX, iY ].Vertex.Z + (aTerrain.TriangleSize div 2) );
 
       if aFoliage.CheckTreeMap(iX, iY) and aTerrain.GetHeight(iPos.X, iPos.Z, iHeight) then
       begin
@@ -352,9 +352,9 @@ Begin
 
       iX := Random(aTerrain.TerrainWidth-1);
       iY := Random(aTerrain.TerrainHeight-1);
-      iPos.Reset( aTerrain.TerrainPoints[ iX, iY ].FVertex.X + (aTerrain.TriangleSize div 2) ,
+      iPos.Reset( aTerrain.TerrainPoints[ iX, iY ].Vertex.X + (aTerrain.TriangleSize div 2) ,
                   0,
-                  aTerrain.TerrainPoints[ iX, iY ].FVertex.Z + (aTerrain.TriangleSize div 2) );
+                  aTerrain.TerrainPoints[ iX, iY ].Vertex.Z + (aTerrain.TriangleSize div 2) );
 
       if aFoliage.CheckRockMap(iX, iY) and aTerrain.GetHeight(iPos.X, iPos.Z, iHeight) then
       begin

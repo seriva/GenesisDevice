@@ -69,16 +69,12 @@ type
 {* Terrain point class                                                        *}
 {******************************************************************************}
 
-  TGDTerrainPoint = class
-  private
-  public
-    FVertex : TGDVector;
-    FNormal : TGDVector;
-    FColorUVCoords  : TGDUVCoord;
-    FDetailUVCoords : TGDUVCoord;
-    FCausticUVCoords : TGDUVCoord;
-    constructor Create();
-    destructor  Destroy(); override;
+  TGDTerrainPoint = record
+    Vertex : TGDVector;
+    Normal : TGDVector;
+    ColorUVCoords  : TGDUVCoord;
+    DetailUVCoords : TGDUVCoord;
+    CausticUVCoords : TGDUVCoord;
   end;
 
 {******************************************************************************}
@@ -106,12 +102,6 @@ type
 
     property TerrainWidth  : Integer read FTerrainWidth;
     property TerrainHeight : Integer read FTerrainHeight;
-    property Top : Double read FTerrainTop;
-    property Bottom : Double read FTerrainBottom;
-    property DetailTexture1 : TGDTexture read FDetailTexture1;
-    property DetailTexture2 : TGDTexture read FDetailTexture2;
-    property DetailTexture3 : TGDTexture read FDetailTexture3;
-    property DetailLookup   : TGDTexture read FDetailLookup;
     property TerrainLoaded : Boolean read FTerrainLoaded;
     property DetailUV     : integer read FDetailUV;
     property CausticUV    : integer read FCausticUV;
@@ -140,24 +130,6 @@ implementation
 uses
   GDMap,
   GDRenderer;
-
-{******************************************************************************}
-{* Create the terrainpoint class                                              *}
-{******************************************************************************}
-
-constructor TGDTerrainPoint.Create();
-begin
-  inherited;
-end;
-
-{******************************************************************************}
-{* Destroy the terrainpoint class                                             *}
-{******************************************************************************}
-
-destructor  TGDTerrainPoint.Destroy();
-begin
-  Inherited;
-end;
 
 {******************************************************************************}
 {* Create the terrain class                                                   *}
@@ -247,16 +219,15 @@ begin
           FTerrainTop := iMapHeight;
         If iMapHeight < FTerrainBottom then
           FTerrainBottom := iMapHeight;
-        TerrainPoints[iX,iY] := TGDTerrainPoint.Create();
-        TerrainPoints[iX,iY].FColorUVCoords.U := (iX / (FTerrainWidth-1));
-        TerrainPoints[iX,iY].FColorUVCoords.V := (iY / (FTerrainHeight-1));
-        TerrainPoints[iX,iY].FDetailUVCoords.U := (FDetailUV * iX) / FTerrainWidth;
-        TerrainPoints[iX,iY].FDetailUVCoords.V := (FDetailUV * iY) / FTerrainHeight;
-        TerrainPoints[iX,iY].FCausticUVCoords.U := (FCausticUV * iX) / FTerrainWidth;
-        TerrainPoints[iX,iY].FCausticUVCoords.V := (FCausticUV * iY) / FTerrainHeight;
-        TerrainPoints[iX,iY].FVertex.X := iStartWidth + (iX * FTriangleSize);
-        TerrainPoints[iX,iY].FVertex.Y := (iMapHeight)*FHeightScale;
-        TerrainPoints[iX,iY].FVertex.Z := iStartHeight + (iY * FTriangleSize);
+        TerrainPoints[iX,iY].ColorUVCoords.U := (iX / (FTerrainWidth-1));
+        TerrainPoints[iX,iY].ColorUVCoords.V := (iY / (FTerrainHeight-1));
+        TerrainPoints[iX,iY].DetailUVCoords.U := (FDetailUV * iX) / FTerrainWidth;
+        TerrainPoints[iX,iY].DetailUVCoords.V := (FDetailUV * iY) / FTerrainHeight;
+        TerrainPoints[iX,iY].CausticUVCoords.U := (FCausticUV * iX) / FTerrainWidth;
+        TerrainPoints[iX,iY].CausticUVCoords.V := (FCausticUV * iY) / FTerrainHeight;
+        TerrainPoints[iX,iY].Vertex.X := iStartWidth + (iX * FTriangleSize);
+        TerrainPoints[iX,iY].Vertex.Y := (iMapHeight)*FHeightScale;
+        TerrainPoints[iX,iY].Vertex.Z := iStartHeight + (iY * FTriangleSize);
       end;
     end;
     FTerrainTop     := (FTerrainTop) * FHeightScale;
@@ -270,24 +241,24 @@ begin
       begin
         if (iX = (FTerrainWidth-1)) and (iY = FTerrainHeight-1) then
         begin
-           TerrainPoints[iX,iY].FNormal := TerrainPoints[iX-1,iY-1].FNormal.Copy();
+           TerrainPoints[iX,iY].Normal := TerrainPoints[iX-1,iY-1].Normal.Copy();
            continue;
         end
         else if iX = (FTerrainWidth-1) then
         begin
-           TerrainPoints[iX,iY].FNormal := TerrainPoints[iX-1,iY].FNormal.Copy();
+           TerrainPoints[iX,iY].Normal := TerrainPoints[iX-1,iY].Normal.Copy();
            continue;
         end
         else if iY = FTerrainHeight-1 then
         begin
-          TerrainPoints[iX,iY].FNormal := TerrainPoints[iX,iY-1].FNormal.Copy();
+          TerrainPoints[iX,iY].Normal := TerrainPoints[iX,iY-1].Normal.Copy();
           continue;
         end;
         GetRotation(iStartWidth + iX*FTriangleSize, iStartHeight + iY*FTriangleSize, iR);
         iM.EmptyMatrix();
         iM.CreateRotation( iR );
-        TerrainPoints[iX,iY].FNormal.reset(0,1,0);
-        iM.ApplyToVector( TerrainPoints[iX,iY].FNormal );
+        TerrainPoints[iX,iY].Normal.reset(0,1,0);
+        iM.ApplyToVector( TerrainPoints[iX,iY].Normal );
       end;
     end;
     GUI.LoadingScreen.UpdateBar();
@@ -327,23 +298,11 @@ begin
   begin
     for iX := 0 to Length(TerrainPoints)-1 do
     begin
-      for iY := 0 to Length(TerrainPoints)-1 do
-      begin
-        TerrainPoints[iX, iY].Destroy();
-      end;
+        setlength(TerrainPoints[iX],0);
     end;
-    for iX := 0 to Length(TerrainPoints)-1 do
-    begin
-        Finalize(TerrainPoints[iX]);
-    end;
-    Finalize(TerrainPoints);
-
-    SetLength(TerrainPoints, 0);
     SetLength(TerrainPoints, 0);
   end;
   TerrainPoints := nil;
-
-  FDetailUV := 1;
 
   Resources.RemoveResource(TGDResource(FColorTexture));
   Resources.RemoveResource(TGDResource(FDetailTexture1));
@@ -378,10 +337,10 @@ begin
    iRZ := trunc(aZ);
    iFX := aX - iRX;
    iFZ := aZ - iRZ;
-   iA := TerrainPoints[iRX   ,iRZ].FVertex.Y;
-   iB := TerrainPoints[iRX+1 ,iRZ].FVertex.Y;
-   iC := TerrainPoints[iRX   ,iRZ+1].FVertex.Y;
-   iD := TerrainPoints[iRX+1 ,iRZ+1].FVertex.Y;
+   iA := TerrainPoints[iRX   ,iRZ].Vertex.Y;
+   iB := TerrainPoints[iRX+1 ,iRZ].Vertex.Y;
+   iC := TerrainPoints[iRX   ,iRZ+1].Vertex.Y;
+   iD := TerrainPoints[iRX+1 ,iRZ+1].Vertex.Y;
    aHeight := (iA + (iB - iA) * iFX) + ((iC + (iD - iC) * iFX) - (iA + (iB - iA) * iFX)) * iFZ;
    result := true;
 end;
@@ -424,22 +383,22 @@ begin
   iRZ := trunc(aZ);
   iFX := aX - iRX;
   iFZ := aZ - iRZ;
-  iA := TerrainPoints[iRX   ,iRZ].FVertex.Y;
-  iB := TerrainPoints[iRX+1 ,iRZ].FVertex.Y;
-  iC := TerrainPoints[iRX   ,iRZ+1].FVertex.Y;
-  iD := TerrainPoints[iRX+1 ,iRZ+1].FVertex.Y;
+  iA := TerrainPoints[iRX   ,iRZ].Vertex.Y;
+  iB := TerrainPoints[iRX+1 ,iRZ].Vertex.Y;
+  iC := TerrainPoints[iRX   ,iRZ+1].Vertex.Y;
+  iD := TerrainPoints[iRX+1 ,iRZ+1].Vertex.Y;
   iPos.Y := (iA + (iB - iA) * iFX) + ((iC + (iD - iC) * iFX) - (iA + (iB - iA) * iFX)) * iFZ;
 
-  iTriangle.V1 := TerrainPoints[iRX, iRZ].FVertex.Copy();
-  iTriangle.V2 := TerrainPoints[iRX+1, iRZ].FVertex.Copy();
-  iTriangle.V3 := TerrainPoints[iRX, iRZ+1].FVertex.Copy();
+  iTriangle.V1 := TerrainPoints[iRX, iRZ].Vertex.Copy();
+  iTriangle.V2 := TerrainPoints[iRX+1, iRZ].Vertex.Copy();
+  iTriangle.V3 := TerrainPoints[iRX, iRZ+1].Vertex.Copy();
   iFound := true;
   iSecTris := false;;
   If Not(iTriangle.PointInTraingle( iPos )) then
   begin
-    iTriangle.V1 := TerrainPoints[iRX+1, iRZ+1].FVertex.Copy();
-    iTriangle.V2 := TerrainPoints[iRX, iRZ+1].FVertex.Copy();
-    iTriangle.V3 := TerrainPoints[iRX+1, iRZ].FVertex.Copy();
+    iTriangle.V1 := TerrainPoints[iRX+1, iRZ+1].Vertex.Copy();
+    iTriangle.V2 := TerrainPoints[iRX, iRZ+1].Vertex.Copy();
+    iTriangle.V3 := TerrainPoints[iRX+1, iRZ].Vertex.Copy();
     iSecTris := true;
     If Not(iTriangle.PointInTraingle( iPos )) then
       iFound := false;

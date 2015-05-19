@@ -75,11 +75,11 @@ procedure SendTerrainPoint(aX,aY : integer);
 begin
   With FTerrain do
   begin
-    glMultiTexCoord2fv(GL_TEXTURE0, TerrainPoints[aX,aY].FColorUVCoords.ArrayPointer );
-    glMultiTexCoord2fv(GL_TEXTURE1, TerrainPoints[aX,aY].FDetailUVCoords.ArrayPointer );
-    glMultiTexCoord2fv(GL_TEXTURE2, TerrainPoints[aX,aY].FCausticUVCoords.ArrayPointer );
-    glNormal3fv( TerrainPoints[aX,aY].FNormal.ArrayPointer );
-    glVertex3fv( TerrainPoints[aX,aY].FVertex.ArrayPointer );
+    glMultiTexCoord2fv(GL_TEXTURE0, TerrainPoints[aX,aY].ColorUVCoords.ArrayPointer );
+    glMultiTexCoord2fv(GL_TEXTURE1, TerrainPoints[aX,aY].DetailUVCoords.ArrayPointer );
+    glMultiTexCoord2fv(GL_TEXTURE2, TerrainPoints[aX,aY].CausticUVCoords.ArrayPointer );
+    glNormal3fv( TerrainPoints[aX,aY].Normal.ArrayPointer );
+    glVertex3fv( TerrainPoints[aX,aY].Vertex.ArrayPointer );
   end;
 end;
 
@@ -133,12 +133,12 @@ procedure TGDTerrainCell.CalculateBoundingBox();
 var
   iX,iY : Integer;
 begin
-  BoundingBox.Min.Reset(  FTerrain.TerrainPoints[ FStartPoint.X-1, FStartPoint.Y-1 ].FVertex.X,
+  BoundingBox.Min.Reset(  FTerrain.TerrainPoints[ FStartPoint.X-1, FStartPoint.Y-1 ].Vertex.X,
                          999999999999999,
-                         FTerrain.TerrainPoints[ FStartPoint.X-1, FStartPoint.Y-1 ].FVertex.Z);
-  BoundingBox.Max.Reset( FTerrain.TerrainPoints[ FEndPoint.X-1, FEndPoint.Y-1 ].FVertex.X,
+                         FTerrain.TerrainPoints[ FStartPoint.X-1, FStartPoint.Y-1 ].Vertex.Z);
+  BoundingBox.Max.Reset( FTerrain.TerrainPoints[ FEndPoint.X-1, FEndPoint.Y-1 ].Vertex.X,
                          -999999999999999,
-                         FTerrain.TerrainPoints[ FEndPoint.X-1, FEndPoint.Y-1 ].FVertex.Z);
+                         FTerrain.TerrainPoints[ FEndPoint.X-1, FEndPoint.Y-1 ].Vertex.Z);
 
 
   for iY := (FStartPoint.Y-1) to FEndPoint.Y-1 do
@@ -146,10 +146,10 @@ begin
     iX := (FStartPoint.X-1);
     for iX := (FStartPoint.X-1) to FEndPoint.X-1 do
     begin
-      If FTerrain.TerrainPoints[ iX,iY  ].FVertex.Y > BoundingBox.Max.Y then
-        BoundingBox.Max.setY(FTerrain.TerrainPoints[ iX,iY  ].FVertex.Y);
-      If FTerrain.TerrainPoints[ iX,iY  ].FVertex.Y < BoundingBox.Min.Y then
-        BoundingBox.Min.setY(FTerrain.TerrainPoints[ iX,iY  ].FVertex.Y);
+      If FTerrain.TerrainPoints[ iX,iY  ].Vertex.Y > BoundingBox.Max.Y then
+        BoundingBox.Max.setY(FTerrain.TerrainPoints[ iX,iY  ].Vertex.Y);
+      If FTerrain.TerrainPoints[ iX,iY  ].Vertex.Y < BoundingBox.Min.Y then
+        BoundingBox.Min.setY(FTerrain.TerrainPoints[ iX,iY  ].Vertex.Y);
     end;
   end;
   BoundingBox.CalculateCenter();
@@ -181,10 +181,10 @@ begin
                               for iX := (FStartPoint.X-1) to FEndPoint.X-1 do
                               begin
                                 glBegin( GL_LINES);
-                                  glVertex3f( TerrainPoints[iX,iY].FVertex.X, TerrainPoints[iX,iY].FVertex.Y, TerrainPoints[iX,iY].FVertex.Z );
-                                  glVertex3f((TerrainPoints[iX,iY].FNormal.X * R_NORMAL_LENGTH) + TerrainPoints[iX,iY].FVertex.X,
-                                             (TerrainPoints[iX,iY].FNormal.Y * R_NORMAL_LENGTH) + TerrainPoints[iX,iY].FVertex.Y,
-                                             (TerrainPoints[iX,iY].FNormal.Z * R_NORMAL_LENGTH) + TerrainPoints[iX,iY].FVertex.Z );
+                                  glVertex3f( TerrainPoints[iX,iY].Vertex.X, TerrainPoints[iX,iY].Vertex.Y, TerrainPoints[iX,iY].Vertex.Z );
+                                  glVertex3f((TerrainPoints[iX,iY].Normal.X * R_NORMAL_LENGTH) + TerrainPoints[iX,iY].Vertex.X,
+                                             (TerrainPoints[iX,iY].Normal.Y * R_NORMAL_LENGTH) + TerrainPoints[iX,iY].Vertex.Y,
+                                             (TerrainPoints[iX,iY].Normal.Z * R_NORMAL_LENGTH) + TerrainPoints[iX,iY].Vertex.Z );
                                 glEnd;
                               end;
                             end;

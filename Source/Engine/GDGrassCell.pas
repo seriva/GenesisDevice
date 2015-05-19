@@ -177,8 +177,8 @@ begin
           for iJ := 0 to iParticalCount[iI]-1 do
           begin
             //position
-            iPos.Reset( aTerrain.TerrainPoints[ iX, iY ].FVertex.X + random(aTerrain.TriangleSize) , 0,
-                        aTerrain.TerrainPoints[ iX, iY ].FVertex.Z + random(aTerrain.TriangleSize) );
+            iPos.Reset( aTerrain.TerrainPoints[ iX, iY ].Vertex.X + random(aTerrain.TriangleSize) , 0,
+                        aTerrain.TerrainPoints[ iX, iY ].Vertex.Z + random(aTerrain.TriangleSize) );
             aTerrain.GetHeight(iPos.X, iPos.Z, iHeight  );
 
             iRandomHeightScale := iTempGrassType.Scale.Y + Random( Round( iTempGrassType.RandomScale.Y ) );
@@ -249,23 +249,23 @@ procedure TGDGrassCell.CalculateBoundingBox(aTerrain : TGDTerrain);
 var
   iX,iY : Integer;
 begin
-  BoundingBox.Min.Reset( aTerrain.TerrainPoints[ FStartPoint.X-1, FStartPoint.Y-1 ].FVertex.X,
+  BoundingBox.Min.Reset( aTerrain.TerrainPoints[ FStartPoint.X-1, FStartPoint.Y-1 ].Vertex.X,
                          999999999999999,
-                         aTerrain.TerrainPoints[ FStartPoint.X-1, FStartPoint.Y-1 ].FVertex.Z);
+                         aTerrain.TerrainPoints[ FStartPoint.X-1, FStartPoint.Y-1 ].Vertex.Z);
 
-  BoundingBox.Max.Reset( aTerrain.TerrainPoints[ FEndPoint.X-1, FEndPoint.Y-1 ].FVertex.X,
+  BoundingBox.Max.Reset( aTerrain.TerrainPoints[ FEndPoint.X-1, FEndPoint.Y-1 ].Vertex.X,
                          -999999999999999,
-                         aTerrain.TerrainPoints[ FEndPoint.X-1, FEndPoint.Y-1 ].FVertex.Z);
+                         aTerrain.TerrainPoints[ FEndPoint.X-1, FEndPoint.Y-1 ].Vertex.Z);
 
   for iY := (FStartPoint.Y-1) to FEndPoint.Y-1 do
   begin
     iX := (FStartPoint.X-1);
     for iX := (FStartPoint.X-1) to FEndPoint.X-1 do
     begin
-      If aTerrain.TerrainPoints[ iX,iY  ].FVertex.Y > BoundingBox.Max.Y then
-        BoundingBox.Max.setY( aTerrain.TerrainPoints[ iX,iY  ].FVertex.Y);
-      If aTerrain.TerrainPoints[ iX,iY  ].FVertex.Y < BoundingBox.Min.Y then
-        BoundingBox.Min.setY( aTerrain.TerrainPoints[ iX,iY  ].FVertex.Y);
+      If aTerrain.TerrainPoints[ iX,iY  ].Vertex.Y > BoundingBox.Max.Y then
+        BoundingBox.Max.setY( aTerrain.TerrainPoints[ iX,iY  ].Vertex.Y);
+      If aTerrain.TerrainPoints[ iX,iY  ].Vertex.Y < BoundingBox.Min.Y then
+        BoundingBox.Min.setY( aTerrain.TerrainPoints[ iX,iY  ].Vertex.Y);
     end;
   end;
   BoundingBox.Max.SetY( BoundingBox.Max.Y+150 );
