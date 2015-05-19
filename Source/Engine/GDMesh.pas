@@ -50,18 +50,10 @@ Type
 {* Meshpoint class                                                            *}
 {******************************************************************************}
 
-  TGDMeshPoint = class
-  private
-    FVertexID : Integer;
-    FNormalID : Integer;
-    FUVID : Integer;
-  public
-    property VertexID : Integer read FVertexID;
-    property NormalID : Integer read FNormalID;
-    property UVID : Integer read FUVID;
-
-    constructor Create();
-    destructor  Destroy();override;
+  TGDMeshPoint = record
+    VertexID : Integer;
+    NormalID : Integer;
+    UVID : Integer;
   end;
 
 {******************************************************************************}
@@ -140,27 +132,6 @@ uses
   GDConsole;
 
 {******************************************************************************}
-{* Create the staticmeshpoint class                                           *}
-{******************************************************************************}
-
-constructor TGDMeshPoint.Create();
-begin
-  FVertexID := 0;
-  FNormalID := 0;
-  FUVID := 0;
-  Inherited;
-end;
-
-{******************************************************************************}
-{* Destroy the staticmeshpoint class                                          *}
-{******************************************************************************}
-
-destructor  TGDMeshPoint.Destroy();
-begin
-  Inherited;
-end;
-
-{******************************************************************************}
 {* Create the staticmeshpolygon class                                         *}
 {******************************************************************************}
 
@@ -168,10 +139,6 @@ constructor TGDMeshPolygon.Create();
 begin
   FPolygonType := PT_TRIANGLE;
   FMaterial := Nil;
-  FPoint1   := TGDMeshPoint.Create();
-  FPoint2   := TGDMeshPoint.Create();
-  FPoint3   := TGDMeshPoint.Create();
-  FPoint4   := TGDMeshPoint.Create();
   Inherited;
 end;
 
@@ -182,10 +149,6 @@ end;
 destructor  TGDMeshPolygon.Destroy();
 begin
   Resources.RemoveResource(TGDResource(FMaterial));
-  FreeAndNil(FPoint1);
-  FreeAndNil(FPoint2);
-  FreeAndNil(FPoint3);
-  FreeAndNil(FPoint4);
   Inherited;
 end;
 
@@ -229,7 +192,7 @@ var
   iQuads : boolean;
   iPolygon : TGDMeshPolygon;
 
-procedure ParsePointSet(aStr : String; aPoint : TGDMeshPoint );
+procedure ParsePointSet(aStr : String; var aPoint : TGDMeshPoint );
 var
   iJ, iCount : Integer;
   iSubStr : String;
@@ -257,9 +220,9 @@ begin
   end;
   iIdx[iCount] := StrToInt(iSubStr)-1;
 
-  aPoint.FVertexID:=iIdx[0];
-  aPoint.FUVID:=iIdx[1];
-  aPoint.FNormalID:=iIdx[2];
+  aPoint.VertexID:=iIdx[0];
+  aPoint.UVID:=iIdx[1];
+  aPoint.NormalID:=iIdx[2];
 end;
 
 begin

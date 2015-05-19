@@ -321,15 +321,15 @@ Begin
         iMeshInput.Model        := iMeshType.Mesh.Name;
         iMeshInput.ModelLOD1    := iMeshType.MeshLOD1.name;
         iMeshInput.ModelLOD2    := iMeshType.MeshLOD2.name;
-        iMeshInput.PosX         := iPos.X;
-        iMeshInput.PosY         := iHeight;
-        iMeshInput.PosZ         := iPos.Z;
-        iMeshInput.RotX         := iMeshType.StartRotation.X;
-        iMeshInput.RotY         := iMeshType.StartRotation.Y + Random(Round(360));
-        iMeshInput.RotZ         := iMeshType.StartRotation.Z;
-        iMeshInput.ScaleX       := iMeshType.Scale + Random(Round(iMeshType.RandomScale));
-        iMeshInput.ScaleY       := iMeshType.Scale + Random(Round(iMeshType.RandomScale));
-        iMeshInput.ScaleZ       := iMeshType.Scale + Random(Round(iMeshType.RandomScale));
+        iMeshInput.Position.X   := iPos.X;
+        iMeshInput.Position.Y   := iHeight;
+        iMeshInput.Position.Z   := iPos.Z;
+        iMeshInput.Rotation.X   := iMeshType.StartRotation.X;
+        iMeshInput.Rotation.Y   := iMeshType.StartRotation.Y + Random(Round(360));
+        iMeshInput.Rotation.Z   := iMeshType.StartRotation.Z;
+        iMeshInput.Scale.X      := iMeshType.Scale + Random(Round(iMeshType.RandomScale));
+        iMeshInput.Scale.Y      := iMeshType.Scale + Random(Round(iMeshType.RandomScale));
+        iMeshInput.Scale.Z      := iMeshType.Scale + Random(Round(iMeshType.RandomScale));
         iMeshInput.FadeDistance := 0;
         iMeshInput.FadeScale    := 0;
 
@@ -359,18 +359,18 @@ Begin
       if aFoliage.CheckRockMap(iX, iY) and aTerrain.GetHeight(iPos.X, iPos.Z, iHeight) then
       begin
         aTerrain.GetRotation(iPos.X, iPos.Z, iRot );
-        iMeshInput.Model     := iMeshType.Mesh.Name;
-        iMeshInput.ModelLOD1 := '';
-        iMeshInput.ModelLOD2 := '';
-        iMeshInput.PosX      := iPos.X;
-        iMeshInput.PosY      := iHeight;
-        iMeshInput.PosZ      := iPos.Z;
-        iMeshInput.RotX      := iRot.x;
-        iMeshInput.RotY      := iRot.y;
-        iMeshInput.RotZ      := iRot.z;
-        iMeshInput.ScaleX    := iMeshType.Scale + Random(Round(iMeshType.RandomScale));
-        iMeshInput.ScaleY    := iMeshType.Scale + Random(Round(iMeshType.RandomScale));
-        iMeshInput.ScaleZ    := iMeshType.Scale + Random(Round(iMeshType.RandomScale));
+        iMeshInput.Model          := iMeshType.Mesh.Name;
+        iMeshInput.ModelLOD1    := '';
+        iMeshInput.ModelLOD2    := '';
+        iMeshInput.Position.X   := iPos.X;
+        iMeshInput.Position.Y   := iHeight;
+        iMeshInput.Position.Z   := iPos.Z;
+        iMeshInput.Rotation.X   := iRot.x;
+        iMeshInput.Rotation.Y   := iRot.y;
+        iMeshInput.Rotation.Z   := iRot.z;
+        iMeshInput.Scale.X      := iMeshType.Scale + Random(Round(iMeshType.RandomScale));
+        iMeshInput.Scale.Y      := iMeshType.Scale + Random(Round(iMeshType.RandomScale));
+        iMeshInput.Scale.Z      := iMeshType.Scale + Random(Round(iMeshType.RandomScale));
         iMeshInput.FadeDistance := Settings.FoliageDistance * R_FOLIAGE_DISTANCE_STEP + (R_FOLIAGE_DISTANCE_STEP * 10);
         iMeshInput.FadeScale    := R_FOLIAGE_LOD_DISTANCE;
         FCells.Add( TGDMeshCell.Create(iMeshInput) );
