@@ -62,7 +62,7 @@ Type
 {* Sound source class                                                         *}
 {******************************************************************************}
 
-  TGDSoundSource = class (TObject)
+  TGDSoundSource = class
   private
     FSource  : TALuint;
     FBuffer  : TGDSoundBuffer;
@@ -82,7 +82,7 @@ Type
     FInitialized : boolean;
     FContext     : PALCcontext;
     FDevice      : PALCdevice;
-    FSources     : TObjectList;
+    FSources     : array[0..S_MAX_SOURCES] of TGDSoundSource;
   public
     property Initialized : boolean read FInitialized;
 
@@ -232,9 +232,8 @@ begin
       Raise Exception.Create('To low OpenAL version! Minimal version ' + iV + ' needed.');
 
     //Create the sources.
-    FSources := TObjectList.Create(true);
     for iI := 0 to S_MAX_SOURCES-1 do
-      FSources.Add(TGDSoundSource.Create());
+      FSources[iI] := TGDSoundSource.Create();
   except
     on E: Exception do
     begin
@@ -259,12 +258,14 @@ destructor TGDSound.Destroy();
 var
   iError  : string;
   iResult : boolean;
+  iI : Integer;
 begin
   inherited;
   Console.Write('Shutting down sound...');
   try
     iResult := true;
-    FreeAndNil(FSources);
+    for iI := 0 to S_MAX_SOURCES-1 do
+      FreeAndNil(FSources[iI]);
     alcDestroyContext(FContext);
     if not(alGetError() = AL_NO_ERROR) then
       Raise Exception.Create('Error destroying contect!');
@@ -312,7 +313,7 @@ begin
     //find a free source for playing
     for iI := 0 to S_MAX_SOURCES-1 do
     begin
-      iSource := FSources.Items[iI] as TGDSoundSource;
+      iSource := FSources[iI];
       if iSource.IsFree() then
       begin
         result := iI;
@@ -347,7 +348,7 @@ var
   iState : TALCint;
 begin
   if (aIndex < 0) or (aIndex > S_MAX_SOURCES-1) then exit;
-  iSource := (FSources.Items[aIndex] as TGDSoundSource);
+  iSource := (FSources[aIndex] as TGDSoundSource);
   alGetSourcei(iSource.FSource, AL_SOURCE_STATE, @iState);
   if (iState = AL_PLAYING) then
     AlSourcePause(iSource.FSource);
@@ -363,7 +364,7 @@ var
   iState : TALCint;
 begin
   if (aIndex < 0) or (aIndex > S_MAX_SOURCES-1) then exit;
-  iSource := (FSources.Items[aIndex] as TGDSoundSource);
+  iSource := (FSources[aIndex] as TGDSoundSource);
   alGetSourcei(iSource.FSource, AL_SOURCE_STATE, @iState);
   if (iState = AL_PAUSED) then
     AlSourcePlay(iSource.FSource);
@@ -379,7 +380,7 @@ var
   iState : TALCint;
 begin
   if (aIndex < 0) or (aIndex > S_MAX_SOURCES-1) then exit;
-  iSource := (FSources.Items[aIndex] as TGDSoundSource);
+  iSource := (FSources[aIndex] as TGDSoundSource);
   alGetSourcei(iSource.FSource, AL_SOURCE_STATE, @iState);
   if (iState = AL_PLAYING) or (iState = AL_PAUSED) then
     AlSourceStop(iSource.FSource);

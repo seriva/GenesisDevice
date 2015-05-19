@@ -48,6 +48,7 @@
         <ComponentName Value="ViewPortForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
+        <UnitName Value="ViewPort"/>
       </Unit1>
       <Unit2>
         <Filename Value="Configuration.pas"/>
@@ -55,10 +56,12 @@
         <ComponentName Value="ConfigurationForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
+        <UnitName Value="Configuration"/>
       </Unit2>
       <Unit3>
         <Filename Value="Main.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="Main"/>
       </Unit3>
       <Unit4>
         <Filename Value="Player.pas"/>
@@ -116,6 +119,7 @@
       <Unit16>
         <Filename Value="..\Engine\GDInterface.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="GDInterface"/>
       </Unit16>
       <Unit17>
         <Filename Value="..\Engine\GDMain.pas"/>
@@ -160,6 +164,7 @@
       <Unit26>
         <Filename Value="..\Engine\GDSound.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="GDSound"/>
       </Unit26>
       <Unit27>
         <Filename Value="..\Engine\GDStatistics.pas"/>
@@ -177,6 +182,7 @@
       <Unit30>
         <Filename Value="..\Engine\GDTexture.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="GDTexture"/>
       </Unit30>
       <Unit31>
         <Filename Value="..\Engine\GDTiming.pas"/>
@@ -218,6 +224,7 @@
       <Unit39>
         <Filename Value="..\Libraries\OpenAL\openal.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="openal"/>
       </Unit39>
       <Unit40>
         <Filename Value="..\Engine\GDResources.pas"/>
@@ -258,6 +265,7 @@
     </Linking>
     <Other>
       <CustomOptions Value="-dBorland -dVer150 -dDelphi7 -dCompiler6_Up -dPUREPASCAL"/>
+      <CompilerPath Value="$(CompPath)"/>
     </Other>
   </CompilerOptions>
   <Debugging>
