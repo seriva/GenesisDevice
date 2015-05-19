@@ -45,7 +45,6 @@ uses
   SysUtils,
   GDInterface,
   IniFiles,
-  Grids,
   multimon,
   GDConstants,
   GDSettings,

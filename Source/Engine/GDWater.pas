@@ -24,16 +24,14 @@ unit GDWater;
 
 {$MODE Delphi}
 
-{******************************************************************************}
-{* Holds the water class                                                      *}
-{******************************************************************************}
-
 interface
 
 uses
   Classes,
   LCLIntf,
   LCLType,
+  IniFiles,
+  GDStringParsing,
   SysUtils,
   dglOpenGL,
   GDConsole,
@@ -49,38 +47,6 @@ uses
   GDModes;
 
 type
-
-{******************************************************************************}
-{* Water input record                                                         *}
-{******************************************************************************}
-
-  TGDWaterInput = record
-    NumberOfWaterText    : integer;
-    WaterPath            : String;
-    WaterPrefix          : String;
-    WaterExtension       : String;
-    WaterDepthMap        : String;
-    Height               : Double;
-    X1                   : Double;
-    Z1                   : Double;
-    X2                   : Double;
-    Z2                   : Double;
-    U                    : Double;
-    V                    : Double;
-    WaveSpeed            : Double;
-    WaveStrength         : Double;
-    CellCountX           : Integer;
-    CellCountY           : Integer;
-    CellDivX             : Integer;
-    CellDivY             : Integer;
-    Visibility           : Integer;
-    NumberOfCausticsText : integer;
-    CausticsPath         : String;
-    CausticsPrefix       : String;
-    CausticsExtension    : String;
-    UnderWaterColor      : TGDColor;
-    WaterColorCorrection : TGDColor;
-  end;
 
 {******************************************************************************}
 {* water class                                                                *}
@@ -117,7 +83,6 @@ type
   public
     Property BoundingBox : TGDBoundingBox read FBoundingBox;
     Property WaterHeight : Double read GetHeight;
-    property Reflection  : TGDTexture read FReflection;
     property CellDivX : Integer read FCellDivX;
     property CellDivY : Integer read FCellDivY;
     property CellCountX : Integer read FCellCountX;
@@ -126,12 +91,12 @@ type
     property WaterV : Double read FWaterV;
     property WaterLoaded : Boolean read FWaterLoaded;
     property UnderWaterColor : TGDColor read FUnderWaterColor;
-    property CausticTextures : TObjectList read FCausticTextures;
-    property CausticCounter : Integer read FCausticCounter;
+
 
     constructor Create();
     destructor  Destroy(); override;
-    function    InitWater( aInput : TGDWaterInput ) : boolean;
+
+    function    InitWater( aIniFile : TIniFile ) : boolean;
     procedure   Clear();
 
     procedure Resize();
@@ -199,11 +164,10 @@ end;
 {* Init the water                                                             *}
 {******************************************************************************}
 
-function TGDWater.InitWater( aInput : TGDWaterInput ) : boolean;
+function TGDWater.InitWater( aIniFile : TIniFile ) : boolean;
 var
-  iI : Integer;
-  iTexture : TGDTexture;
-  iFileName : String;
+  iI, iCount : Integer;
+  iPath, iExt : String;
   iError : string;
 begin
   Console.Write('Loading water...');
@@ -212,44 +176,43 @@ begin
     result        := true;
     FWaterLoaded  := true;
 
-    FCellCountX := aInput.CellCountX;
-    FCellCountY := aInput.CellCountY;
-    FCellDivX   := aInput.CellDivX;
-    FCellDivY   := aInput.CellDivY;
-    FUnderWaterColor := aInput.UnderWaterColor.Copy();
-    FWaterColorCorrection:= aInput.WaterColorCorrection.Copy();
-    FBoundingBox.Max.Reset(aInput.X1,aInput.Height,aInput.Z1);
-    FBoundingBox.Min.Reset(aInput.X2,aInput.Height,aInput.Z2);
-    FWaterU := aInput.U;
-    FWaterV := aInput.V;
+    FCellCountX := aIniFile.ReadInteger('Water', 'CellCountX', 1 );
+    FCellCountY := aIniFile.ReadInteger('Water', 'CellCountY', 1 );
+    FCellDivX   := aIniFile.ReadInteger('Water', 'CellDivX', 1 );
+    FCellDivY   := aIniFile.ReadInteger('Water', 'CellDivY', 1 );
+    FUnderWaterColor      := ReadColor(aIniFile, 'Water', 'UnderWaterColor');
+    FWaterColorCorrection := ReadColor(aIniFile, 'Water', 'WaterColorCorrection');
+    FBoundingBox.Max.Reset(aIniFile.ReadFloat( 'Water', 'X1', 0 ),
+                           aIniFile.ReadFloat( 'Water', 'Height', 0 ),
+                           aIniFile.ReadFloat( 'Water', 'Z1', 0 ));
+    FBoundingBox.Min.Reset(aIniFile.ReadFloat( 'Water', 'X2', 0 ),
+                           aIniFile.ReadFloat( 'Water', 'Height', 0 ),
+                           aIniFile.ReadFloat( 'Water', 'Z2', 0 ));
+    FWaterU := aIniFile.ReadFloat( 'Water', 'WaterU', 1 );
+    FWaterV := aIniFile.ReadFloat( 'Water', 'WaterV', 1 );
     Resize();
     FWaterTextures.Clear();
     FCausticTextures.Clear();
     FWaterCounter := 0;
-    FWaveSpeed := aInput.WaveSpeed;
-    FWaveStrength := aInput.WaveStrength;
+    FWaveSpeed    := aIniFile.ReadFloat( 'Water', 'WaveSpeed', 1000 );
+    FWaveStrength := aIniFile.ReadFloat( 'Water', 'WaveStrength', 18 );
 
-    FDepthMap := Resources.LoadTexture(aInput.WaterDepthMap ,Settings.TextureDetail,Settings.TextureFilter);
+    //Depth texture
+    FDepthMap := Resources.LoadTexture(aIniFile.ReadString( 'Water', 'DepthMap', 'bmp') ,Settings.TextureDetail,Settings.TextureFilter);
 
-    For iI := 0 to aInput.NumberOfWaterText-1 do
-    begin
-      iFileName := '';
-      iFileName := aInput.WaterPath + aInput.WaterPrefix + IntToStr(iI) + '.' + aInput.WaterExtension;
-      iTexture := Resources.LoadTexture(iFileName ,Settings.TextureDetail,Settings.TextureFilter);
-      FWaterTextures.Add( iTexture );
-    end;
+    //Water textures
+    iCount := aIniFile.ReadInteger('Water', 'WaterTexturesCount', 10 );
+    iPath  := aIniFile.ReadString( 'Water', 'WaterMapPath', 'textures\water\') + aIniFile.ReadString( 'Water', 'WaterMapPrefix', 'water');
+    iExt   := aIniFile.ReadString( 'Water', 'WaterMapExtension', 'dds');
+    for iI := 0 to iCount-1 do
+      FWaterTextures.Add( Resources.LoadTexture(iPath + IntToStr(iI) + '.' + iExt ,Settings.TextureDetail,Settings.TextureFilter) );
 
-    if Not(FWaterLoaded) then
-      Raise Exception.Create('Failed to load water textures!');
-
-    For iI := 0 to aInput.NumberOfCausticsText-1 do
-    begin
-      iFileName := '';
-      iFileName := aInput.CausticsPath + aInput.CausticsPrefix + IntToStr(iI) + '.' + aInput.CausticsExtension;
-      iTexture := Resources.LoadTexture(iFileName ,Settings.TextureDetail,Settings.TextureFilter);
-      FCausticTextures.Add( iTexture );
-    end;
-
+    //Caustic textures
+    iCount := aIniFile.ReadInteger('Water', 'CausticTexturesCount', 10 );
+    iPath  := aIniFile.ReadString( 'Water', 'CausticsMapPath', 'textures\water\') + aIniFile.ReadString( 'Water', 'CausticsMapPrefix', 'caust');
+    iExt   := aIniFile.ReadString( 'Water', 'CausticsMapExtension', 'dds');
+    for iI := 0 to iCount-1 do
+      FCausticTextures.Add( Resources.LoadTexture(iPath + IntToStr(iI) + '.' + iExt ,Settings.TextureDetail,Settings.TextureFilter) );
   except
     on E: Exception do
     begin

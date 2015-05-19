@@ -34,7 +34,6 @@ unit GDSound;
 interface
 
 uses
-  Contnrs,
   SysUtils,
   GDConsole,
   GDConstants,

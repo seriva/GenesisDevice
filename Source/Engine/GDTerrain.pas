@@ -26,20 +26,16 @@ unit GDTerrain;
 
 interface
 
-{******************************************************************************}
-{* Hold the terrain class                                                     *}
-{******************************************************************************}
-
 uses
   SysUtils,
   Classes,
   Math,
   Graphics,
+  IniFiles,
   dglOpenGL,
   GDTexture,
   GDTypes,
   GDConsole,
-  GDGUI,
   GDSettings,
   GDConstants,
   GDResource,
@@ -47,23 +43,6 @@ uses
   GDModes;
 
 type
-
-{******************************************************************************}
-{* Terrain input record                                                       *}
-{******************************************************************************}
-
-  TGDTerrainInput = record
-    HeightMap      : String;
-    ColorMap       : String;
-    Detail1        : String;
-    Detail2        : String;
-    Detail3        : String;
-    DetailLookup   : String;
-    TriangleSize   : Integer;
-    HeightScale    : Integer;
-    DetailUV       : Integer;
-    CausticUV      : Integer;
-  end;
 
 {******************************************************************************}
 {* Terrain point class                                                        *}
@@ -111,7 +90,7 @@ type
     constructor Create();
     destructor  Destroy(); override;
 
-    function  InitTerrain( aInput : TGDTerrainInput ) : boolean;
+    function  InitTerrain( aIniFile : TIniFile ) : boolean;
     procedure Clear();
 
     function  GetHeight( aX, aZ : Double; var aHeight : Double ): boolean;
@@ -162,11 +141,10 @@ end;
 {* Init terrain                                                               *}
 {******************************************************************************}
 
-function  TGDTerrain.InitTerrain( aInput : TGDTerrainInput ) : boolean;
+function  TGDTerrain.InitTerrain( aIniFile : TIniFile ) : boolean;
 var
   iMapHeight  : Byte;
-  iBmp1       : TBitmap;
-  iJpg1       : TJPEGImage;
+  iBmp        : TBitmap;
   iX, iY, iStartWidth, iStartHeight : integer;
   iError    : String;
   iM : TGDMatrix;
@@ -180,26 +158,15 @@ begin
     result := true;
     FTerrainLoaded := true;
 
-    iJpg1 := TJPEGImage.Create();
-    iBmp1 := TBitmap.Create();
-    iBmp1.pixelformat := pf32bit;
-    if copy(Uppercase(aInput.HeightMap), length(aInput.HeightMap)-3, 4) = '.JPG' then
-    begin
-      iJpg1.LoadFromFile(aInput.HeightMap);
-      iBmp1.Width:=iJpg1.width;
-      iBmp1.Height:=iJpg1.height;
-      iBmp1.Canvas.Draw(0,0,iJpg1);
-    end
-    else
-      iBmp1.LoadFromFile(aInput.HeightMap);
-
-    FTriangleSize :=   aInput.TriangleSize;
-    FHeightScale  :=   aInput.HeightScale;
-    FTerrainWidth  :=  iBmp1.Width;
-    FTerrainHeight :=  iBmp1.Height;
-
-    FDetailUV := aInput.DetailUV;
-    FCausticUV := aInput.CausticUV;
+    iBmp := TBitmap.Create();
+    iBmp.pixelformat := pf32bit;
+    iBmp.LoadFromFile(aIniFile.ReadString( 'Terrain', 'HeightMap', 'heightmap.bmp' ));
+    FTriangleSize  := aIniFile.ReadInteger('Terrain', 'TriangleSize', 512 );
+    FHeightScale   := aIniFile.ReadInteger('Terrain', 'HeightScale',  64 );
+    FTerrainWidth  := iBmp.Width;
+    FTerrainHeight := iBmp.Height;
+    FDetailUV      := aIniFile.ReadInteger('Terrain', 'DetailMapUV', 100 );
+    FCausticUV     := aIniFile.ReadInteger('Terrain', 'CausticUV', 100 );
 
     if ((FTerrainWidth mod 2) <> 1) or ((FTerrainHeight mod 2) <> 1) then
       Raise Exception.Create('Heightmap dimensions are incorrect!');
@@ -214,7 +181,7 @@ begin
       SetLength(TerrainPoints[iX], FTerrainHeight);
       for iY := 0 to (FTerrainHeight-1) do
       begin
-        iMapHeight := iBmp1.Canvas.Pixels[iX,iY] mod $100;
+        iMapHeight := iBmp.Canvas.Pixels[iX,iY] mod $100;
         If iMapHeight > FTerrainTop then
           FTerrainTop := iMapHeight;
         If iMapHeight < FTerrainBottom then
@@ -230,10 +197,9 @@ begin
         TerrainPoints[iX,iY].Vertex.Z := iStartHeight + (iY * FTriangleSize);
       end;
     end;
-    FTerrainTop     := (FTerrainTop) * FHeightScale;
-    FTerrainBottom  := (FTerrainBottom) * FHeightScale;
-    FreeAndNil(iBmp1);
-    FreeAndNil(iJpg1);
+    FTerrainTop    := (FTerrainTop) * FHeightScale;
+    FTerrainBottom := (FTerrainBottom) * FHeightScale;
+    FreeAndNil(iBmp);
 
     for iX := 0 to (FTerrainWidth-1) do
     begin
@@ -261,17 +227,14 @@ begin
         iM.ApplyToVector( TerrainPoints[iX,iY].Normal );
       end;
     end;
-    GUI.LoadingScreen.UpdateBar();
 
-    FColorTexture := Resources.LoadTexture(aInput.ColorMap ,Settings.TextureDetail,Settings.TextureFilter);
-    GUI.LoadingScreen.UpdateBar();
-    FDetailTexture1 := Resources.LoadTexture(aInput.Detail1 ,Settings.TextureDetail,Settings.TextureFilter);
-    FDetailTexture2 := Resources.LoadTexture(aInput.Detail2 ,Settings.TextureDetail,Settings.TextureFilter);
-    FDetailTexture3 := Resources.LoadTexture(aInput.Detail3 ,Settings.TextureDetail,Settings.TextureFilter);
-    FDetailLookup   := Resources.LoadTexture(aInput.DetailLookup ,Settings.TextureDetail,Settings.TextureFilter);
+    FColorTexture := Resources.LoadTexture(aIniFile.ReadString( 'Terrain', 'ColorMap', 'colormaps.bmp'), Settings.TextureDetail,Settings.TextureFilter);
+    FDetailTexture1 := Resources.LoadTexture(aIniFile.ReadString( 'Terrain', 'DetailMap1', 'detailmap1.jpg'), Settings.TextureDetail,Settings.TextureFilter);
+    FDetailTexture2 := Resources.LoadTexture(aIniFile.ReadString( 'Terrain', 'DetailMap2', 'detailmap2.jpg'), Settings.TextureDetail,Settings.TextureFilter);
+    FDetailTexture3 := Resources.LoadTexture(aIniFile.ReadString( 'Terrain', 'DetailMap3', 'detailmap3.jpg'), Settings.TextureDetail,Settings.TextureFilter);
+    FDetailLookup   := Resources.LoadTexture(aIniFile.ReadString( 'Terrain', 'DetailDistribution', 'detaillookup.jpg') ,Settings.TextureDetail,Settings.TextureFilter);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    GUI.LoadingScreen.UpdateBar();
   except
     on E: Exception do
     begin
@@ -292,7 +255,7 @@ end;
 
 procedure TGDTerrain.Clear();
 var
-  iX, iY: Integer;
+  iX : Integer;
 begin
   if (TerrainPoints <> nil) then
   begin

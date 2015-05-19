@@ -24,16 +24,12 @@ unit GDFoliage;
 
 {$MODE Delphi}
 
-{******************************************************************************}
-{* Hold the main grass classes for settings and coverage of terrain grass     *}
-{* foliage.                                                                   *}
-{******************************************************************************}
-
 interface
 
 uses
   SysUtils,
   dglOpenGL,
+  IniFiles,
   Graphics,
   GDTexture,
   GDTypes,
@@ -121,28 +117,6 @@ type
   end;
 
 {******************************************************************************}
-{* Foliage input record                                                       *}
-{******************************************************************************}
-
-  TGDFoliageInput = record
-    GrassMap               : String;
-    GrassCellCountX        : Integer;
-    GrassCellCountY        : Integer;
-    GrassAnimationSpeed    : Single;
-    GrassAnimationStrength : Single;
-
-    TreeMap                : String;
-    TreeCount              : Integer;
-    TreeLowerLimit         : Integer;
-    TreeUpperLimit         : Integer;
-    TreeAnimationSpeed     : Single;
-    TreeAnimationStrength  : Single;
-
-    RockMap                : String;
-    RockCount              : Integer;
-  end;
-
-{******************************************************************************}
 {* Foliage class                                                              *}
 {******************************************************************************}
 
@@ -171,8 +145,8 @@ type
 
     property GrassAnimationSpeed    : Single read FGrassAnimationSpeed;
     property GrassAnimationStrength : Single read FGrassAnimationStrength;
-    property TreeAnimationSpeed    : Single read FTreeAnimationSpeed;
-    property TreeAnimationStrength : Single read FTreeAnimationStrength;
+    property TreeAnimationSpeed     : Single read FTreeAnimationSpeed;
+    property TreeAnimationStrength  : Single read FTreeAnimationStrength;
 
     property GrassTypes : TObjectList read FGrassTypes;
     property GrassCellCountX : Integer read FGrassCellCountX;
@@ -189,7 +163,7 @@ type
     constructor Create();
     destructor  Destroy(); override;
 
-    Function  InitFoliage( aInput : TGDFoliageInput ) : boolean;
+    Function  InitFoliage( aIniFile : TIniFile ) : boolean;
     procedure Clear();
 
     procedure StartRenderingGrass( aRenderAttribute : TGDRenderAttribute );
@@ -282,7 +256,7 @@ end;
 {* Init the foliage                                                           *}
 {******************************************************************************}
 
-Function TGDFoliage.InitFoliage( aInput : TGDFoliageInput ) : boolean;
+Function TGDFoliage.InitFoliage( aIniFile : TIniFile ) : boolean;
 var
   iTreeMap, iGrassMap, iRockMap : TBitmap;
   iX, iY : integer;
@@ -293,28 +267,28 @@ begin
   try
     result := true;
 
-    FGrassCellCountX        := aInput.GrassCellCountX;
-    FGrassCellCountY        := aInput.GrassCellCountY;
-    FGrassAnimationSpeed    := aInput.GrassAnimationSpeed;
-    FGrassAnimationStrength := aInput.GrassAnimationStrength;
+    FGrassCellCountX        := aIniFile.ReadInteger( 'Foliage', 'GrassCellCountX', 1 ); ;
+    FGrassCellCountY        := aIniFile.ReadInteger( 'Foliage', 'GrassCellCountY', 1 );
+    FGrassAnimationSpeed    := aIniFile.ReadFloat( 'Foliage', 'GrassAnimationSpeed', 1000 );
+    FGrassAnimationStrength := aIniFile.ReadFloat( 'Foliage', 'GrassAnimationStrength', 5);
 
-    FTreeCount              := aInput.TreeCount;
-    FTreeLowerLimit         := aInput.TreeLowerLimit;
-    FTreeUpperLimit         := aInput.TreeUpperLimit;
-    FTreeAnimationSpeed     := aInput.TreeAnimationSpeed;
-    FTreeAnimationStrength  := aInput.TreeAnimationStrength;
+    FTreeCount              := aIniFile.ReadInteger( 'Foliage', 'TreeCount', 0 );
+    FTreeLowerLimit         := aIniFile.ReadInteger( 'Foliage', 'TreeLowerLimit', 0 );
+    FTreeUpperLimit         := aIniFile.ReadInteger( 'Foliage', 'TreeUpperLimit', 0 );
+    FTreeAnimationSpeed     := aIniFile.ReadFloat( 'Foliage', 'TreeAnimationSpeed', 1000 );
+    FTreeAnimationStrength  := aIniFile.ReadFloat( 'Foliage', 'TreeAnimationStrength', 5 );
 
-    FRockCount              := aInput.RockCount;
+    FRockCount              := aIniFile.ReadInteger( 'Foliage', 'RockCount', 0 );
 
     iTreeMap := TBitmap.Create();
     iTreeMap.pixelformat := pf24bit;
-    iTreeMap.LoadFromFile( aInput.TreeMap);
+    iTreeMap.LoadFromFile( aIniFile.ReadString( 'Foliage', 'TreeMap', 'treemap.bmp' ));
     iGrassMap := TBitmap.Create();
     iGrassMap.pixelformat := pf24bit;
-    iGrassMap.LoadFromFile( aInput.GrassMap);
+    iGrassMap.LoadFromFile( aIniFile.ReadString( 'Foliage', 'GrassMap', 'grassmap.bmp' ));
     iRockMap := TBitmap.Create();
     iRockMap.pixelformat := pf24bit;
-    iRockMap.LoadFromFile( aInput.RockMap);
+    iRockMap.LoadFromFile( aIniFile.ReadString( 'Foliage', 'RockMap', 'rockmap.bmp' ));
 
     if ((iTreeMap.Width mod 2) <> 0) or ((iTreeMap.Height mod 2) <> 0) then
       Raise Exception.Create('Dimensions are incorrect!');
