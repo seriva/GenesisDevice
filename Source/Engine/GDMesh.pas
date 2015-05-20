@@ -60,7 +60,7 @@ Type
 {* Meshpolygon class                                                          *}
 {******************************************************************************}
 
-  TGDMeshPolygon = class (TObject)
+  TGDPolygon = class (TObject)
   private
     FPolygonType : TGDPolygonType;
     FMaterial    : TGDMaterial;
@@ -81,10 +81,10 @@ Type
   end;
 
 {******************************************************************************}
-{* Materialsegment class                                                    *}
+{* Segment class                                                              *}
 {******************************************************************************}
 
-  TGDMaterialSegment = class (TObject)
+  TGDSegment = class (TObject)
   private
     FMaterial   : TGDMaterial;
     FPolygons   : TObjectList;
@@ -102,24 +102,24 @@ Type
 
   TGDMesh = class (TGDResource)
   private
-    FFileName            : String;
-    FVertices            : TGDVectorList;
-    FNormals             : TGDVectorList;
-    FUV                  : TGDUVCoordList;
-    FPolygons            : TObjectList;
-    FMaterialSegmentList : TObjectList;
-    FDPLS                : TObjectList;
+    FFileName : String;
+    FVertices : TGDVectorList;
+    FNormals  : TGDVectorList;
+    FUV       : TGDUVCoordList;
+    FPolygons : TObjectList;
+    FSegments : TObjectList;
+    FDPLS     : TObjectList;
 
-    procedure CreateMaterialSegmentLists();
+    procedure CreateSegmentLists();
     procedure CreateDisplayLists();
   public
-    property FileName      : String read FFileName;
-    property Vertices      : TGDVectorList read FVertices;
-    property Normals       : TGDVectorList read FNormals;
-    property UV            : TGDUVCoordList read FUV;
-    property Polygons      : TObjectList read FPolygons;
-    property MaterialSegmentList : TObjectList read FMaterialSegmentList;
-    property DPLS          : TObjectList read FDPLS;
+    property FileName : String read FFileName;
+    property Vertices : TGDVectorList read FVertices;
+    property Normals  : TGDVectorList read FNormals;
+    property UV       : TGDUVCoordList read FUV;
+    property Polygons : TObjectList read FPolygons;
+    property Segments : TObjectList read FSegments;
+    property DPLS     : TObjectList read FDPLS;
 
     constructor Create(aFileName : String);
     destructor  Destroy();override;
@@ -135,7 +135,7 @@ uses
 {* Create the staticmeshpolygon class                                         *}
 {******************************************************************************}
 
-constructor TGDMeshPolygon.Create();
+constructor TGDPolygon.Create();
 begin
   FPolygonType := PT_TRIANGLE;
   FMaterial := Nil;
@@ -146,7 +146,7 @@ end;
 {* Destroy the staticmeshpolygon class                                        *}
 {******************************************************************************}
 
-destructor  TGDMeshPolygon.Destroy();
+destructor  TGDPolygon.Destroy();
 begin
   Resources.RemoveResource(TGDResource(FMaterial));
   Inherited;
@@ -156,7 +156,7 @@ end;
 {* Create the materialrendersegment class                                     *}
 {******************************************************************************}
 
-constructor TGDMaterialSegment.Create();
+constructor TGDSegment.Create();
 begin
   FMaterial := Nil;
   FPolygons := TObjectList.Create();
@@ -168,7 +168,7 @@ end;
 {* Destroy the materialrendersegment class                                    *}
 {******************************************************************************}
 
-destructor  TGDMaterialSegment.Destroy();
+destructor  TGDSegment.Destroy();
 begin
   Resources.RemoveResource(TGDResource(FMaterial));
   FMaterial := Nil;
@@ -190,7 +190,7 @@ var
   iMat : TGDMaterial;
   iResult : boolean;
   iQuads : boolean;
-  iPolygon : TGDMeshPolygon;
+  iPolygon : TGDPolygon;
 
 procedure ParsePointSet(aStr : String; var aPoint : TGDMeshPoint );
 var
@@ -230,13 +230,13 @@ begin
   try
     iResult := true;
 
-    iQuads               := false;
-    FVertices            := TGDVectorList.Create();
-    FNormals             := TGDVectorList.Create();
-    FUV                  := TGDUVCoordList.Create();
-    FPolygons            := TObjectList.Create();
-    FMaterialSegmentList := TObjectList.Create();
-    FDPLS                := TObjectList.Create();
+    iQuads    := false;
+    FVertices := TGDVectorList.Create();
+    FNormals  := TGDVectorList.Create();
+    FUV       := TGDUVCoordList.Create();
+    FPolygons := TObjectList.Create();
+    FSegments := TObjectList.Create();
+    FDPLS     := TObjectList.Create();
 
     If Not(FileExistsUTF8(aFileName) ) then
       Raise Exception.Create('Mesh ' + aFileName + ' doesn`t excist!');
@@ -301,7 +301,7 @@ begin
            Raise Exception.Create('No material for polygon!');
 
         //we only support triangles now.
-        iPolygon := TGDMeshPolygon.Create();
+        iPolygon := TGDPolygon.Create();
         iPolygon.FMaterial := iMat;
         ParsePointSet(GetNextToken(iFile), iPolygon.FPoint1);
         ParsePointSet(GetNextToken(iFile), iPolygon.FPoint2);
@@ -327,7 +327,7 @@ begin
   Console.Use:=true;
   Console.WriteOkFail(iResult, iError);
 
-  CreateMaterialSegmentLists();
+  CreateSegmentLists();
   CreateDisplayLists();
 end;
 
@@ -337,16 +337,11 @@ end;
 
 destructor  TGDMesh.Destroy();
 begin
-  FVertices.Clear();
-  FNormals.Clear();
-  FUV.Clear();
-  FPolygons.Clear();
-  FMaterialSegmentList.Clear();
   FreeAndNil(FVertices);
   FreeAndNil(FNormals);
   FreeAndNil(FUV);
   FreeAndNil(FPolygons);
-  FreeAndnil(FMaterialSegmentList);
+  FreeAndnil(FSegments);
   FreeAndNil(FDPLS);
 end;
 
@@ -354,23 +349,23 @@ end;
 {* Create the mesh material segment lists                                     *}
 {******************************************************************************}
 
-procedure TGDMesh.CreateMaterialSegmentLists();
+procedure TGDMesh.CreateSegmentLists();
 var
   iI    : Integer;
   iCount: Integer;
   iMat  : TGDMaterial;
-  iMS   : TGDMaterialSegment;
-  iTempPolygon : TGDMeshPolygon;
+  iMS   : TGDSegment;
+  iPolygon : TGDPolygon;
 
 procedure StartMaterialSegment();
 begin
-  iMS := TGDMaterialSegment.Create();
-  iMS.FMaterial := iTempPolygon.Material;
+  iMS := TGDSegment.Create();
+  iMS.FMaterial := iPolygon.Material;
 end;
 
 procedure EndMaterialSegment();
 begin
-  FMaterialSegmentList.Add( iMS );
+  FSegments.Add( iMS );
 end;
 
 begin
@@ -378,9 +373,9 @@ begin
   iCount := Fpolygons.Count - 1;
   for iI := 0 to iCount do
   begin
-    iTempPolygon := TGDMeshPolygon(Fpolygons.Items[iI]);
+    iPolygon := TGDPolygon(Fpolygons.Items[iI]);
 
-    If iMat <> iTempPolygon.Material then
+    If iMat <> iPolygon.Material then
     begin
       if iMat = nil then
         StartMaterialSegment()
@@ -391,9 +386,9 @@ begin
       end;
     end;
 
-    iMS.Polygons.Add(iTempPolygon);
+    iMS.Polygons.Add(iPolygon);
 
-    iMat := iTempPolygon.Material;
+    iMat := iPolygon.Material;
   end;
 
   EndMaterialSegment();
@@ -406,16 +401,16 @@ end;
 procedure TGDMesh.CreateDisplayLists();
 var
   iI   : Integer;
-  iMS  : TGDMaterialSegment;
+  iMS  : TGDSegment;
   iDPL : TGDGLDisplayList;
   iJ   : Integer;
-  iPL  : TGDMeshPolygon;
+  iPL  : TGDPolygon;
   iFirst : boolean;
 begin
   //prepare the displaylists.
-  for iI := 0 to FMaterialSegmentList.Count - 1 do
+  for iI := 0 to FSegments.Count - 1 do
   begin
-    iMS := TGDMaterialSegment(FMaterialSegmentList.Items[iI]);
+    iMS  := TGDSegment(FSegments.Items[iI]);
     iDPL := TGDGLDisplayList.Create();
     iDPL.InitDisplayList();
     iDPL.StartList();
@@ -423,7 +418,7 @@ begin
 
     for iJ := 0 to iMS.Polygons.Count-1 do
     begin
-      iPL := TGDMeshPolygon(iMS.Polygons.Items[iJ]);
+      iPL := TGDPolygon(iMS.Polygons.Items[iJ]);
       if iFirst then
       begin
         if iPL.FPolygonType = PT_TRIANGLE then

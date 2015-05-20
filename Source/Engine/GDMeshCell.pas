@@ -164,11 +164,11 @@ end;
 procedure TGDMeshCell.Render( aRenderAttribute : TGDRenderAttribute; aRenderFor : TGDRenderFor );
 var
   iI  : Integer;
-  iMS : TGDMaterialSegment;
+  iMS : TGDSegment;
   iNormal, iVertex : TGDVector;
   iNormals : TGDVectorList;
   iVertices : TGDVectorList;
-  iTempPolygon : TGDMeshPolygon;
+  iTempPolygon : TGDPolygon;
   iFadeDistanceScale : Single;
   iMesh : TGDMesh;
 
@@ -212,9 +212,9 @@ begin
 
   Case aRenderAttribute Of
     RA_NORMAL         : begin
-                          for iI := 0 to iMesh.MaterialSegmentList.Count - 1 do
+                          for iI := 0 to iMesh.Segments.Count - 1 do
                           begin
-                            iMS := TGDMaterialSegment(iMesh.MaterialSegmentList.Items[iI]);
+                            iMS := TGDSegment(iMesh.Segments.Items[iI]);
 
                             if Modes.RenderWireframe then
                             begin
@@ -288,7 +288,7 @@ begin
                           glBegin(GL_LINES);
                           for iI := 0 to iMesh.Polygons.Count - 1 do
                           begin
-                            iTempPolygon := TGDMeshPolygon(iMesh.Polygons.Items[iI]);
+                            iTempPolygon := TGDPolygon(iMesh.Polygons.Items[iI]);
                             RenderNormal(iTempPolygon.P1);
                             RenderNormal(iTempPolygon.P2);
                             RenderNormal(iTempPolygon.P3);
