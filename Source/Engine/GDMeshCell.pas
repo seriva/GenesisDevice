@@ -288,7 +288,7 @@ begin
                           glBegin(GL_LINES);
                           for iI := 0 to iMesh.Polygons.Count - 1 do
                           begin
-                            iTempPolygon := TGDPolygon(iMesh.Polygons.Items[iI]);
+                            iTempPolygon := iMesh.Polygons.Items[iI];
                             RenderNormal(iTempPolygon.P1);
                             RenderNormal(iTempPolygon.P2);
                             RenderNormal(iTempPolygon.P3);

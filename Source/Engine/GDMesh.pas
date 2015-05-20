@@ -22,7 +22,7 @@
 *******************************************************************************}   
 unit GDMesh;
 
-{$MODE Delphi}
+{$MODE objfpc}
 
 {******************************************************************************}
 {* Holds the mesh classes                                                     *}
@@ -31,6 +31,7 @@ unit GDMesh;
 interface
 
 Uses
+  fgl,
   SysUtils,
   Classes,
   dglOpenGL,
@@ -79,6 +80,7 @@ Type
     constructor Create();
     destructor  Destroy();override;
   end;
+  TGDPolygonList = specialize TFPGObjectList<TGDPolygon>;
 
 {******************************************************************************}
 {* Segment class                                                              *}
@@ -86,11 +88,11 @@ Type
 
   TGDSegment = class (TObject)
   private
-    FMaterial   : TGDMaterial;
-    FPolygons   : TObjectList;
+    FMaterial : TGDMaterial;
+    FPolygons : TGDPolygonList;
   public
     property Material : TGDMaterial read FMaterial;
-    property Polygons : TObjectList read FPolygons;
+    property Polygons : TGDPolygonList read FPolygons;
 
     constructor Create();
     destructor  Destroy();override;
@@ -106,7 +108,7 @@ Type
     FVertices : TGDVectorList;
     FNormals  : TGDVectorList;
     FUV       : TGDUVCoordList;
-    FPolygons : TObjectList;
+    FPolygons : TGDPolygonList;
     FSegments : TObjectList;
     FDPLS     : TObjectList;
 
@@ -117,7 +119,7 @@ Type
     property Vertices : TGDVectorList read FVertices;
     property Normals  : TGDVectorList read FNormals;
     property UV       : TGDUVCoordList read FUV;
-    property Polygons : TObjectList read FPolygons;
+    property Polygons : TGDPolygonList read FPolygons;
     property Segments : TObjectList read FSegments;
     property DPLS     : TObjectList read FDPLS;
 
@@ -159,8 +161,7 @@ end;
 constructor TGDSegment.Create();
 begin
   FMaterial := Nil;
-  FPolygons := TObjectList.Create();
-  FPolygons.OwnsObjects := False;
+  FPolygons := TGDPolygonList.Create(false);
   Inherited;
 end;
 
@@ -234,7 +235,7 @@ begin
     FVertices := TGDVectorList.Create();
     FNormals  := TGDVectorList.Create();
     FUV       := TGDUVCoordList.Create();
-    FPolygons := TObjectList.Create();
+    FPolygons := TGDPolygonList.Create();
     FSegments := TObjectList.Create();
     FDPLS     := TObjectList.Create();
 
@@ -373,7 +374,7 @@ begin
   iCount := Fpolygons.Count - 1;
   for iI := 0 to iCount do
   begin
-    iPolygon := TGDPolygon(Fpolygons.Items[iI]);
+    iPolygon := Fpolygons.Items[iI];
 
     If iMat <> iPolygon.Material then
     begin
