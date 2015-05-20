@@ -53,7 +53,7 @@ type
                        aStartU2, aStartV2, aStepU2, aStepV2 : Double);
     destructor  Destroy(); override;
 
-    procedure RenderWaterCell( aRenderAttribute : TGDRenderAttribute );
+    procedure Render( aRenderAttribute : TGDRenderAttribute; aRenderFor : TGDRenderFor ); override;
   end;
 
 implementation
@@ -136,7 +136,7 @@ end;
 {* Render the watercell                                                       *}
 {******************************************************************************}
 
-procedure TGDWaterCell.RenderWaterCell( aRenderAttribute : TGDRenderAttribute );
+procedure TGDWaterCell.Render( aRenderAttribute : TGDRenderAttribute; aRenderFor : TGDRenderFor );
 begin
   Case aRenderAttribute Of
     RA_NORMAL         : begin

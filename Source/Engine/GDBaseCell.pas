@@ -22,7 +22,7 @@
 *******************************************************************************}   
 unit GDBaseCell;
 
-{$MODE Delphi}
+{$MODE objfpc}
 
 {******************************************************************************}
 {* Holds the base cell class                                                  *}
@@ -31,7 +31,7 @@ unit GDBaseCell;
 interface
 
 uses
-  SysUtils,
+  FGL,
   GDConstants,
   GDTypes;
 
@@ -41,7 +41,7 @@ type
 {* Base cell class                                                            *}
 {******************************************************************************}
 
-  TGDBaseCell = class (TObject)
+  TGDBaseCell = class
   private
     FBoundingBox    : TGDBoundingBox;
     FObjectType     : TGDStaticObjectType;
@@ -53,7 +53,11 @@ type
 
     constructor Create();
     destructor  Destroy(); override;
+
+    procedure Render( aRenderAttribute : TGDRenderAttribute; aRenderFor : TGDRenderFor ); virtual;
   end;
+
+  TGDBaseCellList = specialize TFPGObjectList<TGDBaseCell>;
 
 implementation
 
@@ -71,10 +75,18 @@ end;
 {* Destroy the base cell class                                                *}
 {******************************************************************************}
 
-destructor  TGDBaseCell.Destroy();
+destructor TGDBaseCell.Destroy();
 begin
   inherited;
 end;
 
+{******************************************************************************}
+{* Cell Render method                                                         *}
+{******************************************************************************}
+
+procedure TGDBaseCell.Render( aRenderAttribute : TGDRenderAttribute; aRenderFor : TGDRenderFor );
+begin
+ //Do nothing.
+end;
 
 end.

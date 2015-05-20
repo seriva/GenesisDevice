@@ -22,7 +22,7 @@
 *******************************************************************************}   
 unit GDTexture;
 
-{$MODE Delphi}
+{$MODE objfpc}
 
 {******************************************************************************}
 {* Holds the texture class and managing system                                *}
@@ -31,6 +31,7 @@ unit GDTexture;
 interface
 
 Uses
+ fgl,
  Windows,
  Classes,
  LCLIntf,
@@ -157,6 +158,8 @@ type
     procedure BindTexture(aTU : GLEnum);
   end;
 
+  TGDTextureList = specialize TFPGObjectList<TGDTexture>;
+
 implementation
 
 uses
@@ -203,7 +206,7 @@ begin
       Raise Exception.Create( aName + ' doesn`t exists.');
 
     //load the texture
-    iPFile := CreateFile(PChar(aName), GENERIC_READ, FILE_SHARE_READ, nil, OPEN_EXISTING, 0, 0);
+    iPFile := CreateFile(PChar(AnsiString(aName)), GENERIC_READ, FILE_SHARE_READ, nil, OPEN_EXISTING, 0, 0);
     if (iPFile = INVALID_HANDLE_VALUE) then
       Raise Exception.Create('Failed to load texture ' + aName);
 

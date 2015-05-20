@@ -89,7 +89,7 @@ Type
     FMaterial   : TGDMaterial;
     FPolygons   : TObjectList;
   public
-    property Material    : TGDMaterial read FMaterial;
+    property Material : TGDMaterial read FMaterial;
     property Polygons : TObjectList read FPolygons;
 
     constructor Create();

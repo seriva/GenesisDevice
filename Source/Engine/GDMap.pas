@@ -24,10 +24,6 @@ unit GDMap;
 
 {$MODE Delphi}
 
-{******************************************************************************}
-{* Hold the map class that loads maps                                         *}
-{******************************************************************************}
-
 interface
 
 uses
@@ -145,9 +141,7 @@ function TGDMap.InitMap( aFileName : String ) : boolean;
 var
   iIniFile : TIniFile;
   iI : Integer;
-  iString : String;
-  iGrassTypeInput : TGDGrassTypeInput;
-  iMeshTypeInput  : TGDMeshTypeInput;
+  iString         : String;
   iMeshInput      : TGDMeshCellInput;
 begin
   Timing.Start();
@@ -194,13 +188,7 @@ begin
   iI := 1;
   while(iIniFile.SectionExists('GrassType' + IntToStr(iI))) do
   begin
-    iString := 'GrassType' + IntToStr(iI);
-    iGrassTypeInput.Texture      := iIniFile.ReadString( iString, 'Texture', '');
-    iGrassTypeInput.Scale        := ReadVector(iIniFile, iString, 'Scale');
-    iGrassTypeInput.RandomScale  := ReadVector(iIniFile, iString, 'RandomScale');
-    iGrassTypeInput.CoverOfTotal := iIniFile.ReadFloat( iString, 'CoverOfTotal', 100 );
-    Foliage.GrassTypes.Add( TGDGrassType.Create(iGrassTypeInput));
-
+    Foliage.GrassTypes.Add( TGDGrassType.Create(iIniFile, 'GrassType' + IntToStr(iI)));
     iI := iI + 1;
   end;
   GUI.LoadingScreen.UpdateBar();
@@ -209,17 +197,7 @@ begin
   iI := 1;
   while(iIniFile.SectionExists('TreeType' + IntToStr(iI))) do
   begin
-    iString := 'TreeType' + IntToStr(iI);
-
-    iMeshTypeInput.Model         := iIniFile.ReadString( iString, 'Model', '');
-    iMeshTypeInput.ModelLOD1     := iIniFile.ReadString( iString, 'ModelLOD1', '' );
-    iMeshTypeInput.ModelLOD2     := iIniFile.ReadString( iString, 'ModelLOD2', '' );
-    iMeshTypeInput.Scale         := iIniFile.ReadFloat( iString, 'Scale', 100 );
-    iMeshTypeInput.RandomScale   := iIniFile.ReadFloat( iString, 'RandomScale', 0 );
-    iMeshTypeInput.StartRotation := ReadVector(iIniFile, iString, 'StartRotation');
-    iMeshTypeInput.CoverOfTotal  := iIniFile.ReadFloat( iString, 'CoverOfTotal', 100 );
-    Foliage.TreeTypes.Add(TGDMeshType.Create(iMeshTypeInput));
-
+    Foliage.TreeTypes.Add(TGDMeshType.Create(iIniFile, 'TreeType' + IntToStr(iI)));
     iI := iI + 1;
   end;
   GUI.LoadingScreen.UpdateBar();
@@ -228,14 +206,7 @@ begin
   iI := 1;
   while(iIniFile.SectionExists('RockType' + IntToStr(iI))) do
   begin
-    iString := 'RockType' + IntToStr(iI);
-
-    iMeshTypeInput.Model        := iIniFile.ReadString( iString, 'Model', '');
-    iMeshTypeInput.Scale        := iIniFile.ReadFloat( iString, 'Scale', 100 );
-    iMeshTypeInput.RandomScale  := iIniFile.ReadFloat( iString, 'RandomScale', 0 );
-    iMeshTypeInput.CoverOfTotal := iIniFile.ReadFloat( iString, 'CoverOfTotal', 100 );
-    Foliage.RockTypes.Add(TGDMeshType.Create(iMeshTypeInput));
-
+    Foliage.RockTypes.Add(TGDMeshType.Create(iIniFile, 'RockType' + IntToStr(iI)));
     iI := iI + 1;
   end;
   GUI.LoadingScreen.UpdateBar();

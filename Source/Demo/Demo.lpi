@@ -73,6 +73,7 @@
       <Unit6>
         <Filename Value="..\Engine\GDBaseCell.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="GDBaseCell"/>
       </Unit6>
       <Unit7>
         <Filename Value="..\Engine\GDCamera.pas"/>
@@ -99,6 +100,7 @@
       <Unit12>
         <Filename Value="..\Engine\GDGLObjects.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="GDGLObjects"/>
       </Unit12>
       <Unit13>
         <Filename Value="..\Engine\GDGrassCell.pas"/>
@@ -108,10 +110,12 @@
       <Unit14>
         <Filename Value="..\Engine\GDGUI.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="GDGUI"/>
       </Unit14>
       <Unit15>
         <Filename Value="..\Engine\GDInput.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="GDInput"/>
       </Unit15>
       <Unit16>
         <Filename Value="..\Engine\GDInterface.pas"/>
@@ -130,10 +134,12 @@
       <Unit19>
         <Filename Value="..\Engine\GDMesh.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="GDMesh"/>
       </Unit19>
       <Unit20>
         <Filename Value="..\Engine\GDMeshCell.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="GDMeshCell"/>
       </Unit20>
       <Unit21>
         <Filename Value="..\Engine\GDModes.pas"/>
@@ -142,10 +148,12 @@
       <Unit22>
         <Filename Value="..\Engine\GDOctree.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="GDOctree"/>
       </Unit22>
       <Unit23>
         <Filename Value="..\Engine\GDRenderer.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="GDRenderer"/>
       </Unit23>
       <Unit24>
         <Filename Value="..\Engine\GDSettings.pas"/>
@@ -210,6 +218,7 @@
       <Unit37>
         <Filename Value="..\Engine\GDGenerics.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="GDGenerics"/>
       </Unit37>
       <Unit38>
         <Filename Value="..\Libraries\OpenAL\mpg123.pas"/>
@@ -222,6 +231,7 @@
       <Unit40>
         <Filename Value="..\Engine\GDResources.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="GDResources"/>
       </Unit40>
       <Unit41>
         <Filename Value="..\Engine\GDResource.pas"/>
@@ -258,6 +268,7 @@
     </Linking>
     <Other>
       <CustomOptions Value="-dBorland -dVer150 -dDelphi7 -dCompiler6_Up -dPUREPASCAL"/>
+      <CompilerPath Value="$(CompPath)"/>
     </Other>
   </CompilerOptions>
   <Debugging>

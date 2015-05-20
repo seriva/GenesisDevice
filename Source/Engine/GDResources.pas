@@ -91,6 +91,11 @@ function TGDResources.Loadmesh(aFileName : String): TGDMesh;
 var
   iIdx : Integer;
 begin
+  if aFileName = '' then
+  begin
+    result := nil;
+    exit
+  end;
   if Find(aFileName, iIdx) then
     result := GetResource(iIdx) as TGDMesh
   else

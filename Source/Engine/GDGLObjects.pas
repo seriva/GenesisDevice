@@ -253,7 +253,6 @@ function TGDGLShader.LoadShaderFromFile( aFileName: String;  atype: GLenum): GLh
 var
   iTXT: TStringList;
 begin
-
   iTXT := TStringList.Create;
   iTXT.LoadFromFile(aFileName);
 

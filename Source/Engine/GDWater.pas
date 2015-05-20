@@ -43,7 +43,6 @@ uses
   GDCamera,
   GDResource,
   GDTiming,
-  Contnrs,
   GDModes;
 
 type
@@ -74,9 +73,9 @@ type
     FWaterLoaded     : Boolean;
     FUnderWaterColor : TGDColor;
     FWaterColorCorrection : TGDColor;
-    FCausticTextures : TObjectList;
+    FCausticTextures : TGDTextureList;
     FCausticCounter  : Integer;
-    FWaterTextures   : TObjectList;
+    FWaterTextures   : TGDTextureList;
     FWaterCounter    : Integer;
 
     function GetHeight() : Double;
@@ -134,8 +133,8 @@ begin
   FWaterLoaded     := false;
   FCausticCounter  := 0;
   FWaterCounter    := 0;
-  FCausticTextures := TObjectList.Create(false);
-  FWaterTextures   := TObjectList.Create(false);
+  FCausticTextures := TGDTextureList.Create(false);
+  FWaterTextures   := TGDTextureList.Create(false);
 end;
 
 {******************************************************************************}

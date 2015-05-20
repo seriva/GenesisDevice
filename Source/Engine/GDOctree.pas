@@ -29,7 +29,6 @@ interface
 uses
   dglOpenGL,
   SysUtils,
-  Contnrs,
   GDTypes,
   GDCamera,
   GDRenderer,
@@ -46,11 +45,11 @@ type
 {******************************************************************************}
 
 TGDVisibilityQuery = record
-  Cells               : TObjectList;
-  VisibleTerrainCells : TObjectList;
-  VisibleGrassCells   : TObjectList;
-  VisibleMeshCells    : TObjectList;
-  VisibleWaterCells   : TObjectList;
+  Cells               : TGDBaseCellList;
+  VisibleTerrainCells : TGDBaseCellList;
+  VisibleGrassCells   : TGDBaseCellList;
+  VisibleMeshCells    : TGDBaseCellList;
+  VisibleWaterCells   : TGDBaseCellList;
 end;
 
 {******************************************************************************}
@@ -62,12 +61,12 @@ end;
     FCellIndexes : array of integer;
     FBoundingBox : TGDBoundingBox;
     FSubNodes    : array[0..7] of TGDOctree;
-    procedure InitSubOCTreeNodes(aCells : TObjectList);
+    procedure InitSubOCTreeNodes(aCells : TGDBaseCellList);
   public
     constructor Create();
     destructor  Destroy(); override;
 
-    procedure InitOcTree(aCells : TObjectList);
+    procedure InitOcTree(aCells : TGDBaseCellList);
     procedure Clear();
 
     procedure GetVisibleCells(aQueryData : TGDVisibilityQuery);
@@ -99,7 +98,7 @@ end;
 {* Init the octree`s subnodes                                                 *}
 {******************************************************************************}
 
-procedure TGDOctree.InitSubOCTreeNodes(aCells : TObjectList);
+procedure TGDOctree.InitSubOCTreeNodes(aCells : TGDBaseCellList);
 
 procedure SetupNode(iNode : integer);
 var
@@ -110,7 +109,7 @@ begin
   iI := 0;
   while(iI <= (length(FCellIndexes)-1)) do
   begin
-    If FSubNodes[iNode].FBoundingBox.BoxInsideBox( TGDBaseCell( aCells.Items[ FCellIndexes[iI] ]).BoundingBox ) then
+    If FSubNodes[iNode].FBoundingBox.BoxInsideBox( aCells.Items[ FCellIndexes[iI] ].BoundingBox ) then
     begin
       SetLength(iTempMeshIndexes,length(iTempMeshIndexes)+1);
       iTempMeshIndexes[length(iTempMeshIndexes)-1] := FCellIndexes[iI];
@@ -185,7 +184,7 @@ end;
 {* Init the octree                                                            *}
 {******************************************************************************}
 
-procedure TGDOctree.InitOcTree(aCells : TObjectList);
+procedure TGDOctree.InitOcTree(aCells : TGDBaseCellList);
 var
   iI    : Integer;
   iCell : TGDBaseCell;
@@ -195,7 +194,7 @@ begin
 
   for iI := 0 to aCells.Count-1 do
   begin
-    iCell :=  TGDBaseCell( aCells.Items[  iI ]);
+    iCell := aCells.Items[iI];
 
     If (iCell.BoundingBox.Min.X < FBoundingBox.Min.x) then
       FBoundingBox.Min.setX(iCell.BoundingBox.Min.X);

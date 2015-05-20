@@ -22,7 +22,7 @@
 *******************************************************************************}   
 unit GDCellManager;
 
-{$MODE Delphi}
+{$MODE objfpc}
 
 {******************************************************************************}
 {* This units holds the cell manager                                          *}
@@ -36,6 +36,7 @@ uses
   GDConstants,
   GDSettings,
   GDGUI,
+  GDBaseCell,
   GDWater,
   GDWaterCell,
   GDFoliage,
@@ -47,7 +48,6 @@ uses
   GDConsole,
   GDTypes,
   GDMeshCell,
-  Contnrs,
   GDModes;
 
 type
@@ -59,11 +59,11 @@ type
   TGDCellManager = class
   private
     FTriangleCount       : Integer;
-    FCells               : TObjectList;
-    FVisibleTerrainCells : TObjectList;
-    FVisibleGrassCells   : TObjectList;
-    FVisibleMeshCells    : TObjectList;
-    FVisibleWaterCells   : TObjectList;
+    FCells               : TGDBaseCellList;
+    FVisibleTerrainCells : TGDBaseCellList;
+    FVisibleGrassCells   : TGDBaseCellList;
+    FVisibleMeshCells    : TGDBaseCellList;
+    FVisibleWaterCells   : TGDBaseCellList;
     FOctree              : TGDOctree;
 
     procedure GenerateTerrainCells(aTerrain : TGDTerrain);
@@ -93,11 +93,11 @@ implementation
 
 constructor TGDCellManager.Create();
 begin
-  FCells               := TObjectList.Create();
-  FVisibleTerrainCells := TObjectList.Create(false);
-  FVisibleGrassCells   := TObjectList.Create(false);
-  FVisibleMeshCells    := TObjectList.Create(false);
-  FVisibleWaterCells   := TObjectList.Create(false);
+  FCells               := TGDBaseCellList.Create();
+  FVisibleTerrainCells := TGDBaseCellList.Create(false);
+  FVisibleGrassCells   := TGDBaseCellList.Create(false);
+  FVisibleMeshCells    := TGDBaseCellList.Create(false);
+  FVisibleWaterCells   := TGDBaseCellList.Create(false);
   FOctree              := TGDOctree.Create();
 end;
 
@@ -300,7 +300,7 @@ Begin
   //create treecells
   for iI := 0 to aFoliage.TreeTypes.Count-1 do
   begin
-    iMeshType := aFoliage.TreeTypes.Items[iI] as TGDMeshType;
+    iMeshType := aFoliage.TreeTypes.Items[iI];
     iTreeCount := Round(aFoliage.TreeCount * iMeshType.CoverOfTotal) div 100;
     for iJ := 1 to iTreeCount do
     begin
@@ -344,7 +344,7 @@ Begin
   //create rocks
   for iI := 0 to aFoliage.RockTypes.Count-1 do
   begin
-    iMeshType  := aFoliage.RockTypes.Items[iI] as TGDMeshType;
+    iMeshType  := aFoliage.RockTypes.Items[iI];
     iRockCount := Round(aFoliage.RockCount * iMeshType.CoverOfTotal) div 100;
     for iJ := 1 to iRockCount do
     begin
@@ -460,7 +460,7 @@ Begin
     for iI := 0 to FVisibleTerrainCells.Count - 1 do
     begin
       iTerrainCell := TGDTerrainCell(FVisibleTerrainCells.Items[ iI ]);
-      iTerrainCell.RenderTerrainCell( aRenderAttribute );
+      iTerrainCell.Render( aRenderAttribute, aRenderFor );
       TriangleCount := TriangleCount + TRISINCELL;
     end;
     aTerrain.EndRendering();
@@ -473,7 +473,7 @@ Begin
     for iI := 0 to FVisibleGrassCells.Count - 1 do
     begin
       iGrassCell := TGDGrassCell(FVisibleGrassCells.Items[ iI ]);
-      iGrassCell.RenderGrassCell( aRenderAttribute );
+      iGrassCell.Render( aRenderAttribute, aRenderFor );
       TriangleCount := TriangleCount + iGrassCell.TrisCount;
     end;
     aFoliage.EndRenderingGrass();
@@ -486,7 +486,7 @@ Begin
     begin
       If (aRenderFor = RF_WATER) and (Settings.WaterReflection = WR_TERRAIN_ONLY) then break;
       iMeshCell := TGDMeshCell(FVisibleMeshCells.Items[ iI ]);
-      iMeshCell.RenderMeshCell( aRenderAttribute, aRenderFor );
+      iMeshCell.Render( aRenderAttribute, aRenderFor );
       TriangleCount := TriangleCount + iMeshCell.TriangleCount();
     end;
   end;
@@ -497,7 +497,7 @@ Begin
     for iI := 0 to FVisibleWaterCells.Count - 1 do
     begin
       iWaterCell := TGDWaterCell(FVisibleWaterCells.Items[ iI ]);
-      iWaterCell.RenderWaterCell( aRenderAttribute );
+      iWaterCell.Render( aRenderAttribute, aRenderFor );
       TriangleCount := TriangleCount + (aWater.CellDivX * aWater.CellDivY * 2);
     end;
     aWater.EndRendering();

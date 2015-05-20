@@ -80,7 +80,7 @@ type
     constructor Create(aTerrain : TGDTerrain; aFoliage : TGDFoliage;  aWater : TGDWater; aStartX, aStartY, aEndX, aEndY : Integer);
     destructor  Destroy(); override;
 
-    procedure RenderGrassCell( aRenderAttribute : TGDRenderAttribute );
+    procedure Render( aRenderAttribute : TGDRenderAttribute; aRenderFor : TGDRenderFor ); override;
   end;
 
 implementation
@@ -276,7 +276,7 @@ end;
 {* Render the grasscell                                                       *}
 {******************************************************************************}
 
-procedure TGDGrassCell.RenderGrassCell( aRenderAttribute : TGDRenderAttribute );
+procedure TGDGrassCell.Render( aRenderAttribute : TGDRenderAttribute; aRenderFor : TGDRenderFor );
 begin
   Case aRenderAttribute Of
     RA_NORMAL         : begin

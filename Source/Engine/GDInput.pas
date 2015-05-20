@@ -22,7 +22,7 @@
 *******************************************************************************}   
 unit GDInput;
 
-{$MODE Delphi}
+{$MODE objfpc}
 
 {******************************************************************************}
 {* This unit holds the input classes of the engine. types of input actions:   *}
@@ -38,6 +38,7 @@ unit GDInput;
 interface
 
 uses
+  FGL,
   LCLIntf,
   LCLType,
   SysUtils,
@@ -45,8 +46,7 @@ uses
   Windows,
   GDConstants,
   GDSettings,
-  GDCamera,
-  Contnrs;
+  GDCamera;
 
 type
 
@@ -54,7 +54,7 @@ type
 {* Inputaction class                                                          *}
 {******************************************************************************}
 
-  TGDInputAction = class(TObject)
+  TGDInputAction = class
   private
     FKey             : integer;
     FAction          : TGDCallback;
@@ -69,6 +69,7 @@ type
 
     procedure Execute();
   end;
+  TGDInputActionList = specialize TFPGObjectList<TGDInputAction>;
 
 {******************************************************************************}
 {* Input class                                                                *}
@@ -83,10 +84,10 @@ type
     FMousePosStart   : TPoint;
     FMousePosCurrent : TPoint;
 
-    FSingle          : TObjectList;
-    FDirect          : TObjectList;
-    FUp              : TObjectList;
-    FDown            : TObjectList;
+    FSingle          : TGDInputActionList;
+    FDirect          : TGDInputActionList;
+    FUp              : TGDInputActionList;
+    FDown            : TGDInputActionList;
   public
     property Initialized     : boolean read FInitialized;
     property EnableInput     : boolean read FEnableInput write FEnableInput;
@@ -163,10 +164,10 @@ begin
     FEnableInput := false;
 
     FMouseLook := False;
-    FDirect := TObjectList.Create();
-    FSingle := TObjectList.Create();
-    FUp     := TObjectList.Create();
-    FDown   := TObjectList.Create();
+    FDirect := TGDInputActionList.Create();
+    FSingle := TGDInputActionList.Create();
+    FUp     := TGDInputActionList.Create();
+    FDown   := TGDInputActionList.Create();
     CalculateMousePosStart();
   except
     on E: Exception do
@@ -243,7 +244,7 @@ begin
   KeyboardState();
   For iI := 0 to FSingle.Count-1 do
   begin
-    iTempAction := TGDInputAction(FSingle.Items[iI]);
+    iTempAction := FSingle.Items[iI];
     if (iTempAction.FConsoleDisabled and Not(Console.Show)) or not(iTempAction.FConsoleDisabled) then
       If Not(Input.KeyDown( iTempAction.Key )) Then
       begin
@@ -252,7 +253,7 @@ begin
   end;
   For iI := 0 to FSingle.Count-1 do
   begin
-    iTempAction := TGDInputAction(FSingle.Items[iI]);
+    iTempAction := FSingle.Items[iI];
     if (iTempAction.FConsoleDisabled and Not(Console.Show)) or not(iTempAction.FConsoleDisabled) then
       If Input.KeyDown( iTempAction.Key ) Then
       begin
@@ -263,21 +264,21 @@ begin
 
   For iI := 0 to FDirect.Count-1 do
   begin
-    iTempAction := TGDInputAction(FDirect.Items[iI]);
+    iTempAction := FDirect.Items[iI];
     if (iTempAction.FConsoleDisabled and Not(Console.Show)) or not(iTempAction.FConsoleDisabled) then
       If Input.KeyDown( iTempAction.Key ) Then iTempAction.Execute();
   end;
 
   For iI := 0 to FDown.Count-1 do
   begin
-    iTempAction := TGDInputAction(FDown.Items[iI]);
+    iTempAction := FDown.Items[iI];
     if (iTempAction.FConsoleDisabled and Not(Console.Show)) or not(iTempAction.FConsoleDisabled) then
       If Input.KeyDown( iTempAction.Key ) Then iTempAction.Execute();
   end;
 
   For iI := 0 to FUp.Count-1 do
   begin
-    iTempAction := TGDInputAction(FUp.Items[iI]);
+    iTempAction := FUp.Items[iI];
     if (iTempAction.FConsoleDisabled and Not(Console.Show)) or not(iTempAction.FConsoleDisabled) then
       If Not(Input.KeyDown( iTempAction.Key )) Then iTempAction.Execute();
   end;

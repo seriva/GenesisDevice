@@ -87,7 +87,7 @@ type
     constructor Create(aInput : TGDMeshCellInput);
     destructor  Destroy(); override;
 
-    procedure RenderMeshCell( aRenderAttribute : TGDRenderAttribute; aRenderFor : TGDRenderFor );
+    procedure Render( aRenderAttribute : TGDRenderAttribute; aRenderFor : TGDRenderFor ); override;
 
     function TriangleCount() : Integer;
   end;
@@ -161,7 +161,7 @@ end;
 {* Render the meshcell                                                        *}
 {******************************************************************************}
 
-procedure TGDMeshCell.RenderMeshCell( aRenderAttribute : TGDRenderAttribute; aRenderFor : TGDRenderFor );
+procedure TGDMeshCell.Render( aRenderAttribute : TGDRenderAttribute; aRenderFor : TGDRenderFor );
 var
   iI  : Integer;
   iMS : TGDMaterialSegment;

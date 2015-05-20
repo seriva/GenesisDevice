@@ -58,7 +58,7 @@ type
     constructor Create( aTerrain : TGDTerrain; aStartX, aStartY, aEndX, aEndY : Integer);
     destructor  Destroy(); override;
 
-    procedure RenderTerrainCell(aRenderAttribute : TGDRenderAttribute );
+    procedure Render( aRenderAttribute : TGDRenderAttribute; aRenderFor : TGDRenderFor ); override;
   end;
 
 implementation
@@ -159,7 +159,7 @@ end;
 {* Render the terraincell                                                     *}
 {******************************************************************************}
 
-procedure TGDTerrainCell.RenderTerrainCell( aRenderAttribute : TGDRenderAttribute );
+procedure TGDTerrainCell.Render( aRenderAttribute : TGDRenderAttribute; aRenderFor : TGDRenderFor );
 var
   iX,iY : Integer;
 begin

@@ -22,15 +22,17 @@
 *******************************************************************************}   
 unit GDFoliage;
 
-{$MODE Delphi}
+{$MODE objfpc}
 
 interface
 
 uses
+  FGL,
   SysUtils,
   dglOpenGL,
   IniFiles,
   Graphics,
+  GDStringParsing,
   GDTexture,
   GDTypes,
   GDConsole,
@@ -38,7 +40,6 @@ uses
   GDConstants,
   GDMesh,
   GDTiming,
-  Contnrs,
   GDResources,
   GDResource,
   GDModes;
@@ -46,35 +47,10 @@ uses
 type
 
 {******************************************************************************}
-{* Grasstype input record                                                     *}
-{******************************************************************************}
-
-  TGDGrassTypeInput = record
-    Texture       : String;
-    Scale         : TGDVector;
-    RandomScale   : TGDVector;
-    CoverOfTotal  : Single;
-  end;
-
-{******************************************************************************}
-{* Meshtype input record                                                      *}
-{******************************************************************************}
-
-  TGDMeshTypeInput = record
-    Model            : String;
-    ModelLOD1        : String;
-    ModelLOD2        : String;
-    Scale            : Single;
-    RandomScale      : Single;
-    StartRotation    : TGDVector;
-    CoverOfTotal     : Single;
-  end;
-
-{******************************************************************************}
 {* Grasstype class                                                            *}
 {******************************************************************************}
 
-  TGDGrassType = class(TObject)
+  TGDGrassType = class
   private
     FTexture : TGDTexture;
     FScale   : TGDVector;
@@ -86,15 +62,16 @@ type
     property RandomScale : TGDVector read FRandomScale;
     property CoverOfTotal : Single read FCoverOfTotal;
 
-    constructor Create(aInput : TGDGrassTypeInput);
+    constructor Create(aIniFile : TIniFile; aSection : String);
     destructor  Destroy(); override;
   end;
+  TGDGrassTypeList = specialize TFPGObjectList<TGDGrassType>;
 
 {******************************************************************************}
 {* Treetype class                                                             *}
 {******************************************************************************}
 
-  TGDMeshType = class(TObject)
+  TGDMeshType = class
   private
     FMesh          : TGDMesh;
     FMeshLOD1      : TGDMesh;
@@ -112,9 +89,10 @@ type
     property RandomScale : Single read FRandomScale;
     property CoverOfTotal : Single read FCoverOfTotal;
 
-    constructor Create(aInput : TGDMeshTypeInput);
+    constructor Create(aIniFile : TIniFile; aSection : String);
     destructor  Destroy(); override;
   end;
+  TGDMeshTypeList = specialize TFPGObjectList<TGDMeshType>;
 
 {******************************************************************************}
 {* Foliage class                                                              *}
@@ -127,16 +105,16 @@ type
     FTreeAnimationSpeed     : Single;
     FTreeAnimationStrength  : Single;
 
-    FGrassTypes           : TObjectList;
+    FGrassTypes           : TGDGrassTypeList;
     FGrassCellCountX      : Integer;
     FGrassCellCountY      : Integer;
 
-    FTreeTypes            : TObjectList;
+    FTreeTypes            : TGDMeshTypeList;
     FTreeCount            : Integer;
     FTreeLowerLimit       : Integer;
     FTreeUpperLimit       : Integer;
 
-    FRockTypes            : TObjectList;
+    FRockTypes            : TGDMeshTypeList;
     FRockCount            : Integer;
   public
     GrassMap : array of array of boolean;
@@ -148,16 +126,16 @@ type
     property TreeAnimationSpeed     : Single read FTreeAnimationSpeed;
     property TreeAnimationStrength  : Single read FTreeAnimationStrength;
 
-    property GrassTypes : TObjectList read FGrassTypes;
+    property GrassTypes : TGDGrassTypeList read FGrassTypes;
     property GrassCellCountX : Integer read FGrassCellCountX;
     property GrassCellCountY : Integer read FGrassCellCountY;
 
-    property TreeTypes : TObjectList read FTreeTypes;
+    property TreeTypes : TGDMeshTypeList read FTreeTypes;
     property TreeCount : Integer read FTreeCount;
     property TreeLowerLimit : Integer read FTreeLowerLimit;
     property TreeUpperLimit : Integer read FTreeUpperLimit;
 
-    property RockTypes : TObjectList read FRockTypes;
+    property RockTypes : TGDMeshTypeList read FRockTypes;
     property RockCount : Integer read FRockCount;
 
     constructor Create();
@@ -183,12 +161,13 @@ uses
 {* Create the grasstype class                                                 *}
 {******************************************************************************}
 
-constructor TGDGrassType.Create(aInput : TGDGrassTypeInput);
+constructor TGDGrassType.Create(aIniFile : TIniFile; aSection : String);
 begin
-  FTexture := Resources.LoadTexture(aInput.Texture ,TD_HIGH,Settings.TextureFilter);
-  FScale := aInput.Scale.Copy();
-  FRandomScale :=aInput.RandomScale.Copy();
-  FCoverOfTotal := aInput.CoverOfTotal;
+  FTexture      := Resources.LoadTexture(aIniFile.ReadString( aSection, 'Texture', ''),
+                                         TD_HIGH,Settings.TextureFilter);
+  FScale        := ReadVector(aIniFile, aSection, 'Scale');
+  FRandomScale  := ReadVector(aIniFile, aSection, 'RandomScale');
+  FCoverOfTotal := aIniFile.ReadFloat( aSection, 'CoverOfTotal', 100 );
 end;
 
 {******************************************************************************}
@@ -205,15 +184,15 @@ end;
 {* Create the treetype class                                                  *}
 {******************************************************************************}
 
-constructor TGDMeshType.Create(aInput : TGDMeshTypeInput );
+constructor TGDMeshType.Create(aIniFile : TIniFile; aSection : String);
 begin
-  FMesh := Resources.Loadmesh(aInput.Model);
-  FMeshLOD1 := Resources.Loadmesh(aInput.ModelLOD1);
-  FMeshLOD2 := Resources.Loadmesh(aInput.ModelLOD2);
-  FStartRotation := aInput.StartRotation.Copy();
-  FScale := aInput.Scale;
-  FRandomScale := aInput.RandomScale;
-  FCoverOfTotal := aInput.CoverOfTotal;
+  FMesh          := Resources.Loadmesh(aIniFile.ReadString( aSection, 'Model', ''));
+  FMeshLOD1      := Resources.Loadmesh(aIniFile.ReadString( aSection, 'ModelLOD1', ''));
+  FMeshLOD2      := Resources.Loadmesh(aIniFile.ReadString( aSection, 'ModelLOD2', ''));
+  FStartRotation := ReadVector(aIniFile, aSection, 'StartRotation');
+  FScale         := aIniFile.ReadFloat( aSection, 'Scale', 0 );
+  FRandomScale   := aIniFile.ReadFloat( aSection, 'RandomScale', 0 );
+  FCoverOfTotal  := aIniFile.ReadFloat( aSection, 'CoverOfTotal', 100 );
 end;
 
 {******************************************************************************}
@@ -234,9 +213,9 @@ end;
 
 constructor TGDFoliage.Create();
 begin
-  FGrassTypes := TObjectList.Create();
-  FTreeTypes  := TObjectList.Create();
-  FRockTypes  := TObjectList.Create();
+  FGrassTypes := TGDGrassTypeList.Create();
+  FTreeTypes  := TGDMeshTypeList.Create();
+  FRockTypes  := TGDMeshTypeList.Create();
 end;
 
 {******************************************************************************}
@@ -340,15 +319,12 @@ begin
   begin
     for iX := 0 to Length(GrassMap)-1 do
     begin
-      Finalize(GrassMap[iX]);
-      Finalize(TreeMap[iX]);
-      Finalize(RockMap[iX]);
+      SetLength(GrassMap[iX], 0);
+      SetLength(TreeMap[iX], 0);
+      SetLength(RockMap[iX], 0);
     end;
-    Finalize(GrassMap);
     SetLength(GrassMap, 0);
-    Finalize(TreeMap);
     SetLength(TreeMap, 0);
-    Finalize(RockMap);
     SetLength(RockMap, 0);
   end;
 

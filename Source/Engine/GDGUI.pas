@@ -22,7 +22,7 @@
 *******************************************************************************}   
 unit GDGUI;
 
-{$MODE Delphi}
+{$MODE objfpc}
 
 interface
 
@@ -34,11 +34,11 @@ interface
 {******************************************************************************}
 
 uses
+  fgl,
   LCLIntf,
   LCLType,
   Windows,
   Classes,
-  Contnrs,
   IniFiles,
   SysUtils,
   dglOpenGL,
@@ -153,7 +153,7 @@ type
 {* GUI component classes                                                      *}
 {******************************************************************************}
 
-  TGDComponent = class (TObject)
+  TGDComponent = class
   private
     FDepth : Integer;
     FX : Integer;
@@ -165,15 +165,7 @@ type
 
     procedure Render(); virtual;
   end;
-
-  TGDPanelInput = record
-    Depth : Integer;
-    X : integer;
-    Y : integer;
-    Width : integer;
-    Height : integer;
-    Texture : String;
-  end;
+  TGDComponentList = specialize TFPGObjectList<TGDComponent>;
 
   TGDPanel = class (TGDComponent)
   private
@@ -181,18 +173,9 @@ type
     FHeight : Integer;
     FTexture : TGDTexture;
   public
-    constructor Create(aInput : TGDPanelInput);
+    constructor Create(aIniFile : TIniFile; aSection : String);
     destructor  Destroy(); override;
     procedure   Render();  override;
-  end;
-
-  TGDLabelInput = record
-    Depth : Integer;
-    X : integer;
-    Y : integer;
-    R, G, B : Single;
-    Scale : Single;
-    Text : String;
   end;
 
   TGDLabel = class (TGDComponent)
@@ -201,15 +184,15 @@ type
     FText : String;
     FColor : TGDColor;
   public
-    constructor Create(aInput : TGDLabelInput);
+    constructor Create(aIniFile : TIniFile; aSection : String);
     destructor  Destroy(); override;
     procedure   Render();  override;
   end;
 
-  TGDScreen = class (TObject)
+  TGDScreen = class
   private
     FVisible : Boolean;
-    FComponents : TObjectList;
+    FComponents : TGDComponentList;
   public
     property Visible : Boolean read FVisible write FVisible;
 
@@ -217,6 +200,7 @@ type
     destructor  Destroy(); override;
     procedure   Render();
   end;
+  TGDScreenList = specialize TFPGObjectList<TGDScreen>;
 
 {******************************************************************************}
 {* Font class                                                                 *}
@@ -316,7 +300,7 @@ type
     FFillColor     : TGDColor;
 
     //Screens
-    FScreens : TObjectList;
+    FScreens : TGDScreenList;
   public
     property Font : TGDFont read FFont;
     property MouseCursor : TGDMouseCursor read FMouseCursor;
@@ -409,15 +393,18 @@ begin
   //Do nothing
 end;
 
-constructor TGDPanel.Create(aInput : TGDPanelInput);
+constructor TGDPanel.Create(aIniFile : TIniFile; aSection : String);
+var
+  iStr : String;
 begin
-  Depth := aInput.Depth;
-  X := aInput.X;
-  Y := aInput.Y;
-  FWidth := aInput.Width;
-  FHeight := aInput.Height;
-  if aInput.Texture <> '' then
-    FTexture := Resources.LoadTexture(aInput.Texture, TD_HIGH, TF_TRILINEAR)
+  Depth := aIniFile.ReadInteger( aSection, 'Depth', 0 );;
+  X := aIniFile.ReadInteger( aSection, 'X', 0 );
+  Y := aIniFile.ReadInteger( aSection, 'Y', 0 );
+  FWidth  := aIniFile.ReadInteger( aSection, 'Width', 0 );
+  FHeight := aIniFile.ReadInteger( aSection, 'Height', 0 );
+  iStr := aIniFile.ReadString( aSection, 'Texture', '' );
+  if iStr <> '' then
+    FTexture := Resources.LoadTexture(iStr, TD_HIGH, TF_TRILINEAR)
   else
     FTexture := nil;
 end;
@@ -444,14 +431,14 @@ begin
   end;
 end;
 
-constructor TGDLabel.Create(aInput : TGDLabelInput);
+constructor TGDLabel.Create(aIniFile : TIniFile; aSection : String);
 begin
-  Depth := aInput.Depth;
-  X := aInput.X;
-  Y := aInput.Y;
-  FScale := aInput.Scale;
-  FText := aInput.Text;
-  FColor.Reset(aInput.r,aInput.g, aInput.b, 1.0);
+  Depth  := aIniFile.ReadInteger( aSection, 'Depth', 0 );
+  FScale := aIniFile.ReadFloat( aSection, 'Scale', 1 );
+  FText  := aIniFile.ReadString( aSection, 'Text', '' );
+  X      := aIniFile.ReadInteger( aSection, 'X', 0 );
+  Y      := aIniFile.ReadInteger( aSection, 'Y', 0 );
+  FColor := ReadColor(aIniFile, aSection, 'Color');;
 end;
 
 destructor  TGDLabel.Destroy();
@@ -468,13 +455,10 @@ end;
 
 constructor TGDScreen.Create(aFileName : String);
 var
-  iIniFile    : TIniFile;
-  iLabelInput : TGDLabelInput;
-  iPanelInput : TGDPanelInput;
-  iI          : Integer;
-  iString     : String;
+  iIniFile : TIniFile;
+  iI       : Integer;
 begin
-  FComponents := TObjectList.create(true);
+  FComponents := TGDComponentList.create();
   FVisible := false;
   iIniFile := TIniFile.Create( aFileName );
 
@@ -482,16 +466,7 @@ begin
   iI := 1;
   while(iIniFile.SectionExists('Panel' + IntToStr(iI))) do
   begin
-    iString := 'Panel' + IntToStr(iI);
-
-    iPanelInput.Depth   := iIniFile.ReadInteger( iString, 'Depth', 0 );
-    iPanelInput.X       := iIniFile.ReadInteger( iString, 'X', 0 );
-    iPanelInput.Y       := iIniFile.ReadInteger( iString, 'Y', 0 );
-    iPanelInput.Width   := iIniFile.ReadInteger( iString, 'Width', 0 );
-    iPanelInput.Height  := iIniFile.ReadInteger( iString, 'Height', 0 );
-    iPanelInput.Texture := iIniFile.ReadString( iString, 'Texture', '' );
-
-    FComponents.Add( TGDPanel.Create(iPanelInput) );
+    FComponents.Add( TGDPanel.Create(iIniFile, 'Panel' + IntToStr(iI)));
     iI := iI + 1;
   end;
 
@@ -499,18 +474,7 @@ begin
   iI := 1;
   while(iIniFile.SectionExists('Label' + IntToStr(iI))) do
   begin
-    iString := 'Label' + IntToStr(iI);
-
-    iLabelInput.Depth := iIniFile.ReadInteger( iString, 'Depth', 0 );
-    iLabelInput.X     := iIniFile.ReadInteger( iString, 'X', 0 );
-    iLabelInput.Y     := iIniFile.ReadInteger( iString, 'Y', 0 );
-    iLabelInput.R     := iIniFile.ReadFloat( iString, 'R', 1 );
-    iLabelInput.G     := iIniFile.ReadFloat( iString, 'G', 1 );
-    iLabelInput.B     := iIniFile.ReadFloat( iString, 'B', 1 );
-    iLabelInput.Scale := iIniFile.ReadFloat( iString, 'Scale', 1 );
-    iLabelInput.Text  := iIniFile.ReadString( iString, 'Text', '' );
-
-    FComponents.Add(TGDLabel.Create(iLabelInput));
+    FComponents.Add(TGDLabel.Create(iIniFile, 'Label' + IntToStr(iI)));
     iI := iI + 1;
   end;
 
@@ -528,7 +492,7 @@ var
   iI : Integer;
 begin
   for iI := 0 to FComponents.Count - 1 do
-    (FComponents.Items[iI] as TGDComponent).Render();
+    FComponents.Items[iI].Render();
 end;
 
 {******************************************************************************}
@@ -838,7 +802,7 @@ begin
   FFont          := TGDFont.Create();
   FMouseCursor   := TGDMouseCursor.Create();
   FLoadingScreen := TGDLoadingScreen.Create();
-  FScreens       := TObjectList.Create(true);
+  FScreens       := TGDScreenList.Create();
 end;
 
 {******************************************************************************}
@@ -938,7 +902,7 @@ var
 begin
   for iI := 0 to FScreens.Count - 1 do
   begin
-    iScreen := (FScreens.Items[iI] as TGDScreen);
+    iScreen := FScreens.Items[iI];
     if iScreen.Visible then
       iScreen.Render();
   end;
