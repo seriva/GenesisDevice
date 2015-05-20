@@ -2,9 +2,12 @@
 #extension GL_EXT_gpu_shader4 : enable
 
 uniform sampler2D T_SOURCE_IMAGE;
+uniform sampler2D T_BLOOM_IMAGE;
 uniform vec2 V_SCREEN_SIZE;
 uniform int I_DO_FXAA;
 uniform float I_GAMMA;
+uniform float I_BLOOM_STENGTH;
+uniform int I_DO_BLOOM;
 
 varying vec4 posPos;
 
@@ -69,6 +72,12 @@ void main()
 	{
 		color = texture2D(T_SOURCE_IMAGE, gl_TexCoord[0].xy).rgb;
 	}
+    
+	if (I_DO_BLOOM == 1)
+	{ 
+        vec3 bloom = texture2D(T_BLOOM_IMAGE, gl_TexCoord[0].xy).rgb;
+        color = color + (bloom * I_BLOOM_STENGTH);
+    }
 
 	gl_FragColor.rgb = pow(color, 1.0 / vec3(I_GAMMA));
 	gl_FragColor.a = 1.0;

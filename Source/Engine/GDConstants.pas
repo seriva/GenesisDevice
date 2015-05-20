@@ -128,8 +128,6 @@ const
   SHADER_WATER    = FP_SHADERS + 'water';
   SHADER_GRASS    = FP_SHADERS + 'grass';
   SHADER_BLUR     = FP_SHADERS + 'blur';
-  SHADER_BLOOMMIX = FP_SHADERS + 'bloommix';
-  SHADER_COPY     = FP_SHADERS + 'copy';
   SHADER_FINAL    = FP_SHADERS + 'final';
   SHADER_MESH     = FP_SHADERS + 'mesh';
   SHADER_COLOR    = FP_SHADERS + 'color';

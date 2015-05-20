@@ -125,6 +125,7 @@
       <Unit17>
         <Filename Value="..\Engine\GDMain.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="GDMain"/>
       </Unit17>
       <Unit18>
         <Filename Value="..\Engine\GDMap.pas"/>
@@ -144,6 +145,7 @@
       <Unit21>
         <Filename Value="..\Engine\GDModes.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="GDModes"/>
       </Unit21>
       <Unit22>
         <Filename Value="..\Engine\GDOctree.pas"/>
@@ -158,6 +160,7 @@
       <Unit24>
         <Filename Value="..\Engine\GDSettings.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="GDSettings"/>
       </Unit24>
       <Unit25>
         <Filename Value="..\Engine\GDSkyDome.pas"/>
@@ -171,6 +174,7 @@
       <Unit27>
         <Filename Value="..\Engine\GDStatistics.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="GDStatistics"/>
       </Unit27>
       <Unit28>
         <Filename Value="..\Engine\GDTerrain.pas"/>
