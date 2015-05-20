@@ -233,7 +233,7 @@ begin
       Raise Exception.Create('To low OpenGL version! Minimal version ' + iV + ' needed.');
 
     //Texture units
-    glGetIntegerv(GL_MAX_TEXTURE_UNITS_ARB, @iGLInt1);
+    glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, @iGLInt1);
     Console.Write('Texture units: ' + IntToStr(iGLInt1));
     if iGLInt1 < MRS_TEXTURE_UNITS then
       Raise Exception.Create('Not ennough texture units! Minimal of ' + IntToStr(MRS_TEXTURE_UNITS) + ' needed.');

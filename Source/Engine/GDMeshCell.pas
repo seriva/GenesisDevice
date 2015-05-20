@@ -214,14 +214,14 @@ begin
     RA_NORMAL         : begin
                           for iI := 0 to iMesh.Segments.Count - 1 do
                           begin
-                            iMS := TGDSegment(iMesh.Segments.Items[iI]);
+                            iMS := iMesh.Segments.Items[iI];
 
                             if Modes.RenderWireframe then
                             begin
                               Renderer.SetColor(1.0,1.0,1.0,1.0);
                               SetMeshPositioning(Renderer.ColorShader);
                               Renderer.ColorShader.SetInt('I_CUSTOM_TRANSLATE', 1);
-                              (iMesh.DPLS.Items[iI] as TGDGLDisplayList).CallList();
+                              iMS.DPL.CallList();
                             end
                             else
                             begin
@@ -239,7 +239,7 @@ begin
 
                               Renderer.MeshShader.SetInt('I_FLIP_NORMAL', 0);
 
-                              (iMesh.DPLS.Items[iI] as TGDGLDisplayList).CallList();
+                              iMS.DPL.CallList();
 
                               //fix for lighting with alha based surfaces
                               if iMS.Material.HasAlpha then
@@ -249,7 +249,7 @@ begin
                                 else
                                   glCullFace(GL_FRONT);
                                 Renderer.MeshShader.SetInt('I_FLIP_NORMAL', 1);
-                                (iMesh.DPLS.Items[iI] as TGDGLDisplayList).CallList();
+                                iMS.DPL.CallList();
                                 if (aRenderFor = RF_WATER) and Not(Map.Water.UnderWater) then
                                   glCullFace(GL_FRONT)
                                 else

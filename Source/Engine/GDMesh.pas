@@ -39,7 +39,6 @@ Uses
   GDConstants,
   GDMaterial,
   GDGLObjects,
-  Contnrs,
   FileUtil,
   GDGenerics,
   GDResource,
@@ -61,7 +60,7 @@ Type
 {* Meshpolygon class                                                          *}
 {******************************************************************************}
 
-  TGDPolygon = class (TObject)
+  TGDPolygon = class
   private
     FPolygonType : TGDPolygonType;
     FMaterial    : TGDMaterial;
@@ -90,13 +89,16 @@ Type
   private
     FMaterial : TGDMaterial;
     FPolygons : TGDPolygonList;
+    FDPL      : TGDGLDisplayList;
   public
     property Material : TGDMaterial read FMaterial;
     property Polygons : TGDPolygonList read FPolygons;
+    property DPL      : TGDGLDisplayList read FDPL;
 
     constructor Create();
     destructor  Destroy();override;
   end;
+  TGDSegmentList = specialize TFPGObjectList<TGDSegment>;
 
 {******************************************************************************}
 {* Mesh class                                                                 *}
@@ -109,19 +111,17 @@ Type
     FNormals  : TGDVectorList;
     FUV       : TGDUVCoordList;
     FPolygons : TGDPolygonList;
-    FSegments : TObjectList;
-    FDPLS     : TObjectList;
+    FSegments : TGDSegmentList;
 
-    procedure CreateSegmentLists();
-    procedure CreateDisplayLists();
+    procedure CreateSegmentList();
+    procedure CreateDisplayList();
   public
     property FileName : String read FFileName;
     property Vertices : TGDVectorList read FVertices;
     property Normals  : TGDVectorList read FNormals;
     property UV       : TGDUVCoordList read FUV;
     property Polygons : TGDPolygonList read FPolygons;
-    property Segments : TObjectList read FSegments;
-    property DPLS     : TObjectList read FDPLS;
+    property Segments : TGDSegmentList read FSegments;
 
     constructor Create(aFileName : String);
     destructor  Destroy();override;
@@ -134,7 +134,7 @@ uses
   GDConsole;
 
 {******************************************************************************}
-{* Create the staticmeshpolygon class                                         *}
+{* Create polygon                                                             *}
 {******************************************************************************}
 
 constructor TGDPolygon.Create();
@@ -145,7 +145,7 @@ begin
 end;
 
 {******************************************************************************}
-{* Destroy the staticmeshpolygon class                                        *}
+{* Destroy polygon                                                            *}
 {******************************************************************************}
 
 destructor  TGDPolygon.Destroy();
@@ -155,18 +155,19 @@ begin
 end;
 
 {******************************************************************************}
-{* Create the materialrendersegment class                                     *}
+{* Create segment                                                             *}
 {******************************************************************************}
 
 constructor TGDSegment.Create();
 begin
   FMaterial := Nil;
   FPolygons := TGDPolygonList.Create(false);
+  FDPL      := TGDGLDisplayList.Create();
   Inherited;
 end;
 
 {******************************************************************************}
-{* Destroy the materialrendersegment class                                    *}
+{* Destroy segment                                                            *}
 {******************************************************************************}
 
 destructor  TGDSegment.Destroy();
@@ -174,6 +175,7 @@ begin
   Resources.RemoveResource(TGDResource(FMaterial));
   FMaterial := Nil;
   FreeAndNil(FPolygons);
+  FreeAndNil(FDPL);
   Inherited;
 end;
 
@@ -236,8 +238,7 @@ begin
     FNormals  := TGDVectorList.Create();
     FUV       := TGDUVCoordList.Create();
     FPolygons := TGDPolygonList.Create();
-    FSegments := TObjectList.Create();
-    FDPLS     := TObjectList.Create();
+    FSegments := TGDSegmentList.Create();
 
     If Not(FileExistsUTF8(aFileName) ) then
       Raise Exception.Create('Mesh ' + aFileName + ' doesn`t excist!');
@@ -328,8 +329,8 @@ begin
   Console.Use:=true;
   Console.WriteOkFail(iResult, iError);
 
-  CreateSegmentLists();
-  CreateDisplayLists();
+  CreateSegmentList();
+  CreateDisplayList();
 end;
 
 {******************************************************************************}
@@ -343,14 +344,13 @@ begin
   FreeAndNil(FUV);
   FreeAndNil(FPolygons);
   FreeAndnil(FSegments);
-  FreeAndNil(FDPLS);
 end;
 
 {******************************************************************************}
-{* Create the mesh material segment lists                                     *}
+{* Create the segment list                                                    *}
 {******************************************************************************}
 
-procedure TGDMesh.CreateSegmentLists();
+procedure TGDMesh.CreateSegmentList();
 var
   iI    : Integer;
   iCount: Integer;
@@ -396,14 +396,13 @@ begin
 end;
 
 {******************************************************************************}
-{* Create the mesh material segment lists                                     *}
+{* Create the segment dpl                                                     *}
 {******************************************************************************}
 
-procedure TGDMesh.CreateDisplayLists();
+procedure TGDMesh.CreateDisplayList();
 var
   iI   : Integer;
   iMS  : TGDSegment;
-  iDPL : TGDGLDisplayList;
   iJ   : Integer;
   iPL  : TGDPolygon;
   iFirst : boolean;
@@ -411,10 +410,9 @@ begin
   //prepare the displaylists.
   for iI := 0 to FSegments.Count - 1 do
   begin
-    iMS  := TGDSegment(FSegments.Items[iI]);
-    iDPL := TGDGLDisplayList.Create();
-    iDPL.InitDisplayList();
-    iDPL.StartList();
+    iMS  := FSegments.Items[iI];
+    iMS.DPL.InitDisplayList();
+    iMS.DPL.StartList();
     iFirst := true;
 
     for iJ := 0 to iMS.Polygons.Count-1 do
@@ -454,8 +452,7 @@ begin
     end;
     glEnd();
 
-    iDPL.EndList();
-    FDPLS.Add(iDPL);
+    iMS.DPL.EndList();
   end;
 end;
 

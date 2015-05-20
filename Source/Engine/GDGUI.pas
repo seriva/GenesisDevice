@@ -245,16 +245,6 @@ type
   end;
 
 {******************************************************************************}
-{* Loadingscreen input record                                                 *}
-{******************************************************************************}
-
-  TGDLoadingInput = record
-    X : integer;
-    Y : integer;
-    Bar : TGDColor;
-  end;
-
-{******************************************************************************}
 {* Loadingscreen class                                                        *}
 {******************************************************************************}
 
@@ -277,7 +267,7 @@ type
     constructor Create();
     destructor  Destroy();override;
 
-    procedure   InitLoadingScreen( aInput : TGDLoadingInput );
+    procedure   InitLoadingScreen(aIniFile : TIniFile);
     procedure   Clear();
     procedure   SetupForUse( aProcesName : String; aMax : integer );
     procedure   UpdateBar();
@@ -695,13 +685,13 @@ end;
 {* Init the loadingscreen                                                     *}
 {******************************************************************************}
 
-procedure TGDLoadingScreen.InitLoadingScreen( aInput : TGDLoadingInput );
+procedure TGDLoadingScreen.InitLoadingScreen(aIniFile : TIniFile);
 begin
   Clear();
-  FX := aInput.X;
-  FY := aInput.Y;
+  FX := aIniFile.ReadInteger('Loading', 'X', 1);
+  FY := aIniFile.ReadInteger('Loading', 'Y', 1);
   FBarOnly := false;
-  FBarColor := aInput.Bar.Copy();
+  FBarColor := ReadColor(aIniFile, 'Loading', 'Bar');
 end;
 
 {******************************************************************************}
@@ -824,7 +814,6 @@ end;
 procedure TGDGUI.InitGUI();
 var
   iIniFile      : TIniFile;
-  iLoadingInput : TGDLoadingInput;
 begin
   ShowCursor(false);
   iIniFile := TIniFile.Create( FP_INITS + GUI_INI );
@@ -842,10 +831,7 @@ begin
                              iIniFile.ReadInteger('Mouse', 'Size', 40) );
 
   //Loading
-  iLoadingInput.X := iIniFile.ReadInteger('Loading', 'X', 1);
-  iLoadingInput.Y := iIniFile.ReadInteger('Loading', 'Y', 1);
-  iLoadingInput.Bar := ReadColor(iIniFile, 'Loading', 'Bar');
-  GUI.LoadingScreen.InitLoadingScreen( iLoadingInput );
+  GUI.LoadingScreen.InitLoadingScreen( iIniFile );
 
   FreeAndNil(iIniFile);
 end;
