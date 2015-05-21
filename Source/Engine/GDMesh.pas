@@ -45,36 +45,15 @@ Uses
   GDStringParsing;
 
 Type
-
 {******************************************************************************}
-{* Meshpoint class                                                            *}
-{******************************************************************************}
-
-  TGDMeshPoint = record
-    VertexID : Integer;
-    NormalID : Integer;
-    UVID : Integer;
-  end;
-
-{******************************************************************************}
-{* Meshpolygon class                                                          *}
+{* Mesh surface class                                                         *}
 {******************************************************************************}
 
   TGDPolygon = class
   private
-    FPolygonType : TGDPolygonType;
-    FMaterial    : TGDMaterial;
-    FPoint1      : TGDMeshPoint;
-    FPoint2      : TGDMeshPoint;
-    FPoint3      : TGDMeshPoint;
-    FPoint4      : TGDMeshPoint;
   public
-    property PolygonType : TGDPolygonType read FPolygonType;
-    property Material : TGDMaterial read FMaterial;
-    property P1  : TGDMeshPoint read FPoint1;
-    property P2  : TGDMeshPoint read FPoint2;
-    property P3  : TGDMeshPoint read FPoint3;
-    property P4  : TGDMeshPoint read FPoint4;
+    Material : TGDMaterial;
+    Points   : array[0..8] of integer;
 
     constructor Create();
     destructor  Destroy();override;
@@ -106,7 +85,6 @@ Type
 
   TGDMesh = class (TGDResource)
   private
-    FFileName : String;
     FVertices : TGDVectorList;
     FNormals  : TGDVectorList;
     FUV       : TGDUVCoordList;
@@ -116,7 +94,6 @@ Type
     procedure CreateSegmentList();
     procedure CreateDisplayList();
   public
-    property FileName : String read FFileName;
     property Vertices : TGDVectorList read FVertices;
     property Normals  : TGDVectorList read FNormals;
     property UV       : TGDUVCoordList read FUV;
@@ -139,8 +116,7 @@ uses
 
 constructor TGDPolygon.Create();
 begin
-  FPolygonType := PT_TRIANGLE;
-  FMaterial := Nil;
+  Material := Nil;
   Inherited;
 end;
 
@@ -150,7 +126,7 @@ end;
 
 destructor  TGDPolygon.Destroy();
 begin
-  Resources.RemoveResource(TGDResource(FMaterial));
+  Resources.RemoveResource(TGDResource(Material));
   Inherited;
 end;
 
@@ -192,40 +168,18 @@ var
   iUV : TGDUVCoord;
   iMat : TGDMaterial;
   iResult : boolean;
-  iQuads : boolean;
   iPolygon : TGDPolygon;
 
-procedure ParsePointSet(aStr : String; var aPoint : TGDMeshPoint );
+procedure ParsePointSet(aStr : String; var aData: array of integer; aStartIndex : integer);
 var
-  iJ, iCount : Integer;
-  iSubStr : String;
-  iIdx : array[0..2] of integer;
+  iSL : TStringList;
 begin
-  iSubStr := '';
-  iCount := 0;
-  for iJ := 1 to length(aStr) do
-  begin
-    if aStr[iJ] <> '/' then
-    begin
-      iSubStr := iSubStr + aStr[iJ];
-    end
-    else
-    begin
-      if iSubStr = '' then
-         iIdx[iCount] := -1
-      else
-      begin
-        iIdx[iCount] := StrToInt(iSubStr)-1;
-        iSubStr := '';
-      end;
-      Inc(iCount);
-    end;
-  end;
-  iIdx[iCount] := StrToInt(iSubStr)-1;
-
-  aPoint.VertexID:=iIdx[0];
-  aPoint.UVID:=iIdx[1];
-  aPoint.NormalID:=iIdx[2];
+  iSL := TStringList.Create();
+  ExtractStrings(['/'], [], PChar(AnsiString(aStr)), iSL);
+  aData[aStartIndex]   := StrToInt(iSL.Strings[0])-1;
+  aData[aStartIndex+1] := StrToInt(iSL.Strings[1])-1;
+  aData[aStartIndex+2] := StrToInt(iSL.Strings[2])-1;
+  FreeAndNil(iSL);
 end;
 
 begin
@@ -233,7 +187,6 @@ begin
   try
     iResult := true;
 
-    iQuads    := false;
     FVertices := TGDVectorList.Create();
     FNormals  := TGDVectorList.Create();
     FUV       := TGDUVCoordList.Create();
@@ -244,7 +197,7 @@ begin
       Raise Exception.Create('Mesh ' + aFileName + ' doesn`t excist!');
 
     //create the filestream
-    FFileName := aFileName;
+    Name := aFileName;
     iFile := TMemoryStream.Create();
     iFile.LoadFromFile(aFileName);
 
@@ -284,11 +237,6 @@ begin
         FNormals.Add(iNorm);
         continue;
       end
-      else if iStr = 'quads' then //read a normal
-      begin
-        iQuads := true;
-        continue;
-      end
       else if iStr = 'usemtl' then //read the current material for the faces
       begin
         iStr := GetNextToken(iFile);
@@ -304,15 +252,10 @@ begin
 
         //we only support triangles now.
         iPolygon := TGDPolygon.Create();
-        iPolygon.FMaterial := iMat;
-        ParsePointSet(GetNextToken(iFile), iPolygon.FPoint1);
-        ParsePointSet(GetNextToken(iFile), iPolygon.FPoint2);
-        ParsePointSet(GetNextToken(iFile), iPolygon.FPoint3);
-        if iQuads then
-        begin
-          iPolygon.FPolygonType := PT_QUAD;
-          ParsePointSet(GetNextToken(iFile), iPolygon.FPoint4);
-        end;
+        iPolygon.Material := iMat;
+        ParsePointSet(GetNextToken(iFile), iPolygon.Points, 0);
+        ParsePointSet(GetNextToken(iFile), iPolygon.Points, 3);
+        ParsePointSet(GetNextToken(iFile), iPolygon.Points, 6);
         FPolygons.Add(iPolygon);
         continue;
       end;
@@ -420,35 +363,24 @@ begin
       iPL := TGDPolygon(iMS.Polygons.Items[iJ]);
       if iFirst then
       begin
-        if iPL.FPolygonType = PT_TRIANGLE then
-          glBegin(GL_TRIANGLES)
-        else
-          glBegin(GL_QUADS);
+        glBegin(GL_TRIANGLES);
         iFirst := false;
       end;
 
       glColor3f(0.75 + (Random(25)/100), 0.75 + (Random(25)/100), 0.75 + (Random(25)/100));
 
       //V1
-      glNormal3fv( FNormals.Items[ iPL.P1.NormalID ].ArrayPointer );
-      glTexCoord2fv( FUV.Items[ iPL.P1.UVID ].ArrayPointer );
-      glVertex3fv( FVertices.Items[ iPL.P1.VertexID ].ArrayPointer );
+      glNormal3fv( FNormals.Items[ iPL.Points[2] ].ArrayPointer );
+      glTexCoord2fv( FUV.Items[ iPL.Points[1] ].ArrayPointer );
+      glVertex3fv( FVertices.Items[ iPL.Points[0] ].ArrayPointer );
       //V2
-      glNormal3fv( FNormals.Items[ iPL.P2.NormalID ].ArrayPointer );
-      glTexCoord2fv( FUV.Items[ iPL.P2.UVID ].ArrayPointer );
-      glVertex3fv( FVertices.Items[ iPL.P2.VertexID ].ArrayPointer );
+      glNormal3fv( FNormals.Items[ iPL.Points[5] ].ArrayPointer );
+      glTexCoord2fv( FUV.Items[ iPL.Points[4] ].ArrayPointer );
+      glVertex3fv( FVertices.Items[ iPL.Points[3] ].ArrayPointer );
       //V3
-      glNormal3fv( FNormals.Items[ iPL.P3.NormalID ].ArrayPointer );
-      glTexCoord2fv( FUV.Items[ iPL.P3.UVID ].ArrayPointer );
-      glVertex3fv( FVertices.Items[ iPL.P3.VertexID ].ArrayPointer );
-
-      //V4
-      if iPL.FPolygonType = PT_QUAD then
-      begin
-        glNormal3fv( FNormals.Items[ iPL.P4.NormalID ].ArrayPointer );
-        glTexCoord2fv( FUV.Items[ iPL.P4.UVID ].ArrayPointer );
-        glVertex3fv( FVertices.Items[ iPL.P4.VertexID ].ArrayPointer );
-      end;
+      glNormal3fv( FNormals.Items[ iPL.Points[8] ].ArrayPointer );
+      glTexCoord2fv( FUV.Items[ iPL.Points[7] ].ArrayPointer );
+      glVertex3fv( FVertices.Items[ iPL.Points[6] ].ArrayPointer );
     end;
     glEnd();
 

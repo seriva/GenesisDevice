@@ -46,9 +46,6 @@ type
   //static object types
   TGDStaticObjectType = (SO_NONE, SO_TERRAINCELL, SO_WATERCELL, SO_MESHCELL, SO_GRASSCELL );
 
-  //polygon type
-  TGDPolygonType = (PT_TRIANGLE, PT_QUAD);
-
   //Mesh LOD type
   TGDMeshLODType = (LT_NONE, LT_FADE_IN, LT_STAGES);
 

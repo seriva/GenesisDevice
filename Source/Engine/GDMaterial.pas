@@ -49,14 +49,12 @@ Type
 
   TGDMaterial = class (TGDResource)
   private
-    FName    : String;
     FTexture : TGDTexture;
     FHasAlpha : Boolean;
     FAlphaFunc : double;
     FDoBloom : boolean;
     FDoTreeAnim : boolean;
   public
-    property Name : String read FName write FName;
     property Texture : TGDTexture read FTexture write FTexture;
     property HasAlpha : Boolean read FHasAlpha write FHasAlpha;
     property AlphaFunc : double read FAlphaFunc write FAlphaFunc;

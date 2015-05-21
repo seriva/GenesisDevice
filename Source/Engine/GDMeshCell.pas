@@ -172,6 +172,7 @@ var
   iFadeDistanceScale : Single;
   iMesh : TGDMesh;
 
+{
 procedure RenderNormal(aP : TGDMeshPoint);
 begin
   iVertex := iNormals.Items[aP.NormalID].Copy();
@@ -180,6 +181,7 @@ begin
   glVertex3fv( iVertices.Items[aP.VertexID].ArrayPointer );
   glVertex3fv( iVertex.ArrayPointer );
 end;
+}
 
 procedure SetMeshPositioning(aShader : TGDGLShader);
 begin
@@ -269,6 +271,7 @@ begin
                           iNormals  := TGDVectorList.Create();
                           iVertices := TGDVectorList.Create();
 
+                          {
                           For iI := 0 to iMesh.Vertices.Count - 1 do
                           begin
                             iVertex := iMesh.Vertices.Items[iI].Copy();
@@ -294,7 +297,7 @@ begin
                             RenderNormal(iTempPolygon.P3);
                           end;
                           glEnd();
-
+                          }
                           FreeAndNil(iNormals);
                           FreeAndNil(iVertices);
                         end;

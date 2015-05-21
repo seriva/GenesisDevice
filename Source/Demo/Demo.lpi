@@ -92,6 +92,7 @@
       <Unit10>
         <Filename Value="..\Engine\GDConstants.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="GDConstants"/>
       </Unit10>
       <Unit11>
         <Filename Value="..\Engine\GDFog.pas"/>
@@ -244,6 +245,7 @@
       <Unit42>
         <Filename Value="..\Engine\GDMaterial.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="GDMaterial"/>
       </Unit42>
     </Units>
   </ProjectOptions>
