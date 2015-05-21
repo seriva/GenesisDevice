@@ -37,6 +37,7 @@ uses
   GDTypes,
   GDConsole,
   GDSettings,
+  GDCamera,
   GDConstants,
   GDResource,
   GDResources,
@@ -440,6 +441,9 @@ begin
                    else
                      Renderer.TerrainShader.SetInt('I_UNDER_WATER', 0);
                    Renderer.TerrainShader.SetFloat('I_WATER_HEIGHT', Map.Water.WaterHeight);
+
+                   Renderer.TerrainShader.SetFloat3('V_CAM_POS', Camera.Position.x,  Camera.Position.Y,  Camera.Position.Z );
+
 
                    FColorTexture.BindTexture(GL_TEXTURE0);
                    FDetailTexture1.BindTexture(GL_TEXTURE1);

@@ -758,7 +758,6 @@ end;
 procedure RenderGUI();
 begin
   SwitchToOrtho();
-    If Modes.RenderWireframe = false then Map.Water.RenderUnderWater();
     GUI.RenderScreens();
     If Modes.RenderStats then Statistics.Render();
     Console.Render();

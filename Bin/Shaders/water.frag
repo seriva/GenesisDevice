@@ -26,12 +26,12 @@ void main()
 	
 	if(I_UNDER_WATER == 0)
 	{
-		gl_FragColor = mix(ReflectionColor * V_WATER_COLOR_CORRECTION  * Light, V_FOG_COLOR, Fog);
+		gl_FragColor = mix(ReflectionColor * Light, V_FOG_COLOR, Fog);
 	}
 	else
 	{
-		gl_FragColor = ReflectionColor * V_WATER_COLOR_CORRECTION  * Light;
+		gl_FragColor = ReflectionColor * Light;
 	}	
 	float Depth           = texture2D(T_DEPTHMAP, DepthCoords).x;
-	gl_FragColor.a        = 1.0 - Depth;
+	gl_FragColor.a        = 0.3;
 }

@@ -102,8 +102,6 @@ type
     function  Visible(): boolean;
     function  UnderWater(): boolean;
 
-    procedure RenderUnderWater();
-
     procedure StartReflection();
     procedure EndReflection();
 
@@ -443,27 +441,6 @@ begin
     result := true
   else
     result := false;
-end;
-
-{******************************************************************************}
-{* Render the underwater color blend                                          *}
-{******************************************************************************}
-
-procedure TGDWater.RenderUnderWater();
-begin
-  If (Camera.Position.Y < FBoundingBox.Max.Y ) then
-  begin
-    Renderer.SetColor(FUnderWaterColor);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glEnable(GL_BLEND);
-    glBegin(GL_QUADS);
-      glVertex2f(0, 0);
-      glVertex2f(R_HUDWIDTH, 0);
-      glVertex2f(R_HUDWIDTH, R_HUDHEIGHT);
-      glVertex2f(0, R_HUDHEIGHT);
-    glEnd;
-    glDisable(GL_BLEND);
-  end;
 end;
 
 {******************************************************************************}
