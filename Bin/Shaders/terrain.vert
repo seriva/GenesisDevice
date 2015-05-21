@@ -1,5 +1,7 @@
 uniform float F_MIN_VIEW_DISTANCE;
 uniform float F_MAX_VIEW_DISTANCE;
+uniform int I_DETAIL_UV;
+uniform int I_CAUSTIC_UV;
 
 varying vec2  ColorUV;
 varying vec2  DetailUV;
@@ -19,7 +21,7 @@ void main(void)
 	gl_ClipVertex  = vec4(gl_ModelViewMatrix * gl_Vertex);
 	Fog            = clamp((length(Pos) - F_MIN_VIEW_DISTANCE) / F_MAX_VIEW_DISTANCE, 0.0, 1.0);
 	ColorUV        = gl_MultiTexCoord0.xy;
-	DetailUV       = gl_MultiTexCoord1.xy;
-	CausticUV      = gl_MultiTexCoord2.xy;
+	DetailUV       = ColorUV * I_DETAIL_UV;
+	CausticUV      = ColorUV * I_CAUSTIC_UV;
 }
 

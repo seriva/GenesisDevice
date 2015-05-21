@@ -22,11 +22,7 @@
 *******************************************************************************}   
 unit GDMesh;
 
-{$MODE objfpc}
-
-{******************************************************************************}
-{* Holds the mesh classes                                                     *}
-{******************************************************************************}
+{$mode objfpc}
 
 interface
 
@@ -40,44 +36,30 @@ Uses
   GDMaterial,
   GDGLObjects,
   FileUtil,
-  GDGenerics,
+  GDTypesGenerics,
   GDResource,
   GDStringParsing;
 
 Type
+
 {******************************************************************************}
-{* Mesh surface class                                                         *}
+{* Surface class                                                              *}
 {******************************************************************************}
 
-  TGDPolygon = class
+  TGDSurface = class (TObject)
   private
+    FMaterial  : TGDMaterial;
+    FTriangles : TGDTriangleIdxList;
+    FDPL       : TGDGLDisplayList;
   public
-    Material : TGDMaterial;
-    Points   : array[0..8] of integer;
+    property Material  : TGDMaterial read FMaterial;
+    property Triangles : TGDTriangleIdxList read FTriangles;
+    property DPL       : TGDGLDisplayList read FDPL;
 
     constructor Create();
     destructor  Destroy();override;
   end;
-  TGDPolygonList = specialize TFPGObjectList<TGDPolygon>;
-
-{******************************************************************************}
-{* Segment class                                                              *}
-{******************************************************************************}
-
-  TGDSegment = class (TObject)
-  private
-    FMaterial : TGDMaterial;
-    FPolygons : TGDPolygonList;
-    FDPL      : TGDGLDisplayList;
-  public
-    property Material : TGDMaterial read FMaterial;
-    property Polygons : TGDPolygonList read FPolygons;
-    property DPL      : TGDGLDisplayList read FDPL;
-
-    constructor Create();
-    destructor  Destroy();override;
-  end;
-  TGDSegmentList = specialize TFPGObjectList<TGDSegment>;
+  TGDSurfaceList = specialize TFPGObjectList<TGDSurface>;
 
 {******************************************************************************}
 {* Mesh class                                                                 *}
@@ -88,17 +70,16 @@ Type
     FVertices : TGDVectorList;
     FNormals  : TGDVectorList;
     FUV       : TGDUVCoordList;
-    FPolygons : TGDPolygonList;
-    FSegments : TGDSegmentList;
+    FSurfaces : TGDSurfaceList;
+    FTriangleCount : Integer;
 
-    procedure CreateSegmentList();
     procedure CreateDisplayList();
   public
     property Vertices : TGDVectorList read FVertices;
     property Normals  : TGDVectorList read FNormals;
     property UV       : TGDUVCoordList read FUV;
-    property Polygons : TGDPolygonList read FPolygons;
-    property Segments : TGDSegmentList read FSegments;
+    property Surfaces : TGDSurfaceList read FSurfaces;
+    property TriangleCount : Integer read FTriangleCount;
 
     constructor Create(aFileName : String);
     destructor  Destroy();override;
@@ -111,46 +92,25 @@ uses
   GDConsole;
 
 {******************************************************************************}
-{* Create polygon                                                             *}
+{* Create surface                                                             *}
 {******************************************************************************}
 
-constructor TGDPolygon.Create();
-begin
-  Material := Nil;
-  Inherited;
-end;
-
-{******************************************************************************}
-{* Destroy polygon                                                            *}
-{******************************************************************************}
-
-destructor  TGDPolygon.Destroy();
-begin
-  Resources.RemoveResource(TGDResource(Material));
-  Inherited;
-end;
-
-{******************************************************************************}
-{* Create segment                                                             *}
-{******************************************************************************}
-
-constructor TGDSegment.Create();
+constructor TGDSurface.Create();
 begin
   FMaterial := Nil;
-  FPolygons := TGDPolygonList.Create(false);
-  FDPL      := TGDGLDisplayList.Create();
+  FTriangles := TGDTriangleIdxList.Create();
+  FDPL       := TGDGLDisplayList.Create();
   Inherited;
 end;
 
 {******************************************************************************}
-{* Destroy segment                                                            *}
+{* Destroy surface                                                            *}
 {******************************************************************************}
 
-destructor  TGDSegment.Destroy();
+destructor TGDSurface.Destroy();
 begin
   Resources.RemoveResource(TGDResource(FMaterial));
-  FMaterial := Nil;
-  FreeAndNil(FPolygons);
+  FreeAndNil(FTriangles);
   FreeAndNil(FDPL);
   Inherited;
 end;
@@ -168,17 +128,18 @@ var
   iUV : TGDUVCoord;
   iMat : TGDMaterial;
   iResult : boolean;
-  iPolygon : TGDPolygon;
+  iTri : TGDTriangleIdxs;
+  iSur : TGDSurface;
 
-procedure ParsePointSet(aStr : String; var aData: array of integer; aStartIndex : integer);
+procedure ParsePointSet(aStr : String; var aTriangle : TGDTriangleIdxs; aStartIndex : integer);
 var
   iSL : TStringList;
 begin
   iSL := TStringList.Create();
   ExtractStrings(['/'], [], PChar(AnsiString(aStr)), iSL);
-  aData[aStartIndex]   := StrToInt(iSL.Strings[0])-1;
-  aData[aStartIndex+1] := StrToInt(iSL.Strings[1])-1;
-  aData[aStartIndex+2] := StrToInt(iSL.Strings[2])-1;
+  aTriangle.Data[aStartIndex]   := StrToInt(iSL.Strings[0])-1;
+  aTriangle.Data[aStartIndex+1] := StrToInt(iSL.Strings[1])-1;
+  aTriangle.Data[aStartIndex+2] := StrToInt(iSL.Strings[2])-1;
   FreeAndNil(iSL);
 end;
 
@@ -190,8 +151,7 @@ begin
     FVertices := TGDVectorList.Create();
     FNormals  := TGDVectorList.Create();
     FUV       := TGDUVCoordList.Create();
-    FPolygons := TGDPolygonList.Create();
-    FSegments := TGDSegmentList.Create();
+    FSurfaces := TGDSurfaceList.Create();
 
     If Not(FileExistsUTF8(aFileName) ) then
       Raise Exception.Create('Mesh ' + aFileName + ' doesn`t excist!');
@@ -243,24 +203,27 @@ begin
         if not(Resources.Find(iStr, iIdx)) then
            Raise Exception.Create('Material ' + iStr + ' doesn`t excist!');
         iMat := TGDMaterial(Resources.Data[iIdx]);
+
+        iSur := TGDSurface.Create();
+        iSur.FMaterial := iMat;
+        FSurfaces.Add(iSur);
         continue;
       end
       else if iStr = 'f' then //read a face (we only support triangles)
       begin
-        if (iMat = nil) then
+        if (iSur = nil) then
            Raise Exception.Create('No material for polygon!');
 
         //we only support triangles now.
-        iPolygon := TGDPolygon.Create();
-        iPolygon.Material := iMat;
-        ParsePointSet(GetNextToken(iFile), iPolygon.Points, 0);
-        ParsePointSet(GetNextToken(iFile), iPolygon.Points, 3);
-        ParsePointSet(GetNextToken(iFile), iPolygon.Points, 6);
-        FPolygons.Add(iPolygon);
+        ParsePointSet(GetNextToken(iFile), iTri, 0);
+        ParsePointSet(GetNextToken(iFile), iTri, 3);
+        ParsePointSet(GetNextToken(iFile), iTri, 6);
+        iSur.FTriangles.Add(iTri);
         continue;
       end;
     end;
     FreeAndNil(iFile);
+    CreateDisplayList();
   except
     on E: Exception do
     begin
@@ -271,9 +234,6 @@ begin
 
   Console.Use:=true;
   Console.WriteOkFail(iResult, iError);
-
-  CreateSegmentList();
-  CreateDisplayList();
 end;
 
 {******************************************************************************}
@@ -285,57 +245,7 @@ begin
   FreeAndNil(FVertices);
   FreeAndNil(FNormals);
   FreeAndNil(FUV);
-  FreeAndNil(FPolygons);
-  FreeAndnil(FSegments);
-end;
-
-{******************************************************************************}
-{* Create the segment list                                                    *}
-{******************************************************************************}
-
-procedure TGDMesh.CreateSegmentList();
-var
-  iI    : Integer;
-  iCount: Integer;
-  iMat  : TGDMaterial;
-  iMS   : TGDSegment;
-  iPolygon : TGDPolygon;
-
-procedure StartMaterialSegment();
-begin
-  iMS := TGDSegment.Create();
-  iMS.FMaterial := iPolygon.Material;
-end;
-
-procedure EndMaterialSegment();
-begin
-  FSegments.Add( iMS );
-end;
-
-begin
-  iMat:= nil;
-  iCount := Fpolygons.Count - 1;
-  for iI := 0 to iCount do
-  begin
-    iPolygon := Fpolygons.Items[iI];
-
-    If iMat <> iPolygon.Material then
-    begin
-      if iMat = nil then
-        StartMaterialSegment()
-      else
-      begin
-        EndMaterialSegment();
-        StartMaterialSegment()
-      end;
-    end;
-
-    iMS.Polygons.Add(iPolygon);
-
-    iMat := iPolygon.Material;
-  end;
-
-  EndMaterialSegment();
+  FreeAndnil(FSurfaces);
 end;
 
 {******************************************************************************}
@@ -344,47 +254,38 @@ end;
 
 procedure TGDMesh.CreateDisplayList();
 var
-  iI   : Integer;
-  iMS  : TGDSegment;
-  iJ   : Integer;
-  iPL  : TGDPolygon;
-  iFirst : boolean;
+  iI     : Integer;
+  iSur   : TGDSurface;
+  iJ     : Integer;
+  iTri   : TGDTriangleIdxs;
+
+procedure SendPoint(aTri : TGDTriangleIdxs; aStartIdx : integer);
 begin
-  //prepare the displaylists.
-  for iI := 0 to FSegments.Count - 1 do
+  glNormal3fv( FNormals.Items[ aTri.Data[aStartIdx+2] ].ArrayPointer );
+  glTexCoord2fv( FUV.Items[ aTri.Data[aStartIdx+1] ].ArrayPointer );
+  glVertex3fv( FVertices.Items[ aTri.Data[aStartIdx] ].ArrayPointer );
+end;
+
+begin
+  for iI := 0 to FSurfaces.Count - 1 do
   begin
-    iMS  := FSegments.Items[iI];
-    iMS.DPL.InitDisplayList();
-    iMS.DPL.StartList();
-    iFirst := true;
-
-    for iJ := 0 to iMS.Polygons.Count-1 do
+    iSur  := FSurfaces.Items[iI];
+    iSur.DPL.StartList();
+    glBegin(GL_TRIANGLES);
+    for iJ := 0 to iSur.Triangles.Count-1 do
     begin
-      iPL := TGDPolygon(iMS.Polygons.Items[iJ]);
-      if iFirst then
-      begin
-        glBegin(GL_TRIANGLES);
-        iFirst := false;
-      end;
+      iTri := iSur.Triangles.Items[iJ];
 
-      glColor3f(0.75 + (Random(25)/100), 0.75 + (Random(25)/100), 0.75 + (Random(25)/100));
+      if iSur.Material.DoTreeAnim then
+         glColor3f(0.75 + (Random(25)/100), 0.75 + (Random(25)/100), 0.75 + (Random(25)/100));
 
-      //V1
-      glNormal3fv( FNormals.Items[ iPL.Points[2] ].ArrayPointer );
-      glTexCoord2fv( FUV.Items[ iPL.Points[1] ].ArrayPointer );
-      glVertex3fv( FVertices.Items[ iPL.Points[0] ].ArrayPointer );
-      //V2
-      glNormal3fv( FNormals.Items[ iPL.Points[5] ].ArrayPointer );
-      glTexCoord2fv( FUV.Items[ iPL.Points[4] ].ArrayPointer );
-      glVertex3fv( FVertices.Items[ iPL.Points[3] ].ArrayPointer );
-      //V3
-      glNormal3fv( FNormals.Items[ iPL.Points[8] ].ArrayPointer );
-      glTexCoord2fv( FUV.Items[ iPL.Points[7] ].ArrayPointer );
-      glVertex3fv( FVertices.Items[ iPL.Points[6] ].ArrayPointer );
+      SendPoint(iTri, 0);
+      SendPoint(iTri, 3);
+      SendPoint(iTri, 6);
     end;
     glEnd();
-
-    iMS.DPL.EndList();
+    iSur.DPL.EndList();
+    FTriangleCount := FTriangleCount + iSur.Triangles.Count;
   end;
 end;
 

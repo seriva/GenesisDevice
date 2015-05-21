@@ -79,7 +79,6 @@ begin
   iStepX := (aWater.BoundingBox.Max.X + Abs(aWater.BoundingBox.Min.X)) / (aWater.CellCountX * aWater.CellDivX);
   iStepY := (aWater.BoundingBox.Max.Z + Abs(aWater.BoundingBox.Min.Z)) / (aWater.CellCountY * aWater.CellDivY);
 
-  FDisplayList.InitDisplayList();
   FDisplayList.StartList();
 
   iCurrentU1 := aStartU1;

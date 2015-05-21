@@ -119,8 +119,6 @@ Type
     constructor Create();
     destructor  Destroy(); override;
 
-    procedure InitDisplayList();
-    procedure Clear();
     procedure StartList();
     procedure EndList();
     procedure CallList();
@@ -474,7 +472,7 @@ end;
 
 constructor TGDGLDisplayList.Create();
 begin
-  FDisplayList := 0;
+  FDisplayList := glGenLists(1);
 end;
 
 {******************************************************************************}
@@ -483,26 +481,8 @@ end;
 
 destructor  TGDGLDisplayList.Destroy();
 begin
-  Clear();
-  inherited;
-end;
-
-{******************************************************************************}
-{* Init the displaylist                                                       *}
-{******************************************************************************}
-
-procedure TGDGLDisplayList.InitDisplayList();
-begin
-  FDisplayList := glGenLists(1);
-end;
-
-{******************************************************************************}
-{* Clear displaylist                                                          *}
-{******************************************************************************}
-
-procedure TGDGLDisplayList.Clear();
-begin
   glDeleteLists(FDisplayList,1);
+  inherited;
 end;
 
 {******************************************************************************}
@@ -511,6 +491,7 @@ end;
 
 procedure TGDGLDisplayList.StartList();
 begin
+
   glNewList(FDisplayList,GL_COMPILE);
 end;
 

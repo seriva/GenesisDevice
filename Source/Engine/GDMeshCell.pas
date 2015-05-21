@@ -44,7 +44,7 @@ uses
   GDResource,
   GDResources,
   GDBaseCell,
-  GDGenerics;
+  GDTypesGenerics;
 
 type
 
@@ -163,25 +163,23 @@ end;
 
 procedure TGDMeshCell.Render( aRenderAttribute : TGDRenderAttribute; aRenderFor : TGDRenderFor );
 var
-  iI  : Integer;
-  iMS : TGDSegment;
+  iI, iJ : Integer;
+  iSur : TGDSurface;
   iNormal, iVertex : TGDVector;
   iNormals : TGDVectorList;
   iVertices : TGDVectorList;
-  iTempPolygon : TGDPolygon;
+  iTri : TGDTriangleIdxs;
   iFadeDistanceScale : Single;
   iMesh : TGDMesh;
 
-{
-procedure RenderNormal(aP : TGDMeshPoint);
+procedure RenderNormal(aTris : TGDTriangleIdxs; aStartIdx : integer);
 begin
-  iVertex := iNormals.Items[aP.NormalID].Copy();
+  iVertex := iNormals.Items[aTris.Data[aStartIdx+2]].Copy();
   iVertex.Multiply(R_NORMAL_LENGTH);
-  iVertex.Add( iVertices.Items[aP.VertexID] );
-  glVertex3fv( iVertices.Items[aP.VertexID].ArrayPointer );
+  iVertex.Add( iVertices.Items[aTris.Data[aStartIdx]] );
+  glVertex3fv( iVertices.Items[aTris.Data[aStartIdx]].ArrayPointer );
   glVertex3fv( iVertex.ArrayPointer );
 end;
-}
 
 procedure SetMeshPositioning(aShader : TGDGLShader);
 begin
@@ -214,26 +212,26 @@ begin
 
   Case aRenderAttribute Of
     RA_NORMAL         : begin
-                          for iI := 0 to iMesh.Segments.Count - 1 do
+                          for iI := 0 to iMesh.Surfaces.Count - 1 do
                           begin
-                            iMS := iMesh.Segments.Items[iI];
+                            iSur := iMesh.Surfaces.Items[iI];
 
                             if Modes.RenderWireframe then
                             begin
                               Renderer.SetColor(1.0,1.0,1.0,1.0);
                               SetMeshPositioning(Renderer.ColorShader);
                               Renderer.ColorShader.SetInt('I_CUSTOM_TRANSLATE', 1);
-                              iMS.DPL.CallList();
+                              iSur.DPL.CallList();
                             end
                             else
                             begin
-                              iMS.Material.ApplyMaterial();
+                              iSur.Material.ApplyMaterial();
                               SetMeshPositioning(Renderer.MeshShader);
                               Renderer.MeshShader.SetInt('I_DO_BLOOM', 1);
 
                               if aRenderFor = RF_BLOOM then
                               begin
-                               if iMS.Material.DoBloom then
+                               if iSur.Material.DoBloom then
                                  Renderer.MeshShader.SetInt('I_DO_BLOOM', 1)
                                else
                                  Renderer.MeshShader.SetInt('I_DO_BLOOM', 0);
@@ -241,24 +239,24 @@ begin
 
                               Renderer.MeshShader.SetInt('I_FLIP_NORMAL', 0);
 
-                              iMS.DPL.CallList();
+                              iSur.DPL.CallList();
 
                               //fix for lighting with alha based surfaces
-                              if iMS.Material.HasAlpha then
+                              if iSur.Material.HasAlpha then
                               begin
                                 if (aRenderFor = RF_WATER) and Not(Map.Water.UnderWater) then
                                   glCullFace(GL_BACK)
                                 else
                                   glCullFace(GL_FRONT);
                                 Renderer.MeshShader.SetInt('I_FLIP_NORMAL', 1);
-                                iMS.DPL.CallList();
+                                iSur.DPL.CallList();
                                 if (aRenderFor = RF_WATER) and Not(Map.Water.UnderWater) then
                                   glCullFace(GL_FRONT)
                                 else
                                   glCullFace(GL_BACK);
                               end;
 
-                              iMS.Material.DisableMaterial();
+                              iSur.Material.DisableMaterial();
                             end;
                           end;
                         end;
@@ -271,7 +269,6 @@ begin
                           iNormals  := TGDVectorList.Create();
                           iVertices := TGDVectorList.Create();
 
-                          {
                           For iI := 0 to iMesh.Vertices.Count - 1 do
                           begin
                             iVertex := iMesh.Vertices.Items[iI].Copy();
@@ -289,15 +286,18 @@ begin
                           end;
 
                           glBegin(GL_LINES);
-                          for iI := 0 to iMesh.Polygons.Count - 1 do
+                          for iI := 0 to iMesh.Surfaces.Count - 1 do
                           begin
-                            iTempPolygon := iMesh.Polygons.Items[iI];
-                            RenderNormal(iTempPolygon.P1);
-                            RenderNormal(iTempPolygon.P2);
-                            RenderNormal(iTempPolygon.P3);
+                            for iJ := 0 to iMesh.Surfaces[iI].Triangles.Count - 1 do
+                            begin
+                              iTri := iMesh.Surfaces[iI].Triangles[iJ];
+                              RenderNormal(iTri, 0);
+                              RenderNormal(iTri, 3);
+                              RenderNormal(iTri, 6);
+                            end;
                           end;
                           glEnd();
-                          }
+
                           FreeAndNil(iNormals);
                           FreeAndNil(iVertices);
                         end;
@@ -310,15 +310,15 @@ end;
 
 function TGDMeshCell.TriangleCount() : Integer;
 begin
-  result := FMesh.Polygons.Count;
+  result := FMesh.TriangleCount;
   if FLODType = LT_STAGES then
   begin
     if ((Distance >= 0) and (Distance < Settings.LOD0)) then
-      result := FMesh.Polygons.Count
+      result := FMesh.TriangleCount
     else if ((Distance >= Settings.LOD0) and (Distance <= Settings.LOD1)) then
-      result := FMeshLOD1.Polygons.Count
+      result := FMeshLOD1.TriangleCount
     else if ((Distance >= Settings.LOD1) and (Distance <= Settings.LOD2)) then
-      result := FMeshLOD2.Polygons.Count;
+      result := FMeshLOD2.TriangleCount;
   end;
 end;
 

@@ -43,7 +43,7 @@ uses
   GDModes,
   GDResources,
   GDResource,
-  GDGenerics;
+  GDTypesGenerics;
 
 type
 
@@ -65,7 +65,6 @@ type
     destructor  Destroy(); override;
 
     procedure InitSkyDome( aSkyTexture : String; aSize : Double );
-    procedure ReCalculateDome( aSize : Double );
     procedure Clear();
     Procedure Render();
   end;
@@ -85,7 +84,6 @@ Const
 
 constructor TGDSkyDome.Create();
 begin
-  FDisplayList := TGDGLDisplayList.Create();
 end;
 
 {******************************************************************************}
@@ -105,7 +103,7 @@ end;
 procedure TGDSkyDome.Clear();
 begin
   FTriangleCount := 0;
-  FDisplayList.Clear();
+  FreeAndNil(FDisplayList);
   Resources.RemoveResource(TGDResource(FSkyTexture));
 end;
 
@@ -153,7 +151,7 @@ begin
     iMatrix.ApplyToVector(iStartPoint);
   end;
 
-  FDisplayList.InitDisplayList();
+  FDisplayList := TGDGLDisplayList.Create();
   FDisplayList.StartList();
   FSkyTexture.BindTexture(GL_TEXTURE0);
   For iI := 0 to (COMPLEXITY div 4)-1 do
@@ -187,16 +185,6 @@ begin
   FSkyTexture := Resources.LoadTexture(aSkyTexture ,Settings.TextureDetail,Settings.TextureFilter);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-  CalculateDome(aSize);
-end;
-
-{******************************************************************************}
-{* Recalculate the skydome                                                    *}
-{******************************************************************************}
-
-procedure TGDSkyDome.ReCalculateDome( aSize : Double );
-begin
-  FDisplayList.Clear();
   CalculateDome(aSize);
 end;
 

@@ -181,18 +181,28 @@ type
 {* Axis aligned bounding box class                                            *}
 {******************************************************************************}
 
-    TGDBoundingBox = record
-      Min : TGDVector;
-      Max : TGDVector;
-      Center : TGDVector;
+  TGDBoundingBox = record
+    Min : TGDVector;
+    Max : TGDVector;
+    Center : TGDVector;
 
-      procedure CalculateCenter();
+    procedure CalculateCenter();
 
-      function  BoxInsideBox( aBoundingBox : TGDBoundingBox ) : boolean;
-      function  PointInsideBox( aV : TGDVector ) : boolean;
+    function  BoxInsideBox( aBoundingBox : TGDBoundingBox ) : boolean;
+    function  PointInsideBox( aV : TGDVector ) : boolean;
 
-      procedure RenderWireFrame();
-    end;
+    procedure RenderWireFrame();
+  end;
+
+{******************************************************************************}
+{* Axis aligned bounding box class                                            *}
+{******************************************************************************}
+
+  TGDTriangleIdxs = record
+  public
+    Data : array[0..8] of integer;
+    class operator Equal(v1, v2: TGDTriangleIdxs) B: Boolean;
+  end;
 
 implementation
 
@@ -1017,6 +1027,15 @@ begin
     glVertex3f( Max.x, Max.y, Min.Z  );
     glVertex3f( Max.x, Min.y, Min.Z  );
   glEnd;
+end;
+
+{******************************************************************************}
+{* TriangleIDX equals                                                         *}
+{******************************************************************************}
+
+class operator TGDTriangleIdxs.Equal (v1, v2: TGDTriangleIdxs) B: Boolean;
+begin
+  result := false;
 end;
 
 end.

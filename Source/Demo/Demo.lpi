@@ -166,6 +166,7 @@
       <Unit25>
         <Filename Value="..\Engine\GDSkyDome.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="GDSkyDome"/>
       </Unit25>
       <Unit26>
         <Filename Value="..\Engine\GDSound.pas"/>
@@ -221,31 +222,31 @@
         <IsPartOfProject Value="True"/>
       </Unit36>
       <Unit37>
-        <Filename Value="..\Engine\GDGenerics.pas"/>
+        <Filename Value="..\Libraries\OpenAL\mpg123.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="GDGenerics"/>
       </Unit37>
       <Unit38>
-        <Filename Value="..\Libraries\OpenAL\mpg123.pas"/>
+        <Filename Value="..\Libraries\OpenAL\openal.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit38>
       <Unit39>
-        <Filename Value="..\Libraries\OpenAL\openal.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit39>
-      <Unit40>
         <Filename Value="..\Engine\GDResources.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="GDResources"/>
-      </Unit40>
-      <Unit41>
+      </Unit39>
+      <Unit40>
         <Filename Value="..\Engine\GDResource.pas"/>
         <IsPartOfProject Value="True"/>
-      </Unit41>
-      <Unit42>
+      </Unit40>
+      <Unit41>
         <Filename Value="..\Engine\GDMaterial.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="GDMaterial"/>
+      </Unit41>
+      <Unit42>
+        <Filename Value="..\Engine\GDTypesGenerics.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="GDTypesGenerics"/>
       </Unit42>
     </Units>
   </ProjectOptions>

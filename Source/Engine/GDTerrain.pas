@@ -49,11 +49,9 @@ type
 {******************************************************************************}
 
   TGDTerrainPoint = record
-    Vertex : TGDVector;
-    Normal : TGDVector;
-    ColorUVCoords  : TGDUVCoord;
-    DetailUVCoords : TGDUVCoord;
-    CausticUVCoords : TGDUVCoord;
+    Vertex   : TGDVector;
+    Normal   : TGDVector;
+    UVCoords : TGDUVCoord;
   end;
 
 {******************************************************************************}
@@ -186,12 +184,8 @@ begin
           FTerrainTop := iMapHeight;
         If iMapHeight < FTerrainBottom then
           FTerrainBottom := iMapHeight;
-        TerrainPoints[iX,iY].ColorUVCoords.U := (iX / (FTerrainWidth-1));
-        TerrainPoints[iX,iY].ColorUVCoords.V := (iY / (FTerrainHeight-1));
-        TerrainPoints[iX,iY].DetailUVCoords.U := (FDetailUV * iX) / FTerrainWidth;
-        TerrainPoints[iX,iY].DetailUVCoords.V := (FDetailUV * iY) / FTerrainHeight;
-        TerrainPoints[iX,iY].CausticUVCoords.U := (FCausticUV * iX) / FTerrainWidth;
-        TerrainPoints[iX,iY].CausticUVCoords.V := (FCausticUV * iY) / FTerrainHeight;
+        TerrainPoints[iX,iY].UVCoords.U := (iX / (FTerrainWidth-1));
+        TerrainPoints[iX,iY].UVCoords.V := (iY / (FTerrainHeight-1));
         TerrainPoints[iX,iY].Vertex.X := iStartWidth + (iX * FTriangleSize);
         TerrainPoints[iX,iY].Vertex.Y := (iMapHeight)*FHeightScale;
         TerrainPoints[iX,iY].Vertex.Z := iStartHeight + (iY * FTriangleSize);
@@ -437,7 +431,8 @@ begin
                    Renderer.TerrainShader.SetInt('T_DETAILTEX2', 2);
                    Renderer.TerrainShader.SetInt('T_DETAILTEX3', 3);
                    Renderer.TerrainShader.SetInt('T_WEIGHT_LOOKUP', 4);
-                   Renderer.TerrainShader.SetInt('T_CAUSTIC_TEX', 5);
+                   Renderer.TerrainShader.SetInt('I_DETAIL_UV', FDetailUV);
+                   Renderer.TerrainShader.SetInt('I_CAUSTIC_UV', FCausticUV);
 
                    If Map.Water.UnderWater() then
                      Renderer.TerrainShader.SetInt('I_UNDER_WATER', 1)

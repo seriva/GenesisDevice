@@ -207,7 +207,6 @@ begin
   end;
 
   //create displaylist for this cell
-  FDisplayList.InitDisplayList();
   FDisplayList.StartList();
   For iI := 0 to Length(iParticalLists)-1 do
   begin

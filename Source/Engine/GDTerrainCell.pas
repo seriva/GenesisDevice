@@ -75,10 +75,8 @@ procedure SendTerrainPoint(aX,aY : integer);
 begin
   With FTerrain do
   begin
-    glMultiTexCoord2fv(GL_TEXTURE0, TerrainPoints[aX,aY].ColorUVCoords.ArrayPointer );
-    glMultiTexCoord2fv(GL_TEXTURE1, TerrainPoints[aX,aY].DetailUVCoords.ArrayPointer );
-    glMultiTexCoord2fv(GL_TEXTURE2, TerrainPoints[aX,aY].CausticUVCoords.ArrayPointer );
     glNormal3fv( TerrainPoints[aX,aY].Normal.ArrayPointer );
+    glTexCoord2fv( TerrainPoints[aX,aY].UVCoords.ArrayPointer );
     glVertex3fv( TerrainPoints[aX,aY].Vertex.ArrayPointer );
   end;
 end;
@@ -95,7 +93,6 @@ begin
 
   CalculateBoundingBox();
 
-  FDisplayList.InitDisplayList();
   FDisplayList.StartList();
   for iY := (FStartPoint.Y-1) to FEndPoint.Y-2 do
   begin

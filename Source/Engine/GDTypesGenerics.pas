@@ -20,13 +20,14 @@
 *  along with Genesis Device.  If not, see <http://www.gnu.org/licenses/>.     *
 *                                                                              *
 *******************************************************************************}
-unit GDGenerics;
+unit GDTypesGenerics;
 
 {$mode objfpc}
 
 {******************************************************************************}
 {* Holds the generic types of the engine. We put them in a seperate file      *}
-{* since we need to use objfpc compiler mode to make them work properly.      *}
+{* since we need to use objfpc compiler mode to make them work properly and   *}
+{*   the types in GDTypes need delphi compiler mode                           *}
 {******************************************************************************}
 
 interface
@@ -42,6 +43,7 @@ type
   public
     function GenerateBoundingBox(): TGDBoundingBox;
   end;
+  TGDTriangleIdxList = specialize TFPGList<TGDTriangleIdxs>;
 
 implementation
 
