@@ -431,6 +431,7 @@ begin
                    Renderer.TerrainShader.SetInt('T_DETAILTEX2', 2);
                    Renderer.TerrainShader.SetInt('T_DETAILTEX3', 3);
                    Renderer.TerrainShader.SetInt('T_WEIGHT_LOOKUP', 4);
+                   Renderer.TerrainShader.SetInt('T_CAUSTIC_TEX', 5);
                    Renderer.TerrainShader.SetInt('I_DETAIL_UV', FDetailUV);
                    Renderer.TerrainShader.SetInt('I_CAUSTIC_UV', FCausticUV);
 

@@ -17,14 +17,7 @@ void main(void)
 	vec4 Color = texture2D(T_COLORMAP, UV);
 	if (I_DO_BLOOM == 1)
 	{
-		if(I_UNDER_WATER == 0)
-		{
-			gl_FragColor = mix( (Color * Light), V_FOG_COLOR, Fog);	
-		}
-		else
-		{
-			gl_FragColor = Color * Light;
-		}	
+		gl_FragColor = mix( (Color * Light), V_FOG_COLOR, Fog);
 	}
 	else
 	{
