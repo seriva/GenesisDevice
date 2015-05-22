@@ -487,6 +487,10 @@ begin
                                      Map.Water.Color.G,
                                      Map.Water.Color.B,
                                      Map.Water.Color.A);
+  aShader.SetFloat('I_WATER_DEPTH', Map.Water.Depth);
+  aShader.SetFloat('I_WATER_MAX', Map.Water.MaxDistance);
+  aShader.SetFloat('I_WATER_MIN', Map.Water.MinDistance);
+
 
   aShader.SetFloat3('V_CAM_POS', Camera.Position.x,  Camera.Position.Y,  Camera.Position.Z );
 end;

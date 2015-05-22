@@ -9,6 +9,9 @@ uniform vec4 V_FOG_COLOR;
 uniform int I_UNDER_WATER;
 uniform float I_WATER_HEIGHT;
 uniform vec4 V_WATER_COLOR;
+uniform float I_WATER_DEPTH;
+uniform float I_WATER_MAX;
+uniform float I_WATER_MIN;
 uniform vec3 V_CAM_POS;
 uniform vec3 V_LIGHT_DIR;
 uniform vec4 V_LIGHT_AMB;
@@ -33,12 +36,7 @@ void main(void)
 	vec4 Weights       = texture2D(T_WEIGHT_LOOKUP, ColorUV);
 	vec4 Caustic       = texture2D(T_CAUSTIC_TEX, CausticUV);
 	vec4 DetailFinal   = (Detail1*Weights.x + Detail2*Weights.y + Detail3*Weights.z); 
-    Color = Color + DetailFinal - 0.5;
-
-    const float c = 0.1;
-    const float b = 0.17;
-    float dist = length(VWorld - V_CAM_POS);    
-    float waterFog = clamp((log((dist * (I_WATER_HEIGHT - VWorld.y)/500) * c) - 1) * b, 0, 1);    
+    Color = Color + DetailFinal - 0.5; 
 
     if(I_UNDER_WATER == 0)
 	{
@@ -48,6 +46,7 @@ void main(void)
 		}
 		else
 		{
+            float waterFog = clamp((log((length(VWorld - V_CAM_POS) * (I_WATER_HEIGHT - VWorld.y)/I_WATER_DEPTH) * I_WATER_MIN) - 1) * I_WATER_MAX, 0, 1); 
             gl_FragColor = mix((Color * clamp(Caustic, 0.7, 0.8)) * Light, V_WATER_COLOR, waterFog);
 		}	    
 	}
@@ -55,10 +54,11 @@ void main(void)
 	{
 		if (VWorld.y > I_WATER_HEIGHT)
 		{
-            gl_FragColor = mix(Color * Light, V_WATER_COLOR, 0.8);
+            gl_FragColor = mix(Color * Light, V_WATER_COLOR, 0.85);
 		}
 		else
 		{
+            float waterFog = clamp((log((length(VWorld - V_CAM_POS) * (I_WATER_HEIGHT - VWorld.y)/I_WATER_DEPTH) * I_WATER_MIN) - 1) * I_WATER_MAX, 0, 1); 
             gl_FragColor = mix((Color * clamp(Caustic, 0.7, 0.8)) * Light, V_WATER_COLOR, waterFog);
 		}
 	}

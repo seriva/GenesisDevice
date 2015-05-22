@@ -73,6 +73,9 @@ type
     FCausticCounter  : Integer;
     FWaterTextures   : TGDTextureList;
     FWaterCounter    : Integer;
+    FDepth           : Double;
+    FMinDistance     : Double;
+    FMaxDistance     : Double;
 
     function GetHeight() : Double;
   public
@@ -86,6 +89,9 @@ type
     property WaterV : Double read FWaterV;
     property WaterLoaded : Boolean read FWaterLoaded;
     property Color : TGDColor read FColor;
+    Property Depth : Double read FDepth;
+    Property MinDistance : Double read FMinDistance;
+    Property MaxDistance : Double read FMaxDistance;
 
     constructor Create();
     destructor  Destroy(); override;
@@ -181,6 +187,10 @@ begin
                            aIniFile.ReadFloat( 'Water', 'Z2', 0 ));
     FWaterU := aIniFile.ReadFloat( 'Water', 'WaterU', 1 );
     FWaterV := aIniFile.ReadFloat( 'Water', 'WaterV', 1 );
+    FDepth := aIniFile.ReadFloat( 'Water', 'Depth', 500 );;
+    FMinDistance := aIniFile.ReadFloat( 'Water', 'MinDistance', 0.1 );
+    FMaxDistance := aIniFile.ReadFloat( 'Water', 'MaxDistance', 0.2 );
+
     Resize();
     FWaterTextures.Clear();
     FCausticTextures.Clear();

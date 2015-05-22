@@ -17,10 +17,9 @@ void main()
 	vec3 N = vec3(0.0, 1.0, 0.0); 
 	Light = V_LIGHT_AMB + clamp(V_LIGHT_DIFF * max(dot(N,L), 0.0), 0.0, 1.0);
 
-	vec4 Eye     = ftransform();
 	RefrCoords   = gl_MultiTexCoord0;
 	DepthCoords  = gl_MultiTexCoord1.xy;
 	ViewCoords   = gl_ModelViewProjectionMatrix * gl_Vertex;
-	Fog          = clamp((length(Eye    ) - F_MIN_VIEW_DISTANCE) / F_MAX_VIEW_DISTANCE, 0.0, 1.0);
+	Fog          = clamp((length(gl_Vertex) - F_MIN_VIEW_DISTANCE) / F_MAX_VIEW_DISTANCE, 0.0, 1.0);
 	gl_Position  = gl_ModelViewProjectionMatrix * gl_Vertex;
 }
