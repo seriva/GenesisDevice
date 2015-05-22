@@ -436,15 +436,6 @@ begin
                    Renderer.TerrainShader.SetInt('I_DETAIL_UV', FDetailUV);
                    Renderer.TerrainShader.SetInt('I_CAUSTIC_UV', FCausticUV);
 
-                   If Map.Water.UnderWater() then
-                     Renderer.TerrainShader.SetInt('I_UNDER_WATER', 1)
-                   else
-                     Renderer.TerrainShader.SetInt('I_UNDER_WATER', 0);
-                   Renderer.TerrainShader.SetFloat('I_WATER_HEIGHT', Map.Water.WaterHeight);
-
-                   Renderer.TerrainShader.SetFloat3('V_CAM_POS', Camera.Position.x,  Camera.Position.Y,  Camera.Position.Z );
-
-
                    FColorTexture.BindTexture(GL_TEXTURE0);
                    FDetailTexture1.BindTexture(GL_TEXTURE1);
                    FDetailTexture2.BindTexture(GL_TEXTURE2);

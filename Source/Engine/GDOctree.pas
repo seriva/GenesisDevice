@@ -75,6 +75,9 @@ end;
 
 implementation
 
+uses
+  GDMap;
+
 {******************************************************************************}
 {* Create octree class                                                        *}
 {******************************************************************************}
@@ -265,8 +268,9 @@ begin
         aQueryData.VisibleWaterCells.Add(iCell);
 
       If (iCell.OjectType = SO_GRASSCELL) and Modes.RenderGrass then
-        If iCell.Distance < (Settings.FoliageDistance * R_FOLIAGE_DISTANCE_STEP + (R_FOLIAGE_DISTANCE_STEP * 10)) then
-          aQueryData.VisibleGrassCells.Add(iCell);
+        If (iCell.Distance < (Settings.FoliageDistance * R_FOLIAGE_DISTANCE_STEP + (R_FOLIAGE_DISTANCE_STEP * 10))) then
+           if not(Map.Water.UnderWater()) then
+             aQueryData.VisibleGrassCells.Add(iCell);
 
       If (iCell.OjectType = SO_TERRAINCELL) and Modes.RenderTerrain then
         aQueryData.VisibleTerrainCells.Add(iCell);

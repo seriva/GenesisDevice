@@ -11,7 +11,7 @@ uniform vec3 V_SCALE;
 varying vec2  UV;
 varying float Fog;
 varying vec3 N;
-varying vec3 V;
+varying vec3 VWorld;
 
 vec3 transformVector(vec3 n, mat4 mat){
   vec3 newNorm;
@@ -41,6 +41,7 @@ void main(void)
         Eye.z        += sin(F_ANIMATION_SPEED * gl_Color.r)*F_ANIMATION_STRENGTH * gl_Color.b;    
     }
     vec4 Pos = gl_ModelViewProjectionMatrix * Eye;
+    VWorld = Eye.xyz;
     
 	gl_Position    = Pos;
 	gl_ClipVertex  = vec4(gl_ModelViewMatrix * Eye);

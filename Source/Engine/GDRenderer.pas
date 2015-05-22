@@ -473,9 +473,22 @@ begin
                                     Map.LightDiffuse.G,
                                     Map.LightDiffuse.B,
                                     Map.LightDiffuse.A);
-  aShader.SetFloat('F_MIN_VIEW_DISTANCE', Map.Fog.MinDistance);
-  aShader.SetFloat('F_MAX_VIEW_DISTANCE', Map.Fog.MaxDistance);
-  aShader.SetFloat4('V_FOG_COLOR', Map.Fog.Color.R, Map.Fog.Color.G, Map.Fog.Color.B, Map.Fog.Color.A);
+
+  aShader.SetFloat('F_MIN_VIEW_DISTANCE', Map.FogMinDistance);
+  aShader.SetFloat('F_MAX_VIEW_DISTANCE', Map.FogMaxDistance);
+  aShader.SetFloat4('V_FOG_COLOR', Map.FogColor.R, Map.FogColor.G, Map.FogColor.B, Map.FogColor.A);
+
+  If Map.Water.UnderWater() then
+    aShader.SetInt('I_UNDER_WATER', 1)
+  else
+    aShader.SetInt('I_UNDER_WATER', 0);
+  aShader.SetFloat('I_WATER_HEIGHT', Map.Water.WaterHeight);
+  aShader.SetFloat4('V_WATER_COLOR', Map.Water.Color.R,
+                                     Map.Water.Color.G,
+                                     Map.Water.Color.B,
+                                     Map.Water.Color.A);
+
+  aShader.SetFloat3('V_CAM_POS', Camera.Position.x,  Camera.Position.Y,  Camera.Position.Z );
 end;
 
 {******************************************************************************}
@@ -771,15 +784,8 @@ end;
 
 Procedure RenderStaticGeometry();
 begin
-  //Render sky
-  Map.Fog.UseDistanceFog();
+  Map.ApplyDistanceFog();
   Map.SkyDome.Render();
-
-  //Set the right fog type
-  If not(Camera.Position.Y > Map.Water.WaterHeight) then
-    Map.Fog.UseWaterFog();
-
-  //Render other cells.
   Map.RenderVisibleCells( RA_NORMAL, RF_NORMAL );
 end;
 

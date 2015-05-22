@@ -205,10 +205,6 @@ begin
     Renderer.SkyShader.Enable();
     Renderer.SetJoinedParams(Renderer.SkyShader);
     Renderer.SkyShader.SetInt('T_SKYTEX', 0);
-    If Map.Water.UnderWater() then
-     Renderer.SkyShader.SetInt('I_UNDER_WATER', 1)
-    else
-     Renderer.SkyShader.SetInt('I_UNDER_WATER', 0);
   end;
 
   glPushMatrix();

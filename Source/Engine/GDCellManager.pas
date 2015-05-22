@@ -491,6 +491,7 @@ Begin
     end;
   end;
 
+  //render the visible water cells
   If (Modes.RenderWater) and(aRenderFor <> RF_WATER) then
   begin
     aWater.StartRendering( aRenderAttribute, aRenderFor );

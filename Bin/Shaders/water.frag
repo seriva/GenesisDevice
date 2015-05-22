@@ -1,9 +1,8 @@
 uniform sampler2D T_REFLECTION;
 uniform sampler2D T_DUDVMAP;
-uniform sampler2D T_DEPTHMAP;
 uniform vec4 V_FOG_COLOR;
-uniform vec4 V_WATER_COLOR_CORRECTION;
 uniform int I_UNDER_WATER;
+uniform vec4 V_WATER_COLOR;
 
 varying vec4  RefrCoords; 
 varying vec4  ViewCoords;
@@ -13,8 +12,8 @@ varying vec4  Light;
 
 void main()
 {
-	const float CDistortion = 0.010;
-	const float CRefraction = 0.010;
+	const float CDistortion = 0.015;
+	const float CRefraction = 0.015;
 	vec4 DistOffset       = texture2D(T_DUDVMAP, vec2(0,0) ) * CDistortion;
 	vec4 DUDVColor        = texture2D(T_DUDVMAP, vec2(RefrCoords + DistOffset ));
 	DUDVColor             = normalize(DUDVColor * 2.0  - 1.0) * CRefraction ;
@@ -31,7 +30,6 @@ void main()
 	else
 	{
 		gl_FragColor = ReflectionColor * Light;
-	}	
-	float Depth           = texture2D(T_DEPTHMAP, DepthCoords).x;
-	gl_FragColor.a        = 0.3;
+	}
+	gl_FragColor.a        = V_WATER_COLOR.a;
 }

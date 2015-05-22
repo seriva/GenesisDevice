@@ -39,7 +39,6 @@ uses
   GDConstants,
   GDSkyDome,
   GDWater,
-  GDFog,
   GDTiming,
   GDCellManager,
   GDStringparsing,
@@ -60,11 +59,15 @@ type
     FLightAmbient    : TGDColor;
     FLightDiffuse    : TGDColor;
 
+    FFogDistance     : Integer;
+    FFogColor        : TGDColor;
+    FFogMinDistance  : double;
+    FFogMaxDistance  : double;
+
     FTerrain         : TGDTerrain;
     FWater           : TGDWater;
     FFoliage         : TGDFoliage;
     FSkyDome         : TGDSkyDome;
-    FFog             : TGDFog;
 
     FCellManager     : TGDCellManager;
   public
@@ -74,7 +77,11 @@ type
     property LightDirection : TGDVector read FLightDirection;
     property LightAmbient   : TGDColor read FLightAmbient;
     property LightDiffuse   : TGDColor read FLightDiffuse;
-    property Fog            : TGDFog read FFog;
+
+    property FogDistance    : Integer read FFogDistance;
+    property FogColor       : TGDColor read FFogColor;
+    property FogMinDistance : double read FFogMinDistance;
+    property FogMaxDistance : double read FFogMaxDistance;
 
     property Terrain     : TGDTerrain read FTerrain;
     property Water       : TGDWater read FWater;
@@ -93,6 +100,8 @@ type
     procedure Update();
     procedure DetectVisibleCells();
     procedure RenderVisibleCells(aRenderAttribute : TGDRenderAttribute; aRenderFor : TGDRenderFor);
+
+    procedure ApplyDistanceFog();
   end;
 
 var
@@ -114,7 +123,6 @@ begin
   FWater   := TGDWater.Create();
   FFoliage := TGDFoliage.Create();
   FSkyDome := TGDSkyDome.Create();
-  FFog     := TGDFog.Create();
   FCellManager := TGDCellManager.Create();
 end;
 
@@ -129,7 +137,6 @@ begin
   FreeAndNil(FWater);
   FreeAndNil(FFoliage);
   FreeAndNil(FSkyDome);
-  FreeAndNil(FFog);
   FreeAndNil(FCellManager);
 end;
 
@@ -163,8 +170,9 @@ begin
   FLightDiffuse   := ReadColor(iIniFile, 'DirectionalLight', 'Diffuse');
 
   //init fog
-  Fog.InitDistanceFog( ReadColor(iIniFile, 'Fog', 'Color'), Settings.ViewDistance );
-  Fog.UseDistanceFog();
+  FFogColor    := ReadColor(iIniFile, 'Fog', 'Color');
+  FFogDistance := Settings.ViewDistance;
+  ApplyDistanceFog();
   GUI.LoadingScreen.UpdateBar();
 
   //init terrain
@@ -175,13 +183,12 @@ begin
   Skydome.InitSkyDome(iIniFile.ReadString( 'Sky', 'TextureMap', 'sky.jpg' ),(Settings.ViewDistance * R_VIEW_DISTANCE_STEP));
   GUI.LoadingScreen.UpdateBar();
 
-  //init water
-  Water.InitWater( iIniFile );
-  Fog.InitWaterFog( FWater.UnderWaterColor, iIniFile.ReadInteger('Water', 'Visibility', 8 ) );
-  GUI.LoadingScreen.UpdateBar();
-
   //foliage
   Foliage.InitFoliage( iIniFile );
+  GUI.LoadingScreen.UpdateBar();
+
+  //init water
+  Water.InitWater( iIniFile );
   GUI.LoadingScreen.UpdateBar();
 
   //grass types
@@ -246,15 +253,20 @@ procedure TGDMap.Clear();
 begin
   FPlayerStart.Reset(0,0,0);
   FPlayerViewAngle.Reset(0,0,0);
+
   FLightDirection.Reset(-1,-1,-1);
   FLightAmbient.Reset(1, 1, 1, 1);
   FLightDiffuse.Reset(1, 1, 1, 1);
+
+  FFogMinDistance := (((Settings.ViewDistance * R_VIEW_DISTANCE_STEP) / 10) *5);
+  FFogMaxDistance := (((Settings.ViewDistance * R_VIEW_DISTANCE_STEP) / 10) *8);
+  FFogColor.Reset( 0.5, 0.5, 0.5, 1.0 );
+  FFogDistance := 5;
 
   FTerrain.Clear();
   FWater.Clear();
   FFoliage.Clear();
   FSkyDome.Clear();
-  FFog.Clear();
 
   FCellManager.Clear();
 end;
@@ -303,6 +315,17 @@ procedure TGDMap.RenderVisibleCells(aRenderAttribute : TGDRenderAttribute; aRend
 begin
   FCellManager.RenderVisibleCells(aRenderAttribute, aRenderFor,
                                   FTerrain, FWater, FFoliage);
+end;
+
+{******************************************************************************}
+{* Set the distance fog                                                       *}
+{******************************************************************************}
+
+procedure TGDMap.ApplyDistanceFog();
+begin
+  FFogMinDistance := (((FFogDistance * R_VIEW_DISTANCE_STEP) / 10) * 5);
+  FFogMaxDistance := (((FFogDistance * R_VIEW_DISTANCE_STEP) / 10) * 7.5);
+  glClearColor( FFogColor.R, FFogColor.G, FFogColor.B, FFogColor.A);
 end;
 
 end.

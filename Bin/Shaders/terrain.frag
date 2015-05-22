@@ -1,12 +1,14 @@
-uniform vec4 V_FOG_COLOR;
 uniform sampler2D T_COLORTEX;
 uniform sampler2D T_DETAILTEX1;
 uniform sampler2D T_DETAILTEX2;
 uniform sampler2D T_DETAILTEX3;
 uniform sampler2D T_WEIGHT_LOOKUP;
 uniform sampler2D T_CAUSTIC_TEX;
+
+uniform vec4 V_FOG_COLOR;
 uniform int I_UNDER_WATER;
 uniform float I_WATER_HEIGHT;
+uniform vec4 V_WATER_COLOR;
 uniform vec3 V_CAM_POS;
 uniform vec3 V_LIGHT_DIR;
 uniform vec4 V_LIGHT_AMB;
@@ -31,37 +33,33 @@ void main(void)
 	vec4 Weights       = texture2D(T_WEIGHT_LOOKUP, ColorUV);
 	vec4 Caustic       = texture2D(T_CAUSTIC_TEX, CausticUV);
 	vec4 DetailFinal   = (Detail1*Weights.x + Detail2*Weights.y + Detail3*Weights.z); 
-
+    Color = Color + DetailFinal - 0.5;
 
     const float c = 0.1;
-    const float b = 0.15;
+    const float b = 0.17;
+    float dist = length(VWorld - V_CAM_POS);    
+    float waterFog = clamp((log((dist * (I_WATER_HEIGHT - VWorld.y)/500) * c) - 1) * b, 0, 1);    
 
     if(I_UNDER_WATER == 0)
 	{
 		if (VWorld.y > I_WATER_HEIGHT)
 		{
-			gl_FragColor = mix( (Color + DetailFinal - 0.5) * Light, V_FOG_COLOR, Fog);
+			gl_FragColor = mix(Color * Light, V_FOG_COLOR, Fog);
 		}
 		else
 		{
-            float dist = length(VWorld - V_CAM_POS); 
-            float distInFog = dist * (I_WATER_HEIGHT - VWorld.y)/500;     
-            float fogAmount = clamp((log(distInFog * c) - 1) * b, 0, 1);
-            gl_FragColor = mix(((Color + DetailFinal - 0.5) * clamp(Caustic, 0.7, 0.8)) * Light, vec4(0.28,0.23,0.15,1.0), fogAmount);
+            gl_FragColor = mix((Color * clamp(Caustic, 0.7, 0.8)) * Light, V_WATER_COLOR, waterFog);
 		}	    
 	}
 	else
 	{
 		if (VWorld.y > I_WATER_HEIGHT)
 		{
-			gl_FragColor = (Color + DetailFinal - 0.5) * Light;
+            gl_FragColor = mix(Color * Light, V_WATER_COLOR, 0.8);
 		}
 		else
 		{
-            float dist = length(VWorld - V_CAM_POS); 
-            float distInFog = dist * (I_WATER_HEIGHT - VWorld.y)/500;     
-            float fogAmount = clamp((log(distInFog * c) - 1) * b, 0, 1);
-            gl_FragColor = mix(((Color + DetailFinal - 0.5) * clamp(Caustic, 0.7, 0.8)) * Light, vec4(0.28,0.23,0.15,1.0), fogAmount);
+            gl_FragColor = mix((Color * clamp(Caustic, 0.7, 0.8)) * Light, V_WATER_COLOR, waterFog);
 		}
 	}
 }

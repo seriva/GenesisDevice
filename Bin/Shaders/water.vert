@@ -1,7 +1,5 @@
 uniform float F_MIN_VIEW_DISTANCE;
 uniform float F_MAX_VIEW_DISTANCE;
-uniform float F_WAVE_SPEED;
-uniform float F_WAVE_STRENGHT;
 uniform vec3 V_LIGHT_DIR;
 uniform vec4 V_LIGHT_AMB;
 uniform vec4 V_LIGHT_DIFF;
@@ -24,9 +22,5 @@ void main()
 	DepthCoords  = gl_MultiTexCoord1.xy;
 	ViewCoords   = gl_ModelViewProjectionMatrix * gl_Vertex;
 	Fog          = clamp((length(Eye    ) - F_MIN_VIEW_DISTANCE) / F_MAX_VIEW_DISTANCE, 0.0, 1.0);
-	vec4 EyeVert = gl_Vertex;
-
-	//float Cosine = cos(EyeVert.x + F_WAVE_SPEED) * sin(EyeVert.z + F_WAVE_SPEED);
-	//EyeVert.y    += Cosine * F_WAVE_STRENGHT; 
-	gl_Position  = gl_ModelViewProjectionMatrix * EyeVert;
+	gl_Position  = gl_ModelViewProjectionMatrix * gl_Vertex;
 }

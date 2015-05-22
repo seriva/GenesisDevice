@@ -60,19 +60,15 @@ type
     FWaterV          : Double;
     FWidth           : Integer;
     FHeight          : Integer;
-    FWaveSpeed       : Double;
-    FWaveStrength    : Double;
     FCellCountX      : Integer;
     FCellCountY      : Integer;
     FCellDivX        : Integer;
     FCellDivY        : Integer;
+    FColor           : TGDColor;
     FReflection      : TGDTexture;
-    FDepthMap        : TGDTexture;
     FRenderBuffer    : TGDGLRenderBufferObject;
     FFrameBuffer     : TGDGLFrameBufferObject;
     FWaterLoaded     : Boolean;
-    FUnderWaterColor : TGDColor;
-    FWaterColorCorrection : TGDColor;
     FCausticTextures : TGDTextureList;
     FCausticCounter  : Integer;
     FWaterTextures   : TGDTextureList;
@@ -89,8 +85,7 @@ type
     property WaterU : Double read FWaterU;
     property WaterV : Double read FWaterV;
     property WaterLoaded : Boolean read FWaterLoaded;
-    property UnderWaterColor : TGDColor read FUnderWaterColor;
-
+    property Color : TGDColor read FColor;
 
     constructor Create();
     destructor  Destroy(); override;
@@ -177,8 +172,7 @@ begin
     FCellCountY := aIniFile.ReadInteger('Water', 'CellCountY', 1 );
     FCellDivX   := aIniFile.ReadInteger('Water', 'CellDivX', 1 );
     FCellDivY   := aIniFile.ReadInteger('Water', 'CellDivY', 1 );
-    FUnderWaterColor      := ReadColor(aIniFile, 'Water', 'UnderWaterColor');
-    FWaterColorCorrection := ReadColor(aIniFile, 'Water', 'WaterColorCorrection');
+    FColor := ReadColor(aIniFile, 'Water', 'Color');
     FBoundingBox.Max.Reset(aIniFile.ReadFloat( 'Water', 'X1', 0 ),
                            aIniFile.ReadFloat( 'Water', 'Height', 0 ),
                            aIniFile.ReadFloat( 'Water', 'Z1', 0 ));
@@ -191,11 +185,6 @@ begin
     FWaterTextures.Clear();
     FCausticTextures.Clear();
     FWaterCounter := 0;
-    FWaveSpeed    := aIniFile.ReadFloat( 'Water', 'WaveSpeed', 1000 );
-    FWaveStrength := aIniFile.ReadFloat( 'Water', 'WaveStrength', 18 );
-
-    //Depth texture
-    FDepthMap := Resources.LoadTexture(aIniFile.ReadString( 'Water', 'DepthMap', 'bmp') ,Settings.TextureDetail,Settings.TextureFilter);
 
     //Water textures
     iCount := aIniFile.ReadInteger('Water', 'WaterTexturesCount', 10 );
@@ -263,13 +252,12 @@ var
 begin
   FreeAndNil(FRenderBuffer);
   FreeAndNil(FFrameBuffer);
+  FreeAndNil(FReflection);
 
   FBoundingBox.Min.Reset(0,0,0);
   FBoundingBox.Max.Reset(0,0,0);
-  Resources.RemoveResource(TGDResource(FDepthMap));
-  FreeAndNil(FReflection);
-  FUnderWaterColor.Reset(1,1,1,1);
-  FWaterColorCorrection.Reset(1,1,1,1);
+
+  FColor.Reset(1,1,1,1);
 
   for iI := 0 to FCausticTextures.Count-1 do
   begin
@@ -391,23 +379,10 @@ begin
         RF_NORMAL, RF_WATER : begin
                    Renderer.WaterShader.Enable();
                    Renderer.SetJoinedParams(Renderer.WaterShader);
-                   Renderer.WaterShader.SetFloat('F_WAVE_SPEED', Timing.ElapsedTime / FWaveSpeed);
-                   Renderer.WaterShader.SetFloat('F_WAVE_STRENGHT', FWaveStrength);
                    Renderer.WaterShader.SetInt('T_REFLECTION', 0);
                    Renderer.WaterShader.SetInt('T_DUDVMAP', 1);
-                   Renderer.WaterShader.SetInt('T_DEPTHMAP', 2);
-                   Renderer.WaterShader.SetFloat4('V_WATER_COLOR_CORRECTION', FWaterColorCorrection.R,
-                                                                              FWaterColorCorrection.G,
-                                                                              FWaterColorCorrection.B,
-                                                                              FWaterColorCorrection.A);
-                   If Map.Water.UnderWater() then
-                     Renderer.WaterShader.SetInt('I_UNDER_WATER', 1)
-                   else
-                     Renderer.WaterShader.SetInt('I_UNDER_WATER', 0);
-
                    FReflection.BindTexture(GL_TEXTURE0);
                    BindWaterTexture();
-                   FDepthMap.BindTexture(GL_TEXTURE2);
                    glEnable(GL_BLEND);
                    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         end;
