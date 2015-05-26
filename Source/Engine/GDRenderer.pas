@@ -182,7 +182,7 @@ begin
                                       iDWStyle,
                                       0, 0,
                                       50, 50,
-                                       0,
+                                      0,
                                       0,
                                       iInstance,
                                       nil);

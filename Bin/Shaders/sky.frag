@@ -9,7 +9,6 @@ void main(void)
 {
   vec4 SkyColor = texture2D(T_SKYTEX, SkyUV);
 
-
   if(I_UNDER_WATER == 0)
   {
      gl_FragColor = mix(SkyColor, V_FOG_COLOR, Fog);
@@ -17,8 +16,6 @@ void main(void)
   else
   {
      gl_FragColor = SkyColor;  
-  }
-
-      
+  }    
 }
 

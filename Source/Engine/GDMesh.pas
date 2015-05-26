@@ -123,6 +123,7 @@ constructor TGDMesh.Create( aFileName : String );
 var
   iIdx : Integer;
   iFile : TMemoryStream;
+  iSL : TStringList;
   iStr, iError : String;
   iVec, iNorm : TGDVector;
   iUV : TGDUVCoord;
@@ -132,15 +133,12 @@ var
   iSur : TGDSurface;
 
 procedure ParsePointSet(aStr : String; var aTriangle : TGDTriangleIdxs; aStartIndex : integer);
-var
-  iSL : TStringList;
 begin
-  iSL := TStringList.Create();
+  iSL.Clear();
   ExtractStrings(['/'], [], PChar(AnsiString(aStr)), iSL);
   aTriangle.Data[aStartIndex]   := StrToInt(iSL.Strings[0])-1;
   aTriangle.Data[aStartIndex+1] := StrToInt(iSL.Strings[1])-1;
   aTriangle.Data[aStartIndex+2] := StrToInt(iSL.Strings[2])-1;
-  FreeAndNil(iSL);
 end;
 
 begin
@@ -148,6 +146,7 @@ begin
   try
     iResult := true;
 
+    iSL       := TStringList.Create();
     FVertices := TGDVectorList.Create();
     FNormals  := TGDVectorList.Create();
     FUV       := TGDUVCoordList.Create();
@@ -232,6 +231,7 @@ begin
     end;
   end;
 
+  FreeAndNil(iSL);
   Console.Use:=true;
   Console.WriteOkFail(iResult, iError);
 end;
@@ -258,6 +258,7 @@ var
   iSur   : TGDSurface;
   iJ     : Integer;
   iTri   : TGDTriangleIdxs;
+  ITrisCounter : Integer;
 
 procedure SendPoint(aTri : TGDTriangleIdxs; aStartIdx : integer);
 begin
@@ -271,13 +272,20 @@ begin
   begin
     iSur  := FSurfaces.Items[iI];
     iSur.DPL.StartList();
+    ITrisCounter := 0;
     glBegin(GL_TRIANGLES);
     for iJ := 0 to iSur.Triangles.Count-1 do
     begin
       iTri := iSur.Triangles.Items[iJ];
 
+      //Add the random animation factor for tree animations.
       if iSur.Material.DoTreeAnim then
+      begin
+        if ITrisCounter = 0 then
          glColor3f(0.75 + (Random(25)/100), 0.75 + (Random(25)/100), 0.75 + (Random(25)/100));
+        inc(ITrisCounter);
+        if ITrisCounter = 2 then ITrisCounter := 0;
+      end;
 
       SendPoint(iTri, 0);
       SendPoint(iTri, 3);

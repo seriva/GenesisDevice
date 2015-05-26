@@ -170,10 +170,10 @@ begin
     if ((FTerrainWidth mod 2) <> 1) or ((FTerrainHeight mod 2) <> 1) then
       Raise Exception.Create('Heightmap dimensions are incorrect!');
 
-    iStartWidth   := -((FTerrainWidth * FTriangleSize) div 2);
-    iStartHeight  := -((FTerrainHeight * FTriangleSize) div 2);
-    FTerrainTop          := -999999999999999;
-    FTerrainBottom       :=  999999999999999;
+    iStartWidth    := -((FTerrainWidth * FTriangleSize) div 2);
+    iStartHeight   := -((FTerrainHeight * FTriangleSize) div 2);
+    FTerrainTop    := -999999999999999;
+    FTerrainBottom :=  999999999999999;
     SetLength(TerrainPoints, FTerrainWidth);
     for iX := 0 to (FTerrainWidth-1) do
     begin

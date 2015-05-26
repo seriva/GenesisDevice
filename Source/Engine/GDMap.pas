@@ -155,7 +155,7 @@ begin
   iIniFile := TIniFile.Create(aFileName);
   Clear();
   Console.Write('......Loading map');
-  GUI.LoadingScreen.SetupForUse('Loading ' + StringReplace( ExtractFileName(aFileName) , ExtractFileExt(aFileName), '',  [rfReplaceAll] ) + '...', 9 );
+  GUI.LoadingScreen.SetupForUse('Loading ' + StringReplace( ExtractFileName(aFileName), ExtractFileExt(aFileName), '',  [rfReplaceAll] ) + '...', 9 );
 
   //spawnpoint
   FPlayerStart := ReadVector(iIniFile, 'SpawnPoint', 'Position');
@@ -313,8 +313,7 @@ end;
 
 procedure TGDMap.RenderVisibleCells(aRenderAttribute : TGDRenderAttribute; aRenderFor : TGDRenderFor);
 begin
-  FCellManager.RenderVisibleCells(aRenderAttribute, aRenderFor,
-                                  FTerrain, FWater, FFoliage);
+  FCellManager.RenderVisibleCells(aRenderAttribute, aRenderFor, FTerrain, FWater, FFoliage);
 end;
 
 {******************************************************************************}

@@ -267,7 +267,7 @@ begin
       FreeAndNil(FSources[iI]);
     alcDestroyContext(FContext);
     if not(alGetError() = AL_NO_ERROR) then
-      Raise Exception.Create('Error destroying contect!');
+      Raise Exception.Create('Error destroying context!');
     alcCloseDevice(FDevice);
     if not(alGetError() = AL_NO_ERROR) then
       Raise Exception.Create('Error destroying device!');

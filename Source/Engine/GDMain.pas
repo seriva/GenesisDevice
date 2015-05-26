@@ -98,8 +98,8 @@ end;
 
 procedure TGDMain.InitBaseResources();
 begin
-  Timing.Start();
   Console.Write('......Initializing engine recources');
+  Timing.Start();
 
   GUI.InitGUI();
   Statistics.InitStatistics();

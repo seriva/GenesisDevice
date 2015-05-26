@@ -21,15 +21,15 @@ void main()
 	ProjCoord             = (ProjCoord + 1.0) * 0.5;
 	ProjCoord             += DUDVColor;
 	ProjCoord             = clamp(ProjCoord , 0.001, 0.999);
-	vec4 ReflectionColor  = texture2D(T_REFLECTION, ProjCoord.xy);
+	vec4 ReflectionColor  = texture2D(T_REFLECTION, ProjCoord.xy) * Light;
 	
 	if(I_UNDER_WATER == 0)
 	{
-		gl_FragColor = mix(ReflectionColor * Light, V_FOG_COLOR, Fog);
+		gl_FragColor = mix(ReflectionColor, V_FOG_COLOR, Fog);
 	}
 	else
 	{
-		gl_FragColor = ReflectionColor * Light;
+		gl_FragColor = ReflectionColor;
 	}
 	gl_FragColor.a        = V_WATER_COLOR.a;
 }

@@ -183,7 +183,7 @@ begin
   FVerticalSync     := false;
 
   //renderer
-  ViewDistance     := 5;
+  ViewDistance      := 5;
   FFoliageDistance  := 1;
   FFoliageDensity   := 10;
   FTextureDetail    := TD_LOW;
@@ -230,7 +230,6 @@ end;
 procedure TGDSettings.LoadIniFile();
 var
   iIniFile : TIniFile;
-  iStr : String;
 begin
   iIniFile := TIniFile.Create( FP_INITS + ENGINE_INI );
 
@@ -242,17 +241,13 @@ begin
   FGamma :=        iIniFile.ReadFloat('ViewPort', 'Gamma', 0.60);
 
   //render settings
-  ViewDistance  := iIniFile.ReadInteger('Renderer', 'ViewDistance', 5);
+  ViewDistance     := iIniFile.ReadInteger('Renderer', 'ViewDistance', 5);
   FFoliageDistance := iIniFile.ReadInteger('Renderer', 'FoliageDistance', 1);
-  FFoliageDensity := iIniFile.ReadInteger('Renderer',  'FoliageDensity', 5);
-  iStr := iIniFile.ReadString('Renderer', 'TextureDetail', TGDTextureDetailStrings[1]);
-  SetTextureDetail( iStr );
-  iStr := iIniFile.ReadString('Renderer', 'TextureFilter', TGDTextureFilterStrings[1]);
-  SetTextureFilter(iStr);
-  iStr := iIniFile.ReadString('Renderer', 'WaterDetail', TGDWaterDetailStrings[1]);
-  SetWaterDetail(iStr);
-  iStr := iIniFile.ReadString('Renderer', 'WaterReflection', TGDWaterReflectionStrings[1]);
-  SetWaterReflectionDetail(iStr);
+  FFoliageDensity  := iIniFile.ReadInteger('Renderer',  'FoliageDensity', 5);
+  SetTextureDetail( iIniFile.ReadString('Renderer', 'TextureDetail', TGDTextureDetailStrings[1]) );
+  SetTextureFilter(iIniFile.ReadString('Renderer', 'TextureFilter', TGDTextureFilterStrings[1]));
+  SetWaterDetail(iIniFile.ReadString('Renderer', 'WaterDetail', TGDWaterDetailStrings[1]));
+  SetWaterReflectionDetail( iIniFile.ReadString('Renderer', 'WaterReflection', TGDWaterReflectionStrings[1]) );
   FUseBloom         := iIniFile.ReadBool( 'Renderer', 'UseBloom', False);
   FUseFXAA          := iIniFile.ReadBool( 'Renderer', 'UseFXAA', False);
 
@@ -315,22 +310,22 @@ end;
 function  TGDSettings.GetSettings() : TSettings;
 begin
   //viewport settings
-  Result.Width            := FWidth;
-  Result.Height           := FHeight;
-  Result.FullScreen       := FFullScreen;
-  Result.VerticalSync     := FVerticalSync;
-  Result.Gamma            := FGamma;
+  Result.Width           := FWidth;
+  Result.Height          := FHeight;
+  Result.FullScreen      := FFullScreen;
+  Result.VerticalSync    := FVerticalSync;
+  Result.Gamma           := FGamma;
 
   //render settings
-  Result.ViewDistance     := FViewDistance;
-  Result.FoliageDistance  := FFoliageDistance;
-  Result.FoliageDensity   := FFoliageDensity;
-  Result.TextureDetail    := GetTextureDetail();
-  Result.WaterDetail      := GetWaterDetail();
-  Result.WaterReflection  := GetWaterReflectionDetail();
-  Result.TextureFilter    := GetTextureFilter();
-  Result.UseBloom         := FUseBloom;
-  Result.UseFXAA          := FUseFXAA;
+  Result.ViewDistance    := FViewDistance;
+  Result.FoliageDistance := FFoliageDistance;
+  Result.FoliageDensity  := FFoliageDensity;
+  Result.TextureDetail   := GetTextureDetail();
+  Result.WaterDetail     := GetWaterDetail();
+  Result.WaterReflection := GetWaterReflectionDetail();
+  Result.TextureFilter   := GetTextureFilter();
+  Result.UseBloom        := FUseBloom;
+  Result.UseFXAA         := FUseFXAA;
 
   //input settings
   Result.InvertMouse      := FInvertMouse;
@@ -500,7 +495,5 @@ begin
      else result := TGDWaterReflectionStrings[1];
   end;
 end;
-
-
 
 end.
