@@ -61,6 +61,7 @@
       <Unit3>
         <Filename Value="Main.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="Main"/>
       </Unit3>
       <Unit4>
         <Filename Value="Player.pas"/>
@@ -220,6 +221,7 @@
       <Unit36>
         <Filename Value="..\Libraries\OpenAL\mpg123.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="mpg123"/>
       </Unit36>
       <Unit37>
         <Filename Value="..\Libraries\OpenAL\openal.pas"/>

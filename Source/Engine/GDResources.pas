@@ -54,7 +54,8 @@ type
    public
      function  LoadTexture(aFileName : String; aDetail : TGDTextureDetail; aTextureFilter : TGDTextureFilter): TGDTexture;
      function  LoadMesh(aFileName : String): TGDMesh;
-     function  LoadSound(aFileName : String): TGDSoundBuffer;
+     function  LoadSoundBuffer(aFileName : String): TGDSoundBuffer;
+     function  LoadSoundStream(aFileName : String): TGDSoundStream;
      procedure LoadMaterials(aFileName : String);
 
      procedure RemoveResource(var aResource : TGDResource);
@@ -106,10 +107,10 @@ begin
 end;
 
 {******************************************************************************}
-{* Load a sound resource                                                      *}
+{* Load a sound buffer resource                                               *}
 {******************************************************************************}
 
-function TGDResources.LoadSound(aFileName : String): TGDSoundBuffer;
+function TGDResources.LoadSoundBuffer(aFileName : String): TGDSoundBuffer;
 var
   iIdx : Integer;
 begin
@@ -118,6 +119,24 @@ begin
   else
   begin
     result := TGDSoundBuffer.Create(aFileName);
+    AddResource(aFileName, result);
+  end;
+end;
+
+
+{******************************************************************************}
+{* Load a sound stream resource                                               *}
+{******************************************************************************}
+
+function TGDResources.LoadSoundStream(aFileName : String): TGDSoundStream;
+var
+  iIdx : Integer;
+begin
+  if Find(aFileName, iIdx) then
+    result := GetResource(iIdx) as TGDSoundStream
+  else
+  begin
+    result := TGDSoundStream.Create(aFileName);
     AddResource(aFileName, result);
   end;
 end;

@@ -32,7 +32,7 @@ type
   //render types
   TGDRenderState     = (RS_COLOR, RS_WIREFRAME, RS_TEXTS, RS_TEXTURE);
   TGDRenderAttribute = (RA_NORMAL, RA_FRUSTUM_BOXES, RA_NODE_BOXES, RA_NORMALS);
-  TGDRenderFor       = (RF_NORMAL, RF_WATER, RF_BLOOM);
+  TGDRenderFor       = (RF_NORMAL, RF_WATER, RF_BLOOM, RF_SHADOW);
 
   //settings types
   TGDTextureDetail   = (TD_LOW, TD_MEDIUM,TD_HIGH);
@@ -48,6 +48,9 @@ type
 
   //Mesh LOD type
   TGDMeshLODType = (LT_NONE, LT_FADE_IN, LT_STAGES);
+
+  //Sound type
+  TGDSoundResourceType = (SR_BUFFER, SR_STREAM);
 
   //base procedure callback
   TGDCallback = procedure();

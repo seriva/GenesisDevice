@@ -258,12 +258,11 @@ begin
   //sounds
   AmbientBuffer    := gdSoundLoad( 'Sounds\ambient.wav');
   UnderWaterBuffer := gdSoundLoad( 'Sounds\underwater.wav');
-  //MusicBuffer    := gdSoundLoad( 'Sounds\music.mp3');
+  MusicBuffer      := gdSoundLoad( 'Sounds\music.mp3');
   AmbientSource := gdSoundPlay(AmbientBuffer, true);
   gdSoundPause(AmbientSource);
   UnderWaterSource := gdSoundPlay(UnderWaterBuffer, true);
   gdSoundPause(UnderWaterSource);
-  //gdSoundPlay( MusicBuffer, true );
   gdGUILoadingScreenUpdate();
 
   //intro
@@ -302,6 +301,8 @@ begin
   gdInputRegisterAction(IT_SINGLE,VK_F4,@ToggleOBJBoxes, false  );
   gdInputRegisterAction(IT_SINGLE,VK_F5,@ToggleClipping, false  );
   gdInputRegisterAction(IT_SINGLE,VK_P,@ToggleIntroText, true  );
+
+  gdSoundPlay( MusicBuffer, true );
 end;
 
 {******************************************************************************}
@@ -315,7 +316,7 @@ begin
   gdSoundStop(UnderWaterSource);
   gdSoundRemove(AmbientBuffer);
   gdSoundRemove(UnderWaterBuffer);
-  //gdSoundRemove(MusicBuffer);
+  gdSoundRemove(MusicBuffer);
 end;
 
 end.

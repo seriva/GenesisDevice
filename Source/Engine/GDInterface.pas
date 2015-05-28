@@ -86,7 +86,7 @@ procedure gdSoundRemove( aPointer : pointer );
 function  gdSoundPlay( aPointer  : pointer; aLoop : boolean ) : integer;
 procedure gdSoundPause( aIndex : Integer );
 procedure gdSoundResume( aIndex : Integer  );
-procedure gdSoundStop( aIndex : Integer  );
+procedure gdSoundStop( aIndex : Integer );
 
 //input functions
 procedure gdInputEnable( aEnable : boolean );
@@ -252,7 +252,10 @@ end;
 
 function  gdSoundLoad( aFileName : String) : pointer;
 begin
-  result := Resources.LoadSound(aFileName);
+  if UpperCase(ExtractFileExt(aFileName)) = '.WAV' then
+     result := Resources.LoadSoundBuffer(aFileName)
+  else if UpperCase(ExtractFileExt(aFileName)) = '.MP3' then
+     result := Resources.LoadSoundStream(aFileName)
 end;
 
 {******************************************************************************}
