@@ -445,35 +445,23 @@ object ConfigurationForm: TConfigurationForm
     end
     object SoundTabSheet: TTabSheet
       Caption = 'Sound'
-      ClientHeight = 311
+      ClientHeight = 308
       ClientWidth = 392
       ImageIndex = 3
       object SoundPanel: TPanel
         Left = 0
-        Height = 311
+        Height = 308
         Top = 0
         Width = 392
         Align = alClient
         BevelOuter = bvNone
-        ClientHeight = 311
+        ClientHeight = 308
         ClientWidth = 392
         TabOrder = 0
-        object MusicVolumeLabel: TLabel
-          Left = 6
-          Height = 16
-          Top = 9
-          Width = 84
-          Caption = 'Music Volume'
-          Font.Color = clWindowText
-          Font.Height = -13
-          Font.Name = 'MS Sans Serif'
-          ParentColor = False
-          ParentFont = False
-        end
         object SoundVolumeLabel: TLabel
           Left = 6
           Height = 16
-          Top = 39
+          Top = 10
           Width = 88
           Caption = 'Sound Volume'
           Font.Color = clWindowText
@@ -484,9 +472,9 @@ object ConfigurationForm: TConfigurationForm
         end
         object MuteSoundCheckBox: TCheckBox
           Left = 6
-          Height = 20
-          Top = 72
-          Width = 151
+          Height = 23
+          Top = 43
+          Width = 155
           Caption = 'Mute Sound                    '
           Font.Color = clWindowText
           Font.Height = -13
@@ -496,27 +484,16 @@ object ConfigurationForm: TConfigurationForm
           ShowHint = True
           TabOrder = 0
         end
-        object MusicVolumeTrackBar: TTrackBar
+        object SoundVolumeTrackBar: TTrackBar
           Left = 126
           Height = 25
-          Top = 6
+          Top = 8
           Width = 257
           Max = 100
           PageSize = 1
           Position = 50
           TickStyle = tsNone
           TabOrder = 1
-        end
-        object SoundVolumeTrackBar: TTrackBar
-          Left = 126
-          Height = 25
-          Top = 37
-          Width = 257
-          Max = 100
-          PageSize = 1
-          Position = 50
-          TickStyle = tsNone
-          TabOrder = 2
         end
       end
     end

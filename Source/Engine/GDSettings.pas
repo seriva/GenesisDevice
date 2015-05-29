@@ -69,7 +69,6 @@ type
 
     //sound settings
     MuteSound   : Boolean;
-    MusicVolume : Double;
     SoundVolume : Double;
   end;
 
@@ -105,7 +104,6 @@ type
 
     //sound settings
     FMuteSound   : boolean;
-    FMusicVolume : Double;
     FSoundVolume : Double;
 
     //Model global LOD settings.
@@ -150,7 +148,6 @@ type
 
     //sound settings
     property MuteSound : Boolean read FMuteSound write FMuteSound;
-    property MusicVolume : Double read FMusicVolume write FMusicVolume;
     property SoundVolume : Double read FSoundVolume write FSoundVolume;
 
     constructor Create();
@@ -196,7 +193,7 @@ begin
   //set right en left
   FTop := 0;
   FLeft := 0;
-  FGamma := 0.60;
+  FGamma := 0.50;
 
   //input
   FInvertMouse      := False;
@@ -204,8 +201,7 @@ begin
 
   //sound
   FMuteSound   := false;
-  FMusicVolume := 0.3;
-  FSoundVolume := 0.7;
+  FSoundVolume := 0.5;
 
   //console commands
   Console.AddCommand('RBloom', '0,1 : Enable or disable bloom', CT_BOOLEAN, @FUseBloom);
@@ -257,8 +253,7 @@ begin
 
   //sound settings
   FMuteSound   := iIniFile.ReadBool( 'Sound', 'Mute', False);
-  FMusicVolume := iIniFile.ReadFloat( 'Sound', 'MusicVolume', 0.3);
-  FSoundVolume := iIniFile.ReadFloat( 'Sound', 'SoundVolume', 0.7);
+  FSoundVolume := iIniFile.ReadFloat( 'Sound', 'SoundVolume', 0.5);
   
   FreeAndNil(iIniFile)
 end;
@@ -297,7 +292,6 @@ begin
 
   //sound settings
   iIniFile.WriteBool( 'Sound', 'Mute', FMuteSound);
-  iIniFile.WriteFloat( 'Sound', 'MusicVolume', FMusicVolume);
   iIniFile.WriteFloat( 'Sound', 'SoundVolume', FSoundVolume);
 
   FreeAndNil(iIniFile)
@@ -333,7 +327,6 @@ begin
 
   //sound settings
   Result.MuteSound   := FMuteSound;
-  Result.MusicVolume := FMusicVolume;
   Result.SoundVolume := FSoundVolume;
 end;
 
@@ -367,7 +360,6 @@ begin
 
   //sound settings
   FMuteSound   := aSettings.MuteSound;
-  FMusicVolume := aSettings.MusicVolume;
   FSoundVolume := aSettings.SoundVolume;
 end;
 

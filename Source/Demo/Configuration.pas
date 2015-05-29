@@ -104,10 +104,8 @@ type
     InvertMouseCheckBox: TCheckBox;
     SoundTabSheet: TTabSheet;
     SoundPanel: TPanel;
-    MusicVolumeLabel: TLabel;
     SoundVolumeLabel: TLabel;
     MuteSoundCheckBox: TCheckBox;
-    MusicVolumeTrackBar: TTrackBar;
     SoundVolumeTrackBar: TTrackBar;
     DemoTabSheet: TTabSheet;
     DemoPanel: TPanel;
@@ -339,7 +337,6 @@ begin
 
   //sound settings
   MuteSoundCheckBox.Checked := iSettings.MuteSound;
-  MusicVolumeTrackBar.Position := Round(100 * iSettings.MusicVolume );
   SoundVolumeTrackBar.Position := Round(100 * iSettings.SoundVolume );
 
   //map
@@ -385,7 +382,6 @@ begin
 
   //sound settings
   iSettings.MuteSound   := MuteSoundCheckBox.Checked;
-  iSettings.MusicVolume := MusicVolumeTrackBar.Position / 100;
   iSettings.SoundVolume := SoundVolumeTrackBar.Position / 100;
 
   //demo

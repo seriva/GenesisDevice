@@ -302,7 +302,7 @@ begin
   gdInputRegisterAction(IT_SINGLE,VK_F5,@ToggleClipping, false  );
   gdInputRegisterAction(IT_SINGLE,VK_P,@ToggleIntroText, true  );
 
-  gdSoundPlay( MusicBuffer, true );
+  MusicSource := gdSoundPlay( MusicBuffer, true );
 end;
 
 {******************************************************************************}
@@ -314,6 +314,7 @@ begin
   FreeAndNil(Player);
   gdSoundStop(AmbientSource);
   gdSoundStop(UnderWaterSource);
+  gdSoundStop(MusicSource);
   gdSoundRemove(AmbientBuffer);
   gdSoundRemove(UnderWaterBuffer);
   gdSoundRemove(MusicBuffer);

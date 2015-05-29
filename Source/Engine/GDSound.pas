@@ -65,7 +65,8 @@ Type
     constructor Create(aFileName : String);
     destructor  Destroy(); override;
 
-    procedure Stream(aBuffer : TALUInt);
+    function  Stream(aBuffer : TALUInt; aLoop : boolean = false): boolean;
+    procedure ResetStream();
     procedure PreBuffer();
   end;
 
@@ -87,8 +88,9 @@ Type
 
   TGDSoundSource = class
   private
-    FSource : TALuint;
+    FSource   : TALuint;
     FResource : TGDSoundResource;
+    FLoop     : Boolean;
   public
     constructor Create();
     destructor  Destroy(); override;
@@ -138,8 +140,6 @@ begin
   try
     iResult := true;
     FHandle := mpg123_new('MMX', nil);
-    //if FHandle = nil then Exit;
-    //  Raise Exception.Create('Error creating stream handle!');
     mpg123_open(FHandle, PChar(aFileName));
     mpg123_getformat(FHandle, @FRate, @FChannels, @FEncoding);
     mpg123_format_none(Fhandle);
@@ -172,17 +172,37 @@ end;
 {* Stream next part in the buffer                                             *}
 {******************************************************************************}
 
-procedure TGDSoundStream.Stream(aBuffer : TALUInt);
+function TGDSoundStream.Stream(aBuffer : TALUInt; aLoop : boolean = false): boolean;
 const
-  BUFFER_SIZE = 4096*8;
+  BUFFER_SIZE = 4096*32;
 var
   lData: PByte;
   lD : Cardinal;
 begin
+  result := true;
   getmem(lData, BUFFER_SIZE);
-  mpg123_read(Fhandle, lData, BUFFER_SIZE, @lD);
-  alBufferData(aBuffer, FFormat, lData, BUFFER_SIZE, FRate);
+  if mpg123_read(Fhandle, lData, BUFFER_SIZE, @lD) = MPG123_OK then
+     alBufferData(aBuffer, FFormat, lData, BUFFER_SIZE, FRate)
+  else
+  begin
+    if aLoop then
+    begin
+      mpg123_seek(Fhandle, 0, 0);
+      result := Stream(aBuffer)
+    end
+    else
+      result := false;
+  end;
   freemem(lData);
+end;
+
+{******************************************************************************}
+{* Reset the sounds stream                                                    *}
+{******************************************************************************}
+
+procedure TGDSoundStream.ResetStream();
+begin
+  mpg123_seek(Fhandle, 0, 0);
 end;
 
 {******************************************************************************}
@@ -390,14 +410,16 @@ var
   iI,iProcessed : integer;
   iSource       : TGDSoundSource;
   iBuffer       : TALUInt;
+  iState        : TALCint;
   iListenerPos  : array [0..2] of TALfloat= ( 0.0, 0.0, 0.0);
   iListenerVel  : array [0..2] of TALfloat= ( 0.0, 0.0, 0.0);
   iListenerOri  : array [0..5] of TALfloat= ( 0.0, 0.0, -1.0, 0.0, 1.0, 0.0);
 begin
   //TODO: add positional sounds
-  AlListenerfv ( AL_POSITION, @iListenerPos);
-  AlListenerfv ( AL_VELOCITY, @iListenerVel);
-  AlListenerfv ( AL_ORIENTATION, @iListenerOri);
+  AlListenerfv( AL_POSITION, @iListenerPos);
+  AlListenerfv( AL_VELOCITY, @iListenerVel);
+  AlListenerfv( AL_ORIENTATION, @iListenerOri);
+  AlListenerf( AL_GAIN, Settings.SoundVolume);
 
   //Update posible steams
   for iI := 0 to S_MAX_SOURCES-1 do
@@ -405,12 +427,16 @@ begin
     iSource := FSources[iI];
     if iSource.FResource = nil then continue;
     if iSource.FResource.ResourceType <> SR_STREAM then continue;
+    alGetSourcei(iSource.FSource, AL_SOURCE_STATE, @iState);
+    if (iState = AL_PAUSED) then  continue;
     alGetSourcei(iSource.FSource, AL_BUFFERS_PROCESSED, @iProcessed);
     if iProcessed > 0 then
       repeat
         alSourceUnqueueBuffers(iSource.FSource, 1, @iBuffer);
-        (iSource.FResource as TGDSoundStream).Stream(iBuffer);
-        alSourceQueueBuffers(iSource.FSource, 1, @iBuffer);
+        if (iSource.FResource as TGDSoundStream).Stream(iBuffer, iSource.FLoop) then
+           alSourceQueueBuffers(iSource.FSource, 1, @iBuffer)
+        else
+          Stop(iI);
         dec(iProcessed);
       until iProcessed <= 0;
   end;
@@ -444,6 +470,7 @@ begin
 
     if iSource <> nil then
     begin
+      iSource.FLoop := aLoop;
       if aResource.ClassType = TGDSoundBuffer then
       begin
         if aLoop then
@@ -455,7 +482,7 @@ begin
       else if aResource.ClassType = TGDSoundStream then
       begin
         TGDSoundStream(aResource).PreBuffer();
-        alSourceQueueBuffers(iSource.FSource, 2, @TGDSoundStream(aResource).FBuffers);
+        alSourceQueueBuffers(iSource.FSource, 2, @TGDSoundStream(aResource).FBuffers[0]);
       end
       else
         Console.WriteOkFail(false, aResource.Name + ' is not a playeble resource.', false);
@@ -514,6 +541,8 @@ begin
   alGetSourcei(iSource.FSource, AL_SOURCE_STATE, @iState);
   if (iState = AL_PLAYING) or (iState = AL_PAUSED) then
     AlSourceStop(iSource.FSource);
+  if iSource.FResource.ResourceType = SR_STREAM then
+    (iSource.FResource as TGDSoundStream).ResetStream();
   iSource.FResource := nil;
 end;
 
