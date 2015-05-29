@@ -187,10 +187,10 @@ Begin
   iStepY1 := (aWater.BoundingBox.Max.Z + Abs(aWater.BoundingBox.Min.Z)) / aWater.CellCountY;
   iStepX2 := (aWater.BoundingBox.Max.X + Abs(aWater.BoundingBox.Min.X)) / (aWater.CellCountX * aWater.CellDivX);
   iStepY2 := (aWater.BoundingBox.Max.Z + Abs(aWater.BoundingBox.Min.Z)) / (aWater.CellCountY * aWater.CellDivY);
-  iStepU1 := aWater.WaterU / (aWater.CellCountX * aWater.CellDivX);
-  iStepV1 := aWater.WaterV / (aWater.CellCountY * aWater.CellDivY);
-  iStepU2 := 1 / (aWater.CellCountX * aWater.CellDivX);
-  iStepV2 := 1 / (aWater.CellCountY * aWater.CellDivY);
+  iStepU1 := aWater.RefractionU / (aWater.CellCountX * aWater.CellDivX);
+  iStepV1 := aWater.RefractionV / (aWater.CellCountY * aWater.CellDivY);
+  iStepU2 := aWater.WavesU / (aWater.CellCountX * aWater.CellDivX);
+  iStepV2 := aWater.WavesV / (aWater.CellCountY * aWater.CellDivY);
 
   iI := aWater.BoundingBox.Min.X-iStepX1;
   iCurrentU1 := 0;

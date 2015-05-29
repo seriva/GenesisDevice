@@ -56,8 +56,10 @@ type
     FWaterTime       : Integer;
     FLastTime        : Integer;
     FBoundingBox     : TGDBoundingBox;
-    FWaterU          : Double;
-    FWaterV          : Double;
+    FRefractionU     : Double;
+    FRefractionV     : Double;
+    FWavesU          : Double;
+    FWavesV          : Double;
     FWidth           : Integer;
     FHeight          : Integer;
     FCellCountX      : Integer;
@@ -85,8 +87,10 @@ type
     property CellDivY : Integer read FCellDivY;
     property CellCountX : Integer read FCellCountX;
     property CellCountY : Integer read FCellCountY;
-    property WaterU : Double read FWaterU;
-    property WaterV : Double read FWaterV;
+    property RefractionU : Double read FRefractionU;
+    property RefractionV : Double read FRefractionV;
+    property WavesU : Double read FWavesU;
+    property WavesV : Double read FWavesV;
     property WaterLoaded : Boolean read FWaterLoaded;
     property Color : TGDColor read FColor;
     Property Depth : Double read FDepth;
@@ -118,7 +122,6 @@ type
 implementation
 
 uses
-  GDMap,
   GDRenderer,
   GDResources;
 
@@ -178,16 +181,18 @@ begin
     FCellCountY := aIniFile.ReadInteger('Water', 'CellCountY', 1 );
     FCellDivX   := aIniFile.ReadInteger('Water', 'CellDivX', 1 );
     FCellDivY   := aIniFile.ReadInteger('Water', 'CellDivY', 1 );
-    FColor := ReadColor(aIniFile, 'Water', 'Color');
+    FColor      := ReadColor(aIniFile, 'Water', 'Color');
     FBoundingBox.Max.Reset(aIniFile.ReadFloat( 'Water', 'X1', 0 ),
                            aIniFile.ReadFloat( 'Water', 'Height', 0 ),
                            aIniFile.ReadFloat( 'Water', 'Z1', 0 ));
     FBoundingBox.Min.Reset(aIniFile.ReadFloat( 'Water', 'X2', 0 ),
                            aIniFile.ReadFloat( 'Water', 'Height', 0 ),
                            aIniFile.ReadFloat( 'Water', 'Z2', 0 ));
-    FWaterU := aIniFile.ReadFloat( 'Water', 'WaterU', 1 );
-    FWaterV := aIniFile.ReadFloat( 'Water', 'WaterV', 1 );
-    FDepth := aIniFile.ReadFloat( 'Water', 'Depth', 500 );;
+    FRefractionU := aIniFile.ReadFloat( 'Water', 'RefractionU', 1 );
+    FRefractionV := aIniFile.ReadFloat( 'Water', 'RefractionV', 1 );
+    FWavesU      := aIniFile.ReadFloat( 'Water', 'WavesU', 1 );
+    FWavesV      := aIniFile.ReadFloat( 'Water', 'WavesV', 1 );
+    FDepth       := aIniFile.ReadFloat( 'Water', 'Depth', 500 );
     FMinDistance := aIniFile.ReadFloat( 'Water', 'MinDistance', 0.1 );
     FMaxDistance := aIniFile.ReadFloat( 'Water', 'MaxDistance', 0.2 );
 
@@ -391,8 +396,10 @@ begin
                    Renderer.SetJoinedParams(Renderer.WaterShader);
                    Renderer.WaterShader.SetInt('T_REFLECTION', 0);
                    Renderer.WaterShader.SetInt('T_DUDVMAP', 1);
+                   Renderer.WaterShader.SetInt('T_CAUSTICMAP', 5);
                    FReflection.BindTexture(GL_TEXTURE0);
                    BindWaterTexture();
+                   BindCausticTexture();
                    glEnable(GL_BLEND);
                    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         end;
