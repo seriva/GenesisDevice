@@ -38,7 +38,6 @@ type
   TGDTextureDetail   = (TD_LOW, TD_MEDIUM,TD_HIGH);
   TGDTextureFilter   = (TF_BILINEAR, TF_TRILINEAR, TF_AF2, TF_AF4, TF_AF8, TF_AF16);
   TGDWaterDetail     = (WD_LOW, WD_MEDIUM, WD_HIGH);
-  TGDWaterReflection = (WR_ALL, WR_TERRAIN_ONLY);
 
   //input types
   TGDInputTypes = (IT_SINGLE, IT_DIRECT, IT_DOWN, IT_UP);
@@ -60,7 +59,6 @@ const
   TTextureDetail   : array[1..3] of String  = ('Low', 'Medium','High');
   TTextureFilter   : array[1..6] of String  = ('Bilinear', 'Trilinear','Anisotropic 2x','Anisotropic 4x','Anisotropic 8x','Anisotropic 16x');
   TWaterDetail     : array[1..3] of String  = ('Low', 'Medium','High');
-  TWaterReflection : array[1..2] of String  = ('Terrain Only', 'All');
 
   //engine constants
   ENGINE_INFO     = '73 -26 May 2015';

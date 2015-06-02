@@ -152,7 +152,7 @@ type
     property Texture : TGLuint read FTexture;
 
     constructor Create(aFileName : String; aDetail : TGDTextureDetail; aTextureFilter : TGDTextureFilter); overload;
-    constructor Create( aType : GLEnum; aSizeW, aSizeH : integer ); overload;
+    constructor Create( aType : GLEnum; aFormat: GLenum; aSizeW, aSizeH : integer ); overload;
     destructor  Destroy(); override;
 
     procedure BindTexture(aTU : GLEnum);
@@ -360,15 +360,26 @@ begin
   Console.WriteOkFail(iResult, iError);
 end;
 
-constructor TGDTexture.Create( aType : GLEnum; aSizeW, aSizeH : integer );
+constructor TGDTexture.Create( aType, aFormat : GLEnum; aSizeW, aSizeH : integer );
 begin
   glGenTextures(1, @FTexture);
   glBindTexture(GL_TEXTURE_2D, FTexture);
-  glTexImage2D(GL_TEXTURE_2D, 0, aType, aSizeW, aSizeH, 0,GL_RGBA, GL_UNSIGNED_BYTE, nil);
-  glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
-  glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+  glTexImage2D(GL_TEXTURE_2D, 0, aType, aSizeW, aSizeH, 0,aFormat, GL_UNSIGNED_BYTE, nil);
+
+  if aType = GL_RGBA then
+  begin
+    glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
+    glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+  end
+  else if aType = GL_DEPTH_COMPONENT then
+  begin
+    glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
+    glTexParameterf(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+  end;
 end;
 
 {******************************************************************************}

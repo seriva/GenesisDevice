@@ -267,11 +267,6 @@ begin
   for iI := Low(TWaterDetail) to High(TWaterDetail) do
     WaterDetailComboBox.Items.Add(TWaterDetail[iI]);
 
-  //fill waterreflection combobox
-  WaterReflectionComboBox.Clear;
-  for iI := Low(TWaterReflection) to High(TWaterReflection) do
-    WaterReflectionComboBox.Items.Add(TWaterReflection[iI]);
-
   //detect maps
   MapComboBox.Items.Clear();
   iResult := TStringList.Create();
@@ -320,14 +315,6 @@ begin
     if  WaterDetailComboBox.Items[iI] = iSettings.WaterDetail then
       WaterDetailComboBox.ItemIndex := iI;
 
-  For  iI := 0 to WaterReflectionComboBox.Items.Count-1 do
-    if  WaterReflectionComboBox.Items[iI] = iSettings.WaterReflection then
-      WaterReflectionComboBox.ItemIndex := iI;
-
-  For  iI := 0 to WaterReflectionComboBox.Items.Count-1 do
-    if  WaterReflectionComboBox.Items[iI] = iSettings.WaterReflection then
-      WaterReflectionComboBox.ItemIndex := iI;
-
   BloomCheckBox.Checked := iSettings.UseBloom;
   FXAACheckBox.Checked := iSettings.UseFXAA;
 
@@ -372,7 +359,6 @@ begin
   iSettings.TextureDetail    := TextureDetailComboBox.Text;
   iSettings.TextureFilter    := TextureFilterComboBox.Text;
   iSettings.WaterDetail      := WaterDetailComboBox.Text;
-  iSettings.WaterReflection  := WaterReflectionComboBox.Text;
   iSettings.UseBloom         := BloomCheckBox.Checked;
   iSettings.UseFXAA          := FXAACheckBox.Checked;
 

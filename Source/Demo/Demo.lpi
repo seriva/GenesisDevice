@@ -70,6 +70,7 @@
       <Unit5>
         <Filename Value="..\Libraries\OpenGL\dglOpenGL.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="dglOpenGL"/>
       </Unit5>
       <Unit6>
         <Filename Value="..\Engine\GDBaseCell.pas"/>
@@ -79,6 +80,7 @@
       <Unit7>
         <Filename Value="..\Engine\GDCamera.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="GDCamera"/>
       </Unit7>
       <Unit8>
         <Filename Value="..\Engine\GDCellManager.pas"/>

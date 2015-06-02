@@ -253,7 +253,7 @@ begin
   FreeAndNil(FReflection);
   FRenderBuffer := TGDGLRenderBufferObject.Create(FWidth,FHeight,GL_DEPTH_COMPONENT24);
   FFrameBuffer  := TGDGLFrameBufferObject.Create();
-  FReflection   := TGDTexture.Create(GL_RGBA, FWidth,FHeight);
+  FReflection   := TGDTexture.Create(GL_RGBA, GL_RGBA, FWidth,FHeight);
 end;
 
 {******************************************************************************}

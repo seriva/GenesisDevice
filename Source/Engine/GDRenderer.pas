@@ -79,12 +79,18 @@ type
     FSourceImage   : TGDTexture;
     FBloomImage    : TGDTexture;
     FBlurImage     : TGDTexture;
+
+    FShadowFrameBuffer : TGDGLFrameBufferObject;
+    FShadowTexture     : TGDTexture;
+
     FBloomStrengh  : Single;
 
     procedure InitShaders();
     procedure ClearShaders();
     procedure InitFrameBuffers();
     procedure ClearFrameBuffers();
+    procedure InitShadowFrameBuffers();
+    procedure ClearShadowFrameBuffers();
     Procedure ResizeFrameBuffers();
   public
     property    Initialized : boolean read FInitialized;
@@ -367,6 +373,7 @@ begin
     ResizeViewPort();
     VerticalSync();
     InitFrameBuffers();
+    InitShadowFrameBuffers();
 
     FCanResize := true;
   except
@@ -396,6 +403,7 @@ begin
     result := true;
     Main.ClearBaseResources();
     ClearFrameBuffers();
+    ClearShadowFrameBuffers();
     wglMakeCurrent(0, 0);
     if (not wglDeleteContext(FViewPortRC)) then
     begin
@@ -491,7 +499,6 @@ begin
   aShader.SetFloat('I_WATER_MAX', Map.Water.MaxDistance);
   aShader.SetFloat('I_WATER_MIN', Map.Water.MinDistance);
 
-
   aShader.SetFloat3('V_CAM_POS', Camera.Position.x,  Camera.Position.Y,  Camera.Position.Z );
 end;
 
@@ -576,9 +583,31 @@ begin
   FFrameBuffer   := TGDGLFrameBufferObject.Create();
   FRenderBuffer1 := TGDGLRenderBufferObject.Create(Settings.Width, Settings.Height, GL_DEPTH_COMPONENT24);
   FRenderBuffer2 := TGDGLRenderBufferObject.Create(Settings.Width div 4, Settings.Height div 4, GL_DEPTH_COMPONENT24);
-  FSourceImage   := TGDTexture.Create(GL_RGBA, Settings.Width, Settings.Height );
-  FBloomImage    := TGDTexture.Create(GL_RGBA, Settings.Width, Settings.Height );
-  FBlurImage     := TGDTexture.Create(GL_RGBA, Settings.Width div 4, Settings.Height div 4);
+  FSourceImage   := TGDTexture.Create(GL_RGBA, GL_RGBA, Settings.Width, Settings.Height );
+  FBloomImage    := TGDTexture.Create(GL_RGBA, GL_RGBA, Settings.Width, Settings.Height );
+  FBlurImage     := TGDTexture.Create(GL_RGBA, GL_RGBA, Settings.Width div 4, Settings.Height div 4);
+end;
+
+procedure TGDRenderer.InitShadowFrameBuffers();
+//var
+  //aRB : TGDGLRenderBufferObject;
+begin
+  FShadowFrameBuffer := TGDGLFrameBufferObject.Create();
+  FShadowFrameBuffer.Bind();
+
+  {
+  aRB := TGDGLRenderBufferObject.Create( 2048, 2048, GL_DEPTH_COMPONENT24);
+  FShadowTexture := TGDTexture.Create(GL_RGBA, GL_RGBA, 2048, 2048 );
+  FShadowFrameBuffer.AttachTexture(FShadowTexture,GL_COLOR_ATTACHMENT0_EXT,GL_TEXTURE_2D);
+  FShadowFrameBuffer.AttachRenderBufferObject(aRB,GL_DEPTH_ATTACHMENT_EXT);
+  }
+
+  FShadowTexture     := TGDTexture.Create(GL_DEPTH_COMPONENT, GL_DEPTH_COMPONENT, 2048, 2048 );
+  glDrawBuffer(GL_NONE);
+  glReadBuffer(GL_NONE);
+  FShadowFrameBuffer.AttachTexture(FShadowTexture, GL_DEPTH_ATTACHMENT_EXT, GL_TEXTURE_2D );
+  FShadowFrameBuffer.Status();
+  FShadowFrameBuffer.Unbind();
 end;
 
 {******************************************************************************}
@@ -593,6 +622,12 @@ begin
   FreeAndNil(FSourceImage);
   FreeAndNil(FBloomImage);
   FreeAndNil(FBlurImage);
+end;
+
+procedure TGDRenderer.ClearShadowFrameBuffers();
+begin
+  FreeAndNil(FShadowFrameBuffer);
+  FreeAndNil(FShadowTexture);
 end;
 
 {******************************************************************************}
@@ -769,6 +804,34 @@ begin
 end;
 
 {******************************************************************************}
+{* Render water reflections                                                   *}
+{******************************************************************************}
+
+procedure RenderShadowMap();
+begin
+  If Modes.RenderWireframe = false then
+  begin
+    //render shadow texture
+    FShadowFrameBuffer.Bind();
+    glViewport(0, 0, 2048, 2048);
+    StartFrame();
+
+
+    gluLookAt(Camera.Position.x, Camera.Position.y+7500, Camera.Position.z,
+              Camera.Position.x+0.01, Camera.Position.y+7500-1, Camera.Position.z+0.01,
+              0,1,0);
+
+    Camera.CalculateFrustum();
+
+    Map.DetectVisibleCells();
+    Map.RenderVisibleCells( RA_NORMAL, RF_SHADOW );
+
+    FShadowFrameBuffer.Unbind();
+    glViewport(0, 0, Settings.Width, Settings.Height);
+  end;
+end;
+
+{******************************************************************************}
 {* Render GUI                                                               *}
 {******************************************************************************}
 
@@ -779,6 +842,24 @@ begin
     If Modes.RenderStats then Statistics.Render();
     Console.Render();
     GUI.MouseCursor.Render();
+
+
+
+     Renderer.RenderState(RS_TEXTURE);
+     FShadowTexture.BindTexture( GL_TEXTURE0 );
+
+
+
+  	 glBegin(GL_QUADS);
+  	    glTexCoord2d(0,0);glVertex3f(0,0,0);
+  	    glTexCoord2d(1,0);glVertex3f(512,0,0);
+  	    glTexCoord2d(1,1);glVertex3f(512,512,0);
+  	    glTexCoord2d(0,1);glVertex3f(0,512,0);
+  	 glEnd();
+
+
+
+
   SwitchToPerspective();
 end;
 
@@ -889,6 +970,9 @@ end;
 begin
   //make renderer current
   MakeCurrent();
+
+  //create the shadow texture
+  RenderShadowMap();
 
   //create the water reflection texture
   RenderWaterReflection();

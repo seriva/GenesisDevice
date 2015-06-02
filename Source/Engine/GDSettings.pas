@@ -58,7 +58,6 @@ type
     FoliageDensity   : Integer;
     TextureDetail    : String;
     WaterDetail      : String;
-    WaterReflection  : String;
     TextureFilter    : String;
     UseBloom         : Boolean;
     UseFXAA          : Boolean;
@@ -93,7 +92,6 @@ type
     FFoliageDensity   : Integer;
     FTextureDetail    : TGDTextureDetail;
     FWaterDetail      : TGDWaterDetail;
-    FWaterReflection  : TGDWaterReflection;
     FTextureFilter    : TGDTextureFilter;
     FUseBloom         : Boolean;
     FUseFXAA          : Boolean;
@@ -113,8 +111,6 @@ type
     function  GetTextureDetail() : String;
     procedure SetWaterDetail(aStr : String);
     function  GetWaterDetail() : String;
-    procedure SetWaterReflectionDetail(aStr : String);
-    function  GetWaterReflectionDetail() : String;
     procedure SetTextureFilter(aStr : String);
     function  GetTextureFilter() : String;
     procedure SetViewDistance(aDistance : Integer);
@@ -136,7 +132,6 @@ type
     property FoliageDistance : Integer read FFoliageDistance write FFoliageDistance;
     property FoliageDensity : Integer read FFoliageDensity write FFoliageDensity;
     property WaterDetail : TGDWaterDetail read FWaterDetail write FWaterDetail;
-    property WaterReflection : TGDWaterReflection read FWaterReflection write FWaterReflection;
     property TextureDetail : TGDTextureDetail read FTextureDetail write FTextureDetail;
     property TextureFilter : TGDTextureFilter read FTextureFilter write FTextureFilter;
     property UseBloom : Boolean read FUseBloom write FUseBloom;
@@ -185,7 +180,6 @@ begin
   FFoliageDensity   := 10;
   FTextureDetail    := TD_LOW;
   FWaterDetail      := WD_LOW;
-  FWaterReflection  := WR_TERRAIN_ONLY;
   FTextureFilter    := TF_BILINEAR;
   FUseBloom         := false;
   FUseFXAA          := false;
@@ -243,7 +237,6 @@ begin
   SetTextureDetail( iIniFile.ReadString('Renderer', 'TextureDetail', TGDTextureDetailStrings[1]) );
   SetTextureFilter(iIniFile.ReadString('Renderer', 'TextureFilter', TGDTextureFilterStrings[1]));
   SetWaterDetail(iIniFile.ReadString('Renderer', 'WaterDetail', TGDWaterDetailStrings[1]));
-  SetWaterReflectionDetail( iIniFile.ReadString('Renderer', 'WaterReflection', TGDWaterReflectionStrings[1]) );
   FUseBloom         := iIniFile.ReadBool( 'Renderer', 'UseBloom', False);
   FUseFXAA          := iIniFile.ReadBool( 'Renderer', 'UseFXAA', False);
 
@@ -282,7 +275,6 @@ begin
   iIniFile.WriteString('Renderer', 'TextureDetail', GetTextureDetail());
   iIniFile.WriteString('Renderer', 'TextureFilter', GetTextureFilter());
   iIniFile.WriteString('Renderer', 'WaterDetail', GetWaterDetail());
-  iIniFile.WriteString('Renderer', 'WaterReflection', GetWaterReflectionDetail());
   iIniFile.WriteBool( 'Renderer', 'UseBloom', FUseBloom );
   iIniFile.WriteBool( 'Renderer', 'UseFXAA', FUseFXAA );
 
@@ -316,7 +308,6 @@ begin
   Result.FoliageDensity  := FFoliageDensity;
   Result.TextureDetail   := GetTextureDetail();
   Result.WaterDetail     := GetWaterDetail();
-  Result.WaterReflection := GetWaterReflectionDetail();
   Result.TextureFilter   := GetTextureFilter();
   Result.UseBloom        := FUseBloom;
   Result.UseFXAA         := FUseFXAA;
@@ -349,7 +340,6 @@ begin
   FFoliageDensity   := aSettings.FoliageDensity;
   SetTextureDetail( aSettings.TextureDetail );
   SetWaterDetail( aSettings.WaterDetail );
-  SetWaterReflectionDetail( aSettings.WaterReflection );
   SetTextureFilter( aSettings.TextureFilter );
   FUseBloom         := aSettings.UseBloom;
   FUseFXAA          := aSettings.UseFXAA;
@@ -461,30 +451,6 @@ begin
      WD_MEDIUM : Result := TGDWaterDetailStrings[2];
      WD_HIGH   : Result := TGDWaterDetailStrings[3];
      else result := 'Low';
-  end;
-end;
-
-{******************************************************************************}
-{* Set water reflection detail                                                *}
-{******************************************************************************}
-
-procedure TGDSettings.SetWaterReflectionDetail(aStr : String);
-begin
-  If  aStr = TGDWaterReflectionStrings[1] then WaterReflection := WR_TERRAIN_ONLY else
-  If  aStr = TGDWaterReflectionStrings[2] then WaterReflection := WR_ALL else
-  WaterReflection := WR_TERRAIN_ONLY;
-end;
-
-{******************************************************************************}
-{* Get water reflection detail                                                *}
-{******************************************************************************}
-
-function TGDSettings.GetWaterReflectionDetail() : String;
-begin
-  case FWaterReflection of
-     WR_TERRAIN_ONLY : Result := TGDWaterReflectionStrings[1];
-     WR_ALL          : Result := TGDWaterReflectionStrings[2];
-     else result := TGDWaterReflectionStrings[1];
   end;
 end;
 

@@ -454,7 +454,7 @@ Begin
   If (aRenderFor = RF_NORMAL) then TriangleCount := 0;
 
   //render the visible terrain cells
-  if Modes.RenderTerrain then
+  if Modes.RenderTerrain and (aRenderFor <> RF_SHADOW) then
   begin
     aTerrain.StartRendering( aRenderAttribute, aRenderFor );
     for iI := 0 to FVisibleTerrainCells.Count - 1 do
@@ -467,7 +467,7 @@ Begin
   end;
 
   //render the visible grass cells
-  if (Modes.RenderGrass) and (aRenderFor <> RF_WATER) and (aRenderFor <> RF_BLOOM) then
+  if (Modes.RenderGrass) and (aRenderFor = RF_NORMAL) then
   begin
     aFoliage.StartRenderingGrass( aRenderAttribute );
     for iI := 0 to FVisibleGrassCells.Count - 1 do
@@ -480,11 +480,10 @@ Begin
   end;
 
   //render the visible mesh cells
-  if (Modes.RenderModels) then
+  if Modes.RenderModels then
   begin
     for iI := 0 to FVisibleMeshCells.Count - 1 do
     begin
-      If (aRenderFor = RF_WATER) and (Settings.WaterReflection = WR_TERRAIN_ONLY) then break;
       iMeshCell := TGDMeshCell(FVisibleMeshCells.Items[ iI ]);
       iMeshCell.Render( aRenderAttribute, aRenderFor );
       TriangleCount := TriangleCount + iMeshCell.TriangleCount();
@@ -492,7 +491,7 @@ Begin
   end;
 
   //render the visible water cells
-  If (Modes.RenderWater) and(aRenderFor <> RF_WATER) then
+  If (Modes.RenderWater) and (aRenderFor <> RF_WATER) and (aRenderFor <> RF_SHADOW) then
   begin
     aWater.StartRendering( aRenderAttribute, aRenderFor );
     for iI := 0 to FVisibleWaterCells.Count - 1 do
