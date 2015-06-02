@@ -589,23 +589,25 @@ begin
 end;
 
 procedure TGDRenderer.InitShadowFrameBuffers();
-//var
-  //aRB : TGDGLRenderBufferObject;
+var
+  aRB : TGDGLRenderBufferObject;
 begin
   FShadowFrameBuffer := TGDGLFrameBufferObject.Create();
   FShadowFrameBuffer.Bind();
 
-  {
+
   aRB := TGDGLRenderBufferObject.Create( 2048, 2048, GL_DEPTH_COMPONENT24);
   FShadowTexture := TGDTexture.Create(GL_RGBA, GL_RGBA, 2048, 2048 );
   FShadowFrameBuffer.AttachTexture(FShadowTexture,GL_COLOR_ATTACHMENT0_EXT,GL_TEXTURE_2D);
   FShadowFrameBuffer.AttachRenderBufferObject(aRB,GL_DEPTH_ATTACHMENT_EXT);
-  }
 
+  {
   FShadowTexture     := TGDTexture.Create(GL_DEPTH_COMPONENT, GL_DEPTH_COMPONENT, 2048, 2048 );
   glDrawBuffer(GL_NONE);
   glReadBuffer(GL_NONE);
   FShadowFrameBuffer.AttachTexture(FShadowTexture, GL_DEPTH_ATTACHMENT_EXT, GL_TEXTURE_2D );
+  }
+
   FShadowFrameBuffer.Status();
   FShadowFrameBuffer.Unbind();
 end;
@@ -808,6 +810,9 @@ end;
 {******************************************************************************}
 
 procedure RenderShadowMap();
+var
+  iV : TGDVector;
+  iM : TGDMatrix;
 begin
   If Modes.RenderWireframe = false then
   begin
@@ -817,14 +822,38 @@ begin
     StartFrame();
 
 
-    gluLookAt(Camera.Position.x, Camera.Position.y+7500, Camera.Position.z,
-              Camera.Position.x+0.01, Camera.Position.y+7500-1, Camera.Position.z+0.01,
-              0,1,0);
+    iM.CreateRotation( Camera.Rotation );
+    iV.Reset(-1,0,0);
+    iM.ApplyToVector(iV);
+    iV.y := 0;
+    iV.Normalize();
 
+    {
+    gluLookAt(Camera.Position.x+(iV.x*2400), Camera.Position.y+7500, Camera.Position.z+(iV.z*2400),
+              Camera.Position.x+0.01+(iV.x*2400), Camera.Position.y+7500-1, Camera.Position.z+0.01+(iV.z*2400),
+              iV.x,0,iV.z);
+    glOrtho(-5000, 5000, -5000, 5000, 0, 1);
+    }
+
+    glMatrixMode(GL_PROJECTION);
+    glPushMatrix();
+    glLoadIdentity();
+    glOrtho(-5000, 5000, -5000, 5000, -100000, 100000);
+    glMatrixMode(GL_MODELVIEW);
+    glPushMatrix();
+    glLoadIdentity();
+    gluLookAt(Camera.Position.x+(iV.x*4900), Camera.Position.y+7500, Camera.Position.z+(iV.z*4900),
+              Camera.Position.x+0.01+(iV.x*4900), Camera.Position.y+7500-1, Camera.Position.z+0.01+(iV.z*4900),
+              iV.x,0,iV.z);
     Camera.CalculateFrustum();
 
     Map.DetectVisibleCells();
     Map.RenderVisibleCells( RA_NORMAL, RF_SHADOW );
+
+    glMatrixMode(GL_PROJECTION);
+    glPopMatrix();
+    glMatrixMode(GL_MODELVIEW);
+    glPopMatrix();
 
     FShadowFrameBuffer.Unbind();
     glViewport(0, 0, Settings.Width, Settings.Height);
@@ -844,20 +873,20 @@ begin
     GUI.MouseCursor.Render();
 
 
-
+     {
      Renderer.RenderState(RS_TEXTURE);
      FShadowTexture.BindTexture( GL_TEXTURE0 );
 
 
-
+         {
   	 glBegin(GL_QUADS);
   	    glTexCoord2d(0,0);glVertex3f(0,0,0);
-  	    glTexCoord2d(1,0);glVertex3f(512,0,0);
-  	    glTexCoord2d(1,1);glVertex3f(512,512,0);
-  	    glTexCoord2d(0,1);glVertex3f(0,512,0);
+  	    glTexCoord2d(1,0);glVertex3f(1024,0,0);
+  	    glTexCoord2d(1,1);glVertex3f(1024,1024,0);
+  	    glTexCoord2d(0,1);glVertex3f(0,1024,0);
   	 glEnd();
 
-
+        }
 
 
   SwitchToPerspective();
