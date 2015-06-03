@@ -8,9 +8,13 @@
       <Unit0>
         <Filename Value="Demo.lpr"/>
         <IsPartOfProject Value="True"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="1"/>
         <WindowIndex Value="1"/>
-        <CursorPos X="81" Y="4"/>
+        <TopLine Value="1"/>
+        <CursorPos X="5" Y="28"/>
         <UsageCount Value="200"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit0>
       <Unit1>
@@ -32,7 +36,7 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="Configuration"/>
-        <EditorIndex Value="3"/>
+        <EditorIndex Value="4"/>
         <WindowIndex Value="1"/>
         <TopLine Value="269"/>
         <CursorPos X="130" Y="294"/>
@@ -81,7 +85,7 @@
         <Filename Value="..\Engine\GDCamera.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="GDCamera"/>
-        <EditorIndex Value="13"/>
+        <EditorIndex Value="14"/>
         <WindowIndex Value="1"/>
         <TopLine Value="250"/>
         <CursorPos X="1" Y="262"/>
@@ -93,7 +97,7 @@
         <Filename Value="..\Engine\GDCellManager.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="GDCellManager"/>
-        <EditorIndex Value="10"/>
+        <EditorIndex Value="11"/>
         <WindowIndex Value="1"/>
         <TopLine Value="443"/>
         <CursorPos X="61" Y="495"/>
@@ -114,7 +118,7 @@
         <Filename Value="..\Engine\GDConstants.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="GDConstants"/>
-        <EditorIndex Value="4"/>
+        <EditorIndex Value="5"/>
         <WindowIndex Value="1"/>
         <TopLine Value="55"/>
         <CursorPos X="16" Y="82"/>
@@ -181,7 +185,7 @@
         <Filename Value="..\Engine\GDMap.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="GDMap"/>
-        <EditorIndex Value="1"/>
+        <EditorIndex Value="2"/>
         <WindowIndex Value="1"/>
         <TopLine Value="292"/>
         <CursorPos X="132" Y="312"/>
@@ -193,7 +197,7 @@
         <Filename Value="..\Engine\GDMesh.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="GDMesh"/>
-        <EditorIndex Value="7"/>
+        <EditorIndex Value="8"/>
         <WindowIndex Value="1"/>
         <TopLine Value="73"/>
         <CursorPos X="242" Y="96"/>
@@ -205,7 +209,7 @@
         <Filename Value="..\Engine\GDMeshCell.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="GDMeshCell"/>
-        <EditorIndex Value="8"/>
+        <EditorIndex Value="9"/>
         <WindowIndex Value="1"/>
         <TopLine Value="291"/>
         <CursorPos X="108" Y="245"/>
@@ -217,7 +221,7 @@
         <Filename Value="..\Engine\GDModes.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="GDModes"/>
-        <EditorIndex Value="5"/>
+        <EditorIndex Value="6"/>
         <WindowIndex Value="1"/>
         <TopLine Value="81"/>
         <CursorPos X="30" Y="123"/>
@@ -238,11 +242,10 @@
         <Filename Value="..\Engine\GDRenderer.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="GDRenderer"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="1"/>
-        <TopLine Value="839"/>
-        <CursorPos X="110" Y="855"/>
+        <TopLine Value="1"/>
+        <CursorPos X="100" Y="9"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -251,7 +254,7 @@
         <Filename Value="..\Engine\GDSettings.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="GDSettings"/>
-        <EditorIndex Value="2"/>
+        <EditorIndex Value="3"/>
         <WindowIndex Value="1"/>
         <TopLine Value="332"/>
         <CursorPos X="34" Y="355"/>
@@ -291,7 +294,7 @@
         <Filename Value="..\Engine\GDTerrain.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="GDTerrain"/>
-        <EditorIndex Value="11"/>
+        <EditorIndex Value="12"/>
         <WindowIndex Value="1"/>
         <TopLine Value="415"/>
         <CursorPos X="20" Y="435"/>
@@ -312,7 +315,7 @@
         <Filename Value="..\Engine\GDTexture.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="GDTexture"/>
-        <EditorIndex Value="6"/>
+        <EditorIndex Value="7"/>
         <WindowIndex Value="1"/>
         <TopLine Value="358"/>
         <CursorPos X="1" Y="399"/>
@@ -333,7 +336,7 @@
         <Filename Value="..\Engine\GDTypes.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="GDTypes"/>
-        <EditorIndex Value="12"/>
+        <EditorIndex Value="13"/>
         <WindowIndex Value="1"/>
         <TopLine Value="715"/>
         <CursorPos X="79" Y="727"/>
@@ -416,7 +419,7 @@
         <Filename Value="..\Engine\GDMaterial.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="GDMaterial"/>
-        <EditorIndex Value="9"/>
+        <EditorIndex Value="10"/>
         <WindowIndex Value="1"/>
         <TopLine Value="76"/>
         <CursorPos X="6" Y="105"/>
