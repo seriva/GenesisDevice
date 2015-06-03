@@ -12,7 +12,7 @@
         <EditorIndex Value="1"/>
         <WindowIndex Value="1"/>
         <TopLine Value="1"/>
-        <CursorPos X="5" Y="28"/>
+        <CursorPos X="26" Y="14"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -432,7 +432,7 @@
         <IsPartOfProject Value="True"/>
         <WindowIndex Value="1"/>
         <CursorPos X="21" Y="23"/>
-        <UsageCount Value="141"/>
+        <UsageCount Value="143"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit41>
       <Unit42>
