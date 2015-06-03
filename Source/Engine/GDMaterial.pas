@@ -103,8 +103,6 @@ end;
 
 procedure   TGDMaterial.ApplyMaterial();
 begin
-  Renderer.MeshShader.Enable();
-  Renderer.SetJoinedParams(Renderer.MeshShader);
   Renderer.MeshShader.SetInt('T_COLORMAP', 0);
   if DoTreeAnim then
     Renderer.MeshShader.SetInt('I_DO_TREE_ANIM', 1)

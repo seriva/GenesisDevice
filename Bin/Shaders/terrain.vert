@@ -10,6 +10,7 @@ varying float Fog;
 varying vec3 N;
 varying vec3 V;
 varying vec3 VWorld;
+varying vec4 ShadowCoord;
 
 void main(void)
 {
@@ -23,5 +24,6 @@ void main(void)
 	ColorUV        = gl_MultiTexCoord0.xy;
 	DetailUV       = ColorUV * I_DETAIL_UV;
 	CausticUV      = ColorUV * I_CAUSTIC_UV;
+    ShadowCoord    = gl_TextureMatrix[7] * gl_Vertex;
 }
 

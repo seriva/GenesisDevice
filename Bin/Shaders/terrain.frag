@@ -4,6 +4,7 @@ uniform sampler2D T_DETAILTEX2;
 uniform sampler2D T_DETAILTEX3;
 uniform sampler2D T_WEIGHT_LOOKUP;
 uniform sampler2D T_CAUSTIC_TEX;
+uniform sampler2D T_SHADOWMAP;
 
 uniform vec4 V_FOG_COLOR;
 uniform int I_UNDER_WATER;
@@ -16,6 +17,7 @@ uniform vec3 V_CAM_POS;
 uniform vec3 V_LIGHT_DIR;
 uniform vec4 V_LIGHT_AMB;
 uniform vec4 V_LIGHT_DIFF;
+uniform float F_LIGHT_SHADOW;
 
 varying vec2 ColorUV;
 varying vec2 DetailUV;
@@ -24,6 +26,7 @@ varying float Fog;
 varying vec3 N;
 varying vec3 V;
 varying vec3 VWorld;
+varying vec4 ShadowCoord;
 
 void CalcUnderWaterColor(vec4 Color){
     float waterFog = clamp((log((length(VWorld - V_CAM_POS) * (I_WATER_HEIGHT - VWorld.y)/I_WATER_DEPTH) * I_WATER_MIN) - 1) * I_WATER_MAX, 0, 1); 
@@ -43,6 +46,11 @@ void main(void)
 	vec4 DetailFinal   = (Detail1*Weights.x + Detail2*Weights.y + Detail3*Weights.z); 
     Color = (Color + DetailFinal - 0.5) * Light;
     
+	vec4 shadowCoordinateWdivide = ShadowCoord / ShadowCoord.w ;
+	float distanceFromLight = texture2D(T_SHADOWMAP,shadowCoordinateWdivide.xy).z;
+    if(ShadowCoord.x >= 0.0 && ShadowCoord.x <= 1.0 && ShadowCoord.y >= 0.0 && ShadowCoord.y <= 1.0 && (distanceFromLight < (shadowCoordinateWdivide.z + 0.001)))
+        Color = Color * F_LIGHT_SHADOW;
+      
     if(I_UNDER_WATER == 0)
 	{
 		if (VWorld.y > I_WATER_HEIGHT)

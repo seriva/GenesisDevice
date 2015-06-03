@@ -7,6 +7,7 @@ uniform vec4 V_LIGHT_AMB;
 uniform vec4 V_LIGHT_DIFF;
 
 varying vec2  GrassUV;
+varying vec4 ShadowCoord;
 varying float Fog;
 varying vec4 Light;
 
@@ -30,5 +31,6 @@ void main(void)
 	}
 
 	gl_Position = gl_ModelViewProjectionMatrix * Eye;
+    ShadowCoord = gl_TextureMatrix[7] * gl_Vertex;
 }
 

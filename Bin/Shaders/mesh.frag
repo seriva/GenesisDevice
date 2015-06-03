@@ -1,4 +1,5 @@
 uniform sampler2D T_COLORMAP;
+uniform sampler2D T_SHADOWMAP;
 
 uniform vec4 V_FOG_COLOR;
 uniform int I_UNDER_WATER;
@@ -11,10 +12,12 @@ uniform vec3 V_CAM_POS;
 uniform vec3 V_LIGHT_DIR;
 uniform vec4 V_LIGHT_AMB;
 uniform vec4 V_LIGHT_DIFF;
-
+uniform int  I_RECEIVE_SHADOW;
 uniform int I_DO_BLOOM;
+uniform float F_LIGHT_SHADOW;
 
 varying vec2 UV;
+varying vec4 ShadowCoord;
 varying float Fog;
 varying vec3 N;
 varying vec3 VWorld;
@@ -29,6 +32,14 @@ void main(void)
 	vec4 Light = V_LIGHT_AMB + clamp(V_LIGHT_DIFF * max(dot(N,normalize(-V_LIGHT_DIR)), 0.0), 0.0, 1.0); 
     
 	vec4 Color = texture2D(T_COLORMAP, UV) * Light;
+    
+    if (I_RECEIVE_SHADOW == 1) 
+    {
+        vec4 shadowCoordinateWdivide = ShadowCoord / ShadowCoord.w ;
+        float distanceFromLight = texture2D(T_SHADOWMAP,shadowCoordinateWdivide.xy).z;
+        if(ShadowCoord.x >= 0.0 && ShadowCoord.x <= 1.0 && ShadowCoord.y >= 0.0 && ShadowCoord.y <= 1.0 && (distanceFromLight < (shadowCoordinateWdivide.z + 0.001)))
+            Color.rgb = Color.rgb * F_LIGHT_SHADOW;  
+    }
     
 	if (I_DO_BLOOM == 1)
 	{

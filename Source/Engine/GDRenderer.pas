@@ -112,7 +112,7 @@ type
 
     procedure   SetColor(aC : TGDColor); overload;
     procedure   SetColor(aR, aG, aB, aA : Single); overload;
-    procedure   SetJoinedParams(aShader : TGDGLShader);
+    procedure   SetJoinedParams(aShader : TGDGLShader; aForShadows : boolean = false);
     procedure   RenderState( aState : TGDRenderState );
 
     procedure   StartFrame();
@@ -279,6 +279,10 @@ begin
     glEnable(GL_TEXTURE_2D);
     glActiveTexture(GL_TEXTURE5);
     glEnable(GL_TEXTURE_2D);
+    glActiveTexture(GL_TEXTURE6);
+    glEnable(GL_TEXTURE_2D);
+    glActiveTexture(GL_TEXTURE7);
+    glEnable(GL_TEXTURE_2D);
     glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
     glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
     glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
@@ -439,7 +443,7 @@ begin
   glViewport(0, 0, Settings.Width, Settings.Height);
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
-  gluPerspective(45.0, Settings.Width/Settings.Height, 25, Settings.ViewDistance * R_VIEW_DISTANCE_STEP);
+  gluPerspective(40.0, Settings.Width/Settings.Height, 25, Settings.ViewDistance * R_VIEW_DISTANCE_STEP);
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
   ResizeFrameBuffers();
@@ -467,7 +471,7 @@ end;
 {* Set joined paramters of shaders.                                           *}
 {******************************************************************************}
 
-procedure TGDRenderer.SetJoinedParams(aShader : TGDGLShader);
+procedure TGDRenderer.SetJoinedParams(aShader : TGDGLShader; aForShadows : boolean = false);
 begin
   aShader.Enable();
   aShader.SetFloat3('V_LIGHT_DIR',  Map.LightDirection.X,
@@ -481,6 +485,7 @@ begin
                                     Map.LightDiffuse.G,
                                     Map.LightDiffuse.B,
                                     Map.LightDiffuse.A);
+  aShader.SetFloat('F_LIGHT_SHADOW', Map.LightShadow);
 
   aShader.SetFloat('F_MIN_VIEW_DISTANCE', Map.FogMinDistance);
   aShader.SetFloat('F_MAX_VIEW_DISTANCE', Map.FogMaxDistance);
@@ -500,6 +505,17 @@ begin
   aShader.SetFloat('I_WATER_MIN', Map.Water.MinDistance);
 
   aShader.SetFloat3('V_CAM_POS', Camera.Position.x,  Camera.Position.Y,  Camera.Position.Z );
+
+  if not(aForShadows) then
+  begin
+    aShader.SetInt('T_SHADOWMAP', 7);
+    FShadowTexture.BindTexture(GL_TEXTURE7);
+  end
+  else
+  begin
+    glActiveTexture(GL_TEXTURE7);
+    glBindTexture(GL_TEXTURE_2D, 0);
+  end;
 end;
 
 {******************************************************************************}
@@ -589,25 +605,13 @@ begin
 end;
 
 procedure TGDRenderer.InitShadowFrameBuffers();
-var
-  aRB : TGDGLRenderBufferObject;
 begin
   FShadowFrameBuffer := TGDGLFrameBufferObject.Create();
   FShadowFrameBuffer.Bind();
-
-
-  aRB := TGDGLRenderBufferObject.Create( 2048, 2048, GL_DEPTH_COMPONENT24);
-  FShadowTexture := TGDTexture.Create(GL_RGBA, GL_RGBA, 2048, 2048 );
-  FShadowFrameBuffer.AttachTexture(FShadowTexture,GL_COLOR_ATTACHMENT0_EXT,GL_TEXTURE_2D);
-  FShadowFrameBuffer.AttachRenderBufferObject(aRB,GL_DEPTH_ATTACHMENT_EXT);
-
-  {
-  FShadowTexture     := TGDTexture.Create(GL_DEPTH_COMPONENT, GL_DEPTH_COMPONENT, 2048, 2048 );
+  FShadowTexture     := TGDTexture.Create(GL_DEPTH_COMPONENT, GL_DEPTH_COMPONENT, R_SHADOW_SIZE, R_SHADOW_SIZE );
   glDrawBuffer(GL_NONE);
   glReadBuffer(GL_NONE);
   FShadowFrameBuffer.AttachTexture(FShadowTexture, GL_DEPTH_ATTACHMENT_EXT, GL_TEXTURE_2D );
-  }
-
   FShadowFrameBuffer.Status();
   FShadowFrameBuffer.Unbind();
 end;
@@ -813,14 +817,26 @@ procedure RenderShadowMap();
 var
   iV : TGDVector;
   iM : TGDMatrix;
+  iProj, iModl : array[0..15] of glDouble;
+  iBias : array[0..15] of glDouble = (0.5, 0.0, 0.0, 0.0,
+		                                 0.0, 0.5, 0.0, 0.0,
+		                                 0.0, 0.0, 0.5, 0.0,
+	                                   0.5, 0.5, 0.5, 1.0);
 begin
   If Modes.RenderWireframe = false then
   begin
     //render shadow texture
     FShadowFrameBuffer.Bind();
-    glViewport(0, 0, 2048, 2048);
-    StartFrame();
+    glViewport(0, 0, R_SHADOW_SIZE, R_SHADOW_SIZE);
+    glClear(GL_DEPTH_BUFFER_BIT);
+    glLoadIdentity;
 
+    If Settings.UseShadows = false then
+    begin
+      FShadowFrameBuffer.Unbind();
+      glViewport(0, 0, Settings.Width, Settings.Height);
+      exit;
+    end;
 
     iM.CreateRotation( Camera.Rotation );
     iV.Reset(-1,0,0);
@@ -828,27 +844,33 @@ begin
     iV.y := 0;
     iV.Normalize();
 
-    {
-    gluLookAt(Camera.Position.x+(iV.x*2400), Camera.Position.y+7500, Camera.Position.z+(iV.z*2400),
-              Camera.Position.x+0.01+(iV.x*2400), Camera.Position.y+7500-1, Camera.Position.z+0.01+(iV.z*2400),
-              iV.x,0,iV.z);
-    glOrtho(-5000, 5000, -5000, 5000, 0, 1);
-    }
-
     glMatrixMode(GL_PROJECTION);
     glPushMatrix();
     glLoadIdentity();
-    glOrtho(-5000, 5000, -5000, 5000, -100000, 100000);
+    glOrtho(-10000, 10000, -10000, 10000, -15000, 15000);
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
     glLoadIdentity();
-    gluLookAt(Camera.Position.x+(iV.x*4900), Camera.Position.y+7500, Camera.Position.z+(iV.z*4900),
-              Camera.Position.x+0.01+(iV.x*4900), Camera.Position.y+7500-1, Camera.Position.z+0.01+(iV.z*4900),
+    gluLookAt(Camera.Position.x+(iV.x*9800), Camera.Position.y+7500, Camera.Position.z+(iV.z*9800),
+              Camera.Position.x+0.01+(iV.x*9800), Camera.Position.y+7500-1, Camera.Position.z+0.01+(iV.z*9800),
               iV.x,0,iV.z);
     Camera.CalculateFrustum();
 
+    glColorMask(FALSE, FALSE, FALSE, FALSE);
     Map.DetectVisibleCells();
     Map.RenderVisibleCells( RA_NORMAL, RF_SHADOW );
+    glColorMask(TRUE, TRUE, TRUE, TRUE);
+
+    //Setup the light projection matrix.
+  	glGetDoublev(GL_MODELVIEW_MATRIX, @iModl);
+  	glGetDoublev(GL_PROJECTION_MATRIX, @iProj);
+  	glMatrixMode(GL_TEXTURE);
+  	glActiveTextureARB(GL_TEXTURE7);
+  	glLoadIdentity();
+  	glLoadMatrixd(@iBias);
+  	glMultMatrixd(@iProj);
+  	glMultMatrixd(@iModl);
+  	glMatrixMode(GL_MODELVIEW);
 
     glMatrixMode(GL_PROJECTION);
     glPopMatrix();
@@ -871,24 +893,6 @@ begin
     If Modes.RenderStats then Statistics.Render();
     Console.Render();
     GUI.MouseCursor.Render();
-
-
-     {
-     Renderer.RenderState(RS_TEXTURE);
-     FShadowTexture.BindTexture( GL_TEXTURE0 );
-
-
-         {
-  	 glBegin(GL_QUADS);
-  	    glTexCoord2d(0,0);glVertex3f(0,0,0);
-  	    glTexCoord2d(1,0);glVertex3f(1024,0,0);
-  	    glTexCoord2d(1,1);glVertex3f(1024,1024,0);
-  	    glTexCoord2d(0,1);glVertex3f(0,1024,0);
-  	 glEnd();
-
-        }
-
-
   SwitchToPerspective();
 end;
 

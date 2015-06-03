@@ -1,12 +1,12 @@
 object ConfigurationForm: TConfigurationForm
   Left = 1938
-  Height = 338
+  Height = 370
   Top = 305
   Width = 398
   BorderIcons = [biSystemMenu]
   BorderStyle = bsSingle
   Caption = 'Genesis Device Configuration'
-  ClientHeight = 338
+  ClientHeight = 370
   ClientWidth = 398
   Color = clBtnFace
   Font.Color = clWindowText
@@ -20,7 +20,7 @@ object ConfigurationForm: TConfigurationForm
   object RunButton: TButton
     Left = 328
     Height = 26
-    Top = 304
+    Top = 336
     Width = 60
     Caption = 'Run'
     Font.Color = clWindowText
@@ -33,7 +33,7 @@ object ConfigurationForm: TConfigurationForm
   end
   object PageControl: TPageControl
     Left = -1
-    Height = 297
+    Height = 329
     Top = -1
     Width = 400
     ActivePage = WindowTabSheet
@@ -46,16 +46,16 @@ object ConfigurationForm: TConfigurationForm
     TabOrder = 1
     object WindowTabSheet: TTabSheet
       Caption = 'Window'
-      ClientHeight = 268
+      ClientHeight = 300
       ClientWidth = 392
       object WindowPanel: TPanel
         Left = 0
-        Height = 268
+        Height = 300
         Top = 0
         Width = 392
         Align = alClient
         BevelOuter = bvNone
-        ClientHeight = 268
+        ClientHeight = 300
         ClientWidth = 392
         TabOrder = 0
         object ResolutionLabel: TLabel
@@ -161,17 +161,17 @@ object ConfigurationForm: TConfigurationForm
     end
     object RenderingTabSheet: TTabSheet
       Caption = 'Rendering'
-      ClientHeight = 268
+      ClientHeight = 300
       ClientWidth = 392
       ImageIndex = 1
       object RenderingPanel: TPanel
         Left = 0
-        Height = 268
+        Height = 300
         Top = 0
         Width = 392
         Align = alClient
         BevelOuter = bvNone
-        ClientHeight = 268
+        ClientHeight = 300
         ClientWidth = 392
         TabOrder = 0
         object WaterDetailLabel: TLabel
@@ -359,21 +359,35 @@ object ConfigurationForm: TConfigurationForm
           ShowHint = True
           TabOrder = 7
         end
+        object ShadowsCheckbox: TCheckBox
+          Left = 8
+          Height = 23
+          Top = 272
+          Width = 80
+          Caption = 'Shadows'
+          Font.Color = clWindowText
+          Font.Height = -13
+          Font.Name = 'MS Sans Serif'
+          ParentFont = False
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 8
+        end
       end
     end
     object InputTabSheet: TTabSheet
       Caption = 'Input'
-      ClientHeight = 268
+      ClientHeight = 300
       ClientWidth = 392
       ImageIndex = 2
       object InputPanel: TPanel
         Left = 0
-        Height = 268
+        Height = 300
         Top = 0
         Width = 392
         Align = alClient
         BevelOuter = bvNone
-        ClientHeight = 268
+        ClientHeight = 300
         ClientWidth = 392
         TabOrder = 0
         object MouseSensitivityLabel: TLabel
@@ -416,17 +430,17 @@ object ConfigurationForm: TConfigurationForm
     end
     object SoundTabSheet: TTabSheet
       Caption = 'Sound'
-      ClientHeight = 268
+      ClientHeight = 300
       ClientWidth = 392
       ImageIndex = 3
       object SoundPanel: TPanel
         Left = 0
-        Height = 268
+        Height = 300
         Top = 0
         Width = 392
         Align = alClient
         BevelOuter = bvNone
-        ClientHeight = 268
+        ClientHeight = 300
         ClientWidth = 392
         TabOrder = 0
         object SoundVolumeLabel: TLabel
@@ -470,17 +484,17 @@ object ConfigurationForm: TConfigurationForm
     end
     object DemoTabSheet: TTabSheet
       Caption = 'Demo'
-      ClientHeight = 268
+      ClientHeight = 300
       ClientWidth = 392
       ImageIndex = 4
       object DemoPanel: TPanel
         Left = 0
-        Height = 268
+        Height = 300
         Top = 0
         Width = 392
         Align = alClient
         BevelOuter = bvNone
-        ClientHeight = 268
+        ClientHeight = 300
         ClientWidth = 392
         TabOrder = 0
         object MapLabel: TLabel

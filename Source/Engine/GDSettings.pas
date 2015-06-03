@@ -61,6 +61,7 @@ type
     TextureFilter    : String;
     UseBloom         : Boolean;
     UseFXAA          : Boolean;
+    UseShadows       : Boolean;
 
     //input settings
     InvertMouse : Boolean;
@@ -95,6 +96,7 @@ type
     FTextureFilter    : TGDTextureFilter;
     FUseBloom         : Boolean;
     FUseFXAA          : Boolean;
+    FUseShadows       : Boolean;
 
     //input settings
     FInvertMouse      : Boolean;
@@ -136,6 +138,8 @@ type
     property TextureFilter : TGDTextureFilter read FTextureFilter write FTextureFilter;
     property UseBloom : Boolean read FUseBloom write FUseBloom;
     property UseFXAA : Boolean read FUseFXAA write FUseFXAA;
+    property UseShadows : Boolean read FUseShadows write FUseShadows;
+
 
     //input settings
     property InvertMouse : Boolean read FInvertMouse write FInvertMouse;
@@ -183,6 +187,7 @@ begin
   FTextureFilter    := TF_BILINEAR;
   FUseBloom         := false;
   FUseFXAA          := false;
+  FUseShadows       := false;
 
   //set right en left
   FTop := 0;
@@ -202,6 +207,7 @@ begin
   Console.AddCommand('RFXAA', '0,1 : Enable or disable bloom', CT_BOOLEAN, @FUseFXAA);
   Console.AddCommand('RVSync', '0,1 : Enable or disable vertical sync', CT_BOOLEAN, @FVerticalSync);
   Console.AddCommand('RGamma', '0.0 to 1.0 : Set the gamma value', CT_FLOAT, @FGamma);
+  Console.AddCommand('RShadows', '0,1 : Enable or disable bloom', CT_BOOLEAN, @FUseShadows);
 end;
 
 {******************************************************************************}
@@ -239,6 +245,7 @@ begin
   SetWaterDetail(iIniFile.ReadString('Renderer', 'WaterDetail', TGDWaterDetailStrings[1]));
   FUseBloom         := iIniFile.ReadBool( 'Renderer', 'UseBloom', False);
   FUseFXAA          := iIniFile.ReadBool( 'Renderer', 'UseFXAA', False);
+  FUseShadows       := iIniFile.ReadBool( 'Renderer', 'UseShadows', False);
 
   //input settings
   FInvertMouse      := iIniFile.ReadBool( 'Controls', 'InvertMouse', False);
@@ -277,6 +284,7 @@ begin
   iIniFile.WriteString('Renderer', 'WaterDetail', GetWaterDetail());
   iIniFile.WriteBool( 'Renderer', 'UseBloom', FUseBloom );
   iIniFile.WriteBool( 'Renderer', 'UseFXAA', FUseFXAA );
+  iIniFile.WriteBool( 'Renderer', 'UseShadows', FUseShadows );
 
   //input settings
   iIniFile.WriteBool( 'Controls', 'InvertMouse', FInvertMouse);
@@ -311,6 +319,7 @@ begin
   Result.TextureFilter   := GetTextureFilter();
   Result.UseBloom        := FUseBloom;
   Result.UseFXAA         := FUseFXAA;
+  Result.UseShadows      := FUseShadows;
 
   //input settings
   Result.InvertMouse      := FInvertMouse;
@@ -343,6 +352,7 @@ begin
   SetTextureFilter( aSettings.TextureFilter );
   FUseBloom         := aSettings.UseBloom;
   FUseFXAA          := aSettings.UseFXAA;
+  FUseShadows       := aSettings.UseShadows;
 
   //input settings
   FInvertMouse      := aSettings.InvertMouse;

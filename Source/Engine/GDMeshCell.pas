@@ -53,14 +53,16 @@ type
 {******************************************************************************}
 
   TGDMeshCellInput = record
-    Model        : String;
-    ModelLOD1    : String;
-    ModelLOD2    : String;
-    FadeScale    : Double;
-    FadeDistance : Double;
-    Position     : TGDVector;
-    Rotation     : TGDVector;
-    Scale        : TGDVector;
+    Model         : String;
+    ModelLOD1     : String;
+    ModelLOD2     : String;
+    FadeScale     : Double;
+    FadeDistance  : Double;
+    Position      : TGDVector;
+    Rotation      : TGDVector;
+    Scale         : TGDVector;
+    CastShadow    : Boolean;
+    ReceiveShadow : Boolean;
   end;
 
 {******************************************************************************}
@@ -79,10 +81,15 @@ type
     FPosition      : TGDVector;
     FScale         : TGDVector;
     FRotation      : TGDMatrix;
+
+    FCastShadow    : Boolean;
+    FReceiveShadow : Boolean;
   public
     property LODType : TGDMeshLODType read FLODType write FLODType;
     property FadeDistance : Single read FFadeDistance write FFadeDistance;
     property FadeScale : Single read FFadeScale write FFadeScale;
+    property CastShadow : Boolean read FCastShadow write FCastShadow;
+    property ReceiveShadow : Boolean read FReceiveShadow write FReceiveShadow;
 
     constructor Create(aInput : TGDMeshCellInput);
     destructor  Destroy(); override;
@@ -144,6 +151,10 @@ begin
   end;
   BoundingBox := iVertices.GenerateBoundingBox();
   FreeAndNil(iVertices);
+
+  //Cast and receive shadows.
+  FCastShadow    := aInput.CastShadow;
+  FReceiveShadow := aInput.ReceiveShadow;
 end;
 
 {******************************************************************************}
@@ -225,9 +236,16 @@ begin
                             end
                             else
                             begin
+                              Renderer.MeshShader.Enable();
+                              Renderer.SetJoinedParams(Renderer.MeshShader,aRenderFor = RF_SHADOW);
                               iSur.Material.ApplyMaterial();
                               SetMeshPositioning(Renderer.MeshShader);
                               Renderer.MeshShader.SetInt('I_DO_BLOOM', 1);
+
+                              if self.ReceiveShadow and (aRenderFor <> RF_SHADOW) then
+                                Renderer.MeshShader.SetInt('I_RECEIVE_SHADOW', 1)
+                              else
+                                Renderer.MeshShader.SetInt('I_RECEIVE_SHADOW', 0);
 
                               if aRenderFor = RF_BLOOM then
                               begin

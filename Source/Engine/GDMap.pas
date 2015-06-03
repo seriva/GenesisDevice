@@ -58,6 +58,7 @@ type
     FLightDirection  : TGDVector;
     FLightAmbient    : TGDColor;
     FLightDiffuse    : TGDColor;
+    FLightShadow     : Double;
 
     FFogDistance     : Integer;
     FFogColor        : TGDColor;
@@ -77,6 +78,7 @@ type
     property LightDirection : TGDVector read FLightDirection;
     property LightAmbient   : TGDColor read FLightAmbient;
     property LightDiffuse   : TGDColor read FLightDiffuse;
+    property LightShadow    : Double read FLightShadow;
 
     property FogDistance    : Integer read FFogDistance;
     property FogColor       : TGDColor read FFogColor;
@@ -168,6 +170,7 @@ begin
   FLightDirection := ReadVector(iIniFile, 'DirectionalLight', 'Direction');
   FLightAmbient   := ReadColor(iIniFile, 'DirectionalLight', 'Ambient');
   FLightDiffuse   := ReadColor(iIniFile, 'DirectionalLight', 'Diffuse');
+  FLightShadow    := iIniFile.ReadFloat( 'DirectionalLight', 'Shadow', 0.5 );
 
   //init fog
   FFogColor    := ReadColor(iIniFile, 'Fog', 'Color');
@@ -224,14 +227,17 @@ begin
   begin
     iString := 'Model' + IntToStr(iI);
 
-    iMeshInput.Model        := iIniFile.ReadString( iString, 'Model', '' );
-    iMeshInput.ModelLOD1    := iIniFile.ReadString( iString, 'ModelLOD1', '' );
-    iMeshInput.ModelLOD2    := iIniFile.ReadString( iString, 'ModelLOD2', '' );
-    iMeshInput.Position     := ReadVector(iIniFile, iString, 'Position');
-    iMeshInput.Rotation     := ReadVector(iIniFile, iString, 'Rotation');
-    iMeshInput.Scale        := ReadVector(iIniFile, iString, 'Scale');
-    iMeshInput.FadeDistance := 0;
-    iMeshInput.FadeScale    := 0;
+    iMeshInput.Model         := iIniFile.ReadString( iString, 'Model', '' );
+    iMeshInput.ModelLOD1     := iIniFile.ReadString( iString, 'ModelLOD1', '' );
+    iMeshInput.ModelLOD2     := iIniFile.ReadString( iString, 'ModelLOD2', '' );
+    iMeshInput.Position      := ReadVector(iIniFile, iString, 'Position');
+    iMeshInput.Rotation      := ReadVector(iIniFile, iString, 'Rotation');
+    iMeshInput.Scale         := ReadVector(iIniFile, iString, 'Scale');
+    iMeshInput.FadeDistance  := 0;
+    iMeshInput.FadeScale     := 0;
+    iMeshInput.CastShadow    := iIniFile.ReadBool( iString, 'CastShadow', false );
+    iMeshInput.ReceiveShadow := iIniFile.ReadBool( iString, 'ReceiveShadow', false );
+
     FCellManager.AddMeshCell( TGDMeshCell.Create(iMeshInput)   );
 
     iI := iI + 1;
@@ -257,6 +263,7 @@ begin
   FLightDirection.Reset(-1,-1,-1);
   FLightAmbient.Reset(1, 1, 1, 1);
   FLightDiffuse.Reset(1, 1, 1, 1);
+  FLightShadow := 0.75;
 
   FFogMinDistance := (((Settings.ViewDistance * R_VIEW_DISTANCE_STEP) / 10) *5);
   FFogMaxDistance := (((Settings.ViewDistance * R_VIEW_DISTANCE_STEP) / 10) *8);

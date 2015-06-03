@@ -318,20 +318,22 @@ Begin
         if not((iHeight > aFoliage.TreeLowerLimit) and (iHeight < aFoliage.TreeUpperLimit)) then
            goto RedoRandomTrees;
 
-        iMeshInput.Model        := iMeshType.Mesh.Name;
-        iMeshInput.ModelLOD1    := iMeshType.MeshLOD1.name;
-        iMeshInput.ModelLOD2    := iMeshType.MeshLOD2.name;
-        iMeshInput.Position.X   := iPos.X;
-        iMeshInput.Position.Y   := iHeight;
-        iMeshInput.Position.Z   := iPos.Z;
-        iMeshInput.Rotation.X   := iMeshType.StartRotation.X;
-        iMeshInput.Rotation.Y   := iMeshType.StartRotation.Y + Random(Round(360));
-        iMeshInput.Rotation.Z   := iMeshType.StartRotation.Z;
-        iMeshInput.Scale.X      := iMeshType.Scale + Random(Round(iMeshType.RandomScale));
-        iMeshInput.Scale.Y      := iMeshType.Scale + Random(Round(iMeshType.RandomScale));
-        iMeshInput.Scale.Z      := iMeshType.Scale + Random(Round(iMeshType.RandomScale));
-        iMeshInput.FadeDistance := 0;
-        iMeshInput.FadeScale    := 0;
+        iMeshInput.Model         := iMeshType.Mesh.Name;
+        iMeshInput.ModelLOD1     := iMeshType.MeshLOD1.name;
+        iMeshInput.ModelLOD2     := iMeshType.MeshLOD2.name;
+        iMeshInput.Position.X    := iPos.X;
+        iMeshInput.Position.Y    := iHeight;
+        iMeshInput.Position.Z    := iPos.Z;
+        iMeshInput.Rotation.X    := iMeshType.StartRotation.X;
+        iMeshInput.Rotation.Y    := iMeshType.StartRotation.Y + Random(Round(360));
+        iMeshInput.Rotation.Z    := iMeshType.StartRotation.Z;
+        iMeshInput.Scale.X       := iMeshType.Scale + Random(Round(iMeshType.RandomScale));
+        iMeshInput.Scale.Y       := iMeshType.Scale + Random(Round(iMeshType.RandomScale));
+        iMeshInput.Scale.Z       := iMeshType.Scale + Random(Round(iMeshType.RandomScale));
+        iMeshInput.FadeDistance  := 0;
+        iMeshInput.FadeScale     := 0;
+        iMeshInput.CastShadow    := True;
+        iMeshInput.ReceiveShadow := False;
 
         FCells.Add( TGDMeshCell.Create(iMeshInput) );
       end
@@ -359,20 +361,22 @@ Begin
       if aFoliage.CheckRockMap(iX, iY) and aTerrain.GetHeight(iPos.X, iPos.Z, iHeight) then
       begin
         aTerrain.GetRotation(iPos.X, iPos.Z, iRot );
-        iMeshInput.Model          := iMeshType.Mesh.Name;
-        iMeshInput.ModelLOD1    := '';
-        iMeshInput.ModelLOD2    := '';
-        iMeshInput.Position.X   := iPos.X;
-        iMeshInput.Position.Y   := iHeight;
-        iMeshInput.Position.Z   := iPos.Z;
-        iMeshInput.Rotation.X   := iRot.x;
-        iMeshInput.Rotation.Y   := iRot.y;
-        iMeshInput.Rotation.Z   := iRot.z;
-        iMeshInput.Scale.X      := iMeshType.Scale + Random(Round(iMeshType.RandomScale));
-        iMeshInput.Scale.Y      := iMeshType.Scale + Random(Round(iMeshType.RandomScale));
-        iMeshInput.Scale.Z      := iMeshType.Scale + Random(Round(iMeshType.RandomScale));
-        iMeshInput.FadeDistance := Settings.FoliageDistance * R_FOLIAGE_DISTANCE_STEP + (R_FOLIAGE_DISTANCE_STEP * 10);
-        iMeshInput.FadeScale    := R_FOLIAGE_LOD_DISTANCE;
+        iMeshInput.Model         := iMeshType.Mesh.Name;
+        iMeshInput.ModelLOD1     := '';
+        iMeshInput.ModelLOD2     := '';
+        iMeshInput.Position.X    := iPos.X;
+        iMeshInput.Position.Y    := iHeight;
+        iMeshInput.Position.Z    := iPos.Z;
+        iMeshInput.Rotation.X    := iRot.x;
+        iMeshInput.Rotation.Y    := iRot.y;
+        iMeshInput.Rotation.Z    := iRot.z;
+        iMeshInput.Scale.X       := iMeshType.Scale + Random(Round(iMeshType.RandomScale));
+        iMeshInput.Scale.Y       := iMeshType.Scale + Random(Round(iMeshType.RandomScale));
+        iMeshInput.Scale.Z       := iMeshType.Scale + Random(Round(iMeshType.RandomScale));
+        iMeshInput.FadeDistance  := Settings.FoliageDistance * R_FOLIAGE_DISTANCE_STEP + (R_FOLIAGE_DISTANCE_STEP * 10);
+        iMeshInput.FadeScale     := R_FOLIAGE_LOD_DISTANCE;
+        iMeshInput.CastShadow    := False;
+        iMeshInput.ReceiveShadow := True;
         FCells.Add( TGDMeshCell.Create(iMeshInput) );
       end
       else
@@ -485,7 +489,13 @@ Begin
     for iI := 0 to FVisibleMeshCells.Count - 1 do
     begin
       iMeshCell := TGDMeshCell(FVisibleMeshCells.Items[ iI ]);
-      iMeshCell.Render( aRenderAttribute, aRenderFor );
+      if (aRenderFor = RF_SHADOW) then
+      begin
+        if iMeshCell.CastShadow then
+           iMeshCell.Render( aRenderAttribute, aRenderFor );
+      end
+      else
+        iMeshCell.Render( aRenderAttribute, aRenderFor );
       TriangleCount := TriangleCount + iMeshCell.TriangleCount();
     end;
   end;

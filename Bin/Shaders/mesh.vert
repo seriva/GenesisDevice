@@ -9,6 +9,7 @@ uniform vec3 V_POSITION;
 uniform vec3 V_SCALE;
 
 varying vec2  UV;
+varying vec4 ShadowCoord;
 varying float Fog;
 varying vec3 N;
 varying vec3 VWorld;
@@ -47,4 +48,5 @@ void main(void)
 	gl_ClipVertex  = vec4(gl_ModelViewMatrix * Eye);
 	Fog = clamp((length(Pos) - F_MIN_VIEW_DISTANCE) / F_MAX_VIEW_DISTANCE, 0.0, 1.0);
 	UV  = gl_MultiTexCoord0.xy;
+    ShadowCoord = gl_TextureMatrix[7] * Eye;
 }

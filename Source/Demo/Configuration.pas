@@ -67,11 +67,13 @@ type
   { TConfigurationForm }
 
   TConfigurationForm = class(TForm)
+    ShadowCheckBox: TCheckBox;
     FXAACheckBox: TCheckBox;
     MonitorLabel: TLabel;
     MonitorComboBox: TComboBox;
     RunButton: TButton;
     PageControl: TPageControl;
+    ShadowsCheckbox: TCheckBox;
     WindowTabSheet: TTabSheet;
     WindowPanel: TPanel;
     ResolutionLabel: TLabel;
@@ -317,6 +319,7 @@ begin
 
   BloomCheckBox.Checked := iSettings.UseBloom;
   FXAACheckBox.Checked := iSettings.UseFXAA;
+  ShadowsCheckbox.Checked := iSettings.UseShadows;
 
   //input settings
   InvertMouseCheckBox.Checked := iSettings.InvertMouse;
@@ -361,6 +364,7 @@ begin
   iSettings.WaterDetail      := WaterDetailComboBox.Text;
   iSettings.UseBloom         := BloomCheckBox.Checked;
   iSettings.UseFXAA          := FXAACheckBox.Checked;
+  iSettings.UseShadows       := ShadowsCheckbox.Checked;
 
   //input settings
   iSettings.InvertMouse      := InvertMouseCheckBox.Checked;
