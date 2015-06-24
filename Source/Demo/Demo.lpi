@@ -48,6 +48,7 @@
         <ComponentName Value="ViewPortForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
+        <UnitName Value="ViewPort"/>
       </Unit1>
       <Unit2>
         <Filename Value="Configuration.pas"/>
@@ -60,10 +61,12 @@
       <Unit3>
         <Filename Value="Main.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="Main"/>
       </Unit3>
       <Unit4>
         <Filename Value="Player.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="Player"/>
       </Unit4>
       <Unit5>
         <Filename Value="..\Libraries\OpenGL\dglOpenGL.pas"/>
@@ -87,6 +90,7 @@
       <Unit9>
         <Filename Value="..\Engine\GDConsole.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="GDConsole"/>
       </Unit9>
       <Unit10>
         <Filename Value="..\Engine\GDConstants.pas"/>
@@ -114,6 +118,7 @@
       <Unit15>
         <Filename Value="..\Engine\GDInterface.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="GDInterface"/>
       </Unit15>
       <Unit16>
         <Filename Value="..\Engine\GDMain.pas"/>
@@ -142,6 +147,7 @@
       <Unit21>
         <Filename Value="..\Engine\GDOctree.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="GDOctree"/>
       </Unit21>
       <Unit22>
         <Filename Value="..\Engine\GDRenderer.pas"/>
@@ -161,6 +167,7 @@
       <Unit25>
         <Filename Value="..\Engine\GDSound.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="GDSound"/>
       </Unit25>
       <Unit26>
         <Filename Value="..\Engine\GDStatistics.pas"/>

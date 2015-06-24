@@ -38,7 +38,7 @@ void main(void)
         vec4 shadowCoordinateWdivide = ShadowCoord / ShadowCoord.w ;
         float distanceFromLight = texture2D(T_SHADOWMAP,shadowCoordinateWdivide.xy).z;
         if(ShadowCoord.x >= 0.0 && ShadowCoord.x <= 1.0 && ShadowCoord.y >= 0.0 && ShadowCoord.y <= 1.0 && (distanceFromLight < (shadowCoordinateWdivide.z + 0.001)))
-            Color.rgb = Color.rgb * F_LIGHT_SHADOW;  
+            Color = Color * (F_LIGHT_SHADOW + ((1-F_LIGHT_SHADOW) * ShadowCoord.y));
     }
     
 	if (I_DO_BLOOM == 1)
