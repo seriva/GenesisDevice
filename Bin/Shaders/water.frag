@@ -6,7 +6,7 @@ uniform int I_UNDER_WATER;
 uniform vec4 V_WATER_COLOR;
 
 varying vec4  RefrCoords; 
-varying vec2  CausticCoords; 
+varying vec2  WavesCoords; 
 varying vec4  ViewCoords;
 varying float Fog;
 varying vec4  Light;
@@ -22,7 +22,7 @@ void main()
 	ProjCoord             = (ProjCoord + 1.0) * 0.5;
 	ProjCoord             += DUDVColor;
 	ProjCoord             = clamp(ProjCoord , 0.001, 0.999);
-    vec4 CausticColor     = texture2D(T_CAUSTICMAP, CausticCoords);
+    vec4 CausticColor     = texture2D(T_CAUSTICMAP, WavesCoords);
 	vec4 ReflectionColor  =  mix(texture2D(T_REFLECTION, ProjCoord.xy) * Light, CausticColor, 0.075);
 	
 	if(I_UNDER_WATER == 0)

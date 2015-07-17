@@ -61,7 +61,7 @@ const
   TWaterDetail     : array[1..3] of String  = ('Low', 'Medium','High');
 
   //engine constants
-  ENGINE_INFO     = '75 - 3 June 2015';
+  ENGINE_INFO     = '76 - 17 July 2015';
 
   //renderer constants
   R_HUDWIDTH              = 1600;
@@ -118,6 +118,9 @@ const
 
   //stats update
   S_UPDATE_TIME  = 1000;
+
+  //terrain constants
+  T_TERRAIN_CELLSIZE = 16;
 
   //shader constants
   SHADER_FRAG_EXT = '.frag';

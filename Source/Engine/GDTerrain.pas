@@ -37,7 +37,6 @@ uses
   GDTypes,
   GDConsole,
   GDSettings,
-  GDCamera,
   GDConstants,
   GDResource,
   GDResources,
@@ -98,10 +97,6 @@ type
     procedure StartRendering( aRenderAttribute : TGDRenderAttribute; aRenderFor : TGDRenderFor );
     procedure EndRendering();
   end;
-
-const
-  CELLSIZE = 16;
-  TRISINCELL = CELLSIZE * CELLSIZE * 2;
 
 implementation
 
@@ -283,8 +278,8 @@ var
 begin
    aX := (aX + ((FTerrainWidth * FTriangleSize)/2)) / FTriangleSize;
    aZ := (aZ + ((FTerrainHeight * FTriangleSize)/2)) / FTriangleSize;
-   if (aX < 0) or (aX > FTerrainWidth-1) or
-      (aZ < 0) or (aZ > FTerrainHeight-1) or
+   if (aX < 0) or (aX >= FTerrainWidth-1) or
+      (aZ < 0) or (aZ >= FTerrainHeight-1) or
        Not(FTerrainLoaded) then
    begin
      aHeight := 0.0;

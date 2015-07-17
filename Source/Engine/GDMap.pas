@@ -191,7 +191,7 @@ begin
   GUI.LoadingScreen.UpdateBar();
 
   //init water
-  Water.InitWater( iIniFile );
+  Water.InitWater(FTerrain, iIniFile );
   GUI.LoadingScreen.UpdateBar();
 
   //grass types

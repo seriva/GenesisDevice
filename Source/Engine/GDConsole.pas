@@ -23,7 +23,7 @@
 *******************************************************************************}   
 unit GDConsole;
 
-{$MODE Delphi}
+{$MODE objfpc}
 
 {******************************************************************************}
 {* Holds the console class for logging commands                               *}
@@ -65,8 +65,7 @@ type
     Func        : PFunction;
   end;
 
-  TGDCommandMap<TKey, TGDCommand> = class(TFPGMap<TKey, TGDCommand>)
-  end;
+  TGDCommandMap = specialize TFPGMap<String, TGDCommand>;
 
 {******************************************************************************}
 {* Console class                                                              *}
@@ -86,9 +85,9 @@ type
     FCommandRow     : integer;
     FCommandHistory : TStringList;
   public
-    CommandMap : TGDCommandMap<String, TGDCommand>;
-    property Use  : Boolean read FUse write FUse;
-    property Show : Boolean read FShow write FShow;
+    CommandMap       : TGDCommandMap;
+    property Use     : Boolean read FUse write FUse;
+    property Show    : Boolean read FShow write FShow;
     property Command : String read FCommand write FCommand;
 
     constructor Create();
@@ -147,7 +146,7 @@ begin
   FShow         := False;
   FLogText      := TStringList.Create();
   FCommandHistory := TStringList.Create();
-  CommandMap    := TGDCommandMap<String, TGDCommand>.Create();
+  CommandMap    := TGDCommandMap.Create();
   FCursorUpdate := False;
   AddCommand('Help', 'Show help', CT_FUNCTION, @Help);
   Write('Log started at ' + DateToStr(Date()) + ', ' + TimeToStr(Time()));
@@ -360,10 +359,10 @@ begin
   iCommand.Help         := aHelp;
   iCommand.CommandType  := aType;
   case iCommand.CommandType of
-    CT_BOOLEAN        : iCommand.Bool  := aPointer;
-    CT_INTEGER        : iCommand.Int   := aPointer;
-    CT_FLOAT          : iCommand.Float := aPointer;
-    CT_FUNCTION       : iCommand.Func  := aPointer;
+    CT_BOOLEAN  : iCommand.Bool  := aPointer;
+    CT_INTEGER  : iCommand.Int   := aPointer;
+    CT_FLOAT    : iCommand.Float := aPointer;
+    CT_FUNCTION : iCommand.Func  := PFunction(aPointer);
   end;
   CommandMap.Add(iCommand.Command,iCommand);
   CommandMap.Sort;

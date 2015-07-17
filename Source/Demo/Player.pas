@@ -102,8 +102,7 @@ end;
 
 procedure TPlayer.MoveForward();
 begin
-  //if Not(Intro.FRenderIntroText) then
-    gdCameraMove( MovementSpeed );
+  gdCameraMove( MovementSpeed );
 end;
 
 {******************************************************************************}
@@ -112,8 +111,7 @@ end;
 
 procedure TPlayer.MoveBackWard();
 begin
-  //if Not(Intro.FRenderIntroText) then
-    gdCameraMove( -MovementSpeed );
+  gdCameraMove( -MovementSpeed );
 end;
 
 {******************************************************************************}
@@ -122,8 +120,7 @@ end;
 
 procedure TPlayer.MoveLeft();
 begin
-  //if Not(Intro.FRenderIntroText) then
-    gdCameraStrafe(MovementSpeed);
+  gdCameraStrafe(MovementSpeed);
 end;
 
 {******************************************************************************}

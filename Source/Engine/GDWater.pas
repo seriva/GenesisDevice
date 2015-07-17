@@ -43,6 +43,7 @@ uses
   GDCamera,
   GDResource,
   GDTiming,
+  GDTerrain,
   GDModes;
 
 type
@@ -56,16 +57,12 @@ type
     FWaterTime       : Integer;
     FLastTime        : Integer;
     FBoundingBox     : TGDBoundingBox;
-    FRefractionU     : Double;
-    FRefractionV     : Double;
-    FWavesU          : Double;
-    FWavesV          : Double;
+    FRefractionUV    : Integer;
+    FWavesUV         : Integer;
     FWidth           : Integer;
     FHeight          : Integer;
     FCellCountX      : Integer;
     FCellCountY      : Integer;
-    FCellDivX        : Integer;
-    FCellDivY        : Integer;
     FColor           : TGDColor;
     FReflection      : TGDTexture;
     FRenderBuffer    : TGDGLRenderBufferObject;
@@ -83,14 +80,10 @@ type
   public
     Property BoundingBox : TGDBoundingBox read FBoundingBox;
     Property WaterHeight : Double read GetHeight;
-    property CellDivX : Integer read FCellDivX;
-    property CellDivY : Integer read FCellDivY;
     property CellCountX : Integer read FCellCountX;
     property CellCountY : Integer read FCellCountY;
-    property RefractionU : Double read FRefractionU;
-    property RefractionV : Double read FRefractionV;
-    property WavesU : Double read FWavesU;
-    property WavesV : Double read FWavesV;
+    property RefractionUV : Integer read FRefractionUV;
+    property WavesUV : Integer read FWavesUV;
     property WaterLoaded : Boolean read FWaterLoaded;
     property Color : TGDColor read FColor;
     Property Depth : Double read FDepth;
@@ -100,7 +93,7 @@ type
     constructor Create();
     destructor  Destroy(); override;
 
-    function    InitWater( aIniFile : TIniFile ) : boolean;
+    function    InitWater(aTerrain : TGDTerrain; aIniFile : TIniFile ) : boolean;
     procedure   Clear();
 
     procedure Resize();
@@ -165,7 +158,7 @@ end;
 {* Init the water                                                             *}
 {******************************************************************************}
 
-function TGDWater.InitWater( aIniFile : TIniFile ) : boolean;
+function TGDWater.InitWater(aTerrain : TGDTerrain; aIniFile : TIniFile ) : boolean;
 var
   iI, iCount : Integer;
   iPath, iExt : String;
@@ -177,24 +170,22 @@ begin
     result        := true;
     FWaterLoaded  := true;
 
-    FCellCountX := aIniFile.ReadInteger('Water', 'CellCountX', 1 );
-    FCellCountY := aIniFile.ReadInteger('Water', 'CellCountY', 1 );
-    FCellDivX   := aIniFile.ReadInteger('Water', 'CellDivX', 1 );
-    FCellDivY   := aIniFile.ReadInteger('Water', 'CellDivY', 1 );
+    FCellCountX := (aTerrain.TerrainWidth-1) div T_TERRAIN_CELLSIZE;
+    FCellCountY := (aTerrain.TerrainHeight-1) div T_TERRAIN_CELLSIZE;
     FColor      := ReadColor(aIniFile, 'Water', 'Color');
-    FBoundingBox.Max.Reset(aIniFile.ReadFloat( 'Water', 'X1', 0 ),
+
+    FBoundingBox.Max.Reset(aTerrain.TerrainPoints[aTerrain.TerrainWidth-1, 0].Vertex.x,
                            aIniFile.ReadFloat( 'Water', 'Height', 0 ),
-                           aIniFile.ReadFloat( 'Water', 'Z1', 0 ));
-    FBoundingBox.Min.Reset(aIniFile.ReadFloat( 'Water', 'X2', 0 ),
+                           aTerrain.TerrainPoints[0, aTerrain.TerrainHeight-1].Vertex.z);
+    FBoundingBox.Min.Reset(aTerrain.TerrainPoints[0, 0].Vertex.x,
                            aIniFile.ReadFloat( 'Water', 'Height', 0 ),
-                           aIniFile.ReadFloat( 'Water', 'Z2', 0 ));
-    FRefractionU := aIniFile.ReadFloat( 'Water', 'RefractionU', 1 );
-    FRefractionV := aIniFile.ReadFloat( 'Water', 'RefractionV', 1 );
-    FWavesU      := aIniFile.ReadFloat( 'Water', 'WavesU', 1 );
-    FWavesV      := aIniFile.ReadFloat( 'Water', 'WavesV', 1 );
-    FDepth       := aIniFile.ReadFloat( 'Water', 'Depth', 500 );
-    FMinDistance := aIniFile.ReadFloat( 'Water', 'MinDistance', 0.1 );
-    FMaxDistance := aIniFile.ReadFloat( 'Water', 'MaxDistance', 0.2 );
+                           aTerrain.TerrainPoints[0, 0].Vertex.z);
+
+    FRefractionUV := aIniFile.ReadInteger( 'Water', 'RefractionUV', 1 );
+    FWavesUV      := aIniFile.ReadInteger( 'Water', 'WavesUV', 1 );
+    FDepth        := aIniFile.ReadFloat( 'Water', 'Depth', 500 );
+    FMinDistance  := aIniFile.ReadFloat( 'Water', 'MinDistance', 0.1 );
+    FMaxDistance  := aIniFile.ReadFloat( 'Water', 'MaxDistance', 0.2 );
 
     Resize();
     FWaterTextures.Clear();
@@ -397,6 +388,9 @@ begin
                    Renderer.WaterShader.SetInt('T_REFLECTION', 0);
                    Renderer.WaterShader.SetInt('T_DUDVMAP', 1);
                    Renderer.WaterShader.SetInt('T_CAUSTICMAP', 5);
+                   Renderer.WaterShader.SetInt('I_REFRACTION_UV', RefractionUV);
+                   Renderer.WaterShader.SetInt('I_WAVES_UV', WavesUV);
+
                    FReflection.BindTexture(GL_TEXTURE0);
                    BindWaterTexture();
                    BindCausticTexture();

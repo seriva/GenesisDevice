@@ -151,15 +151,15 @@ Begin
     exit;
 
   iI := 1;
-  while (iI <= (aTerrain.TerrainWidth-CELLSIZE)) do
+  while (iI <= (aTerrain.TerrainWidth-T_TERRAIN_CELLSIZE)) do
   begin
     iJ := 1;
-    while (iJ <= (aTerrain.TerrainHeight-CELLSIZE)) do
+    while (iJ <= (aTerrain.TerrainHeight-T_TERRAIN_CELLSIZE)) do
     begin
-      FCells.Add(TGDTerrainCell.Create(aTerrain, iI, iJ, iI+CELLSIZE, iJ+CELLSIZE));
-      iJ := iJ + CELLSIZE
+      FCells.Add(TGDTerrainCell.Create(aTerrain, iI, iJ, iI+T_TERRAIN_CELLSIZE, iJ+T_TERRAIN_CELLSIZE));
+      iJ := iJ + T_TERRAIN_CELLSIZE
     end;
-    iI := iI + CELLSIZE
+    iI := iI + T_TERRAIN_CELLSIZE
   end;
 End;
 
@@ -171,70 +171,58 @@ procedure TGDCellManager.GenerateWaterCells(aWater : TGDWater; aTerrain : TGDTer
 var
  iI, iJ, iK, iL : Double;
  iCountX, iCountY : Integer;
- iStepX1, iStepY1 : Double;
- iStepX2, iStepY2 : Double;
- iStepU1, iStepV1 : Double;
- iStepU2, iStepV2 : Double;
- iCurrentU1, iCurrentV1 : Double;
- iCurrentU2, iCurrentV2 : Double;
+ iStepX, iStepY : Double;
+ iStepU, iStepV : Double;
+ iCurrentU, iCurrentV : Double;
  iCellNotAboveTerrain : Boolean;
  iHeight : Double;
 Begin
   If Not(aWater.WaterLoaded) then
     exit;
 
-  iStepX1 := (aWater.BoundingBox.Max.X + Abs(aWater.BoundingBox.Min.X)) / aWater.CellCountX;
-  iStepY1 := (aWater.BoundingBox.Max.Z + Abs(aWater.BoundingBox.Min.Z)) / aWater.CellCountY;
-  iStepX2 := (aWater.BoundingBox.Max.X + Abs(aWater.BoundingBox.Min.X)) / (aWater.CellCountX * aWater.CellDivX);
-  iStepY2 := (aWater.BoundingBox.Max.Z + Abs(aWater.BoundingBox.Min.Z)) / (aWater.CellCountY * aWater.CellDivY);
-  iStepU1 := aWater.RefractionU / (aWater.CellCountX * aWater.CellDivX);
-  iStepV1 := aWater.RefractionV / (aWater.CellCountY * aWater.CellDivY);
-  iStepU2 := aWater.WavesU / (aWater.CellCountX * aWater.CellDivX);
-  iStepV2 := aWater.WavesV / (aWater.CellCountY * aWater.CellDivY);
+  iStepX := (aWater.BoundingBox.Max.X + Abs(aWater.BoundingBox.Min.X)) / aWater.CellCountX;
+  iStepY := (aWater.BoundingBox.Max.Z + Abs(aWater.BoundingBox.Min.Z)) / aWater.CellCountY;
+  iStepU := 1 / aWater.CellCountX;
+  iStepV := 1 / aWater.CellCountY;
 
-  iI := aWater.BoundingBox.Min.X-iStepX1;
-  iCurrentU1 := 0;
-  iCurrentU2 := 0;
-  iCountX := 0;
+  iI := aWater.BoundingBox.Min.X-iStepX;
+  iCurrentU := 0;
+  iCountX   := 0;
   while (iI < (aWater.BoundingBox.Max.X)) do
   begin
-    iJ := aWater.BoundingBox.Min.Z-iStepY1;
-    iCurrentV1 := 0;
-    iCurrentV2 := 0;
+    iJ := aWater.BoundingBox.Min.Z-iStepY;
+    iCurrentV := 0;
     iCountY := 0;
     while (iJ < (aWater.BoundingBox.Max.Z)) do
     begin
       iCellNotAboveTerrain := true;
 
       iK := iI;
-      while ((iK <= ((iI+iStepX1))) and iCellNotAboveTerrain) do
+      while ((iK <= ((iI+iStepX))) and iCellNotAboveTerrain) do
       begin
         iL := iJ;
-        while ((iL <= ((iJ+iStepY1))) and iCellNotAboveTerrain) do
+        while ((iL <= ((iJ+iStepY))) and iCellNotAboveTerrain) do
         begin
           iHeight := 0;
           If aTerrain.GetHeight(iK, iL, iHeight) then
           begin
             if iHeight <= aWater.WaterHeight then
             begin
-              FCells.Add( TGDWaterCell.Create(aWater, iI, iJ, iI+iStepX1, iJ+iStepY1, iCurrentU1, iCurrentV1, iStepU1, iStepV1,
-                                                                        iCurrentU2, iCurrentV2, iStepU2, iStepV2) );
+              FCells.Add( TGDWaterCell.Create(aWater, iI, iJ, iI+iStepX, iJ+iStepY, iCurrentU, iCurrentV, iCurrentU + iStepU, iCurrentV + iStepV) );
               iCellNotAboveTerrain := false;
             end;
           end;
-          iL := iL + iStepY2;
+          iL := iL + iStepY;
         end;
-        iK := iK + iStepX2;
+        iK := iK + iStepX;
       end;
 
-      iCurrentV1 := iCountY * aWater.CellDivY * iStepV1;
-      iCurrentV2 := iCountY * aWater.CellDivY * iStepV2;
-      iJ := iJ + iStepY1;
+      iCurrentV := iCountY * iStepV;
+      iJ := iJ + iStepY;
       iCountY := iCountY + 1;
     end;
-    iCurrentU1 := iCountX * aWater.CellDivX * iStepU1;
-    iCurrentU2 := iCountX * aWater.CellDivX * iStepU2;
-    iI := iI + iStepX1;
+    iCurrentU := iCountX * iStepU;
+    iI := iI + iStepX;
     iCountX := iCountX + 1;
   end;
 End;
@@ -465,7 +453,7 @@ Begin
     begin
       iTerrainCell := TGDTerrainCell(FVisibleTerrainCells.Items[ iI ]);
       iTerrainCell.Render( aRenderAttribute, aRenderFor );
-      TriangleCount := TriangleCount + TRISINCELL;
+      TriangleCount := TriangleCount + (T_TERRAIN_CELLSIZE * T_TERRAIN_CELLSIZE * 2);
     end;
     aTerrain.EndRendering();
   end;
@@ -508,7 +496,7 @@ Begin
     begin
       iWaterCell := TGDWaterCell(FVisibleWaterCells.Items[ iI ]);
       iWaterCell.Render( aRenderAttribute, aRenderFor );
-      TriangleCount := TriangleCount + (aWater.CellDivX * aWater.CellDivY * 2);
+      TriangleCount := TriangleCount + 2;
     end;
     aWater.EndRendering();
   end;
