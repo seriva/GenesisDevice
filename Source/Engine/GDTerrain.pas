@@ -48,6 +48,7 @@ type
 {* Terrain point class                                                        *}
 {******************************************************************************}
 
+  PGDTerrainPoint = ^TGDTerrainPoint;
   TGDTerrainPoint = record
     Vertex   : TGDVector;
     Normal   : TGDVector;
@@ -74,16 +75,15 @@ type
     FCausticUV         : Integer;
     FTriangleSize      : Integer;
     FHeightScale       : Integer;
+    FTerrainPoints     : array of TGDTerrainPoint;
   public
-    TerrainPoints : array of array of TGDTerrainPoint;
-
     property TerrainWidth  : Integer read FTerrainWidth;
     property TerrainHeight : Integer read FTerrainHeight;
     property TerrainLoaded : Boolean read FTerrainLoaded;
-    property DetailUV     : integer read FDetailUV;
-    property CausticUV    : integer read FCausticUV;
-    property TriangleSize : Integer read FTriangleSize;
-    property HeightScale  : Integer read FHeightScale;
+    property DetailUV      : integer read FDetailUV;
+    property CausticUV     : integer read FCausticUV;
+    property TriangleSize  : Integer read FTriangleSize;
+    property HeightScale   : Integer read FHeightScale;
 
     constructor Create();
     destructor  Destroy(); override;
@@ -93,6 +93,7 @@ type
 
     function  GetHeight( aX, aZ : Double; var aHeight : Double ): boolean;
     function  GetRotation( aX, aZ : Double; var aRotation : TGDVector ): boolean;
+    function  GetPoint(aX, aZ : Integer): PGDTerrainPoint;
 
     procedure StartRendering( aRenderAttribute : TGDRenderAttribute; aRenderFor : TGDRenderFor );
     procedure EndRendering();
@@ -110,7 +111,7 @@ uses
 
 constructor TGDTerrain.Create();
 begin
-  TerrainPoints   := nil;
+  FTerrainPoints  := nil;
   FTerrainWidth   := 0;
   FTerrainHeight  := 0;
   FTerrainTop     := 0;
@@ -169,10 +170,9 @@ begin
     iStartHeight   := -((FTerrainHeight * FTriangleSize) div 2);
     FTerrainTop    := -999999999999999;
     FTerrainBottom :=  999999999999999;
-    SetLength(TerrainPoints, FTerrainWidth);
+    SetLength(FTerrainPoints, FTerrainWidth * FTerrainHeight);
     for iX := 0 to (FTerrainWidth-1) do
     begin
-      SetLength(TerrainPoints[iX], FTerrainHeight);
       for iY := 0 to (FTerrainHeight-1) do
       begin
         iMapHeight := iBmp.Canvas.Pixels[iX,iY] mod $100;
@@ -180,11 +180,11 @@ begin
           FTerrainTop := iMapHeight;
         If iMapHeight < FTerrainBottom then
           FTerrainBottom := iMapHeight;
-        TerrainPoints[iX,iY].UVCoords.U := (iX / (FTerrainWidth-1));
-        TerrainPoints[iX,iY].UVCoords.V := (iY / (FTerrainHeight-1));
-        TerrainPoints[iX,iY].Vertex.X := iStartWidth + (iX * FTriangleSize);
-        TerrainPoints[iX,iY].Vertex.Y := (iMapHeight)*FHeightScale;
-        TerrainPoints[iX,iY].Vertex.Z := iStartHeight + (iY * FTriangleSize);
+        GetPoint(iX,iY).UVCoords.U := (iX / (FTerrainWidth-1));
+        GetPoint(iX,iY).UVCoords.V := (iY / (FTerrainHeight-1));
+        GetPoint(iX,iY).Vertex.X := iStartWidth + (iX * FTriangleSize);
+        GetPoint(iX,iY).Vertex.Y := (iMapHeight)*FHeightScale;
+        GetPoint(iX,iY).Vertex.Z := iStartHeight + (iY * FTriangleSize);
       end;
     end;
     FTerrainTop    := (FTerrainTop) * FHeightScale;
@@ -197,28 +197,28 @@ begin
       begin
         if (iX = (FTerrainWidth-1)) and (iY = FTerrainHeight-1) then
         begin
-           TerrainPoints[iX,iY].Normal := TerrainPoints[iX-1,iY-1].Normal.Copy();
+           GetPoint(iX,iY).Normal := GetPoint(iX-1,iY-1).Normal.Copy();
            continue;
         end
         else if iX = (FTerrainWidth-1) then
         begin
-           TerrainPoints[iX,iY].Normal := TerrainPoints[iX-1,iY].Normal.Copy();
+           GetPoint(iX,iY).Normal := GetPoint(iX-1,iY).Normal.Copy();
            continue;
         end
         else if iY = FTerrainHeight-1 then
         begin
-          TerrainPoints[iX,iY].Normal := TerrainPoints[iX,iY-1].Normal.Copy();
+          GetPoint(iX,iY).Normal := GetPoint(iX,iY-1).Normal.Copy();
           continue;
         end;
         GetRotation(iStartWidth + iX*FTriangleSize, iStartHeight + iY*FTriangleSize, iR);
         iM.EmptyMatrix();
         iM.CreateRotation( iR );
-        TerrainPoints[iX,iY].Normal.reset(0,1,0);
-        iM.ApplyToVector( TerrainPoints[iX,iY].Normal );
+        GetPoint(iX,iY).Normal.reset(0,1,0);
+        iM.ApplyToVector( GetPoint(iX,iY).Normal );
       end;
     end;
 
-    FColorTexture := Resources.LoadTexture(aIniFile.ReadString( 'Terrain', 'ColorMap', 'colormaps.bmp'), Settings.TextureDetail,Settings.TextureFilter);
+    FColorTexture   := Resources.LoadTexture(aIniFile.ReadString( 'Terrain', 'ColorMap', 'colormaps.bmp'), Settings.TextureDetail,Settings.TextureFilter);
     FDetailTexture1 := Resources.LoadTexture(aIniFile.ReadString( 'Terrain', 'DetailMap1', 'detailmap1.jpg'), Settings.TextureDetail,Settings.TextureFilter);
     FDetailTexture2 := Resources.LoadTexture(aIniFile.ReadString( 'Terrain', 'DetailMap2', 'detailmap2.jpg'), Settings.TextureDetail,Settings.TextureFilter);
     FDetailTexture3 := Resources.LoadTexture(aIniFile.ReadString( 'Terrain', 'DetailMap3', 'detailmap3.jpg'), Settings.TextureDetail,Settings.TextureFilter);
@@ -244,18 +244,9 @@ end;
 {******************************************************************************}
 
 procedure TGDTerrain.Clear();
-var
-  iX : Integer;
 begin
-  if (TerrainPoints <> nil) then
-  begin
-    for iX := 0 to Length(TerrainPoints)-1 do
-    begin
-        setlength(TerrainPoints[iX],0);
-    end;
-    SetLength(TerrainPoints, 0);
-  end;
-  TerrainPoints := nil;
+  SetLength(FTerrainPoints, 0);
+  FTerrainPoints := nil;
 
   Resources.RemoveResource(TGDResource(FColorTexture));
   Resources.RemoveResource(TGDResource(FDetailTexture1));
@@ -290,10 +281,10 @@ begin
    iRZ := trunc(aZ);
    iFX := aX - iRX;
    iFZ := aZ - iRZ;
-   iA := TerrainPoints[iRX   ,iRZ].Vertex.Y;
-   iB := TerrainPoints[iRX+1 ,iRZ].Vertex.Y;
-   iC := TerrainPoints[iRX   ,iRZ+1].Vertex.Y;
-   iD := TerrainPoints[iRX+1 ,iRZ+1].Vertex.Y;
+   iA := GetPoint(iRX   ,iRZ).Vertex.Y;
+   iB := GetPoint(iRX+1 ,iRZ).Vertex.Y;
+   iC := GetPoint(iRX   ,iRZ+1).Vertex.Y;
+   iD := GetPoint(iRX+1 ,iRZ+1).Vertex.Y;
    aHeight := (iA + (iB - iA) * iFX) + ((iC + (iD - iC) * iFX) - (iA + (iB - iA) * iFX)) * iFZ;
    result := true;
 end;
@@ -336,22 +327,22 @@ begin
   iRZ := trunc(aZ);
   iFX := aX - iRX;
   iFZ := aZ - iRZ;
-  iA := TerrainPoints[iRX   ,iRZ].Vertex.Y;
-  iB := TerrainPoints[iRX+1 ,iRZ].Vertex.Y;
-  iC := TerrainPoints[iRX   ,iRZ+1].Vertex.Y;
-  iD := TerrainPoints[iRX+1 ,iRZ+1].Vertex.Y;
+  iA := GetPoint(iRX   ,iRZ).Vertex.Y;
+  iB := GetPoint(iRX+1 ,iRZ).Vertex.Y;
+  iC := GetPoint(iRX   ,iRZ+1).Vertex.Y;
+  iD := GetPoint(iRX+1 ,iRZ+1).Vertex.Y;
   iPos.Y := (iA + (iB - iA) * iFX) + ((iC + (iD - iC) * iFX) - (iA + (iB - iA) * iFX)) * iFZ;
 
-  iTriangle.V1 := TerrainPoints[iRX, iRZ].Vertex.Copy();
-  iTriangle.V2 := TerrainPoints[iRX+1, iRZ].Vertex.Copy();
-  iTriangle.V3 := TerrainPoints[iRX, iRZ+1].Vertex.Copy();
+  iTriangle.V1 := GetPoint(iRX, iRZ).Vertex.Copy();
+  iTriangle.V2 := GetPoint(iRX+1, iRZ).Vertex.Copy();
+  iTriangle.V3 := GetPoint(iRX, iRZ+1).Vertex.Copy();
   iFound := true;
   iSecTris := false;;
   If Not(iTriangle.PointInTraingle( iPos )) then
   begin
-    iTriangle.V1 := TerrainPoints[iRX+1, iRZ+1].Vertex.Copy();
-    iTriangle.V2 := TerrainPoints[iRX, iRZ+1].Vertex.Copy();
-    iTriangle.V3 := TerrainPoints[iRX+1, iRZ].Vertex.Copy();
+    iTriangle.V1 := GetPoint(iRX+1, iRZ+1).Vertex.Copy();
+    iTriangle.V2 := GetPoint(iRX, iRZ+1).Vertex.Copy();
+    iTriangle.V3 := GetPoint(iRX+1, iRZ).Vertex.Copy();
     iSecTris := true;
     If Not(iTriangle.PointInTraingle( iPos )) then
       iFound := false;
@@ -402,6 +393,15 @@ begin
       end;
     result := true;
   end;
+end;
+
+{******************************************************************************}
+{* Get terrain point.                                                         *}
+{******************************************************************************}
+
+function TGDTerrain.GetPoint(aX, aZ : Integer): PGDTerrainPoint;
+begin
+  result := @FTerrainPoints[(aX * FTerrainWidth) + aZ]
 end;
 
 {******************************************************************************}

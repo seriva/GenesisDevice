@@ -227,7 +227,7 @@ procedure TGDSettings.LoadIniFile();
 var
   iIniFile : TIniFile;
 begin
-  iIniFile := TIniFile.Create( FP_INITS + ENGINE_INI );
+  iIniFile := TIniFile.Create( PATH_INITS + ENGINE_INI );
 
   //viewport settings
   FWidth :=        iIniFile.ReadInteger('ViewPort', 'Width', 800);
@@ -266,7 +266,7 @@ procedure TGDSettings.SaveIniFile();
 var
   iIniFile : TIniFile;
 begin
-  iIniFile := TIniFile.Create(FP_INITS + ENGINE_INI);
+  iIniFile := TIniFile.Create(PATH_INITS + ENGINE_INI);
 
   //viewport
   iIniFile.WriteInteger('ViewPort', 'Width', FWidth);

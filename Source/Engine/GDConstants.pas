@@ -61,7 +61,7 @@ const
   TWaterDetail     : array[1..3] of String  = ('Low', 'Medium','High');
 
   //engine constants
-  ENGINE_INFO     = '76 - 17 July 2015';
+  ENGINE_INFO     = '76 - 22 July 2015';
 
   //renderer constants
   R_HUDWIDTH              = 1600;
@@ -94,12 +94,12 @@ const
   MRS_OPENAL_MINOR_VERSION  = 1;
 
   //filepaths constants
-  FP_MAPS         = 'Maps\';
-  FP_SHADERS      = 'Shaders\';
-  FP_SOUNDS       = 'Sounds\';
-  FP_MODELS       = 'Models\';
-  FP_TEXTURES     = 'Textures\';
-  FP_INITS        = 'Ini\';
+  PATH_MAPS         = 'Maps\';
+  PATH_SHADERS      = 'Shaders\';
+  PATH_SOUNDS       = 'Sounds\';
+  PATH_MODELS       = 'Models\';
+  PATH_TEXTURES     = 'Textures\';
+  PATH_INITS        = 'Ini\';
 
   //file constants
   ENGINE_INI = 'Engine.ini';
@@ -120,20 +120,26 @@ const
   S_UPDATE_TIME  = 1000;
 
   //terrain constants
-  T_TERRAIN_CELLSIZE = 16;
+  TERRAIN_CELLSIZE = 16;
+
+  //sky constants
+  SKY_COMPLEXITY = 64;
+
+  //grass constants
+  GRASS_CELLSIZE = 8;
 
   //shader constants
   SHADER_FRAG_EXT = '.frag';
   SHADER_VERT_EXT = '.vert';
-  SHADER_TERRAIN  = FP_SHADERS + 'terrain';
-  SHADER_SKY      = FP_SHADERS + 'sky';
-  SHADER_WATER    = FP_SHADERS + 'water';
-  SHADER_GRASS    = FP_SHADERS + 'grass';
-  SHADER_BLUR     = FP_SHADERS + 'blur';
-  SHADER_FINAL    = FP_SHADERS + 'final';
-  SHADER_MESH     = FP_SHADERS + 'mesh';
-  SHADER_COLOR    = FP_SHADERS + 'color';
-  SHADER_TEXTURE  = FP_SHADERS + 'texture';
+  SHADER_TERRAIN  = PATH_SHADERS + 'terrain';
+  SHADER_SKY      = PATH_SHADERS + 'sky';
+  SHADER_WATER    = PATH_SHADERS + 'water';
+  SHADER_GRASS    = PATH_SHADERS + 'grass';
+  SHADER_BLUR     = PATH_SHADERS + 'blur';
+  SHADER_FINAL    = PATH_SHADERS + 'final';
+  SHADER_MESH     = PATH_SHADERS + 'mesh';
+  SHADER_COLOR    = PATH_SHADERS + 'color';
+  SHADER_TEXTURE  = PATH_SHADERS + 'texture';
 
 implementation
 end.

@@ -56,7 +56,6 @@ type
     Normal : TGDVector;
     Quad1 : TGDQuad;
     Quad2 : TGDQuad;
-    Quad3 : TGDQuad;
 
     procedure InitGrassPartical(  aMove, aScale, aRotate : TGDVector  );
     procedure Render();
@@ -106,8 +105,7 @@ end;
 begin
   Normal.reset(0,1,0);
   Quad1.Reset(-50, -50, 0, 50, 50, 0 );
-  Quad2.Reset(-25,-50,-43.30127,25,50,43.30127);
-  Quad3.Reset(-25,-50,43.30127,25,50,-43.30127);
+  Quad2.Reset(0, -50, -50, 0, 50, 50 );
 
   iRandomRotation.reset(0,Random(360),0);
   iM1.CreateRotation( iRandomRotation );
@@ -116,7 +114,6 @@ begin
 
   ApplyRQuad(Quad1);
   ApplyRQuad(Quad2);
-  ApplyRQuad(Quad3);
 end;
 
 {******************************************************************************}
@@ -127,7 +124,6 @@ procedure TGDGrassPartical.Render();
 begin
   Quad1.Render();
   Quad2.Render();
-  Quad3.Render();
 end;
 
 {******************************************************************************}
@@ -177,8 +173,8 @@ begin
           for iJ := 0 to iParticalCount[iI]-1 do
           begin
             //position
-            iPos.Reset( aTerrain.TerrainPoints[ iX, iY ].Vertex.X + random(aTerrain.TriangleSize) , 0,
-                        aTerrain.TerrainPoints[ iX, iY ].Vertex.Z + random(aTerrain.TriangleSize) );
+            iPos.Reset( aTerrain.GetPoint( iX, iY ).Vertex.X + random(aTerrain.TriangleSize) , 0,
+                        aTerrain.GetPoint( iX, iY ).Vertex.Z + random(aTerrain.TriangleSize) );
             aTerrain.GetHeight(iPos.X, iPos.Z, iHeight  );
 
             iRandomHeightScale := iTempGrassType.Scale.Y + Random( Round( iTempGrassType.RandomScale.Y ) );
@@ -211,6 +207,7 @@ begin
   For iI := 0 to Length(iParticalLists)-1 do
   begin
     TGDGrassType(aFoliage.GrassTypes.Items[iI]).Texture.BindTexture( GL_TEXTURE0 );
+    glBegin(GL_QUADS);
     for iJ := 0 to Length( iParticalLists[iI] )-1 do
     begin
       iRandomR := 0.75 + (Random(25)/100);
@@ -219,6 +216,7 @@ begin
       glColor3f(iRandomR, iRandomG, iRandomB);
       iParticalLists[iI,iJ].Render();
     end;
+    glEnd();
   end;
   FDisplayList.EndList();
 
@@ -248,23 +246,23 @@ procedure TGDGrassCell.CalculateBoundingBox(aTerrain : TGDTerrain);
 var
   iX,iY : Integer;
 begin
-  BoundingBox.Min.Reset( aTerrain.TerrainPoints[ FStartPoint.X-1, FStartPoint.Y-1 ].Vertex.X,
+  BoundingBox.Min.Reset( aTerrain.GetPoint( FStartPoint.X-1, FStartPoint.Y-1 ).Vertex.X,
                          999999999999999,
-                         aTerrain.TerrainPoints[ FStartPoint.X-1, FStartPoint.Y-1 ].Vertex.Z);
+                         aTerrain.GetPoint( FStartPoint.X-1, FStartPoint.Y-1 ).Vertex.Z);
 
-  BoundingBox.Max.Reset( aTerrain.TerrainPoints[ FEndPoint.X-1, FEndPoint.Y-1 ].Vertex.X,
+  BoundingBox.Max.Reset( aTerrain.GetPoint( FEndPoint.X-1, FEndPoint.Y-1 ).Vertex.X,
                          -999999999999999,
-                         aTerrain.TerrainPoints[ FEndPoint.X-1, FEndPoint.Y-1 ].Vertex.Z);
+                         aTerrain.GetPoint( FEndPoint.X-1, FEndPoint.Y-1 ).Vertex.Z);
 
   for iY := (FStartPoint.Y-1) to FEndPoint.Y-1 do
   begin
     iX := (FStartPoint.X-1);
     for iX := (FStartPoint.X-1) to FEndPoint.X-1 do
     begin
-      If aTerrain.TerrainPoints[ iX,iY  ].Vertex.Y > BoundingBox.Max.Y then
-        BoundingBox.Max.setY( aTerrain.TerrainPoints[ iX,iY  ].Vertex.Y);
-      If aTerrain.TerrainPoints[ iX,iY  ].Vertex.Y < BoundingBox.Min.Y then
-        BoundingBox.Min.setY( aTerrain.TerrainPoints[ iX,iY  ].Vertex.Y);
+      If aTerrain.GetPoint( iX,iY ).Vertex.Y > BoundingBox.Max.Y then
+        BoundingBox.Max.setY( aTerrain.GetPoint( iX,iY ).Vertex.Y);
+      If aTerrain.GetPoint( iX,iY ).Vertex.Y < BoundingBox.Min.Y then
+        BoundingBox.Min.setY( aTerrain.GetPoint( iX,iY ).Vertex.Y);
     end;
   end;
   BoundingBox.Max.SetY( BoundingBox.Max.Y+150 );

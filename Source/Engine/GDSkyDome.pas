@@ -72,11 +72,7 @@ type
 implementation
 
 uses
-  GDMap,
   GDRenderer;
-
-Const
-  COMPLEXITY = 64;
 
 {******************************************************************************}
 {* Create the skydome class                                                   *}
@@ -123,17 +119,17 @@ var
   iVertices : TGDVectorList;
   iUVCoords : TGDUVCoordList;
 begin
-  iRotationStep := 360/COMPLEXITY;
+  iRotationStep := 360/SKY_COMPLEXITY;
   iVertices := TGDVectorList.Create();
   iUVCoords := TGDUVCoordList.Create();
   iStartPoint.Reset(aSize, 0, 0 );
-  iUStep := 1 / (COMPLEXITY);
-  iVStep := 1 / (COMPLEXITY div 4);
+  iUStep := 1 / (SKY_COMPLEXITY);
+  iVStep := 1 / (SKY_COMPLEXITY div 4);
   iRotationZ := 0;
-  For iI := (COMPLEXITY div 4) downto 0 do
+  For iI := (SKY_COMPLEXITY div 4) downto 0 do
   begin
     iRotationY := 0;
-    For iJ := 0 to COMPLEXITY do
+    For iJ := 0 to SKY_COMPLEXITY do
     begin
       iTemp := iStartPoint.Copy();
       iMatrix.EmptyMatrix();
@@ -154,13 +150,13 @@ begin
   FDisplayList := TGDGLDisplayList.Create();
   FDisplayList.StartList();
   FSkyTexture.BindTexture(GL_TEXTURE0);
-  For iI := 0 to (COMPLEXITY div 4)-1 do
+  For iI := 0 to (SKY_COMPLEXITY div 4)-1 do
   begin
     glBegin(GL_TRIANGLE_STRIP);
-    For iJ := 0 to COMPLEXITY do
+    For iJ := 0 to SKY_COMPLEXITY do
     begin
-      iX := iJ + (iI * (COMPLEXITY+1));
-      iY := iJ + ((iI + 1) * (COMPLEXITY+1));
+      iX := iJ + (iI * (SKY_COMPLEXITY+1));
+      iY := iJ + ((iI + 1) * (SKY_COMPLEXITY+1));
       glTexCoord2fv( iUVCoords.Items[ iY ].ArrayPointer );
       glVertex3fv( TGDVector( iVertices.Items[  iY ] ).ArrayPointer);
       glTexCoord2fv( iUVCoords.Items[  iX ].ArrayPointer );
@@ -170,7 +166,7 @@ begin
   end;
   FDisplayList.EndList();
 
-  FTriangleCount := (COMPLEXITY * (COMPLEXITY div 4)) * 2;
+  FTriangleCount := (SKY_COMPLEXITY * (SKY_COMPLEXITY div 4)) * 2;
   FreeAndNil(iVertices);
   FreeAndNil(iUVCoords);
 end;

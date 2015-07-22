@@ -75,9 +75,9 @@ procedure SendTerrainPoint(aX,aY : integer);
 begin
   With FTerrain do
   begin
-    glNormal3fv( TerrainPoints[aX,aY].Normal.ArrayPointer );
-    glTexCoord2fv( TerrainPoints[aX,aY].UVCoords.ArrayPointer );
-    glVertex3fv( TerrainPoints[aX,aY].Vertex.ArrayPointer );
+    glNormal3fv( GetPoint(aX,aY).Normal.ArrayPointer );
+    glTexCoord2fv( GetPoint(aX,aY).UVCoords.ArrayPointer );
+    glVertex3fv( GetPoint(aX,aY).Vertex.ArrayPointer );
   end;
 end;
 
@@ -130,12 +130,12 @@ procedure TGDTerrainCell.CalculateBoundingBox();
 var
   iX,iY : Integer;
 begin
-  BoundingBox.Min.Reset(  FTerrain.TerrainPoints[ FStartPoint.X-1, FStartPoint.Y-1 ].Vertex.X,
+  BoundingBox.Min.Reset(  FTerrain.GetPoint( FStartPoint.X-1, FStartPoint.Y-1 ).Vertex.X,
                          999999999999999,
-                         FTerrain.TerrainPoints[ FStartPoint.X-1, FStartPoint.Y-1 ].Vertex.Z);
-  BoundingBox.Max.Reset( FTerrain.TerrainPoints[ FEndPoint.X-1, FEndPoint.Y-1 ].Vertex.X,
+                         FTerrain.GetPoint( FStartPoint.X-1, FStartPoint.Y-1 ).Vertex.Z);
+  BoundingBox.Max.Reset( FTerrain.GetPoint( FEndPoint.X-1, FEndPoint.Y-1 ).Vertex.X,
                          -999999999999999,
-                         FTerrain.TerrainPoints[ FEndPoint.X-1, FEndPoint.Y-1 ].Vertex.Z);
+                         FTerrain.GetPoint( FEndPoint.X-1, FEndPoint.Y-1 ).Vertex.Z);
 
 
   for iY := (FStartPoint.Y-1) to FEndPoint.Y-1 do
@@ -143,10 +143,10 @@ begin
     iX := (FStartPoint.X-1);
     for iX := (FStartPoint.X-1) to FEndPoint.X-1 do
     begin
-      If FTerrain.TerrainPoints[ iX,iY  ].Vertex.Y > BoundingBox.Max.Y then
-        BoundingBox.Max.setY(FTerrain.TerrainPoints[ iX,iY  ].Vertex.Y);
-      If FTerrain.TerrainPoints[ iX,iY  ].Vertex.Y < BoundingBox.Min.Y then
-        BoundingBox.Min.setY(FTerrain.TerrainPoints[ iX,iY  ].Vertex.Y);
+      If FTerrain.GetPoint( iX,iY ).Vertex.Y > BoundingBox.Max.Y then
+        BoundingBox.Max.setY(FTerrain.GetPoint( iX,iY ).Vertex.Y);
+      If FTerrain.GetPoint( iX,iY ).Vertex.Y < BoundingBox.Min.Y then
+        BoundingBox.Min.setY(FTerrain.GetPoint( iX,iY ).Vertex.Y);
     end;
   end;
   BoundingBox.CalculateCenter();
@@ -178,10 +178,10 @@ begin
                               for iX := (FStartPoint.X-1) to FEndPoint.X-1 do
                               begin
                                 glBegin( GL_LINES);
-                                  glVertex3f( TerrainPoints[iX,iY].Vertex.X, TerrainPoints[iX,iY].Vertex.Y, TerrainPoints[iX,iY].Vertex.Z );
-                                  glVertex3f((TerrainPoints[iX,iY].Normal.X * R_NORMAL_LENGTH) + TerrainPoints[iX,iY].Vertex.X,
-                                             (TerrainPoints[iX,iY].Normal.Y * R_NORMAL_LENGTH) + TerrainPoints[iX,iY].Vertex.Y,
-                                             (TerrainPoints[iX,iY].Normal.Z * R_NORMAL_LENGTH) + TerrainPoints[iX,iY].Vertex.Z );
+                                  glVertex3f( GetPoint(iX,iY).Vertex.X, GetPoint(iX,iY).Vertex.Y, GetPoint(iX,iY).Vertex.Z );
+                                  glVertex3f((GetPoint(iX,iY).Normal.X * R_NORMAL_LENGTH) + GetPoint(iX,iY).Vertex.X,
+                                             (GetPoint(iX,iY).Normal.Y * R_NORMAL_LENGTH) + GetPoint(iX,iY).Vertex.Y,
+                                             (GetPoint(iX,iY).Normal.Z * R_NORMAL_LENGTH) + GetPoint(iX,iY).Vertex.Z );
                                 glEnd;
                               end;
                             end;

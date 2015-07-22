@@ -816,7 +816,7 @@ var
   iIniFile      : TIniFile;
 begin
   ShowCursor(false);
-  iIniFile := TIniFile.Create( FP_INITS + GUI_INI );
+  iIniFile := TIniFile.Create( PATH_INITS + GUI_INI );
 
   //Default colors
   FFontColor    := ReadColor(iIniFile,'DefaultColors', 'Font');

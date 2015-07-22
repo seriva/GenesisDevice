@@ -170,16 +170,16 @@ begin
     result        := true;
     FWaterLoaded  := true;
 
-    FCellCountX := (aTerrain.TerrainWidth-1) div T_TERRAIN_CELLSIZE;
-    FCellCountY := (aTerrain.TerrainHeight-1) div T_TERRAIN_CELLSIZE;
+    FCellCountX := (aTerrain.TerrainWidth-1) div TERRAIN_CELLSIZE;
+    FCellCountY := (aTerrain.TerrainHeight-1) div TERRAIN_CELLSIZE;
     FColor      := ReadColor(aIniFile, 'Water', 'Color');
 
-    FBoundingBox.Max.Reset(aTerrain.TerrainPoints[aTerrain.TerrainWidth-1, 0].Vertex.x,
+    FBoundingBox.Max.Reset(aTerrain.GetPoint(aTerrain.TerrainWidth-1, 0).Vertex.x,
                            aIniFile.ReadFloat( 'Water', 'Height', 0 ),
-                           aTerrain.TerrainPoints[0, aTerrain.TerrainHeight-1].Vertex.z);
-    FBoundingBox.Min.Reset(aTerrain.TerrainPoints[0, 0].Vertex.x,
+                           aTerrain.GetPoint(0, aTerrain.TerrainHeight-1).Vertex.z);
+    FBoundingBox.Min.Reset(aTerrain.GetPoint(0, 0).Vertex.x,
                            aIniFile.ReadFloat( 'Water', 'Height', 0 ),
-                           aTerrain.TerrainPoints[0, 0].Vertex.z);
+                           aTerrain.GetPoint(0, 0).Vertex.z);
 
     FRefractionUV := aIniFile.ReadInteger( 'Water', 'RefractionUV', 1 );
     FWavesUV      := aIniFile.ReadInteger( 'Water', 'WavesUV', 1 );

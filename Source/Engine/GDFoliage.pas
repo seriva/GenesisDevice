@@ -106,8 +106,6 @@ type
     FTreeAnimationStrength  : Single;
 
     FGrassTypes           : TGDGrassTypeList;
-    FGrassCellCountX      : Integer;
-    FGrassCellCountY      : Integer;
 
     FTreeTypes            : TGDMeshTypeList;
     FTreeCount            : Integer;
@@ -127,8 +125,6 @@ type
     property TreeAnimationStrength  : Single read FTreeAnimationStrength;
 
     property GrassTypes : TGDGrassTypeList read FGrassTypes;
-    property GrassCellCountX : Integer read FGrassCellCountX;
-    property GrassCellCountY : Integer read FGrassCellCountY;
 
     property TreeTypes : TGDMeshTypeList read FTreeTypes;
     property TreeCount : Integer read FTreeCount;
@@ -246,8 +242,6 @@ begin
   try
     result := true;
 
-    FGrassCellCountX        := aIniFile.ReadInteger( 'Foliage', 'GrassCellCountX', 1 ); ;
-    FGrassCellCountY        := aIniFile.ReadInteger( 'Foliage', 'GrassCellCountY', 1 );
     FGrassAnimationSpeed    := aIniFile.ReadFloat( 'Foliage', 'GrassAnimationSpeed', 1000 );
     FGrassAnimationStrength := aIniFile.ReadFloat( 'Foliage', 'GrassAnimationStrength', 5);
 
@@ -331,8 +325,6 @@ begin
   FGrassTypes.Clear();
   FTreeTypes.Clear();
   FRockTypes.Clear();
-  FGrassCellCountX := 0;
-  FGrassCellCountY := 0;
 end;
 
 {******************************************************************************}

@@ -22,7 +22,7 @@
 *******************************************************************************}   
 unit GDCellManager;
 
-{$MODE objfpc}
+{$MODE Delphi}
 
 {******************************************************************************}
 {* This units holds the cell manager                                          *}
@@ -151,15 +151,15 @@ Begin
     exit;
 
   iI := 1;
-  while (iI <= (aTerrain.TerrainWidth-T_TERRAIN_CELLSIZE)) do
+  while (iI <= (aTerrain.TerrainWidth-TERRAIN_CELLSIZE)) do
   begin
     iJ := 1;
-    while (iJ <= (aTerrain.TerrainHeight-T_TERRAIN_CELLSIZE)) do
+    while (iJ <= (aTerrain.TerrainHeight-TERRAIN_CELLSIZE)) do
     begin
-      FCells.Add(TGDTerrainCell.Create(aTerrain, iI, iJ, iI+T_TERRAIN_CELLSIZE, iJ+T_TERRAIN_CELLSIZE));
-      iJ := iJ + T_TERRAIN_CELLSIZE
+      FCells.Add(TGDTerrainCell.Create(aTerrain, iI, iJ, iI+TERRAIN_CELLSIZE, iJ+TERRAIN_CELLSIZE));
+      iJ := iJ + TERRAIN_CELLSIZE
     end;
-    iI := iI + T_TERRAIN_CELLSIZE
+    iI := iI + TERRAIN_CELLSIZE
   end;
 End;
 
@@ -203,14 +203,10 @@ Begin
         iL := iJ;
         while ((iL <= ((iJ+iStepY))) and iCellNotAboveTerrain) do
         begin
-          iHeight := 0;
-          If aTerrain.GetHeight(iK, iL, iHeight) then
+          If aTerrain.GetHeight(iK, iL, iHeight) and (iHeight <= aWater.WaterHeight) then
           begin
-            if iHeight <= aWater.WaterHeight then
-            begin
-              FCells.Add( TGDWaterCell.Create(aWater, iI, iJ, iI+iStepX, iJ+iStepY, iCurrentU, iCurrentV, iCurrentU + iStepU, iCurrentV + iStepV) );
-              iCellNotAboveTerrain := false;
-            end;
+            FCells.Add( TGDWaterCell.Create(aWater, iI, iJ, iI+iStepX, iJ+iStepY, iCurrentU, iCurrentV, iCurrentU + iStepU, iCurrentV + iStepV) );
+            iCellNotAboveTerrain := false;
           end;
           iL := iL + iStepY;
         end;
@@ -248,8 +244,8 @@ label
   RedoRandomRocks;
 Begin
   Timing.Start();
-  iStepX := Round((aTerrain.TerrainWidth-1) / aFoliage.GrassCellCountX);
-  iStepY := Round((aTerrain.TerrainHeight-1) / aFoliage.GrassCellCountY);
+  iStepX := aTerrain.TerrainWidth div (aTerrain.TerrainWidth div GRASS_CELLSIZE);
+  iStepY := aTerrain.TerrainHeight div (aTerrain.TerrainHeight div GRASS_CELLSIZE);
 
   GUI.LoadingScreen.SetupForUse('Generating foliage...', Round(aTerrain.TerrainWidth/iStepX) + aFoliage.TreeTypes.Count + aFoliage.RockTypes.Count );
 
@@ -296,9 +292,9 @@ Begin
 
       iX := Random(aTerrain.TerrainWidth-1);
       iY := Random(aTerrain.TerrainHeight-1);
-      iPos.Reset( aTerrain.TerrainPoints[ iX, iY ].Vertex.X + (aTerrain.TriangleSize div 2) ,
+      iPos.Reset( aTerrain.GetPoint( iX, iY ).Vertex.X + (aTerrain.TriangleSize div 2) ,
                   0,
-                  aTerrain.TerrainPoints[ iX, iY ].Vertex.Z + (aTerrain.TriangleSize div 2) );
+                  aTerrain.GetPoint( iX, iY ).Vertex.Z + (aTerrain.TriangleSize div 2) );
 
       if aFoliage.CheckTreeMap(iX, iY) and aTerrain.GetHeight(iPos.X, iPos.Z, iHeight) then
       begin
@@ -342,9 +338,9 @@ Begin
 
       iX := Random(aTerrain.TerrainWidth-1);
       iY := Random(aTerrain.TerrainHeight-1);
-      iPos.Reset( aTerrain.TerrainPoints[ iX, iY ].Vertex.X + (aTerrain.TriangleSize div 2) ,
+      iPos.Reset( aTerrain.GetPoint( iX, iY ).Vertex.X + (aTerrain.TriangleSize div 2) ,
                   0,
-                  aTerrain.TerrainPoints[ iX, iY ].Vertex.Z + (aTerrain.TriangleSize div 2) );
+                  aTerrain.GetPoint( iX, iY ).Vertex.Z + (aTerrain.TriangleSize div 2) );
 
       if aFoliage.CheckRockMap(iX, iY) and aTerrain.GetHeight(iPos.X, iPos.Z, iHeight) then
       begin
@@ -453,7 +449,7 @@ Begin
     begin
       iTerrainCell := TGDTerrainCell(FVisibleTerrainCells.Items[ iI ]);
       iTerrainCell.Render( aRenderAttribute, aRenderFor );
-      TriangleCount := TriangleCount + (T_TERRAIN_CELLSIZE * T_TERRAIN_CELLSIZE * 2);
+      TriangleCount := TriangleCount + (TERRAIN_CELLSIZE * TERRAIN_CELLSIZE * 2);
     end;
     aTerrain.EndRendering();
   end;

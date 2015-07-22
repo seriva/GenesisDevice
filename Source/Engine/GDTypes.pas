@@ -944,17 +944,15 @@ end;
 
 procedure TGDQuad.Render();
 begin
-  glBegin(GL_TRIANGLE_STRIP);
-    glNormal3fv(Normal.ArrayPointer);
-    glMultiTexCoord2f(GL_TEXTURE0, 0.99, 0.99);
-    glVertex3fv(V1.ArrayPointer);
-    glMultiTexCoord2f(GL_TEXTURE0, 0.99, 0.00);
-    glVertex3fv(V2.ArrayPointer);
-    glMultiTexCoord2f(GL_TEXTURE0, 0.0, 0.99);
-    glVertex3fv(V4.ArrayPointer);
-    glMultiTexCoord2f(GL_TEXTURE0, 0.0, 0.0);
-    glVertex3fv(V3.ArrayPointer);
-  glEnd();
+  glNormal3fv(Normal.ArrayPointer);
+  glTexCoord1i(0);
+  glVertex3fv(V1.ArrayPointer);
+  glTexCoord1i(1);
+  glVertex3fv(V2.ArrayPointer);
+  glTexCoord1i(2);
+  glVertex3fv(V3.ArrayPointer);
+  glTexCoord1i(3);
+  glVertex3fv(V4.ArrayPointer);
 end;
 
 {******************************************************************************}

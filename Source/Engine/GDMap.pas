@@ -167,10 +167,10 @@ begin
   Renderer.BloomStrengh := iIniFile.ReadFloat( 'Bloom', 'Strengh', 0.5 );
 
   //directional light
-  FLightDirection := ReadVector(iIniFile, 'DirectionalLight', 'Direction');
-  FLightAmbient   := ReadColor(iIniFile, 'DirectionalLight', 'Ambient');
-  FLightDiffuse   := ReadColor(iIniFile, 'DirectionalLight', 'Diffuse');
-  FLightShadow    := iIniFile.ReadFloat( 'DirectionalLight', 'Shadow', 0.5 );
+  FLightDirection := ReadVector(iIniFile, 'Light', 'Direction');
+  FLightAmbient   := ReadColor(iIniFile, 'Light', 'Ambient');
+  FLightDiffuse   := ReadColor(iIniFile, 'Light', 'Diffuse');
+  FLightShadow    := iIniFile.ReadFloat( 'Light', 'Shadow', 0.5 );
 
   //init fog
   FFogColor    := ReadColor(iIniFile, 'Fog', 'Color');
