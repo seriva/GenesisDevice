@@ -126,20 +126,18 @@ const
   SKY_COMPLEXITY = 64;
 
   //grass constants
-  GRASS_CELLSIZE = 8;
+  GRASS_CELLSIZE = 4;
 
   //shader constants
-  SHADER_FRAG_EXT = '.frag';
-  SHADER_VERT_EXT = '.vert';
-  SHADER_TERRAIN  = PATH_SHADERS + 'terrain';
-  SHADER_SKY      = PATH_SHADERS + 'sky';
-  SHADER_WATER    = PATH_SHADERS + 'water';
-  SHADER_GRASS    = PATH_SHADERS + 'grass';
-  SHADER_BLUR     = PATH_SHADERS + 'blur';
-  SHADER_FINAL    = PATH_SHADERS + 'final';
-  SHADER_MESH     = PATH_SHADERS + 'mesh';
-  SHADER_COLOR    = PATH_SHADERS + 'color';
-  SHADER_TEXTURE  = PATH_SHADERS + 'texture';
+  SHADER_TERRAIN  = PATH_SHADERS + 'terrain.shader';
+  SHADER_SKY      = PATH_SHADERS + 'sky.shader';
+  SHADER_WATER    = PATH_SHADERS + 'water.shader';
+  SHADER_GRASS    = PATH_SHADERS + 'grass.shader';
+  SHADER_BLUR     = PATH_SHADERS + 'blur.shader';
+  SHADER_FINAL    = PATH_SHADERS + 'final.shader';
+  SHADER_MESH     = PATH_SHADERS + 'mesh.shader';
+  SHADER_COLOR    = PATH_SHADERS + 'color.shader';
+  SHADER_TEXTURE  = PATH_SHADERS + 'texture.shader';
 
 implementation
 end.

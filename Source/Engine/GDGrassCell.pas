@@ -195,7 +195,7 @@ begin
               iParticalLists[iI,Length(iParticalLists[iI])-1].InitGrassPartical( iPos, iScale, iRot );
             end;
 
-            FTrisCount := FTrisCount + 6;
+            FTrisCount := FTrisCount + 4;
           end;
         end;
       end;
