@@ -49,19 +49,19 @@ Type
 {* Shader class                                                               *}
 {******************************************************************************}
 
+  TGDShaderType = (ST_GEOM, ST_VERT, ST_FRAG);
+
   TGDGLShader = class
   private
-    FVertexShader    :   GLhandleARB;
-    FFragmentShader  :   GLhandleARB;
-    FProgramObject   :   GLhandleARB;
-    FLoadedOk        :   Boolean;
-    FMessage         :   String;
+    FGeometryShader : GLhandleARB;
+    FVertexShader   : GLhandleARB;
+    FFragmentShader : GLhandleARB;
+    FProgramObject  : GLhandleARB;
 
-    function LoadShaderFromFile( aFileName: String;  atype: GLenum): GLhandleARB;
     function LoadShader( aSrc: String; atype: GLenum): GLhandleARB;
     function GetInfoLog(aObject : GLhandleARB): String;
   public
-    constructor Create(aPath : string);
+    constructor Create(aFileName : string);
     destructor  Destroy(); override;
 
     procedure Enable();
@@ -133,40 +133,60 @@ uses
 {* Create shader class                                                        *}
 {******************************************************************************}
 
-constructor TGDGLShader.Create(aPath : string);
+constructor TGDGLShader.Create(aFileName : string);
 var
-  iVert, ifrag, iError : String;
+  iOk  : boolean;
+  iCur : TGDShaderType;
+  iI   : Integer;
+  iTXT : TStringList;
+  iLine, iGeom, ifrag, iVert, iError : String;
 begin
-  Console.Write('Loading shader ' + ExtractFileName(aPath) + '...');
-  FLoadedOk := True;
+  Console.Write('Loading shader ' + ExtractFileName(aFileName) + '...');
 
   try
-    iVert := aPath + SHADER_VERT_EXT;
-    ifrag := aPath + SHADER_FRAG_EXT;
-    FVertexShader := glCreateShaderObjectARB(GL_VERTEX_SHADER_ARB);
-    FFragmentShader := glCreateShaderObjectARB(GL_FRAGMENT_SHADER_ARB);
-
-    If FileExistsUTF8(iVert ) and FileExistsUTF8(ifrag ) then
-    begin
-      FVertexShader := LoadShaderFromFile(iVert, GL_VERTEX_SHADER_ARB);
-      FFragmentShader := LoadShaderFromFile(ifrag, GL_FRAGMENT_SHADER_ARB);
-    end
-    else
-      raise Exception.Create('Shader files not present');
-
+    iOk := true;
     FProgramObject := glCreateProgramObjectARB();
-    glAttachObjectARB(FProgramObject,FVertexShader);
-    glAttachObjectARB(FProgramObject,FFragmentShader);
+    iTXT := TStringList.Create;
+    iTXT.LoadFromFile(aFileName);
+
+    iGeom := '';
+    iVert := '';
+    ifrag := '';
+
+    for iI := 0 to iTXT.Count-1 do
+    begin
+      iLine := iTXT.Strings[iI];
+      if iLine = '#GEOMETRY' then
+       iCur := ST_GEOM
+      else if iLine = '#VERTEX' then
+        iCur := ST_VERT
+      else if iLine = '#FRAGMENT' then
+        iCur := ST_FRAG
+      else
+      begin
+        case iCur of
+          ST_GEOM : iGeom := iGeom + #13#10 + iLine;
+          ST_VERT : iVert := iVert + #13#10 + iLine;
+          ST_FRAG : ifrag := ifrag + #13#10 + iLine;
+        end;
+      end;
+    end;
+
+    if iGeom <> '' then FGeometryShader := LoadShader(iGeom, GL_GEOMETRY_SHADER_ARB);
+    if iVert <> '' then FVertexShader   := LoadShader(iVert, GL_VERTEX_SHADER_ARB);
+    if ifrag <> '' then FFragmentShader := LoadShader(ifrag, GL_FRAGMENT_SHADER_ARB);
+
     glLinkProgramARB(FProgramObject);
   except
     on E: Exception do
     begin
+      iOk    := false;
       iError := E.Message;
-      FLoadedOk := False;
     end;
   end;
 
-  Console.WriteOkFail(FLoadedOk, iError);
+  FreeAndNil(iTXT);
+  Console.WriteOkFail(iOk, iError);
 end;
 
 {******************************************************************************}
@@ -174,20 +194,21 @@ end;
 {******************************************************************************}
 
 destructor  TGDGLShader.Destroy();
-begin
-	if (FVertexShader > 0) then
-	begin
-		glDetachObjectARB(FProgramObject, FVertexShader);
-		glDeleteObjectARB(FVertexShader);
-		FVertexShader := 0;
-	end;
 
-	if (FFragmentShader > 0) then
+procedure DestroyShader(aShader : GLhandleARB);
+begin
+	if (aShader > 0) then
 	begin
-		glDetachObjectARB(FProgramObject, FFragmentShader);
-		glDeleteObjectARB(FFragmentShader);
-		FFragmentShader := 0;
+		glDetachObjectARB(FProgramObject, aShader);
+		glDeleteObjectARB(aShader);
+		aShader := 0;
 	end;
+end;
+
+begin
+  DestroyShader(FGeometryShader);
+  DestroyShader(FVertexShader);
+  DestroyShader(FFragmentShader);
 
 	if (FProgramObject > 0)  then
 	begin
@@ -224,47 +245,19 @@ var
   iSource: AnsiString;
   iCompiled, iLen: Integer;
   iLog: String;
+  iShader : GLhandleARB;
 begin
-
   iSource := AnsiString(aSrc);
   iLen := Length(aSrc);
-
-  Result := glCreateShaderObjectARB(atype);
-
-  glShaderSourceARB(Result, 1, @iSource, @iLen);
-  glCompileShaderARB(Result);
-  glGetObjectParameterivARB(Result, GL_OBJECT_COMPILE_STATUS_ARB, @iCompiled);
-  iLog := GetInfoLog(Result);
-
+  iShader := glCreateShaderObjectARB(atype);
+  glShaderSourceARB(iShader, 1, @iSource, @iLen);
+  glCompileShaderARB(iShader);
+  glGetObjectParameterivARB(iShader, GL_OBJECT_COMPILE_STATUS_ARB, @iCompiled);
+  iLog := GetInfoLog(iShader);
   if iCompiled <> GL_TRUE then
-  begin
-    FLoadedOk        :=   false;;
-    FMessage         :=   iLog;
-  end;
-end;
-
-{******************************************************************************}
-{* Load the and compile both the fragment and the vertex shader from a file   *}
-{******************************************************************************}
-
-function TGDGLShader.LoadShaderFromFile( aFileName: String;  atype: GLenum): GLhandleARB;
-var
-  iTXT: TStringList;
-begin
-  iTXT := TStringList.Create;
-  iTXT.LoadFromFile(aFileName);
-
-  try
-    Result := LoadShader(iTXT.Text, atype);
-  except
-    on E: Exception do
-    begin
-      FLoadedOk        :=   false;
-      FMessage         :=   e.Message;
-    end;
-  end;
-
-  iTXT.Free;
+     raise Exception.Create(iLog);
+  glAttachObjectARB(FProgramObject,iShader);
+  result := iShader;
 end;
 
 {******************************************************************************}
