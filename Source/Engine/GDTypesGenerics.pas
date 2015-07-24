@@ -38,12 +38,17 @@ uses
 
 type
   TGDUVCoordList = specialize TFPGList<TGDUVCoord>;
+
   TVectorList = specialize TFPGList<TGDVector>;
+
   TGDVectorList = class (TVectorList)
   public
     function GenerateBoundingBox(): TGDBoundingBox;
   end;
+
   TGDTriangleIdxList = specialize TFPGList<TGDTriangleIdxs>;
+
+  TGDTerrainVertexList = specialize TFPGList<TGDTerrainVertex>;
 
 implementation
 

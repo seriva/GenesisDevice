@@ -204,6 +204,18 @@ type
     class operator Equal(v1, v2: TGDTriangleIdxs) B: Boolean;
   end;
 
+{******************************************************************************}
+{* Interleaved terrain vertex                                                 *}
+{******************************************************************************}
+
+  TGDTerrainVertex = record
+    Vertex   : TGDVector;
+    Normal   : TGDVector;
+    UVCoords : TGDUVCoord;
+
+    class operator Equal(v1, v2: TGDTerrainVertex) B: Boolean;
+  end;
+
 implementation
 
 function SameSide( aP1, aP2, aA, aB : TGDVector) : boolean;
@@ -1032,6 +1044,15 @@ end;
 {******************************************************************************}
 
 class operator TGDTriangleIdxs.Equal (v1, v2: TGDTriangleIdxs) B: Boolean;
+begin
+  result := false;
+end;
+
+{******************************************************************************}
+{* terrain vertex equals                                                      *}
+{******************************************************************************}
+
+class operator TGDTerrainVertex.Equal (v1, v2: TGDTerrainVertex) B: Boolean;
 begin
   result := false;
 end;
