@@ -76,6 +76,7 @@ type
     FTriangleSize      : Integer;
     FHeightScale       : Integer;
     FTerrainPoints     : array of TGDTerrainPoint;
+    FBufferID          : GLuint;
   public
     property TerrainWidth  : Integer read FTerrainWidth;
     property TerrainHeight : Integer read FTerrainHeight;
@@ -225,6 +226,11 @@ begin
     FDetailLookup   := Resources.LoadTexture(aIniFile.ReadString( 'Terrain', 'DetailDistribution', 'detaillookup.jpg') ,Settings.TextureDetail,Settings.TextureFilter);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+    glGenBuffers(1, @FBufferID);
+    glBindBuffer(GL_ARRAY_BUFFER, FBufferID);
+    glBufferData(GL_ARRAY_BUFFER, SizeOf(TGDTerrainPoint)*length(FTerrainPoints), @FTerrainPoints[0], GL_STATIC_DRAW);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
   except
     on E: Exception do
     begin
@@ -247,6 +253,7 @@ procedure TGDTerrain.Clear();
 begin
   SetLength(FTerrainPoints, 0);
   FTerrainPoints := nil;
+  glDeleteBuffers(1, @FBufferID);
 
   Resources.RemoveResource(TGDResource(FColorTexture));
   Resources.RemoveResource(TGDResource(FDetailTexture1));
@@ -412,6 +419,17 @@ procedure TGDTerrain.StartRendering( aRenderAttribute : TGDRenderAttribute; aRen
 begin
   if Not(aRenderAttribute = RA_NORMAL) then exit;
 
+  glBindBuffer(GL_ARRAY_BUFFER, FBufferID);
+
+
+
+  glEnableClientState(GL_VERTEX_ARRAY);
+  glVertexPointer(3, GL_FLOAT, sizeof(TGDTerrainPoint), GLvoid(0));
+  glEnableClientState(GL_NORMAL_ARRAY);
+  glNormalPointer(GL_FLOAT, sizeof(TGDTerrainPoint), GLvoid(12));
+  glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+  glTexCoordPointer(2, GL_FLOAT, sizeof(TGDTerrainPoint), GLvoid(24));
+
   if Modes.RenderWireframe then
   begin
     Renderer.SetColor(0.2,0.8,0.2,1);
@@ -453,6 +471,11 @@ end;
 
 procedure TGDTerrain.EndRendering();
 begin
+  glDisableClientState(GL_VERTEX_ARRAY);
+  glDisableClientState(GL_NORMAL_ARRAY);
+  glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+  glTexCoordPointer(2, GL_FLOAT, sizeof(TGDTerrainPoint), GLvoid(24));
+  glBindBuffer(GL_ARRAY_BUFFER, 0);
 end;
 
 end.

@@ -176,6 +176,7 @@
       <Unit26>
         <Filename Value="..\Engine\GDStatistics.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="GDStatistics"/>
       </Unit26>
       <Unit27>
         <Filename Value="..\Engine\GDTerrain.pas"/>
@@ -195,6 +196,7 @@
       <Unit30>
         <Filename Value="..\Engine\GDTiming.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="GDTiming"/>
       </Unit30>
       <Unit31>
         <Filename Value="..\Engine\GDTypes.pas"/>

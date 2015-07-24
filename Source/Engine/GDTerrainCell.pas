@@ -37,7 +37,6 @@ uses
   GDConstants,
   GDTerrain,
   GDRenderer,
-  GDGLObjects,
   GDBaseCell;
 
 type
@@ -51,7 +50,8 @@ type
     FTerrain     : TGDTerrain;
     FStartPoint  : TPoint;
     FEndPoint    : TPoint;
-    FDisplayList : TGDGLDisplayList;
+    FIdxBufferID : GLuint;
+    FTrisCount   : Integer;
 
     procedure CalculateBoundingBox();
   public
@@ -70,21 +70,17 @@ implementation
 constructor TGDTerrainCell.Create( aTerrain : TGDTerrain; aStartX, aStartY, aEndX, aEndY : Integer);
 var
   iX, iY: Integer;
+  iIdxs : array of integer;
 
-procedure SendTerrainPoint(aX,aY : integer);
+procedure AddIdx(aIdx : Integer);
 begin
-  With FTerrain do
-  begin
-    glNormal3fv( GetPoint(aX,aY).Normal.ArrayPointer );
-    glTexCoord2fv( GetPoint(aX,aY).UVCoords.ArrayPointer );
-    glVertex3fv( GetPoint(aX,aY).Vertex.ArrayPointer );
-  end;
+  setLength(iIdxs, length(iIdxs)+1);
+  iIdxs[length(iIdxs)-1] := aIdx;
 end;
 
 begin
   OjectType    := SO_TERRAINCELL;
   FTerrain     := aTerrain;
-  FDisplayList := TGDGLDisplayList.Create();
 
   FStartPoint.X := aStartX;
   FStartPoint.Y := aStartY;
@@ -93,23 +89,27 @@ begin
 
   CalculateBoundingBox();
 
-  FDisplayList.StartList();
   for iY := (FStartPoint.Y-1) to FEndPoint.Y-2 do
   begin
-    glBegin(GL_TRIANGLE_STRIP);
-      iX := (FStartPoint.X-1);
+    for iX := (FStartPoint.X-1) to FEndPoint.X-2 do
+    begin
+      AddIdx((iX * FTerrain.TerrainWidth) + iY);
+      AddIdx(((iX+1) * FTerrain.TerrainWidth) + iY+1);
+      AddIdx(((iX+1) * FTerrain.TerrainWidth) + iY);
 
-      SendTerrainPoint(iX,iY);
-      SendTerrainPoint(iX,iY+1);
+      AddIdx((iX * FTerrain.TerrainWidth) + iY);
+      AddIdx((iX * FTerrain.TerrainWidth) + iY+1);
+      AddIdx(((iX+1) * FTerrain.TerrainWidth) + iY+1);
 
-      for iX := (FStartPoint.X-1) to FEndPoint.X-1 do
-      begin
-        SendTerrainPoint(iX,iY);
-        SendTerrainPoint(iX,iY+1);
-      end;
-    glEnd();
+      FTrisCount := FTrisCount + 2;
+    end;
   end;
-  FDisplayList.EndList();
+
+  glGenBuffers(1, @FIdxBufferID);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, FIdxBufferID);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(Integer)*Length(iIdxs), iIdxs, GL_STATIC_DRAW);
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+  setLength(iIdxs, 0);
 end;
 
 {******************************************************************************}
@@ -118,7 +118,7 @@ end;
 
 destructor  TGDTerrainCell.Destroy();
 begin
-  FreeAndNil(FDisplayList);
+  glDeleteBuffers(1, @FIdxBufferID);
   Inherited;
 end;
 
@@ -162,7 +162,9 @@ var
 begin
   Case aRenderAttribute Of
     RA_NORMAL         : begin
-                          FDisplayList.CallList();
+                          glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, FIdxBufferID);
+                          glDrawElements(GL_TRIANGLES, 3*FTrisCount, GL_UNSIGNED_INT, nil);
+                          glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
                         end;
     RA_FRUSTUM_BOXES  : begin
                           Renderer.SetColor(1,0,0,1);
