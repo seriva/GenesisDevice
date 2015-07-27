@@ -204,7 +204,6 @@ type
     class operator Equal(v1, v2: TGDTriangleIdxs) B: Boolean;
   end;
 
-<<<<<<< HEAD
 {******************************************************************************}
 {* Interleaved terrain vertex                                                 *}
 {******************************************************************************}
@@ -216,10 +215,8 @@ type
 
     class operator Equal(v1, v2: TGDTerrainVertex) B: Boolean;
   end;
-=======
 
 function Vector(aX,aY,aZ: Single) : TGDVector;
->>>>>>> origin/master
 
 implementation
 
