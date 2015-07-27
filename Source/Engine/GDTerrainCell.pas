@@ -37,6 +37,7 @@ uses
   GDConstants,
   GDTerrain,
   GDRenderer,
+  GDTypes,
   GDBaseCell;
 
 type
@@ -159,6 +160,7 @@ end;
 procedure TGDTerrainCell.Render( aRenderAttribute : TGDRenderAttribute; aRenderFor : TGDRenderFor );
 var
   iX,iY : Integer;
+  iV1, iV2 : TGDVector;
 begin
   Case aRenderAttribute Of
     RA_NORMAL         : begin
@@ -166,10 +168,7 @@ begin
                           glDrawElements(GL_TRIANGLES, 3*FTrisCount, GL_UNSIGNED_INT, nil);
                           glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
                         end;
-    RA_FRUSTUM_BOXES  : begin
-                          Renderer.SetColor(1,0,0,1);
-                          BoundingBox.RenderWireFrame();
-                        end;
+    RA_FRUSTUM_BOXES  : BoundingBox.RenderWireFrame();
     RA_NORMALS        : begin
                           Renderer.SetColor(1,0.5,0.25,1);
                           With FTerrain do
@@ -179,12 +178,11 @@ begin
                               iX := (FStartPoint.X-1);
                               for iX := (FStartPoint.X-1) to FEndPoint.X-1 do
                               begin
-                                glBegin( GL_LINES);
-                                  glVertex3f( GetPoint(iX,iY).Vertex.X, GetPoint(iX,iY).Vertex.Y, GetPoint(iX,iY).Vertex.Z );
-                                  glVertex3f((GetPoint(iX,iY).Normal.X * R_NORMAL_LENGTH) + GetPoint(iX,iY).Vertex.X,
-                                             (GetPoint(iX,iY).Normal.Y * R_NORMAL_LENGTH) + GetPoint(iX,iY).Vertex.Y,
-                                             (GetPoint(iX,iY).Normal.Z * R_NORMAL_LENGTH) + GetPoint(iX,iY).Vertex.Z );
-                                glEnd;
+                                iV1 := GetPoint(iX,iY).Vertex.Copy();
+                                iV2 := GetPoint(iX,iY).Normal.Copy();
+                                iV2.Multiply(R_NORMAL_LENGTH);
+                                iV2.Add(iV1);
+                                Renderer.AddLine(iV1, iV2);
                               end;
                             end;
                           end;

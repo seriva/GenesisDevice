@@ -188,8 +188,7 @@ begin
   iVertex := iNormals.Items[aTris.Data[aStartIdx+2]].Copy();
   iVertex.Multiply(R_NORMAL_LENGTH);
   iVertex.Add( iVertices.Items[aTris.Data[aStartIdx]] );
-  glVertex3fv( iVertices.Items[aTris.Data[aStartIdx]].ArrayPointer );
-  glVertex3fv( iVertex.ArrayPointer );
+  Renderer.AddLine(iVertices.Items[aTris.Data[aStartIdx]], iVertex);
 end;
 
 procedure SetMeshPositioning(aShader : TGDGLShader);
@@ -278,12 +277,8 @@ begin
                             end;
                           end;
                         end;
-    RA_FRUSTUM_BOXES  : begin
-                          Renderer.SetColor(1,0,0,1);
-                          BoundingBox.RenderWireFrame();
-                        end;
+    RA_FRUSTUM_BOXES  : BoundingBox.RenderWireFrame();
     RA_NORMALS        : begin
-                          Renderer.SetColor(1,0.5,0.25,1);
                           iNormals  := TGDVectorList.Create();
                           iVertices := TGDVectorList.Create();
 
@@ -303,7 +298,6 @@ begin
                             iNormals.Add( iNormal );
                           end;
 
-                          glBegin(GL_LINES);
                           for iI := 0 to iMesh.Surfaces.Count - 1 do
                           begin
                             for iJ := 0 to iMesh.Surfaces[iI].Triangles.Count - 1 do
@@ -314,7 +308,6 @@ begin
                               RenderNormal(iTri, 6);
                             end;
                           end;
-                          glEnd();
 
                           FreeAndNil(iNormals);
                           FreeAndNil(iVertices);

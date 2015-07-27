@@ -40,6 +40,7 @@ uses
   GDSettings,
   GDTexture,
   GDGLObjects,
+  GDTypesGenerics,
   GDTypes,
   GDModes,
   GDTiming;
@@ -85,6 +86,9 @@ type
 
     FBloomStrengh  : Single;
 
+    FLines   : TGDVectorList;
+    FLinesID : GLuint;
+
     procedure InitShaders();
     procedure ClearShaders();
     procedure InitFrameBuffers();
@@ -114,6 +118,8 @@ type
     procedure   SetColor(aR, aG, aB, aA : Single); overload;
     procedure   SetJoinedParams(aShader : TGDGLShader; aForShadows : boolean = false);
     procedure   RenderState( aState : TGDRenderState );
+
+    procedure   AddLine(aV1, aV2 : TGDVector);
 
     procedure   StartFrame();
     procedure   EndFrame();
@@ -291,6 +297,10 @@ begin
     glDisable(GL_FOG);
     glDisable(GL_LIGHTING);
 
+    //line rendering
+    FLines := TGDVectorList.Create();
+    glGenBuffers(1, @FLinesID);
+
     //commands
     Console.AddCommand('RBloomMult', '0.0 to 1.0 : Set the bloom multiplier value', CT_FLOAT, @FBloomStrengh);
   except
@@ -325,6 +335,10 @@ begin
   try
     //Clear shaders.
     ClearShaders();
+
+    //For normal rendering.
+    glDeleteBuffers(1, @FLinesID);
+    FreeAndNil(FLines);
 
     //Destroy rendering context
     DeactivateRenderingContext();
@@ -550,6 +564,16 @@ begin
                      FTextureShader.SetInt('T_COLORMAP', 0);
                    end;
     end;
+end;
+
+{******************************************************************************}
+{* Add line to render                                                         *}
+{******************************************************************************}
+
+procedure TGDRenderer.AddLine(aV1, aV2 : TGDVector);
+begin
+  FLines.Add( aV1.Copy() );
+  FLines.Add( aV2.Copy() );
 end;
 
 {******************************************************************************}
@@ -780,13 +804,43 @@ end;
 {******************************************************************************}
 
 Procedure RenderDebug();
+
+procedure RenderLines();
+begin
+  glBindBuffer(GL_ARRAY_BUFFER, FLinesID);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(TGDVector) * FLines.Count, FLines.List, GL_DYNAMIC_DRAW);
+  glEnableClientState(GL_VERTEX_ARRAY);
+  glVertexPointer(3, GL_FLOAT, 0, nil);
+  glDrawArrays(GL_LINES, 0, FLines.Count);
+  glDisableClientState(GL_VERTEX_ARRAY);
+  glBindBuffer(GL_ARRAY_BUFFER, 0);
+end;
+
 begin
   glLoadIdentity();
   Camera.Translate();
   RenderState( RS_COLOR );
-  If Modes.RenderNormals     then Map.RenderVisibleCells( RA_NORMALS, RF_NORMAL );
-  If Modes.RenderObjectBoxes then Map.RenderVisibleCells( RA_FRUSTUM_BOXES, RF_NORMAL );
-  If Modes.RenderNodeBoxes   then Map.RenderVisibleCells( RA_NODE_BOXES, RF_NORMAL );
+  If Modes.RenderNormals     then
+  begin
+    FLines.Clear();
+    Renderer.SetColor(1,0.5,0.25,1);
+    Map.RenderVisibleCells( RA_NORMALS, RF_NORMAL );
+    RenderLines();
+  end;
+  If Modes.RenderObjectBoxes then
+  begin
+    FLines.Clear();
+    Renderer.SetColor(1,0,0,1);
+    Map.RenderVisibleCells( RA_FRUSTUM_BOXES, RF_NORMAL );
+    RenderLines();
+  end;
+  If Modes.RenderNodeBoxes then
+  begin
+    FLines.Clear();
+    Renderer.SetColor(1,1,0,1);
+    Map.RenderVisibleCells( RA_NODE_BOXES, RF_NORMAL );
+    RenderLines();
+  end;
 end;
 
 {******************************************************************************}

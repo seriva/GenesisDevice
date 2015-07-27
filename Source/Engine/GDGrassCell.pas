@@ -279,13 +279,8 @@ begin
     RA_NORMAL         : begin
                           FDisplayList.CallList();
                         end;
-    RA_FRUSTUM_BOXES  : begin
-                          Renderer.SetColor(1,0,0,1);
-                          BoundingBox.RenderWireFrame();
-                        end;
-    RA_NORMALS        : begin
-                          //grass doesn`t have normals
-                        end;
+    RA_FRUSTUM_BOXES  : BoundingBox.RenderWireFrame();
+    RA_NORMALS        : //grass doesn`t have normals
     end;
 end;
 
