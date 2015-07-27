@@ -204,7 +204,13 @@ type
     class operator Equal(v1, v2: TGDTriangleIdxs) B: Boolean;
   end;
 
+
+function Vector(aX,aY,aZ: Single) : TGDVector;
+
 implementation
+
+uses
+  GDRenderer;
 
 function SameSide( aP1, aP2, aA, aB : TGDVector) : boolean;
 var
@@ -222,6 +228,17 @@ begin
     result := true
   else
     result := false;
+end;
+
+{******************************************************************************}
+{* create a vector                                                            *}
+{******************************************************************************}
+
+function Vector(aX,aY,aZ: Single) : TGDVector;
+begin
+  result.X := aX;
+  result.Y := aY;
+  result.Z := aZ;
 end;
 
 {******************************************************************************}
@@ -998,33 +1015,20 @@ end;
 
 procedure TGDBoundingBox.RenderWireFrame();
 begin
-  glBegin(GL_LINE_LOOP);
-    glVertex3f( Max.x, Max.y, Max.Z  );
-    glVertex3f( Min.x, Max.y, Max.Z  );
-    glVertex3f( Min.x, Max.y, Min.Z  );
-    glVertex3f( Max.x, Max.y, Min.Z  );
-  glEnd;
+  Renderer.AddLine( Vector(Max.x, Max.y, Max.Z), Vector(Min.x, Max.y, Max.Z));
+  Renderer.AddLine( Vector(Min.x, Max.y, Max.Z), Vector(Min.x, Max.y, Min.Z));
+  Renderer.AddLine( Vector(Min.x, Max.y, Min.Z), Vector(Max.x, Max.y, Min.Z));
+  Renderer.AddLine( Vector(Max.x, Max.y, Min.Z), Vector(Max.x, Max.y, Max.Z));
 
-  glBegin(GL_LINE_LOOP);
-    glVertex3f( Max.x, Min.y, Max.Z  );
-    glVertex3f( Min.x, Min.y, Max.Z  );
-    glVertex3f( Min.x, Min.y, Min.Z  );
-    glVertex3f( Max.x, Min.y, Min.Z  );
-  glEnd;
+  Renderer.AddLine( Vector(Max.x, Min.y, Max.Z), Vector(Min.x, Min.y, Max.Z));
+  Renderer.AddLine( Vector(Min.x, Min.y, Max.Z), Vector(Min.x, Min.y, Min.Z));
+  Renderer.AddLine( Vector(Min.x, Min.y, Min.Z), Vector(Max.x, Min.y, Min.Z));
+  Renderer.AddLine( Vector(Max.x, Min.y, Min.Z), Vector(Max.x, Min.y, Max.Z));
 
-  glBegin(GL_LINES);
-    glVertex3f( Max.x, Max.y, Max.Z  );
-    glVertex3f( Max.x, Min.y, Max.Z  );
-
-    glVertex3f( Min.x, Max.y, Min.Z  );
-    glVertex3f( Min.x, Min.y, Min.Z  );
-
-    glVertex3f( Min.x, Max.y, Max.Z  );
-    glVertex3f( Min.x, Min.y, Max.Z  );
-
-    glVertex3f( Max.x, Max.y, Min.Z  );
-    glVertex3f( Max.x, Min.y, Min.Z  );
-  glEnd;
+  Renderer.AddLine( Vector(Max.x, Max.y, Max.Z), Vector(Max.x, Min.y, Max.Z ));
+  Renderer.AddLine( Vector(Min.x, Max.y, Min.Z), Vector(Min.x, Min.y, Min.Z ));
+  Renderer.AddLine( Vector(Min.x, Max.y, Max.Z), Vector(Min.x, Min.y, Max.Z ));
+  Renderer.AddLine( Vector(Max.x, Max.y, Min.Z), Vector(Max.x, Min.y, Min.Z ));
 end;
 
 {******************************************************************************}

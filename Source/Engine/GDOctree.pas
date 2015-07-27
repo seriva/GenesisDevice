@@ -305,7 +305,6 @@ begin
  if Not(Camera.BoxInView(FBoundingBox)) then
   exit;
 
- Renderer.SetColor(1,1,0,1);
  FBoundingBox.RenderWireFrame();
 
  for iI := 0 to 7 do

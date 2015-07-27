@@ -102,16 +102,9 @@ end;
 procedure TGDWaterCell.Render( aRenderAttribute : TGDRenderAttribute; aRenderFor : TGDRenderFor );
 begin
   Case aRenderAttribute Of
-    RA_NORMAL         : begin
-                          FDisplayList.CallList();
-                        end;
-    RA_FRUSTUM_BOXES  : begin
-                          Renderer.SetColor(1,0,0,1);
-                          BoundingBox.RenderWireFrame();
-                        end;
-    RA_NORMALS        : begin
-                          //water doesn`t have normals
-                        end;
+    RA_NORMAL         : FDisplayList.CallList();
+    RA_FRUSTUM_BOXES  : BoundingBox.RenderWireFrame();
+    RA_NORMALS        : //water doesn`t have normals
     end;
 end;
 
