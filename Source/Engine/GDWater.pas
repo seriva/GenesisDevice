@@ -383,7 +383,7 @@ begin
   begin
     case aRenderFor of
         RF_NORMAL, RF_WATER : begin
-                   Renderer.WaterShader.Enable();
+                   Renderer.WaterShader.Bind();
                    Renderer.SetJoinedParams(Renderer.WaterShader);
                    Renderer.WaterShader.SetInt('T_REFLECTION', 0);
                    Renderer.WaterShader.SetInt('T_DUDVMAP', 1);

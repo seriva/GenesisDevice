@@ -24,17 +24,6 @@ unit GDTypes;
 
 {$MODE Delphi}
 
-{******************************************************************************}
-{* This units holds the following types that are used in the engine:          *}
-{* - Vector                                                                   *}
-{* - UV                                                                       *}
-{* - Color                                                                    *}
-{* - Matrix                                                                   *}
-{* - Triangle                                                                 *}
-{* - Quad                                                                     *}
-{* - BoundingBox                                                              *}
-{******************************************************************************}
-
 interface
 
 uses
@@ -79,7 +68,7 @@ type
 
     case Boolean of
       TRUE: ( x, y, z : Single; );
-      FALSE: ( xyz: array [0..1] of Single; );
+      FALSE: ( xyz: array [0..2] of Single; );
   end;
 
 {******************************************************************************}
@@ -205,18 +194,32 @@ type
   end;
 
 {******************************************************************************}
-{* Interleaved terrain vertex                                                 *}
+{* Interleaved vertex types                                                   *}
 {******************************************************************************}
 
-  TGDTerrainVertex = record
-    Vertex   : TGDVector;
-    Normal   : TGDVector;
-    UVCoords : TGDUVCoord;
+  TGDVertex_V_UV = record
+    Vertex : TGDVector;
+    UV     : TGDUVCoord;
 
-    class operator Equal(v1, v2: TGDTerrainVertex) B: Boolean;
+    class operator Equal(v1, v2: TGDVertex_V_UV) B: Boolean;
   end;
 
+  TGDVertex_V_UV_N = record
+    Vertex : TGDVector;
+    UV     : TGDUVCoord;
+    Normal : TGDVector;
+
+
+    class operator Equal(v1, v2: TGDVertex_V_UV_N) B: Boolean;
+  end;
+
+{******************************************************************************}
+{* Type create functions                                                      *}
+{******************************************************************************}
+
 function Vector(aX,aY,aZ: Single) : TGDVector;
+function UVCoord(aU,aV : Single) : TGDUVCoord;
+function Color(aR,aG,aB,aA : Single) : TGDColor;
 
 implementation
 
@@ -242,14 +245,22 @@ begin
 end;
 
 {******************************************************************************}
-{* create a vector                                                            *}
+{* Type create functions                                                      *}
 {******************************************************************************}
 
 function Vector(aX,aY,aZ: Single) : TGDVector;
 begin
-  result.X := aX;
-  result.Y := aY;
-  result.Z := aZ;
+  result.reset(aX,aY,aZ);
+end;
+
+function UVCoord(aU,aV : Single) : TGDUVCoord;
+begin
+  result.reset(aU,aV)
+end;
+
+function Color(aR,aG,aB,aA : Single) : TGDColor;
+begin
+  result.reset(aR,aG,aB,aA)
 end;
 
 {******************************************************************************}
@@ -1052,10 +1063,15 @@ begin
 end;
 
 {******************************************************************************}
-{* terrain vertex equals                                                      *}
+{* Interleaved vertex types                                                   *}
 {******************************************************************************}
 
-class operator TGDTerrainVertex.Equal (v1, v2: TGDTerrainVertex) B: Boolean;
+class operator TGDVertex_V_UV.Equal(v1, v2: TGDVertex_V_UV) B: Boolean;
+begin
+  result := false;
+end;
+
+class operator TGDVertex_V_UV_N.Equal(v1, v2: TGDVertex_V_UV_N) B: Boolean;
 begin
   result := false;
 end;

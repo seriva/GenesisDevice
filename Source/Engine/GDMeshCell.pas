@@ -111,9 +111,10 @@ uses
 
 constructor TGDMeshCell.Create(aInput : TGDMeshCellInput);
 var
-  iVertex : TGDVector;
-  iI   : Integer;
-  iVertices : TGDVectorList;
+  iI : integer;
+  iVertices : TGDVertex_V_List;
+  iVector : TGDVector;
+  iCenter : TGDVector;
 begin
   OjectType   := SO_MESHCELL;
   FLODType    := LT_NONE;
@@ -139,17 +140,46 @@ begin
   FRotation.CreateRotation(aInput.Rotation);
 
   //calculate boundingbox
-  iVertices   := TGDVectorList.Create();
-  For iI := 0 to FMesh.Vertices.Count - 1 do
+  iVertices   := TGDVertex_V_List.Create();
+  with iVertices do
   begin
-    iVertex := FMesh.Vertices.Items[iI].Copy();
-    iVertex.Multiply(FScale);
-    iVertex.Devide(100);
-    FRotation.ApplyToVector(iVertex);
-    iVertex.Add( FPosition );
-    iVertices.Add(iVertex)
+    For iI := 0 to FMesh.Vertices.Count - 1 do
+    begin
+      iVector := FMesh.Vertices.Items[iI].Copy();
+      iVector.Multiply(FScale);
+      iVector.Devide(100);
+      FRotation.ApplyToVector(iVector);
+      iVector.Add( FPosition );
+      iVertices.Add(iVector)
+    end;
+
+    iCenter.reset(0,0,0);
+    for iI := 0 to Count-1 do iCenter.Add( Items[iI] );
+    iCenter.Devide( Count );
+    BoundingBox.Min.reset(iCenter.x, iCenter.y , iCenter.z);
+    BoundingBox.Max.reset(iCenter.x, iCenter.y , iCenter.z);
+
+    for iI := 0 to Count-1 do
+    begin
+      iVector := Items[iI].Copy();
+
+      If (iVector.X <=  BoundingBox.Min.x) then
+         BoundingBox.Min.setX(iVector.X)
+      else If (iVector.X >=  BoundingBox.Max.x) then
+              BoundingBox.Max.setX(iVector.X);
+
+      If (iVector.Y <=  BoundingBox.Min.Y) then
+         BoundingBox.Min.setY(iVector.Y)
+      else If (iVector.Y >=  BoundingBox.Max.Y) then
+              BoundingBox.Max.setY(iVector.Y);
+
+      If (iVector.Z <=  BoundingBox.Min.Z) then
+         BoundingBox.Min.setZ(iVector.Z)
+      else If (iVector.Z >=  BoundingBox.Max.Z) then
+              BoundingBox.Max.setZ(iVector.Z);
+    end;
+    BoundingBox.CalculateCenter();
   end;
-  BoundingBox := iVertices.GenerateBoundingBox();
   FreeAndNil(iVertices);
 
   //Cast and receive shadows.
@@ -177,8 +207,8 @@ var
   iI, iJ : Integer;
   iSur : TGDSurface;
   iNormal, iVertex : TGDVector;
-  iNormals : TGDVectorList;
-  iVertices : TGDVectorList;
+  iNormals : TGDVertex_V_List;
+  iVertices : TGDVertex_V_List;
   iTri : TGDTriangleIdxs;
   iFadeDistanceScale : Single;
   iMesh : TGDMesh;
@@ -235,7 +265,7 @@ begin
                             end
                             else
                             begin
-                              Renderer.MeshShader.Enable();
+                              Renderer.MeshShader.Bind();
                               Renderer.SetJoinedParams(Renderer.MeshShader,aRenderFor = RF_SHADOW);
                               iSur.Material.ApplyMaterial();
                               SetMeshPositioning(Renderer.MeshShader);
@@ -279,8 +309,8 @@ begin
                         end;
     RA_FRUSTUM_BOXES  : BoundingBox.RenderWireFrame();
     RA_NORMALS        : begin
-                          iNormals  := TGDVectorList.Create();
-                          iVertices := TGDVectorList.Create();
+                          iNormals  := TGDVertex_V_List.Create();
+                          iVertices := TGDVertex_V_List.Create();
 
                           For iI := 0 to iMesh.Vertices.Count - 1 do
                           begin

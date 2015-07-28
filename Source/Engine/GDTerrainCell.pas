@@ -38,6 +38,7 @@ uses
   GDTerrain,
   GDRenderer,
   GDTypes,
+  GDTypesGenerics,
   GDBaseCell;
 
 type
@@ -71,14 +72,7 @@ implementation
 constructor TGDTerrainCell.Create( aTerrain : TGDTerrain; aStartX, aStartY, aEndX, aEndY : Integer);
 var
   iX, iY: Integer;
-  iIdxs : array of integer;
-
-procedure AddIdx(aIdx : Integer);
-begin
-  setLength(iIdxs, length(iIdxs)+1);
-  iIdxs[length(iIdxs)-1] := aIdx;
-end;
-
+  iIdxs : TGDIndexList;
 begin
   OjectType    := SO_TERRAINCELL;
   FTerrain     := aTerrain;
@@ -90,17 +84,18 @@ begin
 
   CalculateBoundingBox();
 
+  iIdxs := TGDIndexList.Create();
   for iY := (FStartPoint.Y-1) to FEndPoint.Y-2 do
   begin
     for iX := (FStartPoint.X-1) to FEndPoint.X-2 do
     begin
-      AddIdx((iX * FTerrain.TerrainWidth) + iY);
-      AddIdx(((iX+1) * FTerrain.TerrainWidth) + iY+1);
-      AddIdx(((iX+1) * FTerrain.TerrainWidth) + iY);
+      iIdxs.Add((iX * FTerrain.TerrainWidth) + iY);
+      iIdxs.Add(((iX+1) * FTerrain.TerrainWidth) + iY+1);
+      iIdxs.Add(((iX+1) * FTerrain.TerrainWidth) + iY);
 
-      AddIdx((iX * FTerrain.TerrainWidth) + iY);
-      AddIdx((iX * FTerrain.TerrainWidth) + iY+1);
-      AddIdx(((iX+1) * FTerrain.TerrainWidth) + iY+1);
+      iIdxs.Add((iX * FTerrain.TerrainWidth) + iY);
+      iIdxs.Add((iX * FTerrain.TerrainWidth) + iY+1);
+      iIdxs.Add(((iX+1) * FTerrain.TerrainWidth) + iY+1);
 
       FTrisCount := FTrisCount + 2;
     end;
@@ -108,9 +103,9 @@ begin
 
   glGenBuffers(1, @FIdxBufferID);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, FIdxBufferID);
-  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(Integer)*Length(iIdxs), iIdxs, GL_STATIC_DRAW);
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(iIdxs.ItemSize)*iIdxs.Count, iIdxs.List, GL_STATIC_DRAW);
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-  setLength(iIdxs, 0);
+  FreeAndNil(iIdxs);
 end;
 
 {******************************************************************************}
@@ -170,7 +165,6 @@ begin
                         end;
     RA_FRUSTUM_BOXES  : BoundingBox.RenderWireFrame();
     RA_NORMALS        : begin
-                          Renderer.SetColor(1,0.5,0.25,1);
                           With FTerrain do
                           begin
                             for iY := (FStartPoint.Y-1) to FEndPoint.Y-1 do

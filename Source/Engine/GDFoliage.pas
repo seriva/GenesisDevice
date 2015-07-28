@@ -347,7 +347,7 @@ begin
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_BLEND);
     glDisable(GL_CULL_FACE);
-    Renderer.GrassShader.Enable();
+    Renderer.GrassShader.Bind();
     Renderer.SetJoinedParams(Renderer.GrassShader);
     Renderer.GrassShader.SetInt('T_GRASSTEX', 0);
     Renderer.GrassShader.SetFloat('F_ANIMATION_SPEED', Timing.ElapsedTime / FGrassAnimationSpeed);

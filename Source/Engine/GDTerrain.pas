@@ -35,12 +35,13 @@ uses
   dglOpenGL,
   GDTexture,
   GDTypes,
+  GDGLObjects,
+  GDTypesGenerics,
   GDConsole,
   GDSettings,
   GDConstants,
   GDResource,
   GDResources,
-  GDTypesGenerics,
   GDModes;
 
 type
@@ -65,8 +66,8 @@ type
     FCausticUV         : Integer;
     FTriangleSize      : Integer;
     FHeightScale       : Integer;
-    FTerrainVertices   : TGDTerrainVertexList;
-    FBufferID          : GLuint;
+    FVertices          : TGDVertex_V_UV_N_List;
+    FVertexBuffer      : TGDGLVertexBuffer;
   public
     property TerrainWidth  : Integer read FTerrainWidth;
     property TerrainHeight : Integer read FTerrainHeight;
@@ -84,7 +85,7 @@ type
 
     function  GetHeight( aX, aZ : Double; var aHeight : Double ): boolean;
     function  GetRotation( aX, aZ : Double; var aRotation : TGDVector ): boolean;
-    function  GetPoint(aX, aZ : Integer): TGDTerrainVertex;
+    function  GetPoint(aX, aZ : Integer): TGDVertex_V_UV_N;
 
     procedure StartRendering( aRenderAttribute : TGDRenderAttribute; aRenderFor : TGDRenderFor );
     procedure EndRendering();
@@ -102,15 +103,15 @@ uses
 
 constructor TGDTerrain.Create();
 begin
-  FTerrainWidth    := 0;
-  FTerrainHeight   := 0;
-  FTerrainTop      := 0;
-  FTerrainBottom   := 0;
-  FTerrainLoaded   := False;
-  FDetailUV        := 0;
-  FTriangleSize    := 0;
-  FHeightScale     := 0;
-  FTerrainVertices := TGDTerrainVertexList.Create();
+  FTerrainWidth  := 0;
+  FTerrainHeight := 0;
+  FTerrainTop    := 0;
+  FTerrainBottom := 0;
+  FTerrainLoaded := False;
+  FDetailUV      := 0;
+  FTriangleSize  := 0;
+  FHeightScale   := 0;
+  FVertices      := TGDVertex_V_UV_N_List.Create();
 end;
 
 {******************************************************************************}
@@ -121,7 +122,7 @@ destructor TGDTerrain.Destroy();
 begin
   inherited;
   Clear();
-  FreeAndNil(FTerrainVertices);
+  FreeAndNil(FVertices);
 end;
 
 {******************************************************************************}
@@ -136,7 +137,7 @@ var
   iError    : String;
   iM : TGDMatrix;
   iR : TGDVector;
-  iV : TGDTerrainVertex;
+  iV : TGDVertex_V_UV_N;
 begin
   Clear();
 
@@ -172,12 +173,10 @@ begin
           FTerrainTop := iMapHeight;
         If iMapHeight < FTerrainBottom then
           FTerrainBottom := iMapHeight;
-        iV.UVCoords.U := (iX / (FTerrainWidth-1));
-        iV.UVCoords.V := (iY / (FTerrainHeight-1));
-        iV.Vertex.X := iStartWidth + (iX * FTriangleSize);
-        iV.Vertex.Y := (iMapHeight)*FHeightScale;
-        iV.Vertex.Z := iStartHeight + (iY * FTriangleSize);
-        FTerrainVertices.Add(iV);
+        iV.Vertex.Reset(iStartWidth + (iX * FTriangleSize),(iMapHeight)*FHeightScale, iStartHeight + (iY * FTriangleSize));
+        iV.Normal.Reset(0,1,0);
+        iV.UV.Reset((iX / (FTerrainWidth-1)), (iY / (FTerrainHeight-1)));
+        FVertices.Add(iV);
       end;
     end;
     FTerrainTop    := (FTerrainTop) * FHeightScale;
@@ -190,24 +189,23 @@ begin
       begin
         if (iX = (FTerrainWidth-1)) and (iY = FTerrainHeight-1) then
         begin
-           GetPoint(iX,iY).Normal := GetPoint(iX-1,iY-1).Normal.Copy();
+           FVertices.List^[(iX * FTerrainWidth) + iY].Normal := GetPoint(iX-1,iY-1).Normal.Copy();
            continue;
         end
         else if iX = (FTerrainWidth-1) then
         begin
-           GetPoint(iX,iY).Normal := GetPoint(iX-1,iY).Normal.Copy();
+           FVertices.List^[(iX * FTerrainWidth) + iY].Normal := GetPoint(iX-1,iY).Normal.Copy();
            continue;
         end
         else if iY = FTerrainHeight-1 then
         begin
-          GetPoint(iX,iY).Normal := GetPoint(iX,iY-1).Normal.Copy();
+          FVertices.List^[(iX * FTerrainWidth) + iY].Normal := GetPoint(iX,iY-1).Normal.Copy();
           continue;
         end;
         GetRotation(iStartWidth + iX*FTriangleSize, iStartHeight + iY*FTriangleSize, iR);
         iM.EmptyMatrix();
         iM.CreateRotation( iR );
-        GetPoint(iX,iY).Normal.reset(0,1,0);
-        iM.ApplyToVector( GetPoint(iX,iY).Normal );
+        iM.ApplyToVector( FVertices.List^[(iX * FTerrainWidth) + iY].Normal );
       end;
     end;
 
@@ -219,10 +217,10 @@ begin
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-    glGenBuffers(1, @FBufferID);
-    glBindBuffer(GL_ARRAY_BUFFER, FBufferID);
-    glBufferData(GL_ARRAY_BUFFER, SizeOf(TGDTerrainVertex)*FTerrainVertices.Count, FTerrainVertices.List, GL_STATIC_DRAW);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    FVertexBuffer := TGDGLVertexBuffer.Create();
+    FVertexBuffer.Bind(VL_NONE);
+    FVertexBuffer.Update(FVertices, GL_STATIC_DRAW);
+    FVertexBuffer.Unbind();
   except
     on E: Exception do
     begin
@@ -243,8 +241,8 @@ end;
 
 procedure TGDTerrain.Clear();
 begin
-  FTerrainVertices.Clear;
-  glDeleteBuffers(1, @FBufferID);
+  FVertices.Clear;
+  FreeAndNil(FVertexBuffer);
 
   Resources.RemoveResource(TGDResource(FColorTexture));
   Resources.RemoveResource(TGDResource(FDetailTexture1));
@@ -397,9 +395,9 @@ end;
 {* Get terrain point.                                                         *}
 {******************************************************************************}
 
-function TGDTerrain.GetPoint(aX, aZ : Integer): TGDTerrainVertex;
+function TGDTerrain.GetPoint(aX, aZ : Integer): TGDVertex_V_UV_N;
 begin
-  result := FTerrainVertices.Items[(aX * FTerrainWidth) + aZ];
+  result := FVertices.Items[(aX * FTerrainWidth) + aZ];
 end;
 
 {******************************************************************************}
@@ -410,14 +408,7 @@ procedure TGDTerrain.StartRendering( aRenderAttribute : TGDRenderAttribute; aRen
 begin
   if Not(aRenderAttribute = RA_NORMAL) then exit;
 
-  glBindBuffer(GL_ARRAY_BUFFER, FBufferID);
-  glEnableClientState(GL_VERTEX_ARRAY);
-  glVertexPointer(3, GL_FLOAT, sizeof(TGDTerrainVertex), GLvoid(0));
-  glEnableClientState(GL_NORMAL_ARRAY);
-  glNormalPointer(GL_FLOAT, sizeof(TGDTerrainVertex), GLvoid(12));
-  glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-  glTexCoordPointer(2, GL_FLOAT, sizeof(TGDTerrainVertex), GLvoid(24));
-
+  FVertexBuffer.Bind(VL_V_UV_N);
   if Modes.RenderWireframe then
   begin
     Renderer.SetColor(0.2,0.8,0.2,1);
@@ -426,7 +417,7 @@ begin
   begin
     case aRenderFor of
      RF_NORMAL, RF_WATER : begin
-                   Renderer.TerrainShader.Enable();
+                   Renderer.TerrainShader.Bind();
                    Renderer.SetJoinedParams(Renderer.TerrainShader);
                    Renderer.TerrainShader.SetInt('T_COLORTEX', 0);
                    Renderer.TerrainShader.SetInt('T_DETAILTEX1', 1);
@@ -459,11 +450,7 @@ end;
 
 procedure TGDTerrain.EndRendering();
 begin
-  glDisableClientState(GL_VERTEX_ARRAY);
-  glDisableClientState(GL_NORMAL_ARRAY);
-  glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-  glTexCoordPointer(2, GL_FLOAT, sizeof(TGDTerrainVertex), GLvoid(24));
-  glBindBuffer(GL_ARRAY_BUFFER, 0);
+  FVertexBuffer.UnBind();
 end;
 
 end.

@@ -43,11 +43,10 @@ type
 
   TGDBaseCell = class
   private
-    FBoundingBox    : TGDBoundingBox;
     FObjectType     : TGDStaticObjectType;
     FDistance       : Double;
   public
-    property BoundingBox : TGDBoundingBox read FBoundingBox write FBoundingBox;
+    BoundingBox : TGDBoundingBox;
     property OjectType   : TGDStaticObjectType read FObjectType write FObjectType;
     property Distance    : Double read FDistance write FDistance;
 

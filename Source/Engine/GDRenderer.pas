@@ -86,8 +86,8 @@ type
 
     FBloomStrengh  : Single;
 
-    FLines   : TGDVectorList;
-    FLinesID : GLuint;
+    FLinesVertices     : TGDVertex_V_List;
+    FLinesVertexBuffer : TGDGLVertexBuffer;
 
     procedure InitShaders();
     procedure ClearShaders();
@@ -298,8 +298,8 @@ begin
     glDisable(GL_LIGHTING);
 
     //line rendering
-    FLines := TGDVectorList.Create();
-    glGenBuffers(1, @FLinesID);
+    FLinesVertices     := TGDVertex_V_List.Create();
+    FLinesVertexBuffer := TGDGLVertexBuffer.Create();
 
     //commands
     Console.AddCommand('RBloomMult', '0.0 to 1.0 : Set the bloom multiplier value', CT_FLOAT, @FBloomStrengh);
@@ -337,8 +337,8 @@ begin
     ClearShaders();
 
     //For normal rendering.
-    glDeleteBuffers(1, @FLinesID);
-    FreeAndNil(FLines);
+    FreeAndNil(FLinesVertices);
+    FreeAndNil(FLinesVertexBuffer);
 
     //Destroy rendering context
     DeactivateRenderingContext();
@@ -487,7 +487,7 @@ end;
 
 procedure TGDRenderer.SetJoinedParams(aShader : TGDGLShader; aForShadows : boolean = false);
 begin
-  aShader.Enable();
+  aShader.Bind();
   aShader.SetFloat3('V_LIGHT_DIR',  Map.LightDirection.X,
                                     Map.LightDirection.Y,
                                     Map.LightDirection.Z);
@@ -544,23 +544,23 @@ begin
 
   Case FState Of
     RS_COLOR   :   begin
-                     FColorShader.Enable();
+                     FColorShader.Bind();
                    end;
     RS_WIREFRAME : begin
                      glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
                      glClearColor(0.3, 0.3, 0.3, 1.0);
-                     FColorShader.Enable();
+                     FColorShader.Bind();
                    end;
     RS_TEXTS   :   begin
                      glEnable(GL_DEPTH_TEST);
                      glDepthFunc(GL_LEQUAL);
                      glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
                      glEnable(GL_BLEND);
-                     FTextureShader.Enable();
+                     FTextureShader.Bind();
                      FTextureShader.SetInt('T_COLORMAP', 0);
                    end;
      RS_TEXTURE  : begin
-                     FTextureShader.Enable();
+                     FTextureShader.Bind();
                      FTextureShader.SetInt('T_COLORMAP', 0);
                    end;
     end;
@@ -572,8 +572,8 @@ end;
 
 procedure TGDRenderer.AddLine(aV1, aV2 : TGDVector);
 begin
-  FLines.Add( aV1.Copy() );
-  FLines.Add( aV2.Copy() );
+  FLinesVertices.Add( aV1.Copy() );
+  FLinesVertices.Add( aV2.Copy() );
 end;
 
 {******************************************************************************}
@@ -774,7 +774,7 @@ begin
   glViewport(0, 0, Settings.Width div 4, Settings.Height div 4);
   glDisable(GL_DEPTH_TEST);
   glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT);
-  FBlurShader.Enable();
+  FBlurShader.Bind();
   FBlurShader.SetInt( 'T_BLUR_IMAGE', 0 );
   FFrameBuffer.Bind();
   FFrameBuffer.AttachRenderBufferObject(FRenderBuffer2, GL_DEPTH_ATTACHMENT_EXT);
@@ -795,7 +795,7 @@ begin
   RenderQuad();
 
   FFrameBuffer.Unbind();
-  FBlurShader.Disable();
+  FBlurShader.UnBind();
   glEnable(GL_DEPTH_TEST);
 end;
 
@@ -807,13 +807,10 @@ Procedure RenderDebug();
 
 procedure RenderLines();
 begin
-  glBindBuffer(GL_ARRAY_BUFFER, FLinesID);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(TGDVector) * FLines.Count, FLines.List, GL_DYNAMIC_DRAW);
-  glEnableClientState(GL_VERTEX_ARRAY);
-  glVertexPointer(3, GL_FLOAT, 0, nil);
-  glDrawArrays(GL_LINES, 0, FLines.Count);
-  glDisableClientState(GL_VERTEX_ARRAY);
-  glBindBuffer(GL_ARRAY_BUFFER, 0);
+  FLinesVertexBuffer.Bind(VL_V);
+  FLinesVertexBuffer.Update(FLinesVertices, GL_DYNAMIC_DRAW);
+  FLinesVertexBuffer.Render(GL_LINES);
+  FLinesVertexBuffer.Unbind();
 end;
 
 begin
@@ -822,21 +819,21 @@ begin
   RenderState( RS_COLOR );
   If Modes.RenderNormals     then
   begin
-    FLines.Clear();
+    FLinesVertices.Clear();
     Renderer.SetColor(1,0.5,0.25,1);
     Map.RenderVisibleCells( RA_NORMALS, RF_NORMAL );
     RenderLines();
   end;
   If Modes.RenderObjectBoxes then
   begin
-    FLines.Clear();
+    FLinesVertices.Clear();
     Renderer.SetColor(1,0,0,1);
     Map.RenderVisibleCells( RA_FRUSTUM_BOXES, RF_NORMAL );
     RenderLines();
   end;
   If Modes.RenderNodeBoxes then
   begin
-    FLines.Clear();
+    FLinesVertices.Clear();
     Renderer.SetColor(1,1,0,1);
     Map.RenderVisibleCells( RA_NODE_BOXES, RF_NORMAL );
     RenderLines();
@@ -1026,7 +1023,7 @@ begin
   glDisable(GL_DEPTH_TEST);
   glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT);
 
-  FFinalShader.Enable();
+  FFinalShader.Bind();
   FFinalShader.SetInt('T_SOURCE_IMAGE',0);
 
   If Settings.UseFXAA and not(Modes.RenderObjectBoxes or Modes.RenderNormals or Modes.RenderNodeBoxes) then
@@ -1050,7 +1047,7 @@ begin
 
   RenderQuad();
 
-  FFinalShader.Disable();
+  FFinalShader.UnBind();
   glEnable(GL_DEPTH_TEST);
 end;
 

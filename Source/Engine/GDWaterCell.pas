@@ -67,6 +67,7 @@ begin
   FDisplayList := TGDGLDisplayList.Create();
   BoundingBox.Min.Reset(aStartX, aWater.WaterHeight, aStartY);
   BoundingBox.Max.Reset(aEndX, aWater.WaterHeight, aEndY);
+  BoundingBox.CalculateCenter();
 
   FDisplayList.StartList();
   glBegin(GL_TRIANGLE_STRIP);

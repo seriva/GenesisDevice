@@ -38,6 +38,7 @@ uses
   SysUtils,
   Classes,
   FileUtil,
+  fgl,
   dglOpenGL,
   GDConstants,
   GDTypes,
@@ -64,8 +65,8 @@ Type
     constructor Create(aFileName : string);
     destructor  Destroy(); override;
 
-    procedure Enable();
-    procedure Disable();
+    procedure Bind();
+    procedure Unbind();
     procedure SetInt(aVariable : String;  aV : integer);
     procedure SetFloat(aVariable : String; aV : Double);
     procedure SetFloat2(aVariable : String; aV0, aV1 : Double);
@@ -122,6 +123,25 @@ Type
     procedure StartList();
     procedure EndList();
     procedure CallList();
+  end;
+
+{******************************************************************************}
+{* VertexBuffer                                                               *}
+{******************************************************************************}
+
+  TGDGLVertexBuffer = class
+  private
+    FBufferID : GLuint;
+    FCount    : Integer;
+    FItemSize : Integer;
+  public
+    constructor Create();
+    destructor  Destroy(); override;
+
+    procedure Bind(aLayout : TGDVertexLayout);
+    procedure Unbind();
+    procedure Update(aData : TFPSList; aDrawType  : cardinal);
+    procedure Render(aPrimitive : cardinal);
   end;
 
 implementation
@@ -264,7 +284,7 @@ end;
 {* Enable the shader                                                          *}
 {******************************************************************************}
 
-procedure TGDGLShader.Enable();
+procedure TGDGLShader.Bind();
 begin
   glUseProgramObjectARB(FProgramObject);
 end;
@@ -273,7 +293,7 @@ end;
 {* Disable the shader                                                         *}
 {******************************************************************************}
 
-procedure TGDGLShader.Disable();
+procedure TGDGLShader.UnBind();
 begin
   glUseProgramObjectARB(0);
 end;
@@ -460,7 +480,7 @@ begin
 end;
 
 {******************************************************************************}
-{* Create the displaylist class                                               *}
+{* Create the displaylist                                                     *}
 {******************************************************************************}
 
 constructor TGDGLDisplayList.Create();
@@ -469,7 +489,7 @@ begin
 end;
 
 {******************************************************************************}
-{* Destroy the displaylist class                                              *}
+{* Destroy the displaylist                                                    *}
 {******************************************************************************}
 
 destructor  TGDGLDisplayList.Destroy();
@@ -484,7 +504,6 @@ end;
 
 procedure TGDGLDisplayList.StartList();
 begin
-
   glNewList(FDisplayList,GL_COMPILE);
 end;
 
@@ -504,6 +523,91 @@ end;
 procedure TGDGLDisplayList.CallList();
 begin
   glCallList(FDisplayList);
+end;
+
+{******************************************************************************}
+{* Create VertexBuffer                                                        *}
+{******************************************************************************}
+
+constructor TGDGLVertexBuffer.Create();
+begin
+  glGenBuffers(1, @FBufferID);
+  FCount    := 0;
+  FItemSize := 0;
+end;
+
+{******************************************************************************}
+{* Destroy VertexBuffer                                                       *}
+{******************************************************************************}
+
+destructor TGDGLVertexBuffer.Destroy();
+begin
+  glDeleteBuffers(1, @FBufferID);
+  inherited;
+end;
+
+{******************************************************************************}
+{* Bind VertexBuffer                                                          *}
+{******************************************************************************}
+
+procedure TGDGLVertexBuffer.Bind(aLayout : TGDVertexLayout);
+begin
+  glBindBuffer(GL_ARRAY_BUFFER, FBufferID);
+  case aLayout of
+  VL_V :
+  begin
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glVertexPointer(3, GL_FLOAT, 0, nil);
+  end;
+  VL_V_UV:
+  begin
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glVertexPointer(3, GL_FLOAT, sizeof(TGDVertex_V_UV), GLvoid(0));
+    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+    glTexCoordPointer(2, GL_FLOAT, sizeof(TGDVertex_V_UV), GLvoid(12));
+  end;
+  VL_V_UV_N:
+  begin
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glVertexPointer(3, GL_FLOAT, sizeof(TGDVertex_V_UV_N), GLvoid(0));
+    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+    glTexCoordPointer(2, GL_FLOAT, sizeof(TGDVertex_V_UV_N), GLvoid(12));
+    glEnableClientState(GL_NORMAL_ARRAY);
+    glNormalPointer(GL_FLOAT, sizeof(TGDVertex_V_UV_N), GLvoid(20));
+  end;
+  end;
+end;
+
+{******************************************************************************}
+{* Bind VertexBuffer                                                          *}
+{******************************************************************************}
+
+procedure TGDGLVertexBuffer.UnBind();
+begin
+  glDisableClientState(GL_VERTEX_ARRAY);
+  glDisableClientState(GL_NORMAL_ARRAY);
+  glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+  glBindBuffer(GL_ARRAY_BUFFER, 0);
+end;
+
+{******************************************************************************}
+{* Update VertexBuffer data                                                   *}
+{******************************************************************************}
+
+procedure TGDGLVertexBuffer.Update(aData : TFPSList; aDrawType  : cardinal);
+begin
+  FCount    := aData.Count;
+  FItemSize := aData.ItemSize;
+  glBufferData(GL_ARRAY_BUFFER, FItemSize*FCount, aData.List, aDrawType);
+end;
+
+{******************************************************************************}
+{* Render VertexBuffer data                                                   *}
+{******************************************************************************}
+
+procedure TGDGLVertexBuffer.Render(aPrimitive : cardinal);
+begin
+  glDrawArrays(aPrimitive, 0, FCount);
 end;
 
 end.

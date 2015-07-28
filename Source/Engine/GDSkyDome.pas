@@ -116,12 +116,12 @@ var
   iI, iJ, iX, iY : Integer;
   iUStep, iVStep: Double;
   iMatrix : TGDMatrix;
-  iVertices : TGDVectorList;
-  iUVCoords : TGDUVCoordList;
+  iVertices : TGDVertex_V_List;
+  iUVCoords : TGDVertex_UV_List;
 begin
   iRotationStep := 360/SKY_COMPLEXITY;
-  iVertices := TGDVectorList.Create();
-  iUVCoords := TGDUVCoordList.Create();
+  iVertices := TGDVertex_V_List.Create();
+  iUVCoords := TGDVertex_UV_List.Create();
   iStartPoint.Reset(aSize, 0, 0 );
   iUStep := 1 / (SKY_COMPLEXITY);
   iVStep := 1 / (SKY_COMPLEXITY div 4);
@@ -198,7 +198,7 @@ begin
   end
   else
   begin
-    Renderer.SkyShader.Enable();
+    Renderer.SkyShader.Bind();
     Renderer.SetJoinedParams(Renderer.SkyShader);
     Renderer.SkyShader.SetInt('T_SKYTEX', 0);
   end;

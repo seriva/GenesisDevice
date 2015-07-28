@@ -67,17 +67,17 @@ Type
 
   TGDMesh = class (TGDResource)
   private
-    FVertices : TGDVectorList;
-    FNormals  : TGDVectorList;
-    FUV       : TGDUVCoordList;
+    FVertices : TGDVertex_V_List;
+    FNormals  : TGDVertex_V_List;
+    FUV       : TGDVertex_UV_List;
     FSurfaces : TGDSurfaceList;
     FTriangleCount : Integer;
 
     procedure CreateDisplayList();
   public
-    property Vertices : TGDVectorList read FVertices;
-    property Normals  : TGDVectorList read FNormals;
-    property UV       : TGDUVCoordList read FUV;
+    property Vertices : TGDVertex_V_List read FVertices;
+    property Normals  : TGDVertex_V_List read FNormals;
+    property UV       : TGDVertex_UV_List read FUV;
     property Surfaces : TGDSurfaceList read FSurfaces;
     property TriangleCount : Integer read FTriangleCount;
 
@@ -147,9 +147,9 @@ begin
     iResult := true;
 
     iSL       := TStringList.Create();
-    FVertices := TGDVectorList.Create();
-    FNormals  := TGDVectorList.Create();
-    FUV       := TGDUVCoordList.Create();
+    FVertices := TGDVertex_V_List.Create();
+    FNormals  := TGDVertex_V_List.Create();
+    FUV       := TGDVertex_UV_List.Create();
     FSurfaces := TGDSurfaceList.Create();
 
     If Not(FileExistsUTF8(aFileName) ) then
