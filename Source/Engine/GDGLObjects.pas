@@ -144,6 +144,26 @@ Type
     procedure Render(aPrimitive : cardinal);
   end;
 
+{******************************************************************************}
+{* IndexBuffer                                                                *}
+{******************************************************************************}
+
+  TGDGLIndexBuffer = class
+  private
+    FBufferID : GLuint;
+    FCount    : Integer;
+    FItemSize : Integer;
+  public
+    constructor Create();
+    destructor  Destroy(); override;
+
+    procedure Bind();
+    procedure Unbind();
+    procedure Update(aData : TFPSList; aDrawType  : cardinal);
+    procedure Render(aPrimitive : cardinal);
+  end;
+
+
 implementation
 
 uses
@@ -603,6 +623,65 @@ end;
 procedure TGDGLVertexBuffer.Render(aPrimitive : cardinal);
 begin
   glDrawArrays(aPrimitive, 0, FCount);
+end;
+
+{******************************************************************************}
+{* Create IndexBuffer                                                         *}
+{******************************************************************************}
+
+constructor TGDGLIndexBuffer.Create();
+begin
+  glGenBuffers(1, @FBufferID);
+  FCount    := 0;
+  FItemSize := 0;
+end;
+
+{******************************************************************************}
+{* Destroy IndexBuffer                                                        *}
+{******************************************************************************}
+
+destructor TGDGLIndexBuffer.Destroy();
+begin
+  glDeleteBuffers(1, @FBufferID);
+  inherited;
+end;
+
+{******************************************************************************}
+{* Bind IndexBuffer                                                           *}
+{******************************************************************************}
+
+procedure TGDGLIndexBuffer.Bind();
+begin
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, FBufferID);
+end;
+
+{******************************************************************************}
+{* Bind VertexBuffer                                                          *}
+{******************************************************************************}
+
+procedure TGDGLIndexBuffer.UnBind();
+begin
+  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+end;
+
+{******************************************************************************}
+{* Update IndexBuffer data                                                   *}
+{******************************************************************************}
+
+procedure TGDGLIndexBuffer.Update(aData : TFPSList; aDrawType  : cardinal);
+begin
+  FCount    := aData.Count;
+  FItemSize := aData.ItemSize;
+  glBufferData(GL_ELEMENT_ARRAY_BUFFER, FItemSize*FCount, aData.List, aDrawType);
+end;
+
+{******************************************************************************}
+{* Render IndexBuffer data                                                   *}
+{******************************************************************************}
+
+procedure TGDGLIndexBuffer.Render(aPrimitive : cardinal);
+begin
+  glDrawElements(aPrimitive, FCount, GL_UNSIGNED_INT, nil);
 end;
 
 end.

@@ -38,6 +38,7 @@ uses
   GDTerrain,
   GDRenderer,
   GDTypes,
+  GDGLObjects,
   GDTypesGenerics,
   GDBaseCell;
 
@@ -52,7 +53,7 @@ type
     FTerrain     : TGDTerrain;
     FStartPoint  : TPoint;
     FEndPoint    : TPoint;
-    FIdxBufferID : GLuint;
+    FIndexes     : TGDGLIndexBuffer;
     FTrisCount   : Integer;
 
     procedure CalculateBoundingBox();
@@ -101,10 +102,10 @@ begin
     end;
   end;
 
-  glGenBuffers(1, @FIdxBufferID);
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, FIdxBufferID);
-  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(iIdxs.ItemSize)*iIdxs.Count, iIdxs.List, GL_STATIC_DRAW);
-  glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+  FIndexes := TGDGLIndexBuffer.Create();
+  FIndexes.Bind();
+  FIndexes.Update(iIdxs, GL_STATIC_DRAW);
+  FIndexes.Unbind();
   FreeAndNil(iIdxs);
 end;
 
@@ -114,7 +115,7 @@ end;
 
 destructor  TGDTerrainCell.Destroy();
 begin
-  glDeleteBuffers(1, @FIdxBufferID);
+  FreeAndNil(FIndexes);
   Inherited;
 end;
 
@@ -159,9 +160,9 @@ var
 begin
   Case aRenderAttribute Of
     RA_NORMAL         : begin
-                          glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, FIdxBufferID);
-                          glDrawElements(GL_TRIANGLES, 3*FTrisCount, GL_UNSIGNED_INT, nil);
-                          glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+                          FIndexes.Bind();
+                          FIndexes.Render(GL_TRIANGLES);
+                          FIndexes.Unbind();
                         end;
     RA_FRUSTUM_BOXES  : BoundingBox.RenderWireFrame();
     RA_NORMALS        : begin
