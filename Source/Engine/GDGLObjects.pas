@@ -229,12 +229,7 @@ begin
   DestroyShader(FGeometryShader);
   DestroyShader(FVertexShader);
   DestroyShader(FFragmentShader);
-
-	if (FProgramObject > 0)  then
-	begin
-		glDeleteObjectARB(FProgramObject);
-		FProgramObject := 0;
-	end;
+  glDeleteObjectARB(FProgramObject);
 end;
 
 {******************************************************************************}
