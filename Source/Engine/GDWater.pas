@@ -37,6 +37,7 @@ uses
   GDConsole,
   GDTexture,
   GDTypes,
+  GDTypesGenerics,
   GDGLObjects,
   GDConstants,
   GDSettings,
@@ -75,6 +76,8 @@ type
     FDepth           : Double;
     FMinDistance     : Double;
     FMaxDistance     : Double;
+    FVertices        : TGDVertex_V_UV_List;
+    FVertexBuffer    : TGDGLVertexBuffer;
 
     function GetHeight() : Double;
   public
@@ -99,6 +102,8 @@ type
     procedure Resize();
     function  Visible(): boolean;
     function  UnderWater(): boolean;
+    function  AddVertex(aV : TGDVertex_V_UV): integer;
+    procedure UpdateVBO();
 
     procedure StartReflection();
     procedure EndReflection();
@@ -130,6 +135,7 @@ begin
   FWaterCounter    := 0;
   FCausticTextures := TGDTextureList.Create(false);
   FWaterTextures   := TGDTextureList.Create(false);
+  FVertices        := TGDVertex_V_UV_List.Create();
 end;
 
 {******************************************************************************}
@@ -142,6 +148,7 @@ begin
   FreeAndNil(FFrameBuffer);
   FreeAndNil(FCausticTextures);
   FreeAndNil(FWaterTextures);
+  FreeAndNil(FVertices);
   inherited;
 end;
 
@@ -205,6 +212,9 @@ begin
     iExt   := aIniFile.ReadString( 'Water', 'CausticsMapExtension', 'dds');
     for iI := 0 to iCount-1 do
       FCausticTextures.Add( Resources.LoadTexture(iPath + IntToStr(iI) + '.' + iExt ,Settings.TextureDetail,Settings.TextureFilter) );
+
+    //create VBO
+    FVertexBuffer := TGDGLVertexBuffer.Create();
   except
     on E: Exception do
     begin
@@ -256,6 +266,7 @@ var
   iI : integer;
   iTex : TGDTexture;
 begin
+  FreeAndNil(FVertexBuffer);
   FreeAndNil(FRenderBuffer);
   FreeAndNil(FFrameBuffer);
   FreeAndNil(FReflection);
@@ -263,6 +274,7 @@ begin
   FBoundingBox.Min.Reset(0,0,0);
   FBoundingBox.Max.Reset(0,0,0);
 
+  FVertices.Clear();
   FColor.Reset(1,1,1,1);
 
   for iI := 0 to FCausticTextures.Count-1 do
@@ -374,7 +386,8 @@ end;
 procedure TGDWater.StartRendering( aRenderAttribute : TGDRenderAttribute; aRenderFor : TGDRenderFor );
 begin
   if Not(aRenderAttribute = RA_NORMAL) then exit;
-  
+
+  FVertexBuffer.Bind(VL_V_UV);
   if Modes.RenderWireframe then
   begin
     Renderer.SetColor(0.3,0.3,1,1);
@@ -413,6 +426,7 @@ end;
 
 procedure TGDWater.EndRendering();
 begin
+  FVertexBuffer.Unbind();
   glEnable(GL_CULL_FACE);
   glDisable(GL_BLEND);
 end;
@@ -427,6 +441,26 @@ begin
     result := true
   else
     result := false;
+end;
+
+{******************************************************************************}
+{* Add vertex to water vertexlist                                             *}
+{******************************************************************************}
+
+function  TGDWater.AddVertex(aV : TGDVertex_V_UV): integer;
+begin
+  result := FVertices.add(aV);
+end;
+
+{******************************************************************************}
+{* Update water VBO                                                           *}
+{******************************************************************************}
+
+procedure TGDWater.UpdateVBO();
+begin
+  FVertexBuffer.Bind(VL_NONE);
+  FVertexBuffer.Update(FVertices, GL_STATIC_DRAW);
+  FVertexBuffer.Unbind()
 end;
 
 {******************************************************************************}

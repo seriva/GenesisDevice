@@ -31,7 +31,6 @@ uses
   SysUtils,
   GDTypes,
   GDCamera,
-  GDRenderer,
   GDConstants,
   GDMeshCell,
   GDSettings,
@@ -44,13 +43,13 @@ type
 {* Visibility query                                                           *}
 {******************************************************************************}
 
-TGDVisibilityQuery = record
-  Cells               : TGDBaseCellList;
-  VisibleTerrainCells : TGDBaseCellList;
-  VisibleGrassCells   : TGDBaseCellList;
-  VisibleMeshCells    : TGDBaseCellList;
-  VisibleWaterCells   : TGDBaseCellList;
-end;
+  TGDVisibilityQuery = record
+    Cells               : TGDBaseCellList;
+    VisibleTerrainCells : TGDBaseCellList;
+    VisibleGrassCells   : TGDBaseCellList;
+    VisibleMeshCells    : TGDBaseCellList;
+    VisibleWaterCells   : TGDBaseCellList;
+  end;
 
 {******************************************************************************}
 {* Octree class                                                               *}

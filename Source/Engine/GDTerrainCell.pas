@@ -82,7 +82,6 @@ begin
   FStartPoint.Y := aStartY;
   FEndPoint.X   := aEndX;
   FEndPoint.Y   := aEndY;
-
   CalculateBoundingBox();
 
   iIdxs := TGDIndexList.Create();

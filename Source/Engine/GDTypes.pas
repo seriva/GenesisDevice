@@ -145,7 +145,7 @@ type
     procedure   Scale(  aScale : TGDVector ); overload;
     function    Copy(): TGDTriangle;
     procedure   CalculateNormal();
-    Function    PointInTraingle( aV : TGDVector ) : boolean;
+    function    PointInTraingle( aV : TGDVector ) : boolean;
   end;
 
 {******************************************************************************}
@@ -160,8 +160,6 @@ type
     procedure   Move( aMove : TGDVector );
     procedure   Rotate( aM : TGDMatrix );
     procedure   Scale(  aScale : TGDVector );
-    procedure   CalculateNormal();
-    Function    PointInQuad( aV : TGDVector ) : boolean;
 
     procedure   Render();
   end;
@@ -176,7 +174,6 @@ type
     Center : TGDVector;
 
     procedure CalculateCenter();
-
     function  BoxInsideBox( aBoundingBox : TGDBoundingBox ) : boolean;
     function  PointInsideBox( aV : TGDVector ) : boolean;
 
@@ -209,7 +206,6 @@ type
     UV     : TGDUVCoord;
     Normal : TGDVector;
 
-
     class operator Equal(v1, v2: TGDVertex_V_UV_N) B: Boolean;
   end;
 
@@ -220,6 +216,9 @@ type
 function Vector(aX,aY,aZ: Single) : TGDVector;
 function UVCoord(aU,aV : Single) : TGDUVCoord;
 function Color(aR,aG,aB,aA : Single) : TGDColor;
+
+const
+  EPSILON   = 0.0001;
 
 implementation
 
@@ -474,7 +473,9 @@ end;
 
 class operator TGDVector.Equal (v1, v2: TGDVector) B: Boolean;
 begin
-  B:=(v1.x=v2.x) and (v1.y=v2.y) and (v1.z=v2.z);
+  B := (Abs(v1.x - v2.x) < EPSILON) and
+       (Abs(v1.y - v2.y) < EPSILON) and
+       (Abs(v1.z - v2.z) < EPSILON);
 end;
 
 {******************************************************************************}
@@ -513,7 +514,8 @@ end;
 
 class operator TGDUVCoord.Equal (uv1, uv2: TGDUVCoord)B: Boolean;
 begin
-  B:=(uv1.u=uv2.u) and (uv1.v=uv2.v);
+  B := (Abs(uv1.u - uv2.u) < EPSILON) and
+       (Abs(uv1.v - uv2.v) < EPSILON);
 end;
 
 {******************************************************************************}
@@ -947,35 +949,6 @@ begin
   V4.Devide(100);
 end;
 
-{******************************************************************************}
-{* Calculate the normal of the quad                                           *}
-{******************************************************************************}
-
-procedure TGDQuad.CalculateNormal();
-var
-  iVVector1 : TGDVector;
-  iVVector2 : TGDVector;
-begin
-  iVVector1.Reset( V3.x, V3.Y, V3.Z);
-  iVVector1.Substract( V1 );
-  iVVector2.Reset(V2.x, V2.Y, V2.Z);
-  iVVector2.Substract( V1 );
-  Normal.CrossProduct( iVVector1, iVVector2 );
-  Normal.Normalize();
-end;
-
-{******************************************************************************}
-{* Check if the point is in the quad
-{******************************************************************************}
-
-Function TGDQuad.PointInQuad( aV : TGDVector ) : boolean;
-begin
-  if ((SameSide(aV,V1,V2,V3) and SameSide(aV,V2,V1,V3) and SameSide(aV,V3,V1,V2)) or
-      (SameSide(aV,V1,V3,V4) and SameSide(aV,V3,V1,V4) and SameSide(aV,V4,V1,V3))) then
-    result := true
-  else
-    result := false;
-end;
 
 {******************************************************************************}
 {* Render the quad                                                            *}
@@ -1068,12 +1041,12 @@ end;
 
 class operator TGDVertex_V_UV.Equal(v1, v2: TGDVertex_V_UV) B: Boolean;
 begin
-  result := false;
+  B := (v1.Vertex = v2.Vertex) and (v1.UV = v2.UV);
 end;
 
 class operator TGDVertex_V_UV_N.Equal(v1, v2: TGDVertex_V_UV_N) B: Boolean;
 begin
-  result := false;
+  B := (v1.Vertex = v2.Vertex) and (v1.UV = v2.UV) and (v1.Normal = v2.Normal);
 end;
 
 end.

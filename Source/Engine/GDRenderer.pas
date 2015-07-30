@@ -88,6 +88,7 @@ type
 
     FLinesVertices     : TGDVertex_V_List;
     FLinesVertexBuffer : TGDGLVertexBuffer;
+    FQuadVertexBuffer  : TGDGLVertexBuffer;
 
     procedure InitShaders();
     procedure ClearShaders();
@@ -158,6 +159,9 @@ var
   iStr, iV    : String;
   iGLInt1, iGLInt2 : GLInt;
   iGLFLoat    : GLFLoat;
+  iI : Integer;
+  iQ  : TGDVertex_V_UV;
+  iQL : TGDVertex_V_UV_List;
 
 function WndProc(aWnd: HWND; aMsg: UINT;  aWParam: WPARAM;  aLParam: LPARAM): LRESULT; stdcall;
 begin
@@ -270,36 +274,30 @@ begin
     glClearColor(0.5, 0.5, 0.5, 1.0);
     glClearDepth(1.0);
     glEnable(GL_DEPTH_TEST);
-    glCullFace(GL_BACK);
-    glEnable(GL_CULL_FACE);
     glDepthFunc(GL_LESS);
-    glActiveTexture(GL_TEXTURE0);
-    glEnable(GL_TEXTURE_2D);
-    glActiveTexture(GL_TEXTURE1);
-    glEnable(GL_TEXTURE_2D);
-    glActiveTexture(GL_TEXTURE2);
-    glEnable(GL_TEXTURE_2D);
-    glActiveTexture(GL_TEXTURE3);
-    glEnable(GL_TEXTURE_2D);
-    glActiveTexture(GL_TEXTURE4);
-    glEnable(GL_TEXTURE_2D);
-    glActiveTexture(GL_TEXTURE5);
-    glEnable(GL_TEXTURE_2D);
-    glActiveTexture(GL_TEXTURE6);
-    glEnable(GL_TEXTURE_2D);
-    glActiveTexture(GL_TEXTURE7);
-    glEnable(GL_TEXTURE_2D);
-    glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
-    glHint(GL_POINT_SMOOTH_HINT, GL_NICEST);
-    glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
-    glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST);
-    glEnable(GL_NORMALIZE);
-    glDisable(GL_FOG);
-    glDisable(GL_LIGHTING);
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_BACK);
+    for iI := 0 to 7 do
+    begin
+      glActiveTexture(GL_TEXTURE0+iI );
+      glEnable(GL_TEXTURE_2D);
+    end;
 
     //line rendering
     FLinesVertices     := TGDVertex_V_List.Create();
     FLinesVertexBuffer := TGDGLVertexBuffer.Create();
+
+    //Fullscreen quad.
+    iQL := TGDVertex_V_UV_List.Create();
+    iQ.Vertex.Reset(-1, -1, 0); iQ.UV.Reset(0, 0); iQL.Add(iQ);
+    iQ.Vertex.Reset(1, -1, 0); iQ.UV.Reset(1, 0); iQL.Add(iQ);
+    iQ.Vertex.Reset(1, 1, 0); iQ.UV.Reset(1, 1); iQL.Add(iQ);
+    iQ.Vertex.Reset(-1, 1, 0); iQ.UV.Reset(0, 1); iQL.Add(iQ);
+    FQuadVertexBuffer := TGDGLVertexBuffer.Create();
+    FQuadVertexBuffer.Bind(VL_NONE);
+    FQuadVertexBuffer.Update(iQL, GL_STATIC_DRAW);
+    FQuadVertexBuffer.Unbind();
+    FreeAndNil(iQL);
 
     //commands
     Console.AddCommand('RBloomMult', '0.0 to 1.0 : Set the bloom multiplier value', CT_FLOAT, @FBloomStrengh);
@@ -339,6 +337,7 @@ begin
     //For normal rendering.
     FreeAndNil(FLinesVertices);
     FreeAndNil(FLinesVertexBuffer);
+    FreeAndNil(FQuadVertexBuffer);
 
     //Destroy rendering context
     DeactivateRenderingContext();
@@ -757,12 +756,9 @@ procedure TGDRenderer.Render();
 
 procedure RenderQuad();
 begin
-  glBegin(GL_QUADS);
-    glTexCoord2f(0, 0);   glVertex2f(-1, -1);
-    glTexCoord2f(1, 0);   glVertex2f( 1, -1);
-    glTexCoord2f(1, 1);   glVertex2f( 1, 1);
-    glTexCoord2f(0, 1);   glVertex2f(-1, 1);
-  glEnd;
+  FQuadVertexBuffer.Bind(VL_V_UV);
+  FQuadVertexBuffer.Render(GL_QUADS);
+  FQuadVertexBuffer.Unbind()
 end;
 
 {******************************************************************************}

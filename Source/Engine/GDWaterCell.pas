@@ -36,7 +36,8 @@ uses
   GDWater,
   GDConstants,
   GDGLObjects,
-  GDRenderer,
+  GDTypes,
+  GDTypesGenerics,
   GDBaseCell;
 
 type
@@ -47,7 +48,7 @@ type
 
   TGDWaterCell = class (TGDBaseCell)
   private
-    FDisplayList : TGDGLDisplayList;
+    FIndexes : TGDGLIndexBuffer;
   public
     constructor Create(aWater : TGDWater; aStartX, aStartY, aEndX, aEndY, aStartU, aStartV, aEndU, aEndV : Double);
     destructor  Destroy(); override;
@@ -62,28 +63,38 @@ implementation
 {******************************************************************************}
 
 constructor TGDWaterCell.Create(aWater : TGDWater; aStartX, aStartY, aEndX, aEndY, aStartU, aStartV, aEndU, aEndV : Double);
+var
+  iIdxs : TGDIndexList;
+  iV : TGDVertex_V_UV;
 begin
   OjectType := SO_WATERCELL;
-  FDisplayList := TGDGLDisplayList.Create();
+  FIndexes := TGDGLIndexBuffer.Create();
+  iIdxs := TGDIndexList.Create();
+
   BoundingBox.Min.Reset(aStartX, aWater.WaterHeight, aStartY);
   BoundingBox.Max.Reset(aEndX, aWater.WaterHeight, aEndY);
   BoundingBox.CalculateCenter();
 
-  FDisplayList.StartList();
-  glBegin(GL_TRIANGLE_STRIP);
-    glMultiTexCoord2f(GL_TEXTURE0, aStartU, aStartV);
-    glVertex3f(aStartX, aWater.WaterHeight, aStartY);
+  iV.Vertex.Reset(aStartX, aWater.WaterHeight, aStartY);
+  iV.UV.Reset(aStartU, aStartV);
+  iIdxs.Add(aWater.AddVertex(iV));
 
-    glMultiTexCoord2f(GL_TEXTURE0, aStartU, aEndV);
-    glVertex3f(aStartX, aWater.WaterHeight, aEndY);
+  iV.Vertex.Reset(aStartX, aWater.WaterHeight, aEndY);
+  iV.UV.Reset(aStartU, aEndV);
+  iIdxs.Add(aWater.AddVertex(iV));
 
-    glMultiTexCoord2f(GL_TEXTURE0, aEndU, aStartV);
-    glVertex3f(aEndX, aWater.WaterHeight, aStartY);
+  iV.Vertex.Reset(aEndX, aWater.WaterHeight, aStartY);
+  iV.UV.Reset(aEndU, aStartV);
+  iIdxs.Add(aWater.AddVertex(iV));
 
-    glMultiTexCoord2f(GL_TEXTURE0, aEndU, aEndV);
-    glVertex3f(aEndX, aWater.WaterHeight, aEndY);
-  glEnd();
-  FDisplayList.EndList();
+  iV.Vertex.Reset(aEndX, aWater.WaterHeight, aEndY);
+  iV.UV.Reset(aEndU, aEndV);
+  iIdxs.Add(aWater.AddVertex(iV));
+
+  FIndexes.Bind();
+  FIndexes.Update(iIdxs, GL_STATIC_DRAW);
+  FIndexes.Unbind();
+  FreeAndNil(iIdxs);
 end;
 
 {******************************************************************************}
@@ -92,7 +103,7 @@ end;
 
 destructor  TGDWaterCell.Destroy();
 begin
-  FreeAndNil(FDisplayList);
+  FreeAndNil(FIndexes);
   Inherited;
 end;
 
@@ -103,7 +114,11 @@ end;
 procedure TGDWaterCell.Render( aRenderAttribute : TGDRenderAttribute; aRenderFor : TGDRenderFor );
 begin
   Case aRenderAttribute Of
-    RA_NORMAL         : FDisplayList.CallList();
+    RA_NORMAL         : begin
+                          FIndexes.Bind();
+                          FIndexes.Render(GL_TRIANGLE_STRIP);
+                          FIndexes.Unbind();
+                        end;
     RA_FRUSTUM_BOXES  : BoundingBox.RenderWireFrame();
     RA_NORMALS        : //water doesn`t have normals
     end;

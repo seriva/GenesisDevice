@@ -221,6 +221,9 @@ Begin
     iI := iI + iStepX;
     iCountX := iCountX + 1;
   end;
+
+  //update the VBO array for water.
+  aWater.UpdateVBO();
 End;
 
 {******************************************************************************}
