@@ -203,7 +203,6 @@ begin
           continue;
         end;
         GetRotation(iStartWidth + iX*FTriangleSize, iStartHeight + iY*FTriangleSize, iR);
-        iM.EmptyMatrix();
         iM.CreateRotation( iR );
         iM.ApplyToVector( FVertices.List^[(iX * FTerrainWidth) + iY].Normal );
       end;

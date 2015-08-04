@@ -227,8 +227,8 @@ begin
   else
     FRotation.z := FRotation.z + dDeltaY / (10-aSensitivity);
 
-  if FRotation.z < -89.99 then FRotation.z := -89.999999;
-  if FRotation.z > 89.99 then FRotation.z :=   89.999999;
+  if FRotation.z < -89 then FRotation.z := -89;
+  if FRotation.z > 89 then FRotation.z :=   89;
 
   iM.CreateRotation( FRotation );
   FDirection.Reset(-1,0,0);

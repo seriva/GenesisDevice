@@ -53,7 +53,8 @@ type
 
   TGDSkyDome = class
   private
-    FDisplayList   : TGDGLDisplayList;
+    FIndexBuffer   : TGDGLIndexBuffer;
+    FVertexBuffer  : TGDGLVertexBuffer;
     FSkyTexture    : TGDTexture;
     FTriangleCount : Integer;
 
@@ -88,7 +89,7 @@ end;
 
 destructor  TGDSkyDome.Destroy();
 begin
-  FreeAndNil(FDisplayList);
+  Clear();
   Inherited;
 end;
 
@@ -98,8 +99,9 @@ end;
 
 procedure TGDSkyDome.Clear();
 begin
+  FreeAndNil(FIndexBuffer);
+  FreeAndNil(FVertexBuffer);
   FTriangleCount := 0;
-  FreeAndNil(FDisplayList);
   Resources.RemoveResource(TGDResource(FSkyTexture));
 end;
 
@@ -111,17 +113,20 @@ procedure TGDSkyDome.CalculateDome( aSize : Double );
 var
   iRotationStep : double;
   iRotationZ, iRotationY : Double;
-  iUV : TGDUVCoord;
-  iStartPoint, iTemp : TGDVector;
+  iStartPoint : TGDVector;
   iI, iJ, iX, iY : Integer;
   iUStep, iVStep: Double;
   iMatrix : TGDMatrix;
-  iVertices : TGDVertex_V_List;
-  iUVCoords : TGDVertex_UV_List;
+  iIndexes : TGDIndexList;
+  iVertices : TGDVertex_V_UV_List;
+  iV : TGDVertex_V_UV;
 begin
+  iIndexes  := TGDIndexList.Create();
+  iVertices := TGDVertex_V_UV_List.Create();
+  FIndexBuffer  := TGDGLIndexBuffer.Create();
+  FVertexBuffer := TGDGLVertexBuffer.Create();
+
   iRotationStep := 360/SKY_COMPLEXITY;
-  iVertices := TGDVertex_V_List.Create();
-  iUVCoords := TGDVertex_UV_List.Create();
   iStartPoint.Reset(aSize, 0, 0 );
   iUStep := 1 / (SKY_COMPLEXITY);
   iVStep := 1 / (SKY_COMPLEXITY div 4);
@@ -131,44 +136,40 @@ begin
     iRotationY := 0;
     For iJ := 0 to SKY_COMPLEXITY do
     begin
-      iTemp := iStartPoint.Copy();
-      iMatrix.EmptyMatrix();
+      iV.Vertex := iStartPoint.Copy();
       iMatrix.CreateRotationY(iRotationY);
-      iMatrix.ApplyToVector(iTemp);
-      iVertices.Add(iTemp);
-      iUV.Reset(iJ * iUStep, iI* iVStep );
-      iUVCoords.Add( iUV );
+      iMatrix.ApplyToVector(iV.Vertex);
+      iV.UV.Reset(iJ * iUStep, iI* iVStep );
+      iVertices.Add(iV);
       iRotationY := iRotationY + iRotationStep;
     end;
     iStartPoint.Reset( aSize, 0, 0 );
     iRotationZ := iRotationZ - iRotationStep;
-    iMatrix.EmptyMatrix();
     iMatrix.CreateRotationZ(iRotationZ);
     iMatrix.ApplyToVector(iStartPoint);
   end;
+  FVertexBuffer.Bind(VL_NONE);
+  FVertexBuffer.Update(iVertices, GL_STATIC_DRAW);
+  FVertexBuffer.Unbind();
 
-  FDisplayList := TGDGLDisplayList.Create();
-  FDisplayList.StartList();
-  FSkyTexture.BindTexture(GL_TEXTURE0);
+
   For iI := 0 to (SKY_COMPLEXITY div 4)-1 do
   begin
-    glBegin(GL_TRIANGLE_STRIP);
-    For iJ := 0 to SKY_COMPLEXITY do
+    For iJ := 0 to SKY_COMPLEXITY-1 do
     begin
       iX := iJ + (iI * (SKY_COMPLEXITY+1));
       iY := iJ + ((iI + 1) * (SKY_COMPLEXITY+1));
-      glTexCoord2fv( iUVCoords.Items[ iY ].ArrayPointer );
-      glVertex3fv( TGDVector( iVertices.Items[  iY ] ).ArrayPointer);
-      glTexCoord2fv( iUVCoords.Items[  iX ].ArrayPointer );
-      glVertex3fv( TGDVector( iVertices.Items[  iX ] ).ArrayPointer);
+      iIndexes.Add(iY); iIndexes.Add(iX); iIndexes.Add(iX+1);
+      iIndexes.Add(iY+1); iIndexes.Add(iY); iIndexes.Add(iX+1);
     end;
-    glEnd;
   end;
-  FDisplayList.EndList();
+  FIndexBuffer.Bind();
+  FIndexBuffer.Update(iIndexes, GL_STATIC_DRAW);
+  FIndexBuffer.Unbind();
 
   FTriangleCount := (SKY_COMPLEXITY * (SKY_COMPLEXITY div 4)) * 2;
   FreeAndNil(iVertices);
-  FreeAndNil(iUVCoords);
+  FreeAndNil(iIndexes);
 end;
 
 {******************************************************************************}
@@ -198,6 +199,7 @@ begin
   end
   else
   begin
+    FSkyTexture.BindTexture(GL_TEXTURE0);
     Renderer.SkyShader.Bind();
     Renderer.SetJoinedParams(Renderer.SkyShader);
     Renderer.SkyShader.SetInt('T_SKYTEX', 0);
@@ -208,7 +210,11 @@ begin
   glDepthMask(GLboolean(FALSE));
   glTranslatef(Camera.Position.x, Camera.Position.y, Camera.Position.z);
   glScalef(1,0.20,1);
-  FDisplayList.CallList();
+  FVertexBuffer.Bind(VL_V_UV);
+  FIndexBuffer.Bind();
+  FIndexBuffer.Render(GL_TRIANGLES);
+  FVertexBuffer.Unbind();
+  FIndexBuffer.Unbind();
   glDepthMask(GLboolean(TRUE));
   glEnable(GL_DEPTH_TEST);
   glPopMatrix();
