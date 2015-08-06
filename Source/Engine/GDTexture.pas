@@ -151,7 +151,7 @@ type
   public
     property Texture : TGLuint read FTexture;
 
-    constructor Create(aFileName : String; aDetail : TGDTextureDetail; aTextureFilter : TGDTextureFilter); overload;
+    constructor Create( aFileName : String; aDetail : TGDTextureDetail; aTextureFilter : TGDTextureFilter); overload;
     constructor Create( aType : GLEnum; aFormat: GLenum; aSizeW, aSizeH : integer ); overload;
     destructor  Destroy(); override;
 

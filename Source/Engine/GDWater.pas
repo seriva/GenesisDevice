@@ -38,7 +38,7 @@ uses
   GDTexture,
   GDTypes,
   GDTypesGenerics,
-  GDGLObjects,
+  GDGLWrappers,
   GDConstants,
   GDSettings,
   GDCamera,
@@ -66,8 +66,8 @@ type
     FCellCountY      : Integer;
     FColor           : TGDColor;
     FReflection      : TGDTexture;
-    FRenderBuffer    : TGDGLRenderBufferObject;
-    FFrameBuffer     : TGDGLFrameBufferObject;
+    FRenderBuffer    : TGDGLRenderBuffer;
+    FFrameBuffer     : TGDGLFrameBuffer;
     FWaterLoaded     : Boolean;
     FCausticTextures : TGDTextureList;
     FCausticCounter  : Integer;
@@ -129,7 +129,7 @@ uses
 
 constructor TGDWater.Create();
 begin
-  FFrameBuffer     := TGDGLFrameBufferObject.Create();
+  FFrameBuffer     := TGDGLFrameBuffer.Create();
   FWaterLoaded     := false;
   FCausticCounter  := 0;
   FWaterCounter    := 0;
@@ -252,8 +252,8 @@ begin
   FreeAndNil(FRenderBuffer);
   FreeAndNil(FFrameBuffer);
   FreeAndNil(FReflection);
-  FRenderBuffer := TGDGLRenderBufferObject.Create(FWidth,FHeight,GL_DEPTH_COMPONENT24);
-  FFrameBuffer  := TGDGLFrameBufferObject.Create();
+  FRenderBuffer := TGDGLRenderBuffer.Create(FWidth,FHeight,GL_DEPTH_COMPONENT24);
+  FFrameBuffer  := TGDGLFrameBuffer.Create();
   FReflection   := TGDTexture.Create(GL_RGBA, GL_RGBA, FWidth,FHeight);
 end;
 
@@ -342,7 +342,7 @@ var
 begin
   FFrameBuffer.Bind();
   FFrameBuffer.AttachTexture(FReflection,GL_COLOR_ATTACHMENT0_EXT,GL_TEXTURE_2D);
-  FFrameBuffer.AttachRenderBufferObject(FRenderBuffer,GL_DEPTH_ATTACHMENT_EXT);
+  FFrameBuffer.AttachRenderBuffer(FRenderBuffer,GL_DEPTH_ATTACHMENT_EXT);
   FFrameBuffer.Status();
   glViewPort(0,0,FWidth,FHeight);
   glClear(GL_DEPTH_BUFFER_BIT or GL_COLOR_BUFFER_BIT);

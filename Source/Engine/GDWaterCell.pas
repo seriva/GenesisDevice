@@ -35,7 +35,7 @@ uses
   dglOpenGL,
   GDWater,
   GDConstants,
-  GDGLObjects,
+  GDGLWrappers,
   GDTypes,
   GDTypesGenerics,
   GDBaseCell;

@@ -20,18 +20,19 @@
 *  along with Genesis Device.  If not, see <http://www.gnu.org/licenses/>.     *
 *                                                                              *
 *******************************************************************************}   
-unit GDGLObjects;
+unit GDGLWrappers;
 
 {$MODE Delphi}
 
 interface
 
 {******************************************************************************}
-{* This unit holds wrappers arround some of the latest opengl 2.1             *}
-{* specification to make use of them easier. Included are:                    *}
-{* - Fragment and vertex Shaders (GLSL)                                       *}
-{* - Frame buffers and Render buffers                                         *}
-{* - Displaylists                                                             *}
+{* This unit holds wrappers arround some of the OpenGL functionality          *}
+{* - Vertex, fragment and geometry shaders.                                   *}
+{* - Frame and Render buffers                                                 *}
+{* - Display lists                                                            *}
+{* - Vertex buffers                                                           *}
+{* - Index buffers                                                            *}
 {******************************************************************************}
 
 uses
@@ -79,14 +80,13 @@ Type
 {* Render buffer class                                                        *}
 {******************************************************************************}
 
-  TGDGLRenderBufferObject = class
+  TGDGLRenderBuffer = class
   private
-    FRenderBufferObject : GLuint;
+    FBufferID : GLuint;
   public
-    property RenderBufferObject : GLuint read FRenderBufferObject;
-
     constructor Create(aSizeW, aSizeH : Integer; aFormat  : cardinal);
     destructor  Destroy(); override;
+
     procedure Bind();
     procedure Unbind();
   end;
@@ -95,9 +95,9 @@ Type
 {* Frame buffer class                                                         *}
 {******************************************************************************}
 
-  TGDGLFrameBufferObject = class
+  TGDGLFrameBuffer = class
   private
-    FFrameBufferObject : GLuint;
+    FBufferID : GLuint;
   public
     constructor Create();
     destructor  Destroy(); override;
@@ -105,7 +105,7 @@ Type
     procedure Bind();
     procedure Unbind();
     procedure AttachTexture( aTexture : TGDTexture; aAttachement, aTexTarget : cardinal);
-    procedure AttachRenderBufferObject(aRenderBuffer : TGDGLRenderBufferObject; aAttachement : cardinal);
+    procedure AttachRenderBuffer(aRenderBuffer : TGDGLRenderBuffer; aAttachement : cardinal);
     procedure Status();
   end;
 
@@ -178,7 +178,7 @@ var
   iOk  : boolean;
   iCur : TGDShaderType;
   iI   : Integer;
-  iTXT : TStringList;
+  iSource : TStringList;
   iLine, iGeom, ifrag, iVert, iError : String;
 begin
   Console.Write('Loading shader ' + ExtractFileName(aFileName) + '...');
@@ -186,16 +186,16 @@ begin
   try
     iOk := true;
     FProgramObject := glCreateProgramObjectARB();
-    iTXT := TStringList.Create;
-    iTXT.LoadFromFile(aFileName);
+    iSource := TStringList.Create;
+    iSource.LoadFromFile(aFileName);
 
     iGeom := '';
     iVert := '';
     ifrag := '';
 
-    for iI := 0 to iTXT.Count-1 do
+    for iI := 0 to iSource.Count-1 do
     begin
-      iLine := iTXT.Strings[iI];
+      iLine := iSource.Strings[iI];
       if iLine = '#GEOMETRY' then
        iCur := ST_GEOM
       else if iLine = '#VERTEX' then
@@ -225,7 +225,7 @@ begin
     end;
   end;
 
-  FreeAndNil(iTXT);
+  FreeAndNil(iSource);
   Console.WriteOkFail(iOk, iError);
 end;
 
@@ -371,35 +371,35 @@ end;
 {* Create the framebuffer class                                               *}
 {******************************************************************************}
 
-constructor TGDGLFrameBufferObject.Create();
+constructor TGDGLFrameBuffer.Create();
 begin
-  glGenFrameBuffersEXT(1, @FFrameBufferObject);
+  glGenFrameBuffersEXT(1, @FBufferID);
 end;
 
 {******************************************************************************}
 {* Destroy the framebuffer class                                              *}
 {******************************************************************************}
 
-destructor TGDGLFrameBufferObject.Destroy();
+destructor TGDGLFrameBuffer.Destroy();
 begin
   inherited;
-  glDeleteFrameBuffersEXT(1, @FFrameBufferObject);
+  glDeleteFrameBuffersEXT(1, @FBufferID);
 end;
 
 {******************************************************************************}
 {* Bind the framebuffer                                                       *}
 {******************************************************************************}
 
-procedure TGDGLFrameBufferObject.Bind();
+procedure TGDGLFrameBuffer.Bind();
 begin
-  glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, FFrameBufferObject);
+  glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, FBufferID);
 end;
 
 {******************************************************************************}
 {* Unbind the framebuffer                                                     *}
 {******************************************************************************}
 
-procedure TGDGLFrameBufferObject.Unbind();
+procedure TGDGLFrameBuffer.Unbind();
 begin
   glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
 end;
@@ -408,7 +408,7 @@ end;
 {* Attach a texture to the frame buffer                                       *}
 {******************************************************************************}
 
-procedure TGDGLFrameBufferObject.AttachTexture( aTexture : TGDTexture; aAttachement, aTexTarget : cardinal);
+procedure TGDGLFrameBuffer.AttachTexture( aTexture : TGDTexture; aAttachement, aTexTarget : cardinal);
 begin
   glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, aAttachement, aTexTarget, aTexture.Texture, 0);
 end;
@@ -417,16 +417,16 @@ end;
 {* Attach renderbuffer to the framebuffer                                     *}
 {******************************************************************************}
 
-procedure TGDGLFrameBufferObject.AttachRenderBufferObject(aRenderBuffer : TGDGLRenderBufferObject; aAttachement : cardinal);
+procedure TGDGLFrameBuffer.AttachRenderBuffer(aRenderBuffer : TGDGLRenderBuffer; aAttachement : cardinal);
 begin
-  glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT,aAttachement,GL_RENDERBUFFER_EXT,aRenderBuffer.RenderBufferObject);
+  glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT,aAttachement,GL_RENDERBUFFER_EXT,aRenderBuffer.FBufferID);
 end;
 
 {******************************************************************************}
 {* Get the status of the framebuffer                                          *}
 {******************************************************************************}
 
-procedure TGDGLFrameBufferObject.Status();
+procedure TGDGLFrameBuffer.Status();
 var
   iM: GLenum;
 begin
@@ -459,10 +459,10 @@ end;
 {* Create the renderbuffer class                                              *}
 {******************************************************************************}
 
-constructor TGDGLRenderBufferObject.Create(aSizeW, aSizeH : Integer; aFormat  : cardinal);
+constructor TGDGLRenderBuffer.Create(aSizeW, aSizeH : Integer; aFormat  : cardinal);
 begin
-  glGenRenderBuffersEXT(1, @FRenderBufferObject);
-  glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, FRenderBufferObject);
+  glGenRenderBuffersEXT(1, @FBufferID);
+  glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, FBufferID);
   glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, aFormat,aSizeW, aSizeH);
 end;
 
@@ -470,26 +470,26 @@ end;
 {* Destroy the renderbuffer class                                             *}
 {******************************************************************************}
 
-destructor  TGDGLRenderBufferObject.Destroy();
+destructor  TGDGLRenderBuffer.Destroy();
 begin
   inherited;
-  glDeleteRenderBuffersEXT(1, @FRenderBufferObject);
+  glDeleteRenderBuffersEXT(1, @FBufferID);
 end;
 
 {******************************************************************************}
 {* Bind the renderbuffer                                                      *}
 {******************************************************************************}
 
-procedure TGDGLRenderBufferObject.Bind();
+procedure TGDGLRenderBuffer.Bind();
 begin
-  glBindRenderBufferEXT(GL_RENDERBUFFER_EXT, FRenderBufferObject);
+  glBindRenderBufferEXT(GL_RENDERBUFFER_EXT, FBufferID);
 end;
 
 {******************************************************************************}
 {* Unbind the renderbuffer                                                    *}
 {******************************************************************************}
 
-procedure TGDGLRenderBufferObject.Unbind();
+procedure TGDGLRenderBuffer.Unbind();
 begin
   glBindRenderBufferEXT(GL_RENDERBUFFER_EXT, 0);
 end;

@@ -39,7 +39,7 @@ uses
   GDTypes,
   GDModes,
   GDMesh,
-  GDGLObjects,
+  GDGLWrappers,
   GDSettings,
   GDResource,
   GDResources,

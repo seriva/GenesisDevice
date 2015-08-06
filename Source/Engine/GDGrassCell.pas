@@ -37,7 +37,7 @@ uses
   Types,
   dglOpenGL,
   GDConstants,
-  GDGLObjects,
+  GDGLWrappers,
   GDRenderer,
   GDFoliage,
   GDTypes,

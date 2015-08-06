@@ -38,7 +38,7 @@ uses
   GDTerrain,
   GDRenderer,
   GDTypes,
-  GDGLObjects,
+  GDGLWrappers,
   GDTypesGenerics,
   GDBaseCell;
 

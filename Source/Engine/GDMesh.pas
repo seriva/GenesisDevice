@@ -34,7 +34,7 @@ Uses
   GDTypes,
   GDConstants,
   GDMaterial,
-  GDGLObjects,
+  GDGLWrappers,
   FileUtil,
   GDTypesGenerics,
   GDResource,

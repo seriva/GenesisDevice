@@ -35,7 +35,7 @@ uses
   dglOpenGL,
   GDTexture,
   GDTypes,
-  GDGLObjects,
+  GDGLWrappers,
   GDTypesGenerics,
   GDConsole,
   GDSettings,

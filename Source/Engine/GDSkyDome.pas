@@ -36,7 +36,7 @@ uses
   dglOpenGL,
   GDTexture,
   GDTypes,
-  GDGLObjects,
+  GDGLWrappers,
   GDConstants,
   GDCamera,
   GDSettings,

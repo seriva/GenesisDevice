@@ -39,7 +39,7 @@ uses
   GDConstants,
   GDSettings,
   GDTexture,
-  GDGLObjects,
+  GDGLWrappers,
   GDTypesGenerics,
   GDTypes,
   GDModes,
@@ -74,14 +74,14 @@ type
     FColorShader   : TGDGLShader;
     FTextureShader : TGDGLShader;
 
-    FFrameBuffer   : TGDGLFrameBufferObject;
-    FRenderBuffer1 : TGDGLRenderBufferObject;
-    FRenderBuffer2 : TGDGLRenderBufferObject;
+    FFrameBuffer   : TGDGLFrameBuffer;
+    FRenderBuffer1 : TGDGLRenderBuffer;
+    FRenderBuffer2 : TGDGLRenderBuffer;
     FSourceImage   : TGDTexture;
     FBloomImage    : TGDTexture;
     FBlurImage     : TGDTexture;
 
-    FShadowFrameBuffer : TGDGLFrameBufferObject;
+    FShadowFrameBuffer : TGDGLFrameBuffer;
     FShadowTexture     : TGDTexture;
 
     FBloomStrengh  : Single;
@@ -619,9 +619,9 @@ end;
 
 procedure TGDRenderer.InitFrameBuffers();
 begin
-  FFrameBuffer   := TGDGLFrameBufferObject.Create();
-  FRenderBuffer1 := TGDGLRenderBufferObject.Create(Settings.Width, Settings.Height, GL_DEPTH_COMPONENT24);
-  FRenderBuffer2 := TGDGLRenderBufferObject.Create(Settings.Width div 4, Settings.Height div 4, GL_DEPTH_COMPONENT24);
+  FFrameBuffer   := TGDGLFrameBuffer.Create();
+  FRenderBuffer1 := TGDGLRenderBuffer.Create(Settings.Width, Settings.Height, GL_DEPTH_COMPONENT24);
+  FRenderBuffer2 := TGDGLRenderBuffer.Create(Settings.Width div 4, Settings.Height div 4, GL_DEPTH_COMPONENT24);
   FSourceImage   := TGDTexture.Create(GL_RGBA, GL_RGBA, Settings.Width, Settings.Height );
   FBloomImage    := TGDTexture.Create(GL_RGBA, GL_RGBA, Settings.Width, Settings.Height );
   FBlurImage     := TGDTexture.Create(GL_RGBA, GL_RGBA, Settings.Width div 4, Settings.Height div 4);
@@ -629,7 +629,7 @@ end;
 
 procedure TGDRenderer.InitShadowFrameBuffers();
 begin
-  FShadowFrameBuffer := TGDGLFrameBufferObject.Create();
+  FShadowFrameBuffer := TGDGLFrameBuffer.Create();
   FShadowFrameBuffer.Bind();
   FShadowTexture     := TGDTexture.Create(GL_DEPTH_COMPONENT, GL_DEPTH_COMPONENT, R_SHADOW_SIZE, R_SHADOW_SIZE );
   glDrawBuffer(GL_NONE);
@@ -773,7 +773,7 @@ begin
   FBlurShader.Bind();
   FBlurShader.SetInt( 'T_BLUR_IMAGE', 0 );
   FFrameBuffer.Bind();
-  FFrameBuffer.AttachRenderBufferObject(FRenderBuffer2, GL_DEPTH_ATTACHMENT_EXT);
+  FFrameBuffer.AttachRenderBuffer(FRenderBuffer2, GL_DEPTH_ATTACHMENT_EXT);
 
   //horizontal
   FFrameBuffer.AttachTexture(FBlurImage,GL_COLOR_ATTACHMENT0_EXT,GL_TEXTURE_2D);
@@ -962,7 +962,7 @@ procedure RenderSourceImage();
 begin
   FFrameBuffer.Bind();
   FFrameBuffer.AttachTexture(FSourceImage,GL_COLOR_ATTACHMENT0_EXT,GL_TEXTURE_2D);
-  FFrameBuffer.AttachRenderBufferObject(FRenderBuffer1,GL_DEPTH_ATTACHMENT_EXT);
+  FFrameBuffer.AttachRenderBuffer(FRenderBuffer1,GL_DEPTH_ATTACHMENT_EXT);
   FFrameBuffer.Status();
   glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT);
 
@@ -979,7 +979,7 @@ procedure RenderUnderWaterSourceImage();
 begin
   FFrameBuffer.Bind();
   FFrameBuffer.AttachTexture(FSourceImage,GL_COLOR_ATTACHMENT0_EXT,GL_TEXTURE_2D);
-  FFrameBuffer.AttachRenderBufferObject(FRenderBuffer1,GL_DEPTH_ATTACHMENT_EXT);
+  FFrameBuffer.AttachRenderBuffer(FRenderBuffer1,GL_DEPTH_ATTACHMENT_EXT);
   FFrameBuffer.Status();
   glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT);
 
@@ -998,7 +998,7 @@ procedure RenderBloomImage();
 begin
   FFrameBuffer.Bind();
   FFrameBuffer.AttachTexture(FBloomImage,GL_COLOR_ATTACHMENT0_EXT,GL_TEXTURE_2D);
-  FFrameBuffer.AttachRenderBufferObject(FRenderBuffer1,GL_DEPTH_ATTACHMENT_EXT);
+  FFrameBuffer.AttachRenderBuffer(FRenderBuffer1,GL_DEPTH_ATTACHMENT_EXT);
   FFrameBuffer.Status();
   glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT);
 

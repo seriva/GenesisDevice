@@ -89,8 +89,9 @@
         <IsPartOfProject Value="True"/>
       </Unit10>
       <Unit11>
-        <Filename Value="..\Engine\GDGLObjects.pas"/>
+        <Filename Value="..\Engine\GDGLWrappers.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="GDGLWrappers"/>
       </Unit11>
       <Unit12>
         <Filename Value="..\Engine\GDGrassCell.pas"/>

@@ -35,9 +35,9 @@ type
   TGDRenderFor       = (RF_NORMAL, RF_WATER, RF_BLOOM, RF_SHADOW);
 
   //settings types
-  TGDTextureDetail   = (TD_LOW, TD_MEDIUM,TD_HIGH);
-  TGDTextureFilter   = (TF_BILINEAR, TF_TRILINEAR, TF_AF2, TF_AF4, TF_AF8, TF_AF16);
-  TGDWaterDetail     = (WD_LOW, WD_MEDIUM, WD_HIGH);
+  TGDTextureDetail   = (TD_LOW=1, TD_MEDIUM=2,TD_HIGH=3);
+  TGDTextureFilter   = (TF_BILINEAR=1, TF_TRILINEAR=2, TF_AF2=3, TF_AF4=4, TF_AF8=5, TF_AF16=6);
+  TGDWaterDetail     = (WD_LOW=1, WD_MEDIUM=2, WD_HIGH=3);
 
   //input types
   TGDInputTypes = (IT_SINGLE, IT_DIRECT, IT_DOWN, IT_UP);

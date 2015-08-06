@@ -385,11 +385,11 @@ end;
 {******************************************************************************}
 
 procedure TGDSettings.SetTextureDetail(aStr : String);
+var
+  iI : Integer;
 begin
-  If  aStr = TGDTextureDetailStrings[1] then FTextureDetail := TD_LOW    else
-  If  aStr = TGDTextureDetailStrings[2] then FTextureDetail := TD_MEDIUM else
-  If  aStr = TGDTextureDetailStrings[3] then FTextureDetail := TD_HIGH   else
-  FTextureDetail := TD_LOW;
+  for iI := 1 to 3 do
+    If  aStr = TGDTextureDetailStrings[iI] then FTextureDetail := TGDTextureDetail(iI);
 end;
 
 {******************************************************************************}
@@ -398,12 +398,7 @@ end;
 
 function TGDSettings.GetTextureDetail() : String;
 begin
-  case FTextureDetail of
-     TD_LOW    : result := TGDTextureDetailStrings[1];
-     TD_MEDIUM : result := TGDTextureDetailStrings[2];
-     TD_HIGH   : result := TGDTextureDetailStrings[3];
-     else result := TGDTextureDetailStrings[1];
-  end;
+  result := TGDTextureDetailStrings[ Integer(FTextureDetail) ];
 end;
 
 {******************************************************************************}
@@ -411,14 +406,11 @@ end;
 {******************************************************************************}
 
 procedure TGDSettings.SetTextureFilter(aStr : String);
+var
+  iI : Integer;
 begin
-  If  aStr = TGDTextureFilterStrings[1] then FTextureFilter := TF_BILINEAR  else
-  If  aStr = TGDTextureFilterStrings[2] then FTextureFilter := TF_TRILINEAR else
-  If  aStr = TGDTextureFilterStrings[3] then FTextureFilter := TF_AF2  else
-  If  aStr = TGDTextureFilterStrings[4] then FTextureFilter := TF_AF4  else
-  If  aStr = TGDTextureFilterStrings[5] then FTextureFilter := TF_AF8  else
-  If  aStr = TGDTextureFilterStrings[6] then FTextureFilter := TF_AF16 else
-  FTextureFilter := TF_BILINEAR;
+  for iI := 1 to 6 do
+    If  aStr = TGDTextureFilterStrings[iI] then FTextureFilter := TGDTextureFilter(iI);
 end;
 
 {******************************************************************************}
@@ -427,15 +419,7 @@ end;
 
 function TGDSettings.GetTextureFilter() : String;
 begin
-  case FTextureFilter of
-     TF_BILINEAR  : Result := TGDTextureFilterStrings[1] ;
-     TF_TRILINEAR : Result := TGDTextureFilterStrings[2] ;
-     TF_AF2       : Result := TGDTextureFilterStrings[3] ;
-     TF_AF4       : Result := TGDTextureFilterStrings[4] ;
-     TF_AF8       : Result := TGDTextureFilterStrings[5] ;
-     TF_AF16      : Result := TGDTextureFilterStrings[6] ;
-     else result := TGDTextureFilterStrings[1];
-  end;
+  result := TGDTextureFilterStrings[ Integer(FTextureFilter) ];
 end;
 
 {******************************************************************************}
@@ -443,11 +427,11 @@ end;
 {******************************************************************************}
 
 procedure TGDSettings.SetWaterDetail(aStr : String);
+var
+  iI : Integer;
 begin
-  If  aStr = TGDWaterDetailStrings[1] then FWaterDetail := WD_LOW    else
-  If  aStr = TGDWaterDetailStrings[2] then FWaterDetail := WD_MEDIUM else
-  If  aStr = TGDWaterDetailStrings[3] then FWaterDetail := WD_HIGH   else
-  FWaterDetail := WD_LOW;
+  for iI := 1 to 3 do
+    If  aStr = TGDWaterDetailStrings[iI] then FWaterDetail := TGDWaterDetail(iI);
 end;
 
 {******************************************************************************}
@@ -456,12 +440,7 @@ end;
 
 function TGDSettings.GetWaterDetail() : String;
 begin
-  case FWaterDetail of
-     WD_LOW    : Result := TGDWaterDetailStrings[1];
-     WD_MEDIUM : Result := TGDWaterDetailStrings[2];
-     WD_HIGH   : Result := TGDWaterDetailStrings[3];
-     else result := 'Low';
-  end;
+  result := TGDWaterDetailStrings[ Integer(FWaterDetail) ];
 end;
 
 end.
