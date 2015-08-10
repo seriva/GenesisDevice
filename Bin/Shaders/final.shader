@@ -33,6 +33,43 @@ uniform int I_DO_FXAA;
 uniform float I_GAMMA;
 uniform float I_BLOOM_STENGTH;
 uniform int I_DO_BLOOM;
+uniform int I_DO_SSAO;
+
+
+
+
+
+
+
+
+uniform sampler2D tDepth;
+uniform float zNear;
+uniform float zFar;
+uniform float strength;
+uniform int samples; //ao sample count //64.0
+uniform float radius; //ao radius //5.0
+
+float aoclamp = 0.125; //depth clamp - reduces haloing at screen edges
+bool noise = true; //use noise instead of pattern for sample dithering
+float noiseamount = 0.0002; //dithering amount
+
+float diffarea = 0.3; //self-shadowing reduction
+float gdisplace = 0.4; //gauss bell center //0.4
+
+float lumInfluence = 0.7; //how much luminance affects occlusion
+
+#define PI 3.14159265
+
+
+
+
+
+
+
+
+
+
+
 
 varying vec4 posPos;
 
@@ -43,6 +80,110 @@ varying vec4 posPos;
 #define FxaaFloat2 vec2
 #define FxaaTexLod0(t, p) texture2DLod(t, p, 0.0)
 #define FxaaTexOff(t, p, o, r) texture2DLodOffset(t, p, 0.0, o)
+
+
+
+
+
+
+vec2 rand(vec2 coord)
+{
+  float noiseX = ((fract(1.0-coord.s*(V_SCREEN_SIZE.x/2.0))*0.25)+(fract(coord.t*(V_SCREEN_SIZE.y/2.0))*0.75))*2.0-1.0;
+  float noiseY = ((fract(1.0-coord.s*(V_SCREEN_SIZE.x/2.0))*0.75)+(fract(coord.t*(V_SCREEN_SIZE.y/2.0))*0.25))*2.0-1.0;
+
+  if (noise)
+  {
+    noiseX = clamp(fract(sin(dot(coord ,vec2(12.9898,78.233))) * 43758.5453),0.0,1.0)*2.0-1.0;
+    noiseY = clamp(fract(sin(dot(coord ,vec2(12.9898,78.233)*2.0)) * 43758.5453),0.0,1.0)*2.0-1.0;
+  }
+  return vec2(noiseX,noiseY)*noiseamount;
+}
+
+float readDepth(vec2 coord)
+{
+  if (gl_TexCoord[0].x<0.0||gl_TexCoord[0].y<0.0) return 1.0;
+  else {
+    float z_b = texture2D(tDepth, coord ).x;
+    float z_n = 2.0 * z_b - 1.0;
+    return (2.0 * zNear) / (zFar + zNear - z_n * (zFar-zNear));
+  }
+}
+
+int compareDepthsFar(float depth1, float depth2) {
+  float garea = 2.0;
+  float diff = (depth1 - depth2)*100.0;
+  if (diff<gdisplace)
+  {
+    return 0;
+  } else {
+    return 1;
+  }
+}
+
+float compareDepths(float depth1, float depth2)
+{
+  float garea = 2.0;
+  float diff = (depth1 - depth2)*100.0; 
+  if (diff<gdisplace)
+  {
+    garea = diffarea;
+  }
+
+  float gauss = pow(2.7182,-2.0*(diff-gdisplace)*(diff-gdisplace)/(garea*garea));
+  return gauss;
+}
+
+float calAO(float depth,float dw, float dh)
+{
+  float dd = (1.0-depth)*radius;
+
+  float temp = 0.0;
+  float temp2 = 0.0;
+  float coordw = gl_TexCoord[0].x + dw*dd;
+  float coordh = gl_TexCoord[0].y + dh*dd;
+  float coordw2 = gl_TexCoord[0].x - dw*dd;
+  float coordh2 = gl_TexCoord[0].y - dh*dd;
+
+  vec2 coord = vec2(coordw , coordh);
+  vec2 coord2 = vec2(coordw2, coordh2);
+
+  float cd = readDepth(coord);
+  int far = compareDepthsFar(depth, cd);
+  temp = compareDepths(depth, cd);
+  //DEPTH EXTRAPOLATION:
+  if (far > 0)
+  {
+    temp2 = compareDepths(readDepth(coord2),depth);
+    temp += (1.0-temp)*temp2;
+  }
+
+  return temp;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 vec3 FxaaPixelShader( vec4 posPos, sampler2D tex, vec2 rcpFrame)
 {
@@ -102,6 +243,46 @@ void main()
 	{ 
         vec3 bloom = texture2D(T_BLOOM_IMAGE, gl_TexCoord[0].xy).rgb;
         color = color + (bloom * I_BLOOM_STENGTH);
+    }
+    
+    if (I_DO_SSAO == 1)
+    {
+        vec2 noise = rand(gl_TexCoord[0].xy);
+        float depth = readDepth(gl_TexCoord[0].xy);
+
+        float w = (1.0 / V_SCREEN_SIZE.x)/clamp(depth,aoclamp,1.0)+(noise.x*(1.0-noise.x));
+        float h = (1.0 / V_SCREEN_SIZE.y)/clamp(depth,aoclamp,1.0)+(noise.y*(1.0-noise.y));
+
+        float pw = 0.0;
+        float ph = 0.0;
+
+        float ao = 0.0;
+
+        float dl = PI * (3.0 - sqrt(5.0));
+        float dz = 1.0 / float(samples);
+        float l = 0.0;
+        float z = 1.0 - dz/2.0;
+
+        for (int i = 0; i < 64; i++)
+        {
+            if (i > samples) break;
+            float r = sqrt(1.0 - z);
+
+            pw = cos(l) * r;
+            ph = sin(l) * r;
+            ao += calAO(depth,pw*w,ph*h);
+            z = z - dz;
+            l = l + dl;
+        }
+        
+        ao /= float(samples);
+        ao *= strength;
+        ao = 1.0-ao;
+
+        vec3 lumcoeff = vec3(0.299,0.587,0.114);
+        float lum = dot(color.rgb, lumcoeff);
+        vec3 luminance = vec3(lum, lum, lum);
+        color = vec3(color*mix(vec3(ao),vec3(1.0),luminance*lumInfluence));//mix(color*ao, white, luminance)        
     }
 
 	gl_FragColor.rgb = pow(color, 1.0 / vec3(I_GAMMA));

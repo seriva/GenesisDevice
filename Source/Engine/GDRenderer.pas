@@ -74,13 +74,15 @@ type
     FColorShader   : TGDGLShader;
     FTextureShader : TGDGLShader;
 
-    FRBO           : TGDGLRenderBuffer;
+
 
     FFrameFBO      : TGDGLFrameBuffer;
     FFrameTex      : TGDTexture;
+    FFrameDepthTex : TGDTexture;
 
     FBloomFBO      : TGDGLFrameBuffer;
     FBloomTex      : TGDTexture;
+    FBloomRBO      : TGDGLRenderBuffer;
 
     FBlurFBO       : TGDGLFrameBuffer;
     FBlurRBO       : TGDGLRenderBuffer;
@@ -625,22 +627,22 @@ end;
 
 procedure TGDRenderer.InitFrameBuffers();
 begin
-  FRBO := TGDGLRenderBuffer.Create(Settings.Width, Settings.Height, GL_DEPTH_COMPONENT24);
-
   //Frame
   FFrameFBO := TGDGLFrameBuffer.Create();
   FFrameTex := TGDTexture.Create(GL_RGBA, GL_RGBA, Settings.Width, Settings.Height );
+  FFrameDepthTex := TGDTexture.Create(GL_DEPTH_COMPONENT, GL_DEPTH_COMPONENT, Settings.Width, Settings.Height );
   FFrameFBO.Bind();
-  FFrameFBO.AttachRenderBuffer(FRBO, GL_DEPTH_ATTACHMENT_EXT);
   FFrameFBO.AttachTexture(FFrameTex,GL_COLOR_ATTACHMENT0_EXT,GL_TEXTURE_2D);
+  FFrameFBO.AttachTexture(FFrameDepthTex, GL_DEPTH_ATTACHMENT_EXT, GL_TEXTURE_2D );
   FFrameFBO.Status();
   FFrameFBO.Unbind();
 
   //Bloom
   FBloomFBO := TGDGLFrameBuffer.Create();
+  FBloomRBO := TGDGLRenderBuffer.Create(Settings.Width, Settings.Height, GL_DEPTH_COMPONENT24);
   FBloomTex := TGDTexture.Create(GL_RGBA, GL_RGBA, Settings.Width, Settings.Height );
   FBloomFBO.Bind();
-  FBloomFBO.AttachRenderBuffer(FRBO, GL_DEPTH_ATTACHMENT_EXT);
+  FBloomFBO.AttachRenderBuffer(FBloomRBO, GL_DEPTH_ATTACHMENT_EXT);
   FBloomFBO.AttachTexture(FBloomTex,GL_COLOR_ATTACHMENT0_EXT,GL_TEXTURE_2D);
   FBloomFBO.Status();
   FBloomFBO.Unbind();
@@ -651,7 +653,7 @@ begin
   FBlurFBO.Bind();
   FBlurFBO.AttachRenderBuffer(FBlurRBO, GL_DEPTH_ATTACHMENT_EXT);
   FBlurFBO.Unbind();
-  FBlurTex  := TGDTexture.Create(GL_RGBA, GL_RGBA, Settings.Width div 4, Settings.Height div 4);
+  FBlurTex := TGDTexture.Create(GL_RGBA, GL_RGBA, Settings.Width div 4, Settings.Height div 4);
 end;
 
 procedure TGDRenderer.InitShadowFrameBuffers();
@@ -674,15 +676,15 @@ procedure TGDRenderer.ClearFrameBuffers();
 begin
   FreeAndNil(FFrameFBO);
   FreeAndNil(FFrameTex);
+  FreeAndNil(FFrameDepthTex);
 
   FreeAndNil(FBloomFBO);
+  FreeAndNil(FBloomRBO);
   FreeAndNil(FBloomTex);
 
   FreeAndNil(FBlurFBO);
   FreeAndNil(FBlurRBO);
   FreeAndNil(FBlurTex);
-
-  FreeAndNil(FRBO);
 end;
 
 procedure TGDRenderer.ClearShadowFrameBuffers();
@@ -1045,6 +1047,8 @@ begin
   end
   else
     FFinalShader.SetInt('I_DO_BLOOM',0);
+
+  FFinalShader.SetInt('I_DO_SSAO',0);
 
   FFinalShader.SetFloat2('V_SCREEN_SIZE',Settings.Width, Settings.Height);
   FFinalShader.SetFloat('I_GAMMA',Settings.Gamma);
