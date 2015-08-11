@@ -40,6 +40,7 @@ uniform float I_SSAO_FAR;
 uniform float I_SSAO_STRENGTH;
 uniform int   I_SSAO_SAMPLES; 
 uniform float I_SSAO_RADIUS;
+uniform int   I_SSAO_ONLY; 
 
 float aoclamp = 0.125; //depth clamp - reduces haloing at screen edges
 bool noise = true; //use noise instead of pattern for sample dithering
@@ -229,6 +230,10 @@ void main()
         vec3 lumcoeff = vec3(0.299,0.587,0.114);
         float lum = dot(color.rgb, lumcoeff);
         vec3 luminance = vec3(lum, lum, lum);
+        if (I_SSAO_ONLY == 1) 
+        {
+           color = vec3(1,1,1); 
+        }
         color = vec3(color*mix(vec3(ao),vec3(1.0),luminance*lumInfluence));       
     }
 

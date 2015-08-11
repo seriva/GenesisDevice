@@ -93,6 +93,7 @@ type
     FSSAOStrength  : Single;
     FSSAOSamples   : Integer;
     FSSAORadius    : Single;
+    FSSAOOnly      : Integer;
 
     FLinesVertices     : TGDVertex_V_List;
     FLinesVertexBuffer : TGDGLVertexBuffer;
@@ -311,12 +312,14 @@ begin
     FSSAOStrength := 0.65;
     FSSAOSamples  := 32;
     FSSAORadius   := 2.25;
+    FSSAOOnly     := 0;
 
     //commands
     Console.AddCommand('RBloomMult', '0.0 to 1.0 : Set the bloom multiplier value', CT_FLOAT, @FBloomStrengh);
     Console.AddCommand('RSSAOStrength', '0.0 to 1.0 : Set SSAO strength', CT_FLOAT, @FSSAOStrength);
     Console.AddCommand('RSSAOSamples', '8, 16, 32, 64 : Set SSAO sample count', CT_INTEGER, @FSSAOSamples);
     Console.AddCommand('RSSAORadius', '0.0 to 10.0 : Set SSAO radius', CT_FLOAT, @FSSAORadius);
+    Console.AddCommand('RSSAOOnly', '0.0 to 1.0 : Only show SSAO', CT_INTEGER, @FSSAOOnly);
   except
     on E: Exception do
     begin
@@ -1065,6 +1068,7 @@ begin
     FPostShader.SetFloat('I_SSAO_STRENGTH',FSSAOStrength);
     FPostShader.SetInt('I_SSAO_SAMPLES',FSSAOSamples);
     FPostShader.SetFloat('I_SSAO_RADIUS',FSSAORadius);
+    FPostShader.SetInt('I_SSAO_ONLY',FSSAOOnly);
     FFrameDepthTex.BindTexture( GL_TEXTURE2 );
   end
   else
