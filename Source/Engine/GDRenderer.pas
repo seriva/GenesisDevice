@@ -70,11 +70,9 @@ type
     FGrassShader   : TGDGLShader;
     FBlurShader    : TGDGLShader;
     FMeshShader    : TGDGLShader;
-    FFinalShader   : TGDGLShader;
+    FPostShader    : TGDGLShader;
     FColorShader   : TGDGLShader;
     FTextureShader : TGDGLShader;
-
-
 
     FFrameFBO      : TGDGLFrameBuffer;
     FFrameTex      : TGDTexture;
@@ -88,11 +86,13 @@ type
     FBlurRBO       : TGDGLRenderBuffer;
     FBlurTex       : TGDTexture;
 
-
     FShadowFBO     : TGDGLFrameBuffer;
     FShadowTex     : TGDTexture;
 
     FBloomStrengh  : Single;
+    FSSAOStrength  : Single;
+    FSSAOSamples   : Integer;
+    FSSAORadius    : Single;
 
     FLinesVertices     : TGDVertex_V_List;
     FLinesVertexBuffer : TGDGLVertexBuffer;
@@ -307,8 +307,16 @@ begin
     FQuadVertexBuffer.Unbind();
     FreeAndNil(iQL);
 
+    //default values
+    FSSAOStrength := 0.75;
+    FSSAOSamples  := 32;
+    FSSAORadius   := 4;
+
     //commands
     Console.AddCommand('RBloomMult', '0.0 to 1.0 : Set the bloom multiplier value', CT_FLOAT, @FBloomStrengh);
+    Console.AddCommand('RSSAOStrength', '0.0 to 1.0 : Set SSAO strength', CT_FLOAT, @FSSAOStrength);
+    Console.AddCommand('RSSAOSamples', '8, 16, 32, 64 : Set SSAO sample count', CT_INTEGER, @FSSAOSamples);
+    Console.AddCommand('RSSAORadius', '0.0 to 10.0 : Set SSAO radius', CT_FLOAT, @FSSAORadius);
   except
     on E: Exception do
     begin
@@ -597,7 +605,7 @@ begin
   FGrassShader    := TGDGLShader.Create(SHADER_GRASS);
   FBlurShader     := TGDGLShader.Create(SHADER_BLUR);
   FMeshShader     := TGDGLShader.Create(SHADER_MESH);
-  FFinalShader    := TGDGLShader.Create(SHADER_FINAL);
+  FPostShader     := TGDGLShader.Create(SHADER_POST);
   FColorShader    := TGDGLShader.Create(SHADER_COLOR);
   FTextureShader  := TGDGLShader.Create(SHADER_TEXTURE);
   Timing.Stop();
@@ -616,7 +624,7 @@ begin
   FreeAndNil(FGrassShader);
   FreeAndNil(FBlurShader);
   FreeAndNil(FMeshShader);
-  FreeAndNil(FFinalShader);
+  FreeAndNil(FPostShader);
   FreeAndNil(FColorShader);
   FreeAndNil(FTextureShader);
 end;
@@ -1030,33 +1038,45 @@ begin
   glDisable(GL_DEPTH_TEST);
   glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT);
 
-  FFinalShader.Bind();
-  FFinalShader.SetInt('T_SOURCE_IMAGE',0);
+  FPostShader.Bind();
+  FPostShader.SetInt('T_SOURCE_IMAGE',0);
 
   If Settings.UseFXAA and not(Modes.RenderObjectBoxes or Modes.RenderNormals or Modes.RenderNodeBoxes) then
-    FFinalShader.SetInt('I_DO_FXAA',1)
+    FPostShader.SetInt('I_DO_FXAA',1)
   else
-    FFinalShader.SetInt('I_DO_FXAA',0);
+    FPostShader.SetInt('I_DO_FXAA',0);
 
   If Settings.UseBloom then
   begin
-    FFinalShader.SetInt('I_DO_BLOOM',1);
-    FFinalShader.SetInt('T_BLOOM_IMAGE',1);
-    FFinalShader.SetFloat('I_BLOOM_STENGTH',FBloomStrengh);
+    FPostShader.SetInt('I_DO_BLOOM',1);
+    FPostShader.SetInt('T_BLOOM_IMAGE',1);
+    FPostShader.SetFloat('I_BLOOM_STENGTH',FBloomStrengh);
     FBloomTex.BindTexture( GL_TEXTURE1 );
   end
   else
-    FFinalShader.SetInt('I_DO_BLOOM',0);
+    FPostShader.SetInt('I_DO_BLOOM',0);
 
-  FFinalShader.SetInt('I_DO_SSAO',0);
+  if Settings.UseSSAO and not(Map.Water.UnderWater()) then
+  begin
+    FPostShader.SetInt('I_DO_SSAO',1);
+    FPostShader.SetInt('T_DEPTH_IMAGE',2);
+    FPostShader.SetFloat('I_SSAO_NEAR',25);
+    FPostShader.SetFloat('I_SSAO_FAR', Settings.ViewDistance * R_VIEW_DISTANCE_STEP);
+    FPostShader.SetFloat('I_SSAO_STRENGTH',FSSAOStrength);
+    FPostShader.SetInt('I_SSAO_SAMPLES',FSSAOSamples);
+    FPostShader.SetFloat('I_SSAO_RADIUS',FSSAORadius);
+    FFrameDepthTex.BindTexture( GL_TEXTURE2 );
+  end
+  else
+    FPostShader.SetInt('I_DO_SSAO',0);
 
-  FFinalShader.SetFloat2('V_SCREEN_SIZE',Settings.Width, Settings.Height);
-  FFinalShader.SetFloat('I_GAMMA',Settings.Gamma);
+  FPostShader.SetFloat2('V_SCREEN_SIZE',Settings.Width, Settings.Height);
+  FPostShader.SetFloat('I_GAMMA',Settings.Gamma);
   FFrameTex.BindTexture( GL_TEXTURE0 );
 
   RenderQuad();
 
-  FFinalShader.UnBind();
+  FPostShader.UnBind();
   glEnable(GL_DEPTH_TEST);
 end;
 

@@ -74,6 +74,7 @@ type
     RunButton: TButton;
     PageControl: TPageControl;
     ShadowsCheckbox: TCheckBox;
+    SSAOCheckbox: TCheckBox;
     WindowTabSheet: TTabSheet;
     WindowPanel: TPanel;
     ResolutionLabel: TLabel;
@@ -320,6 +321,7 @@ begin
   BloomCheckBox.Checked := iSettings.UseBloom;
   FXAACheckBox.Checked := iSettings.UseFXAA;
   ShadowsCheckbox.Checked := iSettings.UseShadows;
+  SSAOCheckbox.Checked := iSettings.UseSSAO;
 
   //input settings
   InvertMouseCheckBox.Checked := iSettings.InvertMouse;
@@ -365,6 +367,7 @@ begin
   iSettings.UseBloom         := BloomCheckBox.Checked;
   iSettings.UseFXAA          := FXAACheckBox.Checked;
   iSettings.UseShadows       := ShadowsCheckbox.Checked;
+  iSettings.UseSSAO          := SSAOCheckbox.Checked;
 
   //input settings
   iSettings.InvertMouse      := InvertMouseCheckBox.Checked;

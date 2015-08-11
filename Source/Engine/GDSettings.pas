@@ -62,6 +62,7 @@ type
     UseBloom         : Boolean;
     UseFXAA          : Boolean;
     UseShadows       : Boolean;
+    UseSSAO          : Boolean;
 
     //input settings
     InvertMouse : Boolean;
@@ -97,6 +98,7 @@ type
     FUseBloom         : Boolean;
     FUseFXAA          : Boolean;
     FUseShadows       : Boolean;
+    FUseSSAO          : Boolean;
 
     //input settings
     FInvertMouse      : Boolean;
@@ -139,6 +141,7 @@ type
     property UseBloom : Boolean read FUseBloom write FUseBloom;
     property UseFXAA : Boolean read FUseFXAA write FUseFXAA;
     property UseShadows : Boolean read FUseShadows write FUseShadows;
+    property UseSSAO : Boolean read FUseSSAO write FUseSSAO;
 
 
     //input settings
@@ -204,10 +207,11 @@ begin
 
   //console commands
   Console.AddCommand('RBloom', '0,1 : Enable or disable bloom', CT_BOOLEAN, @FUseBloom);
-  Console.AddCommand('RFXAA', '0,1 : Enable or disable bloom', CT_BOOLEAN, @FUseFXAA);
+  Console.AddCommand('RFXAA', '0,1 : Enable or disable FXAA', CT_BOOLEAN, @FUseFXAA);
   Console.AddCommand('RVSync', '0,1 : Enable or disable vertical sync', CT_BOOLEAN, @FVerticalSync);
   Console.AddCommand('RGamma', '0.0 to 1.0 : Set the gamma value', CT_FLOAT, @FGamma);
-  Console.AddCommand('RShadows', '0,1 : Enable or disable bloom', CT_BOOLEAN, @FUseShadows);
+  Console.AddCommand('RShadows', '0,1 : Enable or disable shadows', CT_BOOLEAN, @FUseShadows);
+  Console.AddCommand('RSSAO', '0,1 : Enable or disable SSAO', CT_BOOLEAN, @FUseSSAO);
 end;
 
 {******************************************************************************}
@@ -246,6 +250,7 @@ begin
   FUseBloom         := iIniFile.ReadBool( 'Renderer', 'UseBloom', False);
   FUseFXAA          := iIniFile.ReadBool( 'Renderer', 'UseFXAA', False);
   FUseShadows       := iIniFile.ReadBool( 'Renderer', 'UseShadows', False);
+  FUseSSAO          := iIniFile.ReadBool( 'Renderer', 'UseSSAO', False);
 
   //input settings
   FInvertMouse      := iIniFile.ReadBool( 'Controls', 'InvertMouse', False);
@@ -285,6 +290,7 @@ begin
   iIniFile.WriteBool( 'Renderer', 'UseBloom', FUseBloom );
   iIniFile.WriteBool( 'Renderer', 'UseFXAA', FUseFXAA );
   iIniFile.WriteBool( 'Renderer', 'UseShadows', FUseShadows );
+  iIniFile.WriteBool( 'Renderer', 'UseSSAO', FUseSSAO );
 
   //input settings
   iIniFile.WriteBool( 'Controls', 'InvertMouse', FInvertMouse);
@@ -320,6 +326,7 @@ begin
   Result.UseBloom        := FUseBloom;
   Result.UseFXAA         := FUseFXAA;
   Result.UseShadows      := FUseShadows;
+  Result.UseSSAO         := FUseSSAO;
 
   //input settings
   Result.InvertMouse      := FInvertMouse;
@@ -353,6 +360,7 @@ begin
   FUseBloom         := aSettings.UseBloom;
   FUseFXAA          := aSettings.UseFXAA;
   FUseShadows       := aSettings.UseShadows;
+  FUseSSAO          := aSettings.UseSSAO;
 
   //input settings
   FInvertMouse      := aSettings.InvertMouse;

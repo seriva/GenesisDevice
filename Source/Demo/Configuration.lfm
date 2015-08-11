@@ -1,12 +1,12 @@
 object ConfigurationForm: TConfigurationForm
-  Left = 1938
-  Height = 370
-  Top = 305
+  Left = 853
+  Height = 335
+  Top = 275
   Width = 398
   BorderIcons = [biSystemMenu]
   BorderStyle = bsSingle
   Caption = 'Genesis Device Configuration'
-  ClientHeight = 370
+  ClientHeight = 335
   ClientWidth = 398
   Color = clBtnFace
   Font.Color = clWindowText
@@ -16,11 +16,11 @@ object ConfigurationForm: TConfigurationForm
   OnDestroy = FormDestroy
   OnShow = FormShow
   Position = poDefault
-  LCLVersion = '1.2.6.0'
+  LCLVersion = '1.4.2.0'
   object RunButton: TButton
     Left = 328
     Height = 26
-    Top = 336
+    Top = 304
     Width = 60
     Caption = 'Run'
     Font.Color = clWindowText
@@ -33,7 +33,7 @@ object ConfigurationForm: TConfigurationForm
   end
   object PageControl: TPageControl
     Left = -1
-    Height = 329
+    Height = 297
     Top = -1
     Width = 400
     ActivePage = WindowTabSheet
@@ -46,16 +46,16 @@ object ConfigurationForm: TConfigurationForm
     TabOrder = 1
     object WindowTabSheet: TTabSheet
       Caption = 'Window'
-      ClientHeight = 300
+      ClientHeight = 268
       ClientWidth = 392
       object WindowPanel: TPanel
         Left = 0
-        Height = 300
+        Height = 268
         Top = 0
         Width = 392
         Align = alClient
         BevelOuter = bvNone
-        ClientHeight = 300
+        ClientHeight = 268
         ClientWidth = 392
         TabOrder = 0
         object ResolutionLabel: TLabel
@@ -161,17 +161,17 @@ object ConfigurationForm: TConfigurationForm
     end
     object RenderingTabSheet: TTabSheet
       Caption = 'Rendering'
-      ClientHeight = 300
+      ClientHeight = 268
       ClientWidth = 392
       ImageIndex = 1
       object RenderingPanel: TPanel
         Left = 0
-        Height = 300
+        Height = 268
         Top = 0
         Width = 392
         Align = alClient
         BevelOuter = bvNone
-        ClientHeight = 300
+        ClientHeight = 268
         ClientWidth = 392
         TabOrder = 0
         object WaterDetailLabel: TLabel
@@ -360,9 +360,9 @@ object ConfigurationForm: TConfigurationForm
           TabOrder = 7
         end
         object ShadowsCheckbox: TCheckBox
-          Left = 8
+          Left = 136
           Height = 23
-          Top = 272
+          Top = 239
           Width = 80
           Caption = 'Shadows'
           Font.Color = clWindowText
@@ -373,21 +373,35 @@ object ConfigurationForm: TConfigurationForm
           ShowHint = True
           TabOrder = 8
         end
+        object SSAOCheckbox: TCheckBox
+          Left = 136
+          Height = 23
+          Top = 207
+          Width = 61
+          Caption = 'SSAO'
+          Font.Color = clWindowText
+          Font.Height = -13
+          Font.Name = 'MS Sans Serif'
+          ParentFont = False
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 9
+        end
       end
     end
     object InputTabSheet: TTabSheet
       Caption = 'Input'
-      ClientHeight = 300
+      ClientHeight = 268
       ClientWidth = 392
       ImageIndex = 2
       object InputPanel: TPanel
         Left = 0
-        Height = 300
+        Height = 268
         Top = 0
         Width = 392
         Align = alClient
         BevelOuter = bvNone
-        ClientHeight = 300
+        ClientHeight = 268
         ClientWidth = 392
         TabOrder = 0
         object MouseSensitivityLabel: TLabel
@@ -430,17 +444,17 @@ object ConfigurationForm: TConfigurationForm
     end
     object SoundTabSheet: TTabSheet
       Caption = 'Sound'
-      ClientHeight = 300
+      ClientHeight = 268
       ClientWidth = 392
       ImageIndex = 3
       object SoundPanel: TPanel
         Left = 0
-        Height = 300
+        Height = 268
         Top = 0
         Width = 392
         Align = alClient
         BevelOuter = bvNone
-        ClientHeight = 300
+        ClientHeight = 268
         ClientWidth = 392
         TabOrder = 0
         object SoundVolumeLabel: TLabel
@@ -484,17 +498,17 @@ object ConfigurationForm: TConfigurationForm
     end
     object DemoTabSheet: TTabSheet
       Caption = 'Demo'
-      ClientHeight = 300
+      ClientHeight = 268
       ClientWidth = 392
       ImageIndex = 4
       object DemoPanel: TPanel
         Left = 0
-        Height = 300
+        Height = 268
         Top = 0
         Width = 392
         Align = alClient
         BevelOuter = bvNone
-        ClientHeight = 300
+        ClientHeight = 268
         ClientWidth = 392
         TabOrder = 0
         object MapLabel: TLabel

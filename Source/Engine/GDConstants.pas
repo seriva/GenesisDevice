@@ -137,7 +137,7 @@ const
   SHADER_WATER    = PATH_SHADERS + 'water.shader';
   SHADER_GRASS    = PATH_SHADERS + 'grass.shader';
   SHADER_BLUR     = PATH_SHADERS + 'blur.shader';
-  SHADER_FINAL    = PATH_SHADERS + 'final.shader';
+  SHADER_POST     = PATH_SHADERS + 'postprocess.shader';
   SHADER_MESH     = PATH_SHADERS + 'mesh.shader';
   SHADER_COLOR    = PATH_SHADERS + 'color.shader';
   SHADER_TEXTURE  = PATH_SHADERS + 'texture.shader';
