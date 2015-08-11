@@ -308,9 +308,9 @@ begin
     FreeAndNil(iQL);
 
     //default values
-    FSSAOStrength := 0.75;
+    FSSAOStrength := 0.65;
     FSSAOSamples  := 32;
-    FSSAORadius   := 4;
+    FSSAORadius   := 2.25;
 
     //commands
     Console.AddCommand('RBloomMult', '0.0 to 1.0 : Set the bloom multiplier value', CT_FLOAT, @FBloomStrengh);
