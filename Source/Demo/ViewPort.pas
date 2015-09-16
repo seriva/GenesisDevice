@@ -78,7 +78,6 @@ var
   iSettings         : TSettings;
   iDMScreenSettings : DEVMODE;
 begin
-  Application.Title := 'Genesis Device Engine - (Build : ' + gdEngineBuildInfo() + ')';
   self.Caption := 'Genesis Device Engine - (Build : ' + gdEngineBuildInfo() + ')';
 
   //initialize the renderer with the current settings
@@ -145,8 +144,6 @@ begin
 
   //Set settings changed via the console to the configuration interface
   ConfigurationForm.SettingsToInterface();
-  Application.Title := 'Configuration';
-  ConfigurationForm.Caption := 'Configuration';
 
   //clear the gameresources
   ClearGame();

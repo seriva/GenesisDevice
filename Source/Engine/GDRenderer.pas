@@ -1091,7 +1091,7 @@ begin
   //create the water reflection texture
   RenderWaterReflection();
 
-  //detect the visibel objects
+  //detect the visible objects
   glLoadIdentity();
   Camera.Translate();
   Map.DetectVisibleCells();

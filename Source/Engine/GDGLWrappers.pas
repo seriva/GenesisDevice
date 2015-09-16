@@ -590,6 +590,17 @@ begin
     glEnableClientState(GL_NORMAL_ARRAY);
     glNormalPointer(GL_FLOAT, sizeof(TGDVertex_V_UV_N), GLvoid(20));
   end;
+  VL_V_UV_N_C:
+  begin
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glVertexPointer(3, GL_FLOAT, sizeof(TGDVertex_V_UV_N_C), GLvoid(0));
+    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+    glTexCoordPointer(2, GL_FLOAT, sizeof(TGDVertex_V_UV_N_C), GLvoid(12));
+    glEnableClientState(GL_NORMAL_ARRAY);
+    glNormalPointer(GL_FLOAT, sizeof(TGDVertex_V_UV_N_C), GLvoid(20));
+    glEnableClientState(GL_COLOR_ARRAY);
+    glColorPointer(4, GL_FLOAT, sizeof(TGDVertex_V_UV_N_C), GLvoid(32));
+  end;
   end;
 end;
 
@@ -602,6 +613,7 @@ begin
   glDisableClientState(GL_VERTEX_ARRAY);
   glDisableClientState(GL_NORMAL_ARRAY);
   glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+  glDisableClientState(GL_COLOR_ARRAY);
   glBindBuffer(GL_ARRAY_BUFFER, 0);
 end;
 

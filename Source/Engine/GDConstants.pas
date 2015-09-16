@@ -52,7 +52,7 @@ type
   TGDSoundResourceType = (SR_BUFFER, SR_STREAM);
 
   //Vertex layouts
-  TGDVertexLayout = (VL_NONE, VL_V, VL_V_UV, VL_V_UV_N);
+  TGDVertexLayout = (VL_NONE, VL_V, VL_V_UV, VL_V_UV_N, VL_V_UV_N_C);
 
   //base procedure callback
   TGDCallback = procedure();

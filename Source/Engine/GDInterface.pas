@@ -78,7 +78,6 @@ function  gdTimingFrameTime() : Integer;
 function  gdRendererInitViewPort( aWnd  : HWND ) : boolean;
 function  gdRendererShutDownViewPort() : boolean;
 procedure gdRendererResizeViewPort(aTop, aLeft, aWidth, aHeight : integer);
-procedure gdRendererState(aState : TGDRenderState);
 
 //sound functions
 function  gdSoundLoad( aFileName : String) : pointer;
@@ -133,10 +132,10 @@ begin
   Settings := TGDSettings.Create();
 
   //Create engine main and subsystem classes
-  Main             := TGDMain.Create();
-  Input            := TGDInput.Create();
-  Sound            := TGDSound.Create();
-  Renderer         := TGDRenderer.Create();
+  Main     := TGDMain.Create();
+  Input    := TGDInput.Create();
+  Sound    := TGDSound.Create();
+  Renderer := TGDRenderer.Create();
 
   //Check if subsystems where initialized properly.
   If not(Sound.Initialized) or not(Input.Initialized) or not(Renderer.Initialized) then
@@ -146,12 +145,12 @@ begin
   end;
 
   //Create engine classes
-  Resources        := TGDResources.Create();
-  Camera           := TGDCamera.Create();
-  Map              := TGDMap.Create();
-  Statistics       := TGDStatistics.Create();
-  Modes            := TGDModes.Create();
-  GUI              := TGDGUI.Create();
+  Resources  := TGDResources.Create();
+  Camera     := TGDCamera.Create();
+  Map        := TGDMap.Create();
+  Statistics := TGDStatistics.Create();
+  Modes      := TGDModes.Create();
+  GUI        := TGDGUI.Create();
 
   result := true;
 end;
@@ -235,15 +234,6 @@ begin
   Settings.Height := aHeight;
   Input.CalculateMousePosStart();
   Renderer.ResizeViewPort();
-end;
-
-{******************************************************************************}
-{* Set the current renderstate                                                *}
-{******************************************************************************}
-
-procedure gdRendererState(aState : TGDRenderState);
-begin
-  Renderer.RenderState(aState);
 end;
 
 {******************************************************************************}

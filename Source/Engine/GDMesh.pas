@@ -48,16 +48,20 @@ Type
 
   TGDSurface = class (TObject)
   private
-    FMaterial  : TGDMaterial;
-    FTriangles : TGDTriangleIdxList;
-    FDPL       : TGDGLDisplayList;
+    FMaterial      : TGDMaterial;
+    FIndexes       : TGDIndexList;
+    FIndexBuffer   : TGDGLIndexBuffer;
+    FTriangleCount : Integer;
   public
-    property Material  : TGDMaterial read FMaterial;
-    property Triangles : TGDTriangleIdxList read FTriangles;
-    property DPL       : TGDGLDisplayList read FDPL;
+    property Material      : TGDMaterial read FMaterial;
+    property Indexes       : TGDIndexList read FIndexes;
+    property IndexBuffer   : TGDGLIndexBuffer read FIndexBuffer;
+    property TriangleCount : Integer read FTriangleCount write FTriangleCount;
 
     constructor Create();
     destructor  Destroy();override;
+
+    procedure   Render();
   end;
   TGDSurfaceList = specialize TFPGObjectList<TGDSurface>;
 
@@ -67,18 +71,16 @@ Type
 
   TGDMesh = class (TGDResource)
   private
-    FVertices : TGDVertex_V_List;
-    FNormals  : TGDVertex_V_List;
-    FUV       : TGDVertex_UV_List;
     FSurfaces : TGDSurfaceList;
+    FVertices : TGDVertex_V_UV_N_C_List;
+    FVertexBuffer : TGDGLVertexBuffer;
     FTriangleCount : Integer;
 
-    procedure CreateDisplayList();
+    procedure CreateBuffers();
   public
-    property Vertices : TGDVertex_V_List read FVertices;
-    property Normals  : TGDVertex_V_List read FNormals;
-    property UV       : TGDVertex_UV_List read FUV;
     property Surfaces : TGDSurfaceList read FSurfaces;
+    property Vertices : TGDVertex_V_UV_N_C_List read FVertices;
+    property VertexBuffer  : TGDGLVertexBuffer read FVertexBuffer;
     property TriangleCount : Integer read FTriangleCount;
 
     constructor Create(aFileName : String);
@@ -97,9 +99,9 @@ uses
 
 constructor TGDSurface.Create();
 begin
-  FMaterial := Nil;
-  FTriangles := TGDTriangleIdxList.Create();
-  FDPL       := TGDGLDisplayList.Create();
+  FMaterial    := Nil;
+  FIndexes     := TGDIndexList.Create();
+  FIndexBuffer := TGDGLIndexBuffer.Create();
   Inherited;
 end;
 
@@ -110,9 +112,20 @@ end;
 destructor TGDSurface.Destroy();
 begin
   Resources.RemoveResource(TGDResource(FMaterial));
-  FreeAndNil(FTriangles);
-  FreeAndNil(FDPL);
+  FreeAndNil(FIndexes);
+  FreeAndNil(FIndexBuffer);
   Inherited;
+end;
+
+{******************************************************************************}
+{* Render surface                                                             *}
+{******************************************************************************}
+
+procedure TGDSurface.Render();
+begin
+  FIndexBuffer.Bind();
+  FIndexBuffer.Render(GL_TRIANGLES);
+  FIndexBuffer.Unbind();
 end;
 
 {******************************************************************************}
@@ -129,16 +142,32 @@ var
   iUV : TGDUVCoord;
   iMat : TGDMaterial;
   iResult : boolean;
-  iTri : TGDTriangleIdxs;
   iSur : TGDSurface;
+  iVertices : TGDVertex_V_List;
+  iNormals  : TGDVertex_V_List;
+  iUVS      : TGDVertex_UV_List;
 
-procedure ParsePointSet(aStr : String; var aTriangle : TGDTriangleIdxs; aStartIndex : integer);
+function ParseVertex(aStr : String): TGDIdxVertex;
 begin
   iSL.Clear();
   ExtractStrings(['/'], [], PChar(AnsiString(aStr)), iSL);
-  aTriangle.Data[aStartIndex]   := StrToInt(iSL.Strings[0])-1;
-  aTriangle.Data[aStartIndex+1] := StrToInt(iSL.Strings[1])-1;
-  aTriangle.Data[aStartIndex+2] := StrToInt(iSL.Strings[2])-1;
+  result.Vertex := StrToInt(iSL.Strings[0])-1;
+  result.UV     := StrToInt(iSL.Strings[1])-1;
+  result.Normal := StrToInt(iSL.Strings[2])-1;
+end;
+
+function AddVertex(iIdxVertex : TGDIdxVertex): integer;
+var
+  iV : TGDVertex_V_UV_N_C;
+begin
+  iV.Vertex := iVertices.Items[iIdxVertex.Vertex].Copy();
+  iV.UV     := iUVS.Items[iIdxVertex.UV].Copy();
+  iV.Normal := iNormals.Items[iIdxVertex.Normal].Copy();
+  if iSur.Material.DoTreeAnim then
+    iV.Color  := Color(0.75 + (Random(25)/100), 0.75 + (Random(25)/100), 0.75 + (Random(25)/100), 1)
+  else
+    iV.Color  := Color(1,1,1,1);
+  result    := FVertices.Add(iV);
 end;
 
 begin
@@ -146,11 +175,13 @@ begin
   try
     iResult := true;
 
-    iSL       := TStringList.Create();
-    FVertices := TGDVertex_V_List.Create();
-    FNormals  := TGDVertex_V_List.Create();
-    FUV       := TGDVertex_UV_List.Create();
     FSurfaces := TGDSurfaceList.Create();
+    FVertices := TGDVertex_V_UV_N_C_List.Create();
+
+    iSL       := TStringList.Create();
+    iVertices := TGDVertex_V_List.Create();
+    iNormals  := TGDVertex_V_List.Create();
+    iUVs      := TGDVertex_UV_List.Create();
 
     If Not(FileExistsUTF8(aFileName) ) then
       Raise Exception.Create('Mesh ' + aFileName + ' doesn`t excist!');
@@ -178,14 +209,14 @@ begin
         iVec.x := StrToFloat(GetNextToken(iFile));
         iVec.y := StrToFloat(GetNextToken(iFile));
         iVec.z := StrToFloat(GetNextToken(iFile));
-        FVertices.Add(iVec);
+        iVertices.Add(iVec);
         continue;
       end
       else if iStr = 'vt' then //read a uv
       begin
         iUV.U := StrToFloat(GetNextToken(iFile));
         iUV.V := -StrToFloat(GetNextToken(iFile));
-        FUV.Add(iUV);
+        iUVs.Add(iUV);
         continue;
       end
       else if iStr = 'vn' then //read a normal
@@ -193,7 +224,7 @@ begin
         iNorm.x := StrToFloat(GetNextToken(iFile));
         iNorm.y := StrToFloat(GetNextToken(iFile));
         iNorm.z := StrToFloat(GetNextToken(iFile));
-        FNormals.Add(iNorm);
+        iNormals.Add(iNorm);
         continue;
       end
       else if iStr = 'usemtl' then //read the current material for the faces
@@ -202,7 +233,6 @@ begin
         if not(Resources.Find(iStr, iIdx)) then
            Raise Exception.Create('Material ' + iStr + ' doesn`t excist!');
         iMat := TGDMaterial(Resources.Data[iIdx]);
-
         iSur := TGDSurface.Create();
         iSur.FMaterial := iMat;
         FSurfaces.Add(iSur);
@@ -211,18 +241,18 @@ begin
       else if iStr = 'f' then //read a face (we only support triangles)
       begin
         if (iSur = nil) then
-           Raise Exception.Create('No material for polygon!');
+           Raise Exception.Create('No material for surface!');
 
         //we only support triangles now.
-        ParsePointSet(GetNextToken(iFile), iTri, 0);
-        ParsePointSet(GetNextToken(iFile), iTri, 3);
-        ParsePointSet(GetNextToken(iFile), iTri, 6);
-        iSur.FTriangles.Add(iTri);
+        iSur.Indexes.Add( AddVertex(ParseVertex(GetNextToken(iFile))));
+        iSur.Indexes.Add( AddVertex(ParseVertex(GetNextToken(iFile))));
+        iSur.Indexes.Add( AddVertex(ParseVertex(GetNextToken(iFile))));
+        iSur.TriangleCount := iSur.TriangleCount + 1;
         continue;
       end;
     end;
     FreeAndNil(iFile);
-    CreateDisplayList();
+    CreateBuffers();
   except
     on E: Exception do
     begin
@@ -232,6 +262,10 @@ begin
   end;
 
   FreeAndNil(iSL);
+  FreeAndNil(iVertices);
+  FreeAndNil(iNormals);
+  FreeAndNil(iUVS);
+
   Console.Use:=true;
   Console.WriteOkFail(iResult, iError);
 end;
@@ -243,58 +277,32 @@ end;
 destructor  TGDMesh.Destroy();
 begin
   FreeAndNil(FVertices);
-  FreeAndNil(FNormals);
-  FreeAndNil(FUV);
   FreeAndnil(FSurfaces);
+  FreeAndNil(FVertexBuffer);
 end;
 
 {******************************************************************************}
 {* Create the segment dpl                                                     *}
 {******************************************************************************}
 
-procedure TGDMesh.CreateDisplayList();
+procedure TGDMesh.CreateBuffers();
 var
-  iI     : Integer;
+  iI, iJ, iIdx : Integer;
   iSur   : TGDSurface;
-  iJ     : Integer;
-  iTri   : TGDTriangleIdxs;
-  ITrisCounter : Integer;
-
-procedure SendPoint(aTri : TGDTriangleIdxs; aStartIdx : integer);
-begin
-  glNormal3fv( FNormals.Items[ aTri.Data[aStartIdx+2] ].ArrayPointer );
-  glTexCoord2fv( FUV.Items[ aTri.Data[aStartIdx+1] ].ArrayPointer );
-  glVertex3fv( FVertices.Items[ aTri.Data[aStartIdx] ].ArrayPointer );
-end;
-
+  iV : TGDVertex_V_UV_N_C;
 begin
   for iI := 0 to FSurfaces.Count - 1 do
   begin
     iSur  := FSurfaces.Items[iI];
-    iSur.DPL.StartList();
-    ITrisCounter := 0;
-    glBegin(GL_TRIANGLES);
-    for iJ := 0 to iSur.Triangles.Count-1 do
-    begin
-      iTri := iSur.Triangles.Items[iJ];
-
-      //Add the random animation factor for tree animations.
-      if iSur.Material.DoTreeAnim then
-      begin
-        if ITrisCounter = 0 then
-         glColor3f(0.75 + (Random(25)/100), 0.75 + (Random(25)/100), 0.75 + (Random(25)/100));
-        inc(ITrisCounter);
-        if ITrisCounter = 2 then ITrisCounter := 0;
-      end;
-
-      SendPoint(iTri, 0);
-      SendPoint(iTri, 3);
-      SendPoint(iTri, 6);
-    end;
-    glEnd();
-    iSur.DPL.EndList();
-    FTriangleCount := FTriangleCount + iSur.Triangles.Count;
+    iSur.IndexBuffer.Bind();
+    iSur.IndexBuffer.Update(iSur.Indexes, GL_STATIC_DRAW);
+    iSur.IndexBuffer.Unbind();
+    FTriangleCount := FTriangleCount + iSur.TriangleCount;
   end;
+  FVertexBuffer := TGDGLVertexBuffer.Create();
+  FVertexBuffer.Bind(VL_NONE);
+  FVertexBuffer.Update(FVertices, GL_STATIC_DRAW);
+  FVertexBuffer.Unbind();
 end;
 
 end.

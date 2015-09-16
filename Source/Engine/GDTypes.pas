@@ -102,6 +102,7 @@ type
     procedure   Black();
 
     function    ArrayPointer() : PGLFloat;
+    class operator Equal (c1, c2: TGDColor) B: Boolean;
 
     case Boolean of
       TRUE: ( r, g, b, a : Single; );
@@ -181,18 +182,14 @@ type
   end;
 
 {******************************************************************************}
-{* Axis aligned bounding box class                                            *}
-{******************************************************************************}
-
-  TGDTriangleIdxs = record
-  public
-    Data : array[0..8] of integer;
-    class operator Equal(v1, v2: TGDTriangleIdxs) B: Boolean;
-  end;
-
-{******************************************************************************}
 {* Interleaved vertex types                                                   *}
 {******************************************************************************}
+
+  TGDIdxVertex = record
+    Vertex : Integer;
+    UV     : Integer;
+    Normal : Integer;
+  end;
 
   TGDVertex_V_UV = record
     Vertex : TGDVector;
@@ -207,6 +204,15 @@ type
     Normal : TGDVector;
 
     class operator Equal(v1, v2: TGDVertex_V_UV_N) B: Boolean;
+  end;
+
+  TGDVertex_V_UV_N_C = record
+    Vertex : TGDVector;
+    UV     : TGDUVCoord;
+    Normal : TGDVector;
+    Color  : TGDColor;
+
+    class operator Equal(v1, v2: TGDVertex_V_UV_N_C) B: Boolean;
   end;
 
 {******************************************************************************}
@@ -615,6 +621,18 @@ end;
 function TGDColor.ArrayPointer() : PGLFloat;
 begin
   result := @rgba;
+end;
+
+{******************************************************************************}
+{* Color equals                                                               *}
+{******************************************************************************}
+
+class operator TGDColor.Equal (c1, c2: TGDColor) B: Boolean;
+begin
+  B := (Abs(c1.r - c2.r) < EPSILON) and
+       (Abs(c1.g - c2.g) < EPSILON) and
+       (Abs(c1.b - c2.b) < EPSILON) and
+       (Abs(c1.a - c2.a) < EPSILON);
 end;
 
 {******************************************************************************}
@@ -1027,15 +1045,6 @@ begin
 end;
 
 {******************************************************************************}
-{* TriangleIDX equals                                                         *}
-{******************************************************************************}
-
-class operator TGDTriangleIdxs.Equal (v1, v2: TGDTriangleIdxs) B: Boolean;
-begin
-  result := false;
-end;
-
-{******************************************************************************}
 {* Interleaved vertex types                                                   *}
 {******************************************************************************}
 
@@ -1045,6 +1054,11 @@ begin
 end;
 
 class operator TGDVertex_V_UV_N.Equal(v1, v2: TGDVertex_V_UV_N) B: Boolean;
+begin
+  B := (v1.Vertex = v2.Vertex) and (v1.UV = v2.UV) and (v1.Normal = v2.Normal);
+end;
+
+class operator TGDVertex_V_UV_N_C.Equal(v1, v2: TGDVertex_V_UV_N_C) B: Boolean;
 begin
   B := (v1.Vertex = v2.Vertex) and (v1.UV = v2.UV) and (v1.Normal = v2.Normal);
 end;

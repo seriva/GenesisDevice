@@ -145,7 +145,7 @@ begin
   begin
     For iI := 0 to FMesh.Vertices.Count - 1 do
     begin
-      iVector := FMesh.Vertices.Items[iI].Copy();
+      iVector := FMesh.Vertices.Items[iI].Vertex.Copy();
       iVector.Multiply(FScale);
       iVector.Devide(100);
       FRotation.ApplyToVector(iVector);
@@ -206,20 +206,9 @@ procedure TGDMeshCell.Render( aRenderAttribute : TGDRenderAttribute; aRenderFor 
 var
   iI, iJ : Integer;
   iSur : TGDSurface;
-  iNormal, iVertex : TGDVector;
-  iNormals : TGDVertex_V_List;
-  iVertices : TGDVertex_V_List;
-  iTri : TGDTriangleIdxs;
+  iV1, iV2 : TGDVector;
   iFadeDistanceScale : Single;
   iMesh : TGDMesh;
-
-procedure RenderNormal(aTris : TGDTriangleIdxs; aStartIdx : integer);
-begin
-  iVertex := iNormals.Items[aTris.Data[aStartIdx+2]].Copy();
-  iVertex.Multiply(R_NORMAL_LENGTH);
-  iVertex.Add( iVertices.Items[aTris.Data[aStartIdx]] );
-  Renderer.AddLine(iVertices.Items[aTris.Data[aStartIdx]], iVertex);
-end;
 
 procedure SetMeshPositioning(aShader : TGDGLShader);
 begin
@@ -252,6 +241,7 @@ begin
 
   Case aRenderAttribute Of
     RA_NORMAL         : begin
+                          iMesh.VertexBuffer.Bind(VL_V_UV_N_C);
                           for iI := 0 to iMesh.Surfaces.Count - 1 do
                           begin
                             iSur := iMesh.Surfaces.Items[iI];
@@ -261,7 +251,8 @@ begin
                               Renderer.SetColor(1.0,1.0,1.0,1.0);
                               SetMeshPositioning(Renderer.ColorShader);
                               Renderer.ColorShader.SetInt('I_CUSTOM_TRANSLATE', 1);
-                              iSur.DPL.CallList();
+
+                              iSur.Render();
                             end
                             else
                             begin
@@ -286,7 +277,7 @@ begin
 
                               Renderer.MeshShader.SetInt('I_FLIP_NORMAL', 0);
 
-                              iSur.DPL.CallList();
+                              iSur.Render();
 
                               //fix for lighting with alha based surfaces
                               if iSur.Material.HasAlpha then
@@ -296,7 +287,7 @@ begin
                                 else
                                   glCullFace(GL_FRONT);
                                 Renderer.MeshShader.SetInt('I_FLIP_NORMAL', 1);
-                                iSur.DPL.CallList();
+                                iSur.Render();
                                 if (aRenderFor = RF_WATER) and Not(Map.Water.UnderWater) then
                                   glCullFace(GL_FRONT)
                                 else
@@ -306,41 +297,27 @@ begin
                               iSur.Material.DisableMaterial();
                             end;
                           end;
+                          iMesh.VertexBuffer.Unbind();
                         end;
     RA_FRUSTUM_BOXES  : BoundingBox.RenderWireFrame();
     RA_NORMALS        : begin
-                          iNormals  := TGDVertex_V_List.Create();
-                          iVertices := TGDVertex_V_List.Create();
-
-                          For iI := 0 to iMesh.Vertices.Count - 1 do
-                          begin
-                            iVertex := iMesh.Vertices.Items[iI].Copy();
-                            iVertex.Multiply(FScale);
-                            iVertex.Devide(100);
-                            FRotation.ApplyToVector(iVertex);
-                            iVertex.Add( FPosition );
-                            iVertices.Add(iVertex)
-                          end;
-                          For iI := 0 to iMesh.Normals.Count - 1 do
-                          begin
-                            iNormal := iMesh.Normals.Items[iI].Copy();
-                            FRotation.ApplyToVector(iNormal);
-                            iNormals.Add( iNormal );
-                          end;
-
                           for iI := 0 to iMesh.Surfaces.Count - 1 do
                           begin
-                            for iJ := 0 to iMesh.Surfaces[iI].Triangles.Count - 1 do
+                            iSur := iMesh.Surfaces.Items[iI];
+                            for iJ := 0 to iSur.Indexes.Count-1 do
                             begin
-                              iTri := iMesh.Surfaces[iI].Triangles[iJ];
-                              RenderNormal(iTri, 0);
-                              RenderNormal(iTri, 3);
-                              RenderNormal(iTri, 6);
+                              iV1 := iMesh.Vertices.Items[iSur.Indexes.Items[iJ]].Vertex.Copy();
+                              iV1.Multiply(FScale);
+                              iV1.Devide(100);
+                              FRotation.ApplyToVector(iV1);
+                              iV1.Add( FPosition );
+                              iV2 := iMesh.Vertices.Items[iSur.Indexes.Items[iJ]].Normal.Copy();
+                              FRotation.ApplyToVector(iV2);
+                              iV2.Multiply(R_NORMAL_LENGTH);
+                              iV2.Add(iV1);
+                              Renderer.AddLine(iV1, iV2);
                             end;
                           end;
-
-                          FreeAndNil(iNormals);
-                          FreeAndNil(iVertices);
                         end;
     end;
 end;
