@@ -64,7 +64,7 @@ const
   TWaterDetail     : array[1..3] of String  = ('Low', 'Medium','High');
 
   //engine constants
-  ENGINE_INFO     = '79 - 11 August 2015';
+  ENGINE_INFO     = '80 - 16 September 2015';
 
   //renderer constants
   R_HUDWIDTH              = 1600;
@@ -126,7 +126,7 @@ const
   TERRAIN_CELLSIZE = 16;
 
   //sky constants
-  SKY_COMPLEXITY = 64;
+  SKY_COMPLEXITY = 16;
 
   //grass constants
   GRASS_CELLSIZE = 4;

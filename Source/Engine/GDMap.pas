@@ -183,7 +183,7 @@ begin
   GUI.LoadingScreen.UpdateBar();
 
   //init sky
-  Skydome.InitSkyDome(iIniFile.ReadString( 'Sky', 'TextureMap', 'sky.jpg' ),(Settings.ViewDistance * R_VIEW_DISTANCE_STEP));
+  Skydome.InitSkyDome(iIniFile, (Settings.ViewDistance * R_VIEW_DISTANCE_STEP));
   GUI.LoadingScreen.UpdateBar();
 
   //foliage

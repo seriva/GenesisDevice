@@ -33,14 +33,17 @@ interface
 uses
   Classes,
   SysUtils,
+  IniFiles,
   dglOpenGL,
   GDTexture,
   GDTypes,
+  GDTiming,
   GDGLWrappers,
   GDConstants,
   GDCamera,
   GDSettings,
   GDModes,
+  GDConsole,
   GDResources,
   GDResource,
   GDTypesGenerics;
@@ -55,7 +58,11 @@ type
   private
     FIndexBuffer   : TGDGLIndexBuffer;
     FVertexBuffer  : TGDGLVertexBuffer;
-    FSkyTexture    : TGDTexture;
+    FCloudTexture  : TGDTexture;
+    FSize          : Single;
+    FIntensity     : Single;
+    FCloudUV       : Single;
+    FAniSpeed1, FAniSpeed2 : Single;
     FTriangleCount : Integer;
 
     procedure CalculateDome(aSize : Double );
@@ -65,7 +72,7 @@ type
     constructor Create();
     destructor  Destroy(); override;
 
-    procedure InitSkyDome( aSkyTexture : String; aSize : Double );
+    procedure InitSkyDome( aIniFile : TIniFile; aSize : Double );
     procedure Clear();
     Procedure Render();
   end;
@@ -81,6 +88,7 @@ uses
 
 constructor TGDSkyDome.Create();
 begin
+  inherited;
 end;
 
 {******************************************************************************}
@@ -102,7 +110,7 @@ begin
   FreeAndNil(FIndexBuffer);
   FreeAndNil(FVertexBuffer);
   FTriangleCount := 0;
-  Resources.RemoveResource(TGDResource(FSkyTexture));
+  Resources.RemoveResource(TGDResource(FCloudTexture));
 end;
 
 {******************************************************************************}
@@ -118,11 +126,12 @@ var
   iUStep, iVStep: Double;
   iMatrix : TGDMatrix;
   iIndexes : TGDIndexList;
-  iVertices : TGDVertex_V_UV_List;
-  iV : TGDVertex_V_UV;
+  iVertices : TGDVertex_V_List;
+  iV : TGDVector;
 begin
+  FSize := aSize;
   iIndexes  := TGDIndexList.Create();
-  iVertices := TGDVertex_V_UV_List.Create();
+  iVertices := TGDVertex_V_List.Create();
   FIndexBuffer  := TGDGLIndexBuffer.Create();
   FVertexBuffer := TGDGLVertexBuffer.Create();
 
@@ -136,10 +145,9 @@ begin
     iRotationY := 0;
     For iJ := 0 to SKY_COMPLEXITY do
     begin
-      iV.Vertex := iStartPoint.Copy();
+      iV := iStartPoint.Copy();
       iMatrix.CreateRotationY(iRotationY);
-      iMatrix.ApplyToVector(iV.Vertex);
-      iV.UV.Reset(iJ * iUStep, iI* iVStep );
+      iMatrix.ApplyToVector(iV);
       iVertices.Add(iV);
       iRotationY := iRotationY + iRotationStep;
     end;
@@ -176,12 +184,16 @@ end;
 {* Init the skydome                                                           *}
 {******************************************************************************}
 
-procedure TGDSkyDome.InitSkyDome( aSkyTexture : String; aSize : Double );
+procedure TGDSkyDome.InitSkyDome(  aIniFile : TIniFile; aSize : Double );
 begin
   Clear();
-  FSkyTexture := Resources.LoadTexture(aSkyTexture ,Settings.TextureDetail,Settings.TextureFilter);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+  FCloudTexture := Resources.LoadTexture(aIniFile.ReadString( 'Sky', 'CloudMap', 'sky.jpg' ) ,Settings.TextureDetail,Settings.TextureFilter);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+  FIntensity := aIniFile.ReadFloat( 'Sky', 'Intensity', 0.5 );
+  FCloudUV   := aIniFile.ReadFloat( 'Sky', 'CloudUV', 1.0 );
+  FAniSpeed1 := aIniFile.ReadFloat( 'Sky', 'AniSpeed1', 1000.0 );
+  FAniSpeed2 := aIniFile.ReadFloat( 'Sky', 'AniSpeed2', 1000.0 );
   CalculateDome(aSize);
 end;
 
@@ -199,18 +211,22 @@ begin
   end
   else
   begin
-    FSkyTexture.BindTexture(GL_TEXTURE0);
+    FCloudTexture.BindTexture(GL_TEXTURE0);
     Renderer.SkyShader.Bind();
     Renderer.SetJoinedParams(Renderer.SkyShader);
-    Renderer.SkyShader.SetInt('T_SKYTEX', 0);
+    Renderer.SkyShader.SetInt('T_CLOUDTEX', 0);
+    Renderer.SkyShader.SetFloat('I_INTENSITY', FIntensity);
+    Renderer.SkyShader.SetFloat('F_SIZE', FSize / FCloudUV);
+    Renderer.SkyShader.SetFloat('F_ANIMATION_SPEED1', Timing.ElapsedTime / (FAniSpeed1*1000));
+    Renderer.SkyShader.SetFloat('F_ANIMATION_SPEED2', Timing.ElapsedTime / (FAniSpeed2*1000));
   end;
 
   glPushMatrix();
   glDisable(GL_DEPTH_TEST);
   glDepthMask(GLboolean(FALSE));
   glTranslatef(Camera.Position.x, Camera.Position.y, Camera.Position.z);
-  glScalef(1,0.20,1);
-  FVertexBuffer.Bind(VL_V_UV);
+  glScalef(0.95,0.175,0.95);
+  FVertexBuffer.Bind(VL_V);
   FIndexBuffer.Bind();
   FIndexBuffer.Render(GL_TRIANGLES);
   FVertexBuffer.Unbind();
