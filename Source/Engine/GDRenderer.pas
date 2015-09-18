@@ -310,7 +310,7 @@ begin
 
     //default values
     FSSAOStrength := 0.65;
-    FSSAOSamples  := 32;
+    FSSAOSamples  := 16;
     FSSAORadius   := 2.25;
     FSSAOOnly     := 0;
 
@@ -953,15 +953,15 @@ begin
     glColorMask(TRUE, TRUE, TRUE, TRUE);
 
     //Setup the light projection matrix.
-  	glGetDoublev(GL_MODELVIEW_MATRIX, @iModl);
-  	glGetDoublev(GL_PROJECTION_MATRIX, @iProj);
-  	glMatrixMode(GL_TEXTURE);
-  	glActiveTextureARB(GL_TEXTURE7);
-  	glLoadIdentity();
-  	glLoadMatrixd(@iBias);
-  	glMultMatrixd(@iProj);
-  	glMultMatrixd(@iModl);
-  	glMatrixMode(GL_MODELVIEW);
+    glGetDoublev(GL_MODELVIEW_MATRIX, @iModl);
+    glGetDoublev(GL_PROJECTION_MATRIX, @iProj);
+    glMatrixMode(GL_TEXTURE);
+    glActiveTextureARB(GL_TEXTURE7);
+    glLoadIdentity();
+    glLoadMatrixd(@iBias);
+    glMultMatrixd(@iProj);
+    glMultMatrixd(@iModl);
+    glMatrixMode(GL_MODELVIEW);
 
     glMatrixMode(GL_PROJECTION);
     glPopMatrix();
