@@ -134,7 +134,7 @@ begin
   Statistics.FrameStart();
   Timing.CalculateFrameTime();
 
-  Input.ExecuteInput();
+  Input.Update();
   Sound.Update();
   Map.Update();
   if assigned(LoopCallBack) then LoopCallBack();

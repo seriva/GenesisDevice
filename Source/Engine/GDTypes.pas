@@ -150,22 +150,6 @@ type
   end;
 
 {******************************************************************************}
-{* Quad class                                                                 *}
-{******************************************************************************}
-
-  TGDQuad = record
-    Normal   : TGDVector;
-    V1, V2, V3, V4 : TGDVector;
-
-    procedure   Reset(aX1,aY1,aZ1,aX2,aY2,aZ2 : Single);
-    procedure   Move( aMove : TGDVector );
-    procedure   Rotate( aM : TGDMatrix );
-    procedure   Scale(  aScale : TGDVector );
-
-    procedure   Render();
-  end;
-
-{******************************************************************************}
 {* Axis aligned bounding box class                                            *}
 {******************************************************************************}
 
@@ -913,76 +897,6 @@ begin
     result := true
   else
     result := false;
-end;
-
-{******************************************************************************}
-{* Reset the quad                                                             *}
-{******************************************************************************}
-
-procedure   TGDQuad.Reset(aX1,aY1,aZ1,aX2,aY2,aZ2 : Single);
-begin
-  V1.Reset(aX1,aY1,aZ1);
-  V2.Reset(aX1,aY2,aZ1);
-  V3.Reset(aX2,aY2,aZ2);
-  V4.Reset(aX2,aY1,aZ2);
-end;
-
-{******************************************************************************}
-{* Move the quad                                                              *}
-{******************************************************************************}
-
-procedure TGDQuad.Move( aMove : TGDVector );
-begin
-  V1.Add( aMove );
-  V2.Add( aMove );
-  V3.Add( aMove );
-  V4.Add( aMove );
-end;
-
-{******************************************************************************}
-{* Rotate the quad                                                            *}
-{******************************************************************************}
-
-procedure TGDQuad.Rotate( aM : TGDMatrix );
-begin
-  aM.ApplyToVector( V1 );
-  aM.ApplyToVector( V2 );
-  aM.ApplyToVector( V3 );
-  aM.ApplyToVector( V4 );
-end;
-
-{******************************************************************************}
-{* Scale the quad                                                             *}
-{******************************************************************************}
-
-procedure TGDQuad.Scale( aScale : TGDVector );
-begin
-  V1.Multiply(aScale);
-  V1.Devide(100);
-  V2.Multiply(aScale);
-  V2.Devide(100);
-  V3.Multiply(aScale);
-  V3.Devide(100);
-  V4.Multiply(aScale);
-  V4.Devide(100);
-end;
-
-
-{******************************************************************************}
-{* Render the quad                                                            *}
-{******************************************************************************}
-
-procedure TGDQuad.Render();
-begin
-  glNormal3fv(Normal.ArrayPointer);
-  glTexCoord1i(0);
-  glVertex3fv(V1.ArrayPointer);
-  glTexCoord1i(1);
-  glVertex3fv(V2.ArrayPointer);
-  glTexCoord1i(2);
-  glVertex3fv(V3.ArrayPointer);
-  glTexCoord1i(3);
-  glVertex3fv(V4.ArrayPointer);
 end;
 
 {******************************************************************************}

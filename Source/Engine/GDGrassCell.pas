@@ -38,7 +38,6 @@ uses
   dglOpenGL,
   GDConstants,
   GDGLWrappers,
-  GDRenderer,
   GDFoliage,
   GDTypes,
   GDWater,
@@ -53,9 +52,10 @@ type
 {******************************************************************************}
 
   TGDGrassPartical = record
-    Normal : TGDVector;
-    Quad1 : TGDQuad;
-    Quad2 : TGDQuad;
+    Normal    : TGDVector;
+    Animation : TGDVector;
+    UVs       : array[0..7] of byte;
+    Verts     : array[0..7] of TGDVector;
 
     procedure InitGrassPartical(  aMove, aScale, aRotate : TGDVector  );
     procedure Render();
@@ -90,30 +90,33 @@ implementation
 
 procedure TGDGrassPartical.InitGrassPartical( aMove, aScale, aRotate : TGDVector );
 var
-  iRandomRotation : TGDVector;
   iM1, iM2  : TGDMatrix;
-
-procedure ApplyRQuad(var aQuad : TGDQuad);
+  iI : Integer;
 begin
-  aQuad.Rotate(iM1);
-  aQuad.Rotate(iM2);
-  aQuad.Scale( aScale );
-  aQuad.Move( aMove );
-  aQuad.Normal := Normal.Copy();
-end;
-
-begin
+  Animation.Reset(0.75 + (Random(25)/100), 0.75 + (Random(25)/100), 0.75 + (Random(25)/100));
   Normal.reset(0,1,0);
-  Quad1.Reset(-50, -50, 0, 50, 50, 0 );
-  Quad2.Reset(0, -50, -50, 0, 50, 50 );
 
-  iRandomRotation.reset(0,Random(360),0);
-  iM1.CreateRotation( iRandomRotation );
+  Verts[0].Reset( -50, -50, 0 ); UVs[0] := 0;
+  Verts[1].Reset( -50, 50, 0 );  UVs[1] := 1;
+  Verts[2].Reset( 50, 50, 0 );   UVs[2] := 2;
+  Verts[3].Reset( 50, -50, 0 );  UVs[3] := 3;
+  Verts[4].Reset( 0, -50, -50 ); UVs[4] := 0;
+  Verts[5].Reset( 0,  50, -50 ); UVs[5] := 1;
+  Verts[6].Reset( 0, 50, 50 );   UVs[6] := 2;
+  Verts[7].Reset( 0, -50, 50 );  UVs[7] := 3;
+
+  iM1.CreateRotation( Vector(0,Random(360),0) );
   iM2.CreateRotation( aRotate );
   iM2.ApplyToVector(Normal);
 
-  ApplyRQuad(Quad1);
-  ApplyRQuad(Quad2);
+  for iI := 0 to 7 do
+  begin
+    iM1.ApplyToVector(Verts[iI]);
+    iM2.ApplyToVector(Verts[iI]);
+    Verts[iI].Multiply(aScale);
+    Verts[iI].Devide(100);
+    Verts[iI].Add(aMove);
+  end;
 end;
 
 {******************************************************************************}
@@ -121,9 +124,17 @@ end;
 {******************************************************************************}
 
 procedure TGDGrassPartical.Render();
+var
+  iI : Integer;
 begin
-  Quad1.Render();
-  Quad2.Render();
+  glColor3fv(Animation.ArrayPointer());
+  glNormal3fv(Normal.ArrayPointer);
+
+  for iI := 0 to 7 do
+  begin
+    glTexCoord1i(UVs[iI]);
+    glVertex3fv(Verts[iI].ArrayPointer);
+  end;
 end;
 
 {******************************************************************************}
@@ -139,7 +150,6 @@ var
   iParticalCount : array of Integer;
   iHeight, iRandomHeightScale : Double;
   iTempGrassType : TGDGrassType;
-  iRandomR, iRandomG, iRandomB : single;
 begin
   OjectType    := SO_GRASSCELL;
   FTrisCount   := 0;
@@ -209,13 +219,7 @@ begin
     TGDGrassType(aFoliage.GrassTypes.Items[iI]).Texture.BindTexture( GL_TEXTURE0 );
     glBegin(GL_QUADS);
     for iJ := 0 to Length( iParticalLists[iI] )-1 do
-    begin
-      iRandomR := 0.75 + (Random(25)/100);
-      iRandomG := 0.75 + (Random(25)/100);
-      iRandomB := 0.75 + (Random(25)/100);
-      glColor3f(iRandomR, iRandomG, iRandomB);
       iParticalLists[iI,iJ].Render();
-    end;
     glEnd();
   end;
   FDisplayList.EndList();

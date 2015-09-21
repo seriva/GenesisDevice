@@ -99,7 +99,7 @@ type
     procedure KeyboardState();
     function  KeyDown(aKey: byte): boolean;
 
-    procedure ExecuteInput();
+    procedure Update();
 
     procedure CalculateMousePosStart();
     procedure SetMouseStartPos();
@@ -233,7 +233,7 @@ end;
 {* Execute direct events                                                      *}
 {******************************************************************************}
 
-procedure TGDInput.ExecuteInput();
+procedure TGDInput.Update();
 var
   iTempAction : TGDInputAction;
   iI : Integer;

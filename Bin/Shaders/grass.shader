@@ -9,9 +9,9 @@ uniform vec4 V_LIGHT_AMB;
 uniform vec4 V_LIGHT_DIFF;
 
 varying vec2  GrassUV;
-varying vec4 ShadowCoord;
+varying vec4  ShadowCoord;
 varying float Fog;
-varying vec4 Light;
+varying vec4  Light;
 
 vec2 uv[4] = {
                 vec2(0.99, 0.99),
@@ -24,12 +24,12 @@ void main(void)
 {
 	vec3 L = normalize(-V_LIGHT_DIR);
 	vec3 N = normalize(gl_Normal); 
-	Light = V_LIGHT_AMB + clamp(V_LIGHT_DIFF * max(dot(N,L), 0.0), 0.0, 1.0);
+	Light  = V_LIGHT_AMB + clamp(V_LIGHT_DIFF * max(dot(N,L), 0.0), 0.0, 1.0);
 
-	vec4 FogEye  = ftransform();
-	Fog          = clamp((length(FogEye) - F_MIN_VIEW_DISTANCE) / F_MAX_VIEW_DISTANCE, 0.0, 1.0);
-	GrassUV      = uv[int(gl_MultiTexCoord0.x)];
-	vec4 Eye     = gl_Vertex;
+	vec4 FogEye = ftransform();
+	Fog         = clamp((length(FogEye) - F_MIN_VIEW_DISTANCE) / F_MAX_VIEW_DISTANCE, 0.0, 1.0);
+	GrassUV     = uv[int(gl_MultiTexCoord0.x)];
+	vec4 Eye    = gl_Vertex;
 
 	if(GrassUV.y < 0.1)
 	{    
