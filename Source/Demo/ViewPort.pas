@@ -43,8 +43,7 @@ uses
   dglOpenGL,
   Main,
   GDConstants,
-  GDInterface,
-  GDSettings,
+  GDEngine,
   ExtCtrls;
 
 type
@@ -75,28 +74,25 @@ uses
 
 procedure TViewPortForm.FormCreate(Sender: TObject);
 var
-  iSettings         : TSettings;
   iDMScreenSettings : DEVMODE;
 begin
-  self.Caption := 'Genesis Device Engine - (Build : ' + gdEngineBuildInfo() + ')';
+  self.Caption := 'Genesis Device Engine - (Build : ' + Engine.Version + ')';
 
   //initialize the renderer with the current settings
-  If Not(gdRendererInitViewPort( self.Handle )) then
+  If Not(Engine.Renderer.InitViewPort( self.Handle )) then
   begin
     MessageBox(0, 'Error initializing viewport. See Console.txt for details.', 'Error', MB_OK or MB_ICONERROR);
     Application.Terminate();
   end;
 
   //if fullscreen remove the border
-  gdSettingsLoad();
-  iSettings := gdSettingsGetCurrent();
-  If iSettings.FullScreen then
+  If Engine.Settings.FullScreen then
   begin
     ZeroMemory(@iDMScreenSettings, SizeOf(iDMScreenSettings));
     with iDMScreenSettings do begin
             dmSize       := SizeOf(iDMScreenSettings);
-            dmPelsWidth  := iSettings.Width;
-            dmPelsHeight := iSettings.Height;
+            dmPelsWidth  := Engine.Settings.Width;
+            dmPelsHeight := Engine.Settings.Height;
             dmBitsPerPel := 32;
             dmFields     := DM_PELSWIDTH or DM_PELSHEIGHT or DM_BITSPERPEL;
     end;
@@ -127,7 +123,7 @@ begin
   end;
 
   //get the engine settings and set the right windowsettings
-  gdRendererResizeViewPort(self.Top, self.Left, self.Width, self.Height);
+  Engine.Renderer.ResizeViewPort(self.Top, self.Left, self.Width, self.Height);
 
   //show the form
   self.Show();
@@ -149,7 +145,7 @@ begin
   ClearGame();
 
   //shutdown the renderer
-  gdRendererShutDownViewPort();
+  Engine.Renderer.ShutDownViewPort();
 
   //back to configuration
   ConfigurationForm.Visible := true;
@@ -163,7 +159,7 @@ end;
 procedure TViewPortForm.FormResize(Sender: TObject);
 begin
   //resize the window and render the window
-  gdRendererResizeViewPort(self.Top, self.Left, self.Width, self.Height);
+  Engine.Renderer.ResizeViewPort(self.Top, self.Left, self.Width, self.Height);
 end;
 
 {******************************************************************************}
@@ -173,7 +169,7 @@ end;
 procedure TViewPortForm.WMMove(var Message: TMessage);
 begin
   //resize the window and render the window
-  gdRendererResizeViewPort(self.Top, self.Left, self.Width, self.Height);
+  Engine.Renderer.ResizeViewPort(self.Top, self.Left, self.Width, self.Height);
 end;
 
 {******************************************************************************}
@@ -187,7 +183,7 @@ begin
   Done := false;
 
   //do the mainloop
-  gdEngineLoop();
+  Engine.Loop( @GameLoop );
 end;
 
 {******************************************************************************}
@@ -196,13 +192,13 @@ end;
 
 procedure TViewPortForm.FormKeyPress(Sender: TObject; var Key : Char);
 begin
-  gdConsoleAddChar( Key );
+  Engine.Console.AddChar(Key);
 end;
 
 procedure TViewPortForm.FormKeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 begin
-  gdConsoleControl(Key);
+  Engine.Console.Control(Key);
 end;
 
 {******************************************************************************}

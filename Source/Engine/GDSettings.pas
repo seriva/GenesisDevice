@@ -41,39 +41,6 @@ uses
 type
 
 {******************************************************************************}
-{* Records that holds the current settings                                    *}
-{******************************************************************************}
-
-  TSettings = record
-    //viewport settings
-    Width            : Integer;
-    Height           : Integer;
-    FullScreen       : Boolean;
-    VerticalSync     : Boolean;
-    Gamma            : Double;
-
-    //render settings
-    ViewDistance     : Integer;
-    FoliageDistance  : Integer;
-    FoliageDensity   : Integer;
-    TextureDetail    : String;
-    WaterDetail      : String;
-    TextureFilter    : String;
-    UseBloom         : Boolean;
-    UseFXAA          : Boolean;
-    UseShadows       : Boolean;
-    UseSSAO          : Boolean;
-
-    //input settings
-    InvertMouse : Boolean;
-    MouseSensitivity : Integer;
-
-    //sound settings
-    MuteSound   : Boolean;
-    SoundVolume : Double;
-  end;
-
-{******************************************************************************}
 {* Settings class                                                             *}
 {******************************************************************************}
 
@@ -111,14 +78,15 @@ type
     //Model global LOD settings.
     FLOD0, FLOD1, FLOD2 : Single;
 
+    procedure SetViewDistance(aDistance : Integer);
+  public
     procedure SetTextureDetail(aStr : String);
     function  GetTextureDetail() : String;
     procedure SetWaterDetail(aStr : String);
     function  GetWaterDetail() : String;
     procedure SetTextureFilter(aStr : String);
     function  GetTextureFilter() : String;
-    procedure SetViewDistance(aDistance : Integer);
-  public
+
     //viewport settings
     property Top : Integer read FTop write FTop;
     property Left : Integer read FLeft write FLeft;
@@ -155,18 +123,14 @@ type
     constructor Create();
     destructor  Destroy(); override;
 
-    procedure LoadIniFile();
-    procedure SaveIniFile();
-    function  GetSettings() : TSettings;
-    procedure SetSettings(aSettings : TSettings);
+    procedure Load();
+    procedure Save();
   end;
-
-var
-  Settings : TGDSettings;
 
 implementation
 
 uses
+  GDEngine,
   GDConsole;
 
 {******************************************************************************}
@@ -206,12 +170,12 @@ begin
   FSoundVolume := 0.5;
 
   //console commands
-  Console.AddCommand('RBloom', '0,1 : Enable or disable bloom', CT_BOOLEAN, @FUseBloom);
-  Console.AddCommand('RFXAA', '0,1 : Enable or disable FXAA', CT_BOOLEAN, @FUseFXAA);
-  Console.AddCommand('RVSync', '0,1 : Enable or disable vertical sync', CT_BOOLEAN, @FVerticalSync);
-  Console.AddCommand('RGamma', '0.0 to 1.0 : Set the gamma value', CT_FLOAT, @FGamma);
-  Console.AddCommand('RShadows', '0,1 : Enable or disable shadows', CT_BOOLEAN, @FUseShadows);
-  Console.AddCommand('RSSAO', '0,1 : Enable or disable SSAO', CT_BOOLEAN, @FUseSSAO);
+  Engine.Console.AddCommand('RBloom', '0,1 : Enable or disable bloom', CT_BOOLEAN, @FUseBloom);
+  Engine.Console.AddCommand('RFXAA', '0,1 : Enable or disable FXAA', CT_BOOLEAN, @FUseFXAA);
+  Engine.Console.AddCommand('RVSync', '0,1 : Enable or disable vertical sync', CT_BOOLEAN, @FVerticalSync);
+  Engine.Console.AddCommand('RGamma', '0.0 to 1.0 : Set the gamma value', CT_FLOAT, @FGamma);
+  Engine.Console.AddCommand('RShadows', '0,1 : Enable or disable shadows', CT_BOOLEAN, @FUseShadows);
+  Engine.Console.AddCommand('RSSAO', '0,1 : Enable or disable SSAO', CT_BOOLEAN, @FUseSSAO);
 end;
 
 {******************************************************************************}
@@ -227,7 +191,7 @@ end;
 {* Load the settings from an ini-file                                         *}
 {******************************************************************************}
 
-procedure TGDSettings.LoadIniFile();
+procedure TGDSettings.Load();
 var
   iIniFile : TIniFile;
 begin
@@ -267,7 +231,7 @@ end;
 {* Saves the settings to an ini-files                                         *}
 {******************************************************************************}
 
-procedure TGDSettings.SaveIniFile();
+procedure TGDSettings.Save();
 var
   iIniFile : TIniFile;
 begin
@@ -301,74 +265,6 @@ begin
   iIniFile.WriteFloat( 'Sound', 'SoundVolume', FSoundVolume);
 
   FreeAndNil(iIniFile)
-end;
-
-{******************************************************************************}
-{* Get the current settings                                                   *}
-{******************************************************************************}
-
-function  TGDSettings.GetSettings() : TSettings;
-begin
-  //viewport settings
-  Result.Width           := FWidth;
-  Result.Height          := FHeight;
-  Result.FullScreen      := FFullScreen;
-  Result.VerticalSync    := FVerticalSync;
-  Result.Gamma           := FGamma;
-
-  //render settings
-  Result.ViewDistance    := FViewDistance;
-  Result.FoliageDistance := FFoliageDistance;
-  Result.FoliageDensity  := FFoliageDensity;
-  Result.TextureDetail   := GetTextureDetail();
-  Result.WaterDetail     := GetWaterDetail();
-  Result.TextureFilter   := GetTextureFilter();
-  Result.UseBloom        := FUseBloom;
-  Result.UseFXAA         := FUseFXAA;
-  Result.UseShadows      := FUseShadows;
-  Result.UseSSAO         := FUseSSAO;
-
-  //input settings
-  Result.InvertMouse      := FInvertMouse;
-  Result.MouseSensitivity := FMouseSensitivity;
-
-  //sound settings
-  Result.MuteSound   := FMuteSound;
-  Result.SoundVolume := FSoundVolume;
-end;
-
-{******************************************************************************}
-{* Set the current settings                                                   *}
-{******************************************************************************}
-
-procedure TGDSettings.SetSettings(aSettings : TSettings);
-begin
-  //viewport settings
-  FWidth            := aSettings.Width;
-  FHeight           := aSettings.Height;
-  FFullScreen       := aSettings.FullScreen;
-  FVerticalSync     := aSettings.VerticalSync;
-  FGamma            := aSettings.Gamma;
-
-  //render settings
-  FViewDistance     := aSettings.ViewDistance;
-  FFoliageDistance  := aSettings.FoliageDistance;
-  FFoliageDensity   := aSettings.FoliageDensity;
-  SetTextureDetail( aSettings.TextureDetail );
-  SetWaterDetail( aSettings.WaterDetail );
-  SetTextureFilter( aSettings.TextureFilter );
-  FUseBloom         := aSettings.UseBloom;
-  FUseFXAA          := aSettings.UseFXAA;
-  FUseShadows       := aSettings.UseShadows;
-  FUseSSAO          := aSettings.UseSSAO;
-
-  //input settings
-  FInvertMouse      := aSettings.InvertMouse;
-  FMouseSensitivity := aSettings.MouseSensitivity;
-
-  //sound settings
-  FMuteSound   := aSettings.MuteSound;
-  FSoundVolume := aSettings.SoundVolume;
 end;
 
 {******************************************************************************}

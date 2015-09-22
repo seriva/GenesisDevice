@@ -38,7 +38,6 @@ Uses
   GDConstants,
   FileUtil,
   GDResource,
-  GDTiming,
   GDStringParsing;
 
 Type
@@ -71,9 +70,7 @@ Type
 implementation
 
 uses
-  GDMap,
-  GDRenderer,
-  GDResources;
+  GDEngine;
 
 {******************************************************************************}
 {* Create material                                                            *}
@@ -89,7 +86,7 @@ end;
 
 destructor TGDMaterial.Destroy();
 begin
-  Resources.RemoveResource(TGDResource(FTexture));
+  Engine.Resources.RemoveResource(TGDResource(FTexture));
   FHasAlpha := false;
   FAlphaFunc := 1.0;
   FDoBloom := false;
@@ -103,13 +100,16 @@ end;
 
 procedure   TGDMaterial.ApplyMaterial();
 begin
-  Renderer.MeshShader.SetInt('T_COLORMAP', 0);
-  if DoTreeAnim then
-    Renderer.MeshShader.SetInt('I_DO_TREE_ANIM', 1)
-  else
-    Renderer.MeshShader.SetInt('I_DO_TREE_ANIM', 0);
-  Renderer.MeshShader.SetFloat('F_ANIMATION_SPEED', Timing.ElapsedTime / Map.Foliage.TreeAnimationSpeed);
-  Renderer.MeshShader.SetFloat('F_ANIMATION_STRENGTH', Map.Foliage.TreeAnimationStrength);
+  with Engine.Renderer do
+  begin
+    MeshShader.SetInt('T_COLORMAP', 0);
+    if DoTreeAnim then
+      MeshShader.SetInt('I_DO_TREE_ANIM', 1)
+    else
+      MeshShader.SetInt('I_DO_TREE_ANIM', 0);
+    MeshShader.SetFloat('F_ANIMATION_SPEED', Engine.Timing.ElapsedTime / Engine.Map.Foliage.TreeAnimationSpeed);
+    MeshShader.SetFloat('F_ANIMATION_STRENGTH', Engine.Map.Foliage.TreeAnimationStrength);
+  end;
   FTexture.BindTexture( GL_TEXTURE0 );
   if FHasAlpha then
   begin

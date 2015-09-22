@@ -32,14 +32,10 @@ uses
   dglOpenGL,
   GDTerrain,
   GDTypes,
-  GDConsole,
-  GDGUI,
   GDFoliage,
-  GDSettings,
   GDConstants,
   GDSkyDome,
   GDWater,
-  GDTiming,
   GDCellManager,
   GDStringparsing,
   GDMeshCell;
@@ -93,7 +89,7 @@ type
     constructor Create();
     destructor  Destroy(); override;
 
-    function  InitMap( aFileName : String ) : boolean;
+    function  Load( aFileName : String ) : boolean;
     procedure Clear();
 
     function  ObjectCount(): integer;
@@ -106,13 +102,10 @@ type
     procedure ApplyDistanceFog();
   end;
 
-var
-  Map : TGDMap;
-
 implementation
 
 uses
-  GDRenderer;
+  GDEngine;
 
 {******************************************************************************}
 {* Create map class                                                           *}
@@ -146,25 +139,25 @@ end;
 {* Init the map                                                               *}
 {******************************************************************************}
 
-function TGDMap.InitMap( aFileName : String ) : boolean;
+function TGDMap.Load( aFileName : String ) : boolean;
 var
   iIniFile : TIniFile;
   iI : Integer;
   iString         : String;
   iMeshInput      : TGDMeshCellInput;
 begin
-  Timing.Start();
+  Engine.Timing.Start();
   iIniFile := TIniFile.Create(aFileName);
   Clear();
-  Console.Write('......Loading map');
-  GUI.LoadingScreen.SetupForUse('Loading ' + StringReplace( ExtractFileName(aFileName), ExtractFileExt(aFileName), '',  [rfReplaceAll] ) + '...', 9 );
+  Engine.Console.Write('......Loading map (' + aFileName + ')');
+  Engine.GUI.LoadingScreen.Start('Loading ' + StringReplace( ExtractFileName(aFileName), ExtractFileExt(aFileName), '',  [rfReplaceAll] ) + '...', 9 );
 
   //spawnpoint
   FPlayerStart := ReadVector(iIniFile, 'SpawnPoint', 'Position');
   FPlayerViewAngle := ReadVector(iIniFile, 'SpawnPoint', 'ViewAngle');
 
   //bloom
-  Renderer.BloomStrengh := iIniFile.ReadFloat( 'Bloom', 'Strengh', 0.5 );
+  Engine.Renderer.BloomStrengh := iIniFile.ReadFloat( 'Bloom', 'Strengh', 0.5 );
 
   //directional light
   FLightDirection := ReadVector(iIniFile, 'Light', 'Direction');
@@ -174,25 +167,25 @@ begin
 
   //init fog
   FFogColor    := ReadColor(iIniFile, 'Fog', 'Color');
-  FFogDistance := Settings.ViewDistance;
+  FFogDistance := Engine.Settings.ViewDistance;
   ApplyDistanceFog();
-  GUI.LoadingScreen.UpdateBar();
+  Engine.GUI.LoadingScreen.Update();
 
   //init terrain
   FTerrain.InitTerrain(iIniFile);
-  GUI.LoadingScreen.UpdateBar();
+  Engine.GUI.LoadingScreen.Update();
 
   //init sky
-  Skydome.InitSkyDome(iIniFile, (Settings.ViewDistance * R_VIEW_DISTANCE_STEP));
-  GUI.LoadingScreen.UpdateBar();
+  Skydome.InitSkyDome(iIniFile, (Engine.Settings.ViewDistance * R_VIEW_DISTANCE_STEP));
+  Engine.GUI.LoadingScreen.Update();
 
   //foliage
   Foliage.InitFoliage( iIniFile );
-  GUI.LoadingScreen.UpdateBar();
+  Engine.GUI.LoadingScreen.Update();
 
   //init water
   Water.InitWater(FTerrain, iIniFile );
-  GUI.LoadingScreen.UpdateBar();
+  Engine.GUI.LoadingScreen.Update();
 
   //grass types
   iI := 1;
@@ -201,7 +194,7 @@ begin
     Foliage.GrassTypes.Add( TGDGrassType.Create(iIniFile, 'GrassType' + IntToStr(iI)));
     iI := iI + 1;
   end;
-  GUI.LoadingScreen.UpdateBar();
+  Engine.GUI.LoadingScreen.Update();
 
   //tree types
   iI := 1;
@@ -210,7 +203,7 @@ begin
     Foliage.TreeTypes.Add(TGDMeshType.Create(iIniFile, 'TreeType' + IntToStr(iI)));
     iI := iI + 1;
   end;
-  GUI.LoadingScreen.UpdateBar();
+  Engine.GUI.LoadingScreen.Update();
 
   //rock types
   iI := 1;
@@ -219,7 +212,7 @@ begin
     Foliage.RockTypes.Add(TGDMeshType.Create(iIniFile, 'RockType' + IntToStr(iI)));
     iI := iI + 1;
   end;
-  GUI.LoadingScreen.UpdateBar();
+  Engine.GUI.LoadingScreen.Update();
 
   //mesh entities
   iI := 1;
@@ -242,13 +235,17 @@ begin
 
     iI := iI + 1;
   end;
-  GUI.LoadingScreen.UpdateBar();
+  Engine.GUI.LoadingScreen.Update();
 
-  Timing.Stop();
+  Engine.Timing.Stop();
   FreeAndNil(iIniFile);
-  Console.Write('......Done loading map (' + Timing.TimeInSeconds + ' Sec)');
+  Engine.Console.Write('......Done loading map (' + Engine.Timing.TimeInSeconds + ' Sec)');
 
   FCellManager.GenerateCells(FTerrain, FWater, FFoliage);
+
+  Engine.Camera.Position := FPlayerStart.Copy();
+  Engine.Camera.Rotation := FPlayerViewAngle.Copy();
+  Engine.Camera.MouseLook(0,0,1,1,0,False);
 end;
 
 {******************************************************************************}
@@ -265,8 +262,8 @@ begin
   FLightDiffuse.Reset(1, 1, 1, 1);
   FLightShadow := 0.75;
 
-  FFogMinDistance := (((Settings.ViewDistance * R_VIEW_DISTANCE_STEP) / 10) *5);
-  FFogMaxDistance := (((Settings.ViewDistance * R_VIEW_DISTANCE_STEP) / 10) *8);
+  FFogMinDistance := (((Engine.Settings.ViewDistance * R_VIEW_DISTANCE_STEP) / 10) *5);
+  FFogMaxDistance := (((Engine.Settings.ViewDistance * R_VIEW_DISTANCE_STEP) / 10) *8);
   FFogColor.Reset( 0.5, 0.5, 0.5, 1.0 );
   FFogDistance := 5;
 

@@ -73,32 +73,30 @@ type
     constructor Create();
     destructor  Destroy(); override;
 
-    procedure InitModes();
+    procedure Reset();
   end;
-
-var
-  Modes : TGDModes;
 
 implementation
 
 uses
-  GDConsole;
+  GDConsole,
+  GDEngine;
 
 constructor TGDModes.Create();
 begin
-  InitModes();
+  Reset();
 
-  Console.AddCommand('RTris', '0,1 : Enable or disable wireframe', CT_BOOLEAN, @FRenderWireframe);
-  Console.AddCommand('RNorm',  '0,1 : Show or hide normals', CT_BOOLEAN, @FRenderNormals);
-  Console.AddCommand('RTerrain', '0,1 : Show or hide terrain', CT_BOOLEAN, @FRenderTerrain);
-  Console.AddCommand('RSky', '0,1 : Show or hide sky', CT_BOOLEAN, @FRenderSky);
-  Console.AddCommand('RModels', '0,1 : Show or hide models', CT_BOOLEAN, @FRenderModels);
-  Console.AddCommand('RWater', '0,1 : Show or hide water', CT_BOOLEAN, @FRenderWater);
-  Console.AddCommand('RGrass', '0,1 : Show or hide grass', CT_BOOLEAN, @FRenderGrass);
-  Console.AddCommand('RNodes', '0,1 : Show or hide treenodes', CT_BOOLEAN, @FRenderNodeBoxes);
-  Console.AddCommand('RAABB', '0,1 : Show or hide objectboxes', CT_BOOLEAN, @FRenderObjectBoxes);
-  Console.AddCommand('RStats', '0,1 : Show or hide stats', CT_BOOLEAN, @FRenderStats);
-  Console.AddCommand('RGUI', '0,1 : Show or hide GUI', CT_BOOLEAN, @FRenderGUI);
+  Engine.Console.AddCommand('RTris', '0,1 : Enable or disable wireframe', CT_BOOLEAN, @FRenderWireframe);
+  Engine.Console.AddCommand('RNorm',  '0,1 : Show or hide normals', CT_BOOLEAN, @FRenderNormals);
+  Engine.Console.AddCommand('RTerrain', '0,1 : Show or hide terrain', CT_BOOLEAN, @FRenderTerrain);
+  Engine.Console.AddCommand('RSky', '0,1 : Show or hide sky', CT_BOOLEAN, @FRenderSky);
+  Engine.Console.AddCommand('RModels', '0,1 : Show or hide models', CT_BOOLEAN, @FRenderModels);
+  Engine.Console.AddCommand('RWater', '0,1 : Show or hide water', CT_BOOLEAN, @FRenderWater);
+  Engine.Console.AddCommand('RGrass', '0,1 : Show or hide grass', CT_BOOLEAN, @FRenderGrass);
+  Engine.Console.AddCommand('RNodes', '0,1 : Show or hide treenodes', CT_BOOLEAN, @FRenderNodeBoxes);
+  Engine.Console.AddCommand('RAABB', '0,1 : Show or hide objectboxes', CT_BOOLEAN, @FRenderObjectBoxes);
+  Engine.Console.AddCommand('RStats', '0,1 : Show or hide stats', CT_BOOLEAN, @FRenderStats);
+  Engine.Console.AddCommand('RGUI', '0,1 : Show or hide GUI', CT_BOOLEAN, @FRenderGUI);
 
   Inherited;
 end;
@@ -108,7 +106,7 @@ begin
   Inherited;
 end;
 
-procedure TGDModes.InitModes();
+procedure TGDModes.Reset();
 begin
   FRenderWireframe   := false;
   FRenderNodeBoxes   := false;

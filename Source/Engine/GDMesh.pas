@@ -90,8 +90,8 @@ Type
 implementation
 
 uses
-  GDResources,
-  GDConsole;
+  GDEngine,
+  GDResources;
 
 {******************************************************************************}
 {* Create surface                                                             *}
@@ -111,7 +111,7 @@ end;
 
 destructor TGDSurface.Destroy();
 begin
-  Resources.RemoveResource(TGDResource(FMaterial));
+  Engine.Resources.RemoveResource(TGDResource(FMaterial));
   FreeAndNil(FIndexes);
   FreeAndNil(FIndexBuffer);
   Inherited;
@@ -171,7 +171,7 @@ begin
 end;
 
 begin
-  Console.Write('Loading mesh ' + aFileName + '...');
+  Engine.Console.Write('Loading mesh ' + aFileName + '...');
   try
     iResult := true;
 
@@ -193,7 +193,7 @@ begin
 
     //set the comment string
     CommentString := '#';
-    Console.Use:=false;
+    Engine.Console.Use:=false;
 
     while (iFile.Position < iFile.Size) do
     begin
@@ -201,7 +201,7 @@ begin
       if iStr = 'mtllib' then //read the material lib
       begin
         iStr := GetNextToken(iFile);
-        Resources.LoadMaterials(ExtractFilePath(aFileName) + iStr);
+        Engine.Resources.LoadMaterials(ExtractFilePath(aFileName) + iStr);
         continue;
       end
       else if iStr = 'v' then //read a vertex
@@ -230,9 +230,9 @@ begin
       else if iStr = 'usemtl' then //read the current material for the faces
       begin
         iStr := GetNextToken(iFile);
-        if not(Resources.Find(iStr, iIdx)) then
+        if not(Engine.Resources.Find(iStr, iIdx)) then
            Raise Exception.Create('Material ' + iStr + ' doesn`t excist!');
-        iMat := TGDMaterial(Resources.Data[iIdx]);
+        iMat := TGDMaterial(Engine.Resources.Data[iIdx]);
         iSur := TGDSurface.Create();
         iSur.FMaterial := iMat;
         FSurfaces.Add(iSur);
@@ -266,8 +266,8 @@ begin
   FreeAndNil(iNormals);
   FreeAndNil(iUVS);
 
-  Console.Use:=true;
-  Console.WriteOkFail(iResult, iError);
+  Engine.Console.Use:=true;
+  Engine.Console.WriteOkFail(iResult, iError);
 end;
 
 {******************************************************************************}

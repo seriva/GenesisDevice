@@ -36,12 +36,9 @@ interface
 uses
   Classes,
   SysUtils,
-  GDConsole,
   GDConstants,
-  GDSettings,
   GDResource,
   openal,
-  GDTiming,
   mpg123;
 
 Type
@@ -114,6 +111,9 @@ Type
     constructor Create();
     destructor  Destroy(); override;
 
+    function  Load(aFileName : String) : TGDSoundResource;
+    procedure Remove(aSoundResource : TGDSoundResource);
+
     function  Play(aResource : TGDSoundResource; aLoop : boolean): integer;
     procedure Stop(aIndex : Integer);
     procedure Pause(aIndex : Integer);
@@ -122,10 +122,10 @@ Type
     procedure Update();
   end;
 
-var
-  Sound : TGDSound;
-
 implementation
+
+uses
+  GDEngine;
 
 {******************************************************************************}
 {* Create stream class                                                        *}
@@ -136,7 +136,7 @@ var
   iError : string;
   iResult : boolean;
 begin
-  Console.Write('Loading sound stream' + aFileName + '...');
+  Engine.Console.Write('Loading sound stream' + aFileName + '...');
   try
     iResult := true;
     FHandle := mpg123_new('MMX', nil);
@@ -154,7 +154,7 @@ begin
       iResult := false;
     end;
   end;
-  Console.WriteOkFail(iResult, iError);
+  Engine.Console.WriteOkFail(iResult, iError);
 end;
 
 {******************************************************************************}
@@ -229,7 +229,7 @@ var
   iData: TALVoid;
   iResult : boolean;
 begin
-  Console.Write('Loading sound ' + aFileName + '...');
+  Engine.Console.Write('Loading sound ' + aFileName + '...');
   try
     iResult := true;
     AlGenBuffers(1, @FBuffer);
@@ -244,7 +244,7 @@ begin
       iResult := false;
     end;
   end;
-  Console.WriteOkFail(iResult, iError);
+  Engine.Console.WriteOkFail(iResult, iError);
 end;
 
 {******************************************************************************}
@@ -269,7 +269,7 @@ begin
   FResource := nil;
   AlGenSources(1, @FSource);
   AlSourcef( FSource, AL_PITCH, 1.0 );
-  AlSourcef( FSource, AL_GAIN, Settings.SoundVolume);
+  AlSourcef( FSource, AL_GAIN, Engine.Settings.SoundVolume);
   AlSourcefv( FSource, AL_POSITION, @iSourcePos);
   AlSourcefv( FSource, AL_VELOCITY, @iSourceVel);
 end;
@@ -314,8 +314,8 @@ var
   iALInt1, iALInt2 : TALCint;
   iI : Integer;
 begin
-  Timing.Start();
-  Console.Write('......Initializing sound');
+  Engine.Timing.Start();
+  Engine.Console.Write('......Initializing sound');
   try
     FInitialized := true;
     if not(InitOpenAL()) then
@@ -331,9 +331,9 @@ begin
       Raise Exception.Create('Error making the sound context current!');
 
     //Print specs
-    Console.Write('Vendor: ' + String(AnsiString(alGetString(AL_VENDOR))));
-    Console.Write('Renderer: ' + String(AnsiString(alGetString(AL_RENDERER))));
-    Console.Write('Version: ' + String(AnsiString(alGetString(AL_VERSION))));
+    Engine.Console.Write('Vendor: ' + String(AnsiString(alGetString(AL_VENDOR))));
+    Engine.Console.Write('Renderer: ' + String(AnsiString(alGetString(AL_RENDERER))));
+    Engine.Console.Write('Version: ' + String(AnsiString(alGetString(AL_VERSION))));
 
     //Check requirements
     //Version
@@ -357,14 +357,14 @@ begin
     begin
       iError := E.Message;
       FInitialized := false;
-      Console.Write('Failed to initialize sound: ' + iError);
+      Engine.Console.Write('Failed to initialize sound: ' + iError);
     end;
   end;
 
   If FInitialized then
   begin
-    Timing.Stop();
-    Console.Write('......Done initializing sound (' + Timing.TimeInSeconds + ' Sec)');
+    Engine.Timing.Stop();
+    Engine.Console.Write('......Done initializing sound (' + Engine.Timing.TimeInSeconds + ' Sec)');
   end;
 end;
 
@@ -379,7 +379,7 @@ var
   iI : Integer;
 begin
   inherited;
-  Console.Write('Shutting down sound...');
+  Engine.Console.Write('Shutting down sound...');
   try
     iResult := true;
     mpg123_exit;
@@ -398,7 +398,7 @@ begin
       iResult := false;
     end;
   end;
-  Console.WriteOkFail(iResult, iError);
+  Engine.Console.WriteOkFail(iResult, iError);
 end;
 
 {******************************************************************************}
@@ -419,7 +419,7 @@ begin
   AlListenerfv( AL_POSITION, @iListenerPos);
   AlListenerfv( AL_VELOCITY, @iListenerVel);
   AlListenerfv( AL_ORIENTATION, @iListenerOri);
-  AlListenerf( AL_GAIN, Settings.SoundVolume);
+  AlListenerf( AL_GAIN, Engine.Settings.SoundVolume);
 
   //Update posible steams
   for iI := 0 to S_MAX_SOURCES-1 do
@@ -443,6 +443,27 @@ begin
 end;
 
 {******************************************************************************}
+{* Load                                                                       *}
+{******************************************************************************}
+
+function  TGDSound.Load(aFileName : String) : TGDSoundResource;
+begin
+  if UpperCase(ExtractFileExt(aFileName)) = '.WAV' then
+     result := Engine.Resources.LoadSoundBuffer(aFileName)
+  else if UpperCase(ExtractFileExt(aFileName)) = '.MP3' then
+     result := Engine.Resources.LoadSoundStream(aFileName)
+end;
+
+{******************************************************************************}
+{* Remove                                                                     *}
+{******************************************************************************}
+
+procedure TGDSound.Remove(aSoundResource : TGDSoundResource);
+begin
+  Engine.Resources.RemoveResource(TGDResource(aSoundResource));
+end;
+
+{******************************************************************************}
 {* Play                                                                       *}
 {******************************************************************************}
 
@@ -453,7 +474,7 @@ var
 begin
   result := -1;
 
-  If Not(Settings.MuteSound) then
+  If Not(Engine.Settings.MuteSound) then
   begin
     //find a free source for playing
     for iI := 0 to S_MAX_SOURCES-1 do
@@ -485,13 +506,13 @@ begin
         alSourceQueueBuffers(iSource.FSource, 2, @TGDSoundStream(aResource).FBuffers[0]);
       end
       else
-        Console.WriteOkFail(false, aResource.Name + ' is not a playeble resource.', false);
+        Engine.Console.WriteOkFail(false, aResource.Name + ' is not a playeble resource.', false);
 
       iSource.FResource := aResource;
       AlSourcePlay(iSource.FSource);
     end
     else
-      Console.WriteOkFail(false, 'Failed to find free source to play sound: ' + aResource.Name, false);
+      Engine.Console.WriteOkFail(false, 'Failed to find free source to play sound: ' + aResource.Name, false);
   end;
 end;
 

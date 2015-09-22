@@ -27,7 +27,6 @@ unit GDResources;
 interface
 
 uses
-  GDSettings,
   GDStringParsing,
   Classes,
   SysUtils,
@@ -62,10 +61,10 @@ type
      procedure Clear();
    end;
 
-var
-  Resources : TGDResources;
-
 implementation
+
+uses
+  GDEngine;
 
 {******************************************************************************}
 {* Load a texture resource                                                    *}
@@ -180,7 +179,7 @@ begin
         if iMat = nil then
           continue;
         iStr := GetNextToken(iFile);
-        iMat.Texture := Resources.LoadTexture(ExtractFilePath(aFileName) + iStr ,Settings.TextureDetail,Settings.TextureFilter);
+        iMat.Texture := Engine.Resources.LoadTexture(ExtractFilePath(aFileName) + iStr , Engine.Settings.TextureDetail,Engine.Settings.TextureFilter);
         continue;
       end
       else if iStr = 'has_alpha' then //read alpha

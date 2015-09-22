@@ -34,8 +34,6 @@ uses
   SysUtils,
   dglOpenGL,
   GDConstants,
-  GDSettings,
-  GDGUI,
   GDBaseCell,
   GDWater,
   GDWaterCell,
@@ -43,12 +41,9 @@ uses
   GDGrassCell,
   GDTerrain,
   GDTerrainCell,
-  GDTiming,
   GDOctree,
-  GDConsole,
   GDTypes,
-  GDMeshCell,
-  GDModes;
+  GDMeshCell;
 
 type
 
@@ -86,6 +81,9 @@ type
   end;
 
 implementation
+
+uses
+  GDEngine;
 
 {******************************************************************************}
 {* Create the cell manager class                                              *}
@@ -246,11 +244,11 @@ label
 label
   RedoRandomRocks;
 Begin
-  Timing.Start();
+  Engine.Timing.Start();
   iStepX := aTerrain.TerrainWidth div (aTerrain.TerrainWidth div GRASS_CELLSIZE);
   iStepY := aTerrain.TerrainHeight div (aTerrain.TerrainHeight div GRASS_CELLSIZE);
 
-  GUI.LoadingScreen.SetupForUse('Generating foliage...', Round(aTerrain.TerrainWidth/iStepX) + aFoliage.TreeTypes.Count + aFoliage.RockTypes.Count );
+  Engine.GUI.LoadingScreen.Start('Generating foliage...', Round(aTerrain.TerrainWidth/iStepX) + aFoliage.TreeTypes.Count + aFoliage.RockTypes.Count );
 
   //create grasscells
   iI := 1;
@@ -281,7 +279,7 @@ Begin
       iJ := iJ + iStepY;
     end;
     iI := iI + iStepX;
-    GUI.LoadingScreen.UpdateBar();
+    Engine.GUI.LoadingScreen.Update();
   end;
 
   //create treecells
@@ -327,7 +325,7 @@ Begin
       else
         goto RedoRandomTrees;
     end;
-    GUI.LoadingScreen.UpdateBar();
+    Engine.GUI.LoadingScreen.Update();
   end;
 
   //create rocks
@@ -360,7 +358,7 @@ Begin
         iMeshInput.Scale.X       := iMeshType.Scale + Random(Round(iMeshType.RandomScale));
         iMeshInput.Scale.Y       := iMeshType.Scale + Random(Round(iMeshType.RandomScale));
         iMeshInput.Scale.Z       := iMeshType.Scale + Random(Round(iMeshType.RandomScale));
-        iMeshInput.FadeDistance  := Settings.FoliageDistance * R_FOLIAGE_DISTANCE_STEP + (R_FOLIAGE_DISTANCE_STEP * 10);
+        iMeshInput.FadeDistance  := Engine.Settings.FoliageDistance * R_FOLIAGE_DISTANCE_STEP + (R_FOLIAGE_DISTANCE_STEP * 10);
         iMeshInput.FadeScale     := R_FOLIAGE_LOD_DISTANCE;
         iMeshInput.CastShadow    := False;
         iMeshInput.ReceiveShadow := True;
@@ -371,10 +369,10 @@ Begin
 
 
     end;
-    GUI.LoadingScreen.UpdateBar();
+    Engine.GUI.LoadingScreen.Update();
   end;
-  Timing.Stop();
-  Console.Write('......Generated foliage (' + Timing.TimeInSeconds + ' Sec)');
+  Engine.Timing.Stop();
+  Engine.Console.Write('......Generated foliage (' + Engine.Timing.TimeInSeconds + ' Sec)');
 End;
 
 {******************************************************************************}
@@ -445,7 +443,7 @@ Begin
   If (aRenderFor = RF_NORMAL) then TriangleCount := 0;
 
   //render the visible terrain cells
-  if Modes.RenderTerrain and (aRenderFor <> RF_SHADOW) then
+  if Engine.Modes.RenderTerrain and (aRenderFor <> RF_SHADOW) then
   begin
     aTerrain.StartRendering( aRenderAttribute, aRenderFor );
     for iI := 0 to FVisibleTerrainCells.Count - 1 do
@@ -458,7 +456,7 @@ Begin
   end;
 
   //render the visible grass cells
-  if (Modes.RenderGrass) and (aRenderFor = RF_NORMAL) then
+  if (Engine.Modes.RenderGrass) and (aRenderFor = RF_NORMAL) then
   begin
     aFoliage.StartRenderingGrass( aRenderAttribute );
     for iI := 0 to FVisibleGrassCells.Count - 1 do
@@ -471,7 +469,7 @@ Begin
   end;
 
   //render the visible mesh cells
-  if Modes.RenderModels then
+  if Engine.Modes.RenderModels then
   begin
     for iI := 0 to FVisibleMeshCells.Count - 1 do
     begin
@@ -488,7 +486,7 @@ Begin
   end;
 
   //render the visible water cells
-  If (Modes.RenderWater) and (aRenderFor <> RF_WATER) and (aRenderFor <> RF_SHADOW) then
+  If (Engine.Modes.RenderWater) and (aRenderFor <> RF_WATER) and (aRenderFor <> RF_SHADOW) then
   begin
     aWater.StartRendering( aRenderAttribute, aRenderFor );
     for iI := 0 to FVisibleWaterCells.Count - 1 do

@@ -93,10 +93,9 @@ type
     constructor Create();
     destructor  Destroy(); override;
 
-    procedure InitConsole();
-    procedure Clear();
-
     procedure Render();
+
+    procedure Reset();
 
     procedure AddChar( aChar : Char );
     procedure Control( aKey : Integer );
@@ -108,15 +107,10 @@ type
     procedure ExecuteCommand(aCommand : String);
   end;
 
-var
-  Console : TGDConsole;
-
 implementation
 
 uses
-  GDTiming,
-  GDInput,
-  GDRenderer;
+  GDEngine;
 
 {******************************************************************************}
 {* Show help                                                                  *}
@@ -127,13 +121,13 @@ var
   iK : Integer;
   iCommand : TGDCommand;
 begin
-  Console.Write('');
-  for ik := 0 to Console.CommandMap.Count - 1 do
+  Engine.Console.Write('');
+  for ik := 0 to Engine.Console.CommandMap.Count - 1 do
   begin
-    iCommand := Console.CommandMap.Data[ik];
-    Console.Write(iCommand.Command + ' - ' + iCommand.Help);
+    iCommand := Engine.Console.CommandMap.Data[ik];
+    Engine.Console.Write(iCommand.Command + ' - ' + iCommand.Help);
   end;
-  Console.Write('');
+  Engine.Console.Write('');
 end;
 
 {******************************************************************************}
@@ -143,7 +137,6 @@ end;
 constructor TGDConsole.Create();
 begin
   FUse          := True;
-  FShow         := False;
   FLogText      := TStringList.Create();
   FCommandHistory := TStringList.Create();
   CommandMap    := TGDCommandMap.Create();
@@ -151,6 +144,7 @@ begin
   AddCommand('Help', 'Show help', CT_FUNCTION, @Help);
   Write('Log started at ' + DateToStr(Date()) + ', ' + TimeToStr(Time()));
   Write('Build: ' + ENGINE_INFO);
+  Reset();
 end;
 
 {******************************************************************************}
@@ -169,20 +163,11 @@ end;
 {* Init the console                                                           *}
 {******************************************************************************}
 
-procedure TGDConsole.InitConsole();
+procedure TGDConsole.Reset();
 begin
-  Clear();
   FRow := FLogText.Count-1;
   FShow := false;
   FCommand := '';
-end;
-
-{******************************************************************************}
-{* Clear the console                                                          *}
-{******************************************************************************}
-
-procedure TGDConsole.Clear();
-begin
 end;
 
 {******************************************************************************}
@@ -202,7 +187,7 @@ begin
   end;
 
   //calculate cursor timing
-  iTime      := Timing.GetTime();
+  iTime      := Engine.Timing.GetTime();
   iDT        := iTime - FLastTime;
   FLastTime  := iTime;
   FCursorTime   := FCursorTime + iDT;
@@ -216,26 +201,26 @@ begin
   RenderFlatQuad(0, iHalf-7, R_HUDWIDTH, iHalf+7, true, false);
   RenderFlatQuad(-5, iHalf-7, R_HUDWIDTH+5, 32, false, true);
 
-  Renderer.RenderState(RS_TEXTS);
+  Engine.Renderer.RenderState(RS_TEXTS);
   iJ := 0;
   For iI := FRow downto FRow-C_MAX_LINES do
   begin
     If  ((iI) >= 0) then
     begin
       If copy(Uppercase(FLogText.Strings[iI]), 0, 5) = 'ERROR' then
-        GUI.Font.Color.Red
+        Engine.GUI.Font.Color.Red
       else
-        GUI.Font.Color := GUI.FontColor.Copy();
-      GUI.Font.Render(0, (R_HUDHEIGHT/2)+28+(iJ*25), 0.40, FLogText.Strings[iI] );
+        Engine.GUI.Font.Color := Engine.GUI.FontColor.Copy();
+      Engine.GUI.Font.Render(0, (R_HUDHEIGHT/2)+28+(iJ*25), 0.40, FLogText.Strings[iI] );
       iJ := iJ + 1;
     end
   end;
 
-  GUI.Font.Color := GUI.FontColor.Copy();
-  GUI.Font.Render(0, (R_HUDHEIGHT/2)-3, 0.40, FCommand);
-  iX := GUI.Font.TextWidth(Copy(FCommand, 1, FCursorpos-1), 0.40);
+  Engine.GUI.Font.Color := Engine.GUI.FontColor.Copy();
+  Engine.GUI.Font.Render(0, (R_HUDHEIGHT/2)-3, 0.40, FCommand);
+  iX := Engine.GUI.Font.TextWidth(Copy(FCommand, 1, FCursorpos-1), 0.40);
   if FCursorUpdate then
-     GUI.Font.Render(iX, (R_HUDHEIGHT/2)-3, 0.40, '_' );
+     Engine.GUI.Font.Render(iX, (R_HUDHEIGHT/2)-3, 0.40, '_' );
 
   glDisable(GL_BLEND);
 end;
@@ -264,7 +249,7 @@ begin
     FShow := not(FShow);
     If Not(FShow) then
     begin
-      Input.SetMouseStartPos();
+      Engine.Input.SetMouseStartPos();
       Exit;
     end
     else

@@ -65,9 +65,6 @@ type
     Function  TimeInMilliSeconds() : String;
     function  GetTime(): integer;
   end;
-  
-var
-  Timing : TGDTiming;
 
 implementation
 

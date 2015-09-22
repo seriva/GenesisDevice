@@ -36,7 +36,6 @@ uses
   dglOpenGL,
   GDConstants,
   GDTerrain,
-  GDRenderer,
   GDTypes,
   GDGLWrappers,
   GDTypesGenerics,
@@ -65,6 +64,9 @@ type
   end;
 
 implementation
+
+uses
+  GDEngine;
 
 {******************************************************************************}
 {* Create the terraincell class                                               *}
@@ -176,7 +178,7 @@ begin
                                 iV2 := GetPoint(iX,iY).Normal.Copy();
                                 iV2.Multiply(R_NORMAL_LENGTH);
                                 iV2.Add(iV1);
-                                Renderer.AddLine(iV1, iV2);
+                                Engine.Renderer.AddLine(iV1, iV2);
                               end;
                             end;
                           end;

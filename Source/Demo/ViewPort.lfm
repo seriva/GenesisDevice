@@ -1,4 +1,5 @@
 object ViewPortForm: TViewPortForm
+  Cursor = crNone
   Left = 633
   Height = 247
   Top = 754
@@ -16,7 +17,7 @@ object ViewPortForm: TViewPortForm
   OnKeyPress = FormKeyPress
   OnResize = FormResize
   ShowInTaskBar = stAlways
-  LCLVersion = '1.2.6.0'
+  LCLVersion = '1.4.2.0'
   object ApplicationEvents: TApplicationProperties
     OnIdle = ApplicationEventsIdle
     left = 24

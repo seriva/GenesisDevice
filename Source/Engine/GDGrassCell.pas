@@ -41,7 +41,6 @@ uses
   GDFoliage,
   GDTypes,
   GDWater,
-  GDSettings,
   GDTerrain,
   GDBaseCell;
 
@@ -83,6 +82,9 @@ type
   end;
 
 implementation
+
+uses
+  GDEngine;
 
 {******************************************************************************}
 {* Init the grasspartical                                                     *}
@@ -167,7 +169,7 @@ begin
   //create temp arrays
   SetLength( iParticalCount, aFoliage.GrassTypes.Count);
   For iI := 0 to Length(iParticalCount)-1 do
-    iParticalCount[iI] :=  Round( (Settings.FoliageDensity * TGDGrassType( aFoliage.GrassTypes.Items[iI] ).CoverOfTotal) / 100 );
+    iParticalCount[iI] :=  Round( (Engine.Settings.FoliageDensity * TGDGrassType( aFoliage.GrassTypes.Items[iI] ).CoverOfTotal) / 100 );
 
   SetLength( iParticalLists, aFoliage.GrassTypes.Count);
   for iY := (FStartPoint.Y-1) to FEndPoint.Y-2 do

@@ -31,8 +31,7 @@ unit Player;
 interface
 
 uses
-  GDInterface,
-  GDTypes,
+  GDEngine,
   SysUtils;
 
 type
@@ -102,7 +101,7 @@ end;
 
 procedure TPlayer.MoveForward();
 begin
-  gdCameraMove( MovementSpeed );
+  Engine.Camera.Move( MovementSpeed );
 end;
 
 {******************************************************************************}
@@ -111,7 +110,7 @@ end;
 
 procedure TPlayer.MoveBackWard();
 begin
-  gdCameraMove( -MovementSpeed );
+  Engine.Camera.Move( -MovementSpeed );
 end;
 
 {******************************************************************************}
@@ -120,7 +119,7 @@ end;
 
 procedure TPlayer.MoveLeft();
 begin
-  gdCameraStrafe(MovementSpeed);
+  Engine.Camera.Strafe(MovementSpeed);
 end;
 
 {******************************************************************************}
@@ -129,8 +128,7 @@ end;
 
 procedure TPlayer.MoveRight();
 begin
-  //if Not(Intro.FRenderIntroText) then
-    gdCameraStrafe(-MovementSpeed);
+  Engine.Camera.Strafe(-MovementSpeed);
 end;
 
 {******************************************************************************}
@@ -168,11 +166,8 @@ end;
 {******************************************************************************}
 
 Function TPlayer.PlayerInWater() : boolean;
-var
-  aV : TGDVector;
 begin
-  aV := gdCameraGetPosition();
-  if aV.Y < gdMapWaterHeight() + 100 then
+  if Engine.Camera.Position.y < Engine.Map.Water.WaterHeight + 100 then
     result := true
   else
     result := false;
@@ -183,11 +178,8 @@ end;
 {******************************************************************************}
 
 Function TPlayer.PlayerUnderWater() : boolean;
-var
-  aV : TGDVector;
 begin
-  aV := gdCameraGetPosition();
-  if aV.Y < gdMapWaterHeight() then
+  if Engine.Camera.Position.y < Engine.Map.Water.WaterHeight then
     result := true
   else
     result := false;
@@ -200,48 +192,38 @@ end;
 procedure TPlayer.DoPlayerCollisionAndPhysics();
 var
   iTerrainHeight : Double;
-  aV : TGDVector;
 begin
-  FMovementSpeed := FMovementMultiplier * gdTimingFrameTime() / 1000;
-  FSinkSpeed     := FSinkMultiplier * gdTimingFrameTime() / 1000;
+  FMovementSpeed := FMovementMultiplier * Engine.Timing.FrameTime / 1000;
+  FSinkSpeed     := FSinkMultiplier * Engine.Timing.FrameTime / 1000;
 
   If Not(Clip) then exit;
 
   if PlayerInWater() then
-  begin
-    aV := gdCameraGetPosition();
-    aV.Y := aV.Y - FSinkSpeed;
-    gdCameraSetPosition(aV.X, aV.Y, aV.Z);
-  end;
+    Engine.Camera.Position.SetY(Engine.Camera.Position.y - FSinkSpeed);
 
-  aV := gdCameraGetPosition();
-  iTerrainHeight := gdMapTerrainHeight( aV.X, aV.Z  );
+  Engine.Map.Terrain.GetHeight(Engine.Camera.Position.X, Engine.Camera.Position.Z, iTerrainHeight);
 
-  if iTerrainHeight > gdMapWaterHeight() then
+  if iTerrainHeight > Engine.Map.Water.WaterHeight then
   begin
-    aV.Y := iTerrainHeight + 256;
-    gdCameraSetPosition( aV.X, aV.Y, aV.z );
+    Engine.Camera.Position.SetY(iTerrainHeight + 256);
     exit;
   end
   else
   begin
-    if iTerrainHeight + 170 > gdMapWaterHeight() then
+    if iTerrainHeight + 170 > Engine.Map.Water.WaterHeight then
     begin
-      aV.Y := iTerrainHeight + 256;
-      gdCameraSetPosition( aV.X, aV.Y, aV.z );
+      Engine.Camera.Position.SetY(iTerrainHeight + 256);
       exit;
     end;
 
-    if aV.Y < iTerrainHeight+170 then
+    if Engine.Camera.Position.Y < iTerrainHeight+170 then
     begin
-      aV.Y := iTerrainHeight+170;
-      gdCameraSetPosition( aV.X, aV.Y, aV.z );
+      Engine.Camera.Position.SetY(iTerrainHeight+170);
     end
     else
-      if aV.Y > gdMapWaterHeight()+96 then
+      if Engine.Camera.Position.Y > Engine.Map.Water.WaterHeight+96 then
       begin
-        aV.Y := gdMapWaterHeight()+96;
-        gdCameraSetPosition( aV.X, aV.Y, aV.z );
+        Engine.Camera.Position.SetY(Engine.Map.Water.WaterHeight+96);
       end;
   end;
 End;

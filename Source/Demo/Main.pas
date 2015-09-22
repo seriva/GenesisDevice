@@ -39,7 +39,9 @@ uses
   ExtCtrls,
   Controls,
   Player,
-  GDInterface;
+  GDEngine,
+  GDSound,
+  GDGUI;
 
 var
   //main
@@ -53,18 +55,19 @@ var
   Player     : TPlayer;
 
   //Sounds
-  AmbientBuffer    : pointer;
+  AmbientBuffer    : TGDSoundResource;
   AmbientSource    : integer;
-  UnderWaterBuffer : pointer;
+  UnderWaterBuffer : TGDSoundResource;
   UnderWaterSource : integer;
-  MusicBuffer      : pointer;
+  MusicBuffer      : TGDSoundResource;
   MusicSource      : integer;
 
   //Screens
-  IntroScreen    : pointer;
+  IntroScreen    : TGDScreen;
 
 procedure InitGame();
 procedure ClearGame();
+procedure GameLoop();
 
 implementation
 
@@ -86,7 +89,7 @@ end;
 
 procedure PlayerForward();
 begin
-  if not(gdGUIScreenGetVisible(IntroScreen)) then
+  if not(IntroScreen.Visible) then
     Player.MoveForward();
 end;
 
@@ -96,7 +99,7 @@ end;
 
 procedure PlayerBackward();
 begin
-  if not(gdGUIScreenGetVisible(IntroScreen)) then
+  if not(IntroScreen.Visible) then
     Player.MoveBackWard();
 end;
 
@@ -106,7 +109,7 @@ end;
 
 procedure PlayerRight();
 begin
-  if not(gdGUIScreenGetVisible(IntroScreen)) then
+  if not(IntroScreen.Visible) then
     Player.MoveRight();
 end;
 
@@ -116,7 +119,7 @@ end;
 
 procedure PlayerLeft();
 begin
-  if not(gdGUIScreenGetVisible(IntroScreen)) then
+  if not(IntroScreen.Visible) then
     Player.MoveLeft();
 end;
 
@@ -126,7 +129,7 @@ end;
 
 procedure SetWalk();
 begin
-  if not(gdGUIScreenGetVisible(IntroScreen)) then
+  if not(IntroScreen.Visible) then
     Player.Walk();
 end;
 
@@ -136,7 +139,7 @@ end;
 
 procedure SetRun();
 begin
-  if not(gdGUIScreenGetVisible(IntroScreen)) then
+  if not(IntroScreen.Visible) then
     PLayer.Run();
 end;
 
@@ -159,7 +162,7 @@ end;
 procedure ToggleStats();
 begin
   Stats := not(Stats);
-  gdConsoleCommand('RStats ' + BoolToStr(Stats));
+  Engine.Console.ExecuteCommand ('RStats ' + BoolToStr(Stats));
 end;
 
 {******************************************************************************}
@@ -169,7 +172,7 @@ end;
 procedure ToggleWireFrame();
 begin
   WireFrame := not(WireFrame);
-  gdConsoleCommand('RTris ' + BoolToStr(WireFrame));
+  Engine.Console.ExecuteCommand ('RTris ' + BoolToStr(WireFrame));
 end;
 
 {******************************************************************************}
@@ -179,7 +182,7 @@ end;
 procedure ToggleOctreeNodes(); stdcall;
 begin
   TreeNodes := not(TreeNodes);
-  gdConsoleCommand('RNodes ' + BoolToStr(TreeNodes));
+  Engine.Console.ExecuteCommand ('RNodes ' + BoolToStr(TreeNodes));
 end;
 
 {******************************************************************************}
@@ -189,7 +192,7 @@ end;
 procedure ToggleOBJBoxes(); stdcall;
 begin
   ObjBoxes := not(ObjBoxes);
-  gdConsoleCommand('RAABB ' + BoolToStr(ObjBoxes));
+  Engine.Console.ExecuteCommand ('RAABB ' + BoolToStr(ObjBoxes));
 end;
 
 {******************************************************************************}
@@ -207,27 +210,28 @@ end;
 
 procedure ToggleIntroText();
 begin
-  gdGUIScreenSetVisible(IntroScreen, not(gdGUIScreenGetVisible(IntroScreen)));
-  gdInputUseMouseLook(not(gdGUIScreenGetVisible(IntroScreen)));
-  gdGUIMouseCursorShow(gdGUIScreenGetVisible(IntroScreen));
+  IntroScreen.Visible := not(IntroScreen.Visible);
+  Engine.Input.MouseLook := not(IntroScreen.Visible);
+  Engine.Input.CalculateMousePosStart();
+  Engine.GUI.MouseCursor.Visible := IntroScreen.Visible;
 end;
 
 {******************************************************************************}
-{* Beforce render callback                                                    *}
+{* Main gameloop                                                              *}
 {******************************************************************************}
 
-procedure Loop();
+procedure GameLoop();
 begin
   //do soms sound stuff
   if Player.PlayerUnderWater() then
   begin
-    gdSoundResume( UnderWaterSource );
-    gdSoundPause( AmbientSource );
+    Engine.Sound.Resume(UnderWaterSource);
+    Engine.Sound.Pause( AmbientSource );
   end
   else
   begin
-    gdSoundPause( UnderWaterSource );
-    gdSoundResume( AmbientSource  );
+    Engine.Sound.Pause( UnderWaterSource );
+    Engine.Sound.Resume(AmbientSource);
   end;
 
   If (ViewPortForm.Focused = False) or (ViewPortForm.WindowState = wsMinimized) then
@@ -251,58 +255,55 @@ begin
   Clip       := true;
 
   //initialize the gamerecources
-  gdTimingStart();
-  gdGUILoadingScreenSetup( 'Loading game...', 3);
-  gdConsoleLog('......Initializing game resources');
+  Engine.Timing.Start();
+  Engine.GUI.LoadingScreen.Start('Loading game...', 3);
+  Engine.Console.Write('......Initializing game resources');
 
   //sounds
-  AmbientBuffer    := gdSoundLoad( 'Sounds\ambient.wav');
-  UnderWaterBuffer := gdSoundLoad( 'Sounds\underwater.wav');
-  MusicBuffer      := gdSoundLoad( 'Sounds\music.mp3');
-  AmbientSource := gdSoundPlay(AmbientBuffer, true);
-  gdSoundPause(AmbientSource);
-  UnderWaterSource := gdSoundPlay(UnderWaterBuffer, true);
-  gdSoundPause(UnderWaterSource);
-  gdGUILoadingScreenUpdate();
+  AmbientBuffer    := Engine.Sound.Load( 'Sounds\ambient.wav');
+  UnderWaterBuffer := Engine.Sound.Load( 'Sounds\underwater.wav');
+  MusicBuffer      := Engine.Sound.Load( 'Sounds\music.mp3');
+  AmbientSource := Engine.Sound.Play(AmbientBuffer, true);
+  Engine.Sound.Pause(AmbientSource);
+  UnderWaterSource := Engine.Sound.Play(UnderWaterBuffer, true);
+  Engine.Sound.Pause(UnderWaterSource);
+  Engine.GUI.LoadingScreen.Update();
 
   //intro
-  IntroScreen := gdGUIInitScreen('Ini\Intro.ini');
-  gdGUILoadingScreenUpdate();
+  IntroScreen := Engine.GUI.InitScreen('Ini\Intro.ini');
+  Engine.GUI.LoadingScreen.Update();
 
   //player
   Player  := TPlayer.Create();
-  gdGUILoadingScreenUpdate();
-  gdTimingStop();
-  gdConsoleLog( PChar('......Done initializing game resources (' + gdTimingInSeconds() + ' Sec)') );
+  Engine.GUI.LoadingScreen.Update();
+  Engine.Timing.Stop();
+  Engine.Console.Write( '......Done initializing game resources (' +  Engine.Timing.TimeInSeconds() + ' Sec)' );
 
   //map
-  gdMapLoad( PChar( 'Maps\' + ConfigurationForm.Map + '\map.ini') );
+  Engine.Map.Load( 'Maps\' + ConfigurationForm.Map + '\map.ini' );
 
   //final settings.
-  gdGUIScreenSetVisible(IntroScreen, true);
-  gdInputEnable(true);
-  gdGUIMouseCursorShow(true);
-  gdInputUseMouseLook(false);
-
-  //main callback functions
-  gdEngineLoopCallback( @Loop );
+  IntroScreen.Visible := true;
+  Engine.Input.EnableInput := true;
+  Engine.Input.MouseLook :=  false;
+  Engine.GUI.MouseCursor.Visible := true;
 
   //input funtions
-  gdInputRegisterAction(IT_SINGLE,VK_ESCAPE,@ExitCallback, false );
-  gdInputRegisterAction(IT_DIRECT,VK_W,@PlayerForward, true );
-  gdInputRegisterAction(IT_DIRECT,VK_S,@PlayerBackward, true );
-  gdInputRegisterAction(IT_DIRECT,VK_A,@PlayerLeft, true );
-  gdInputRegisterAction(IT_DIRECT,VK_D,@PlayerRight, true );
-  gdInputRegisterAction(IT_DOWN,VK_LSHIFT,@SetRun, true );
-  gdInputRegisterAction(IT_UP,VK_LSHIFT,@SetWalk, true );
-  gdInputRegisterAction(IT_SINGLE,VK_F1,@ToggleStats, false  );
-  gdInputRegisterAction(IT_SINGLE,VK_F2,@ToggleWireFrame, false  );
-  gdInputRegisterAction(IT_SINGLE,VK_F3,@ToggleOctreeNodes, false  );
-  gdInputRegisterAction(IT_SINGLE,VK_F4,@ToggleOBJBoxes, false  );
-  gdInputRegisterAction(IT_SINGLE,VK_F5,@ToggleClipping, false  );
-  gdInputRegisterAction(IT_SINGLE,VK_P,@ToggleIntroText, true  );
+  Engine.Input.AddAction(IT_SINGLE,VK_ESCAPE,@ExitCallback, false );
+  Engine.Input.AddAction(IT_DIRECT,VK_W,@PlayerForward, true );
+  Engine.Input.AddAction(IT_DIRECT,VK_S,@PlayerBackward, true );
+  Engine.Input.AddAction(IT_DIRECT,VK_A,@PlayerLeft, true );
+  Engine.Input.AddAction(IT_DIRECT,VK_D,@PlayerRight, true );
+  Engine.Input.AddAction(IT_DOWN,VK_LSHIFT,@SetRun, true );
+  Engine.Input.AddAction(IT_UP,VK_LSHIFT,@SetWalk, true );
+  Engine.Input.AddAction(IT_SINGLE,VK_F1,@ToggleStats, false  );
+  Engine.Input.AddAction(IT_SINGLE,VK_F2,@ToggleWireFrame, false  );
+  Engine.Input.AddAction(IT_SINGLE,VK_F3,@ToggleOctreeNodes, false  );
+  Engine.Input.AddAction(IT_SINGLE,VK_F4,@ToggleOBJBoxes, false  );
+  Engine.Input.AddAction(IT_SINGLE,VK_F5,@ToggleClipping, false  );
+  Engine.Input.AddAction(IT_SINGLE,VK_P,@ToggleIntroText, true  );
 
-  MusicSource := gdSoundPlay( MusicBuffer, true );
+  MusicSource := Engine.Sound.Play( MusicBuffer, true );
 end;
 
 {******************************************************************************}
@@ -312,12 +313,12 @@ end;
 procedure ClearGame();
 begin
   FreeAndNil(Player);
-  gdSoundStop(AmbientSource);
-  gdSoundStop(UnderWaterSource);
-  gdSoundStop(MusicSource);
-  gdSoundRemove(AmbientBuffer);
-  gdSoundRemove(UnderWaterBuffer);
-  gdSoundRemove(MusicBuffer);
+  Engine.Sound.Stop(AmbientSource);
+  Engine.Sound.Stop(UnderWaterSource);
+  Engine.Sound.Stop(MusicSource);
+  Engine.Sound.Remove(AmbientBuffer);
+  Engine.Sound.Remove(UnderWaterBuffer);
+  Engine.Sound.Remove(MusicBuffer);
 end;
 
 end.

@@ -37,14 +37,8 @@ uses
   dglOpenGL,
   GDTexture,
   GDTypes,
-  GDTiming,
   GDGLWrappers,
   GDConstants,
-  GDCamera,
-  GDSettings,
-  GDModes,
-  GDConsole,
-  GDResources,
   GDResource,
   GDTypesGenerics;
 
@@ -80,7 +74,7 @@ type
 implementation
 
 uses
-  GDRenderer;
+  GDEngine;
 
 {******************************************************************************}
 {* Create the skydome class                                                   *}
@@ -110,7 +104,7 @@ begin
   FreeAndNil(FIndexBuffer);
   FreeAndNil(FVertexBuffer);
   FTriangleCount := 0;
-  Resources.RemoveResource(TGDResource(FCloudTexture));
+  Engine.Resources.RemoveResource(TGDResource(FCloudTexture));
 end;
 
 {******************************************************************************}
@@ -187,7 +181,7 @@ end;
 procedure TGDSkyDome.InitSkyDome(  aIniFile : TIniFile; aSize : Double );
 begin
   Clear();
-  FCloudTexture := Resources.LoadTexture(aIniFile.ReadString( 'Sky', 'CloudMap', 'sky.jpg' ) ,Settings.TextureDetail,Settings.TextureFilter);
+  FCloudTexture := Engine.Resources.LoadTexture(aIniFile.ReadString( 'Sky', 'CloudMap', 'sky.jpg' ), Engine.Settings.TextureDetail, Engine.Settings.TextureFilter);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
   FIntensity := aIniFile.ReadFloat( 'Sky', 'Intensity', 0.5 );
@@ -203,28 +197,31 @@ end;
 
 procedure TGDSkyDome.Render();
 begin
-  If not(Modes.RenderSky) then exit;
+  If not(Engine.Modes.RenderSky) then exit;
 
-  if Modes.RenderWireframe then
+  if Engine.Modes.RenderWireframe then
   begin
-    Renderer.SetColor(0.2,0.2,0.8,1);
+    Engine.Renderer.SetColor(0.2,0.2,0.8,1);
   end
   else
   begin
     FCloudTexture.BindTexture(GL_TEXTURE0);
-    Renderer.SkyShader.Bind();
-    Renderer.SetJoinedParams(Renderer.SkyShader);
-    Renderer.SkyShader.SetInt('T_CLOUDTEX', 0);
-    Renderer.SkyShader.SetFloat('I_INTENSITY', FIntensity);
-    Renderer.SkyShader.SetFloat('F_SIZE', FSize / FCloudUV);
-    Renderer.SkyShader.SetFloat('F_ANIMATION_SPEED1', Timing.ElapsedTime / (FAniSpeed1*1000));
-    Renderer.SkyShader.SetFloat('F_ANIMATION_SPEED2', Timing.ElapsedTime / (FAniSpeed2*1000));
+    with Engine.Renderer do
+    begin
+      SkyShader.Bind();
+      SetJoinedParams(SkyShader);
+      SkyShader.SetInt('T_CLOUDTEX', 0);
+      SkyShader.SetFloat('I_INTENSITY', FIntensity);
+      SkyShader.SetFloat('F_SIZE', FSize / FCloudUV);
+      SkyShader.SetFloat('F_ANIMATION_SPEED1', Engine.Timing.ElapsedTime / (FAniSpeed1*1000));
+      SkyShader.SetFloat('F_ANIMATION_SPEED2', Engine.Timing.ElapsedTime / (FAniSpeed2*1000));
+    end;
   end;
 
   glPushMatrix();
   glDisable(GL_DEPTH_TEST);
   glDepthMask(GLboolean(FALSE));
-  glTranslatef(Camera.Position.x, Camera.Position.y, Camera.Position.z);
+  glTranslatef(Engine.Camera.Position.x, Engine.Camera.Position.y, Engine.Camera.Position.z);
   glScalef(0.95,0.175,0.95);
   FVertexBuffer.Bind(VL_V);
   FIndexBuffer.Bind();

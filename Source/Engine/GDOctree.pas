@@ -30,12 +30,9 @@ uses
   dglOpenGL,
   SysUtils,
   GDTypes,
-  GDCamera,
   GDConstants,
   GDMeshCell,
-  GDSettings,
-  GDBaseCell,
-  GDModes;
+  GDBaseCell;
 
 type
 
@@ -75,7 +72,7 @@ type
 implementation
 
 uses
-  GDMap;
+  GDEngine;
 
 {******************************************************************************}
 {* Create octree class                                                        *}
@@ -251,30 +248,30 @@ var
   iI        : Integer;
   iVertex   : TGDVector;
 begin
-  If Not(Camera.BoxInView(FBoundingBox)) then
+  If Not(Engine.Camera.BoxInView(FBoundingBox)) then
     exit;
 
   for iI := 0 to length(FCellIndexes)-1 do
   begin
-    If Camera.BoxInView( TGDBaseCell( aQueryData.Cells.Items[  FCellIndexes[iI] ] ).BoundingBox ) then
+    If Engine.Camera.BoxInView( TGDBaseCell( aQueryData.Cells.Items[  FCellIndexes[iI] ] ).BoundingBox ) then
     begin
       iCell := TGDBaseCell( aQueryData.Cells.Items[  FCellIndexes[iI] ] );
       iVertex := TGDBaseCell( aQueryData.Cells.Items[  FCellIndexes[iI] ] ).BoundingBox.Center.Copy();
-      iVertex.Substract(Camera.Position.Copy());
+      iVertex.Substract(Engine.Camera.Position.Copy());
       iCell.Distance := iVertex.Magnitude();
 
-      If (iCell.OjectType = SO_WATERCELL) and Modes.RenderWater then
+      If (iCell.OjectType = SO_WATERCELL) and Engine.Modes.RenderWater then
         aQueryData.VisibleWaterCells.Add(iCell);
 
-      If (iCell.OjectType = SO_GRASSCELL) and Modes.RenderGrass then
-        If (iCell.Distance < (Settings.FoliageDistance * R_FOLIAGE_DISTANCE_STEP + (R_FOLIAGE_DISTANCE_STEP * 10))) then
-           if not(Map.Water.UnderWater()) then
+      If (iCell.OjectType = SO_GRASSCELL) and Engine.Modes.RenderGrass then
+        If (iCell.Distance < (Engine.Settings.FoliageDistance * R_FOLIAGE_DISTANCE_STEP + (R_FOLIAGE_DISTANCE_STEP * 10))) then
+           if not(Engine.Map.Water.UnderWater()) then
              aQueryData.VisibleGrassCells.Add(iCell);
 
-      If (iCell.OjectType = SO_TERRAINCELL) and Modes.RenderTerrain then
+      If (iCell.OjectType = SO_TERRAINCELL) and Engine.Modes.RenderTerrain then
         aQueryData.VisibleTerrainCells.Add(iCell);
 
-      If (iCell.OjectType = SO_MESHCELL) and Modes.RenderModels then
+      If (iCell.OjectType = SO_MESHCELL) and Engine.Modes.RenderModels then
       begin
         iMeshCell := TGDMeshCell(iCell);
         if iMeshCell.LODType = LT_FADE_IN then
@@ -301,7 +298,7 @@ procedure TGDOctree.RenderTreeBoxes();
 var
   iI : Integer;
 begin
- if Not(Camera.BoxInView(FBoundingBox)) then
+ if Not(Engine.Camera.BoxInView(FBoundingBox)) then
   exit;
 
  FBoundingBox.RenderWireFrame();

@@ -20,7 +20,7 @@
 *  along with Genesis Device.  If not, see <http://www.gnu.org/licenses/>.     *
 *                                                                              *
 *******************************************************************************}   
-unit GDMain;
+unit GDEngine;
 
 {$MODE Delphi}
 
@@ -47,79 +47,148 @@ uses
   GDResources,
   GDSound,
   GDModes,
+  GDCamera,
+  GDSettings,
   GDStatistics;
 
 type
 
 {******************************************************************************}
-{* Main class                                                                 *}
+{* Engine class                                                               *}
 {******************************************************************************}
 
-  TGDMain  = Class
+  TGDEngine  = Class
   private
-  public
-    LoopCallBack : TGDCallback;
+    FTiming     : TGDTiming;
+    FConsole    : TGDConsole;
+    FSettings   : TGDSettings;
+
+    FInput      : TGDInput;
+    FSound      : TGDSound;
+    FRenderer   : TGDRenderer;
+
+    FStatistics : TGDStatistics;
+    FModes      : TGDModes;
+    FResources  : TGDResources;
+    FCamera     : TGDCamera;
+    FMap        : TGDMap;
+    FGUI        : TGDGUI;
+
+    function GetVersion(): String;
 
     constructor Create();
     destructor  Destroy(); override;
 
-    procedure InitBaseResources();
-    procedure ClearBaseResources();
+    function  InitSystems(): boolean;
+    procedure ClearSystems();
+  public
+    property Version    : String read GetVersion;
+    property Timing     : TGDTiming read FTiming;
+    property Console    : TGDConsole read FConsole;
+    property Settings   : TGDSettings read FSettings;
 
-    procedure Main();
+    property Input      : TGDInput read FInput;
+    property Sound      : TGDSound read FSound;
+    property Renderer   : TGDRenderer read FRenderer;
+
+    property Statistics : TGDStatistics read FStatistics;
+    property Modes      : TGDModes read FModes;
+    property Resources  : TGDResources read FResources;
+    property Camera     : TGDCamera read FCamera;
+    property Map        : TGDMap read FMap;
+    property GUI        : TGDGUI read FGUI;
+
+    procedure Reset();
+
+    procedure Loop(aCallback : TGDCallback);
   end;
 
 var
-  Main : TGDMain;
+  Engine : TGDEngine;
 
 implementation
 
 {******************************************************************************}
-{* Create main class                                                          *}
+{* Get engine version                                                         *}
 {******************************************************************************}
 
-constructor TGDMain.Create();
+function TGDEngine.GetVersion(): String;
 begin
-  LoopCallBack := nil;
+  result := ENGINE_INFO;
+end;
+
+{******************************************************************************}
+{* Create engine class                                                        *}
+{******************************************************************************}
+
+constructor TGDEngine.Create();
+begin
+  DefaultFormatSettings.DecimalSeparator := '.';
 end;
 
 {******************************************************************************}
 {* Destroy main class                                                         *}
 {******************************************************************************}
 
-destructor TGDMain.Destroy();
+destructor TGDEngine.Destroy();
 begin
   inherited;
 end;
 
 {******************************************************************************}
-{* Init the base resources of the engine using the base.ini                   *}
+{* Init engine Systems                                                        *}
 {******************************************************************************}
 
-procedure TGDMain.InitBaseResources();
+function TGDEngine.InitSystems(): boolean;
 begin
-  Console.Write('......Initializing engine recources');
-  Timing.Start();
+  FTiming     := TGDTiming.Create();
+  FConsole    := TGDConsole.Create();
+  FSettings   := TGDSettings.Create();
 
-  GUI.InitGUI();
-  Statistics.InitStatistics();
-  Modes.InitModes();
-  Console.InitConsole();
+  FInput      := TGDInput.Create();
+  FSound      := TGDSound.Create();
+  FRenderer   := TGDRenderer.Create();
+  result      := FSound.Initialized and FInput.Initialized and FRenderer.Initialized;
 
-  Timing.Stop();
-  Console.Write('......Done initializing engine resources (' + Timing.TimeInSeconds + ' Sec)');
+  FStatistics := TGDStatistics.Create();
+  FModes      := TGDModes.Create();
+  FResources  := TGDResources.Create();
+  FCamera     := TGDCamera.Create();
+  FMap        := TGDMap.Create();
+  FGUI        := TGDGUI.Create();
+end;
+
+{******************************************************************************}
+{* Clear engine Systems                                                       *}
+{******************************************************************************}
+
+procedure TGDEngine.ClearSystems();
+begin
+  FreeAndNil(FStatistics);
+  FreeAndNil(FModes);
+
+  FreeAndNil(FInput);
+  FreeAndNil(FSound);
+  FreeAndNil(FRenderer);
+
+  FreeAndNil(FTiming);
+  FreeAndNil(FConsole);
+  FreeAndNil(FSettings);
+  FreeAndNil(FCamera);
+  FreeAndNil(FGUI);
+  FreeAndNil(FMap);
+  FreeAndNil(FResources);
 end;
 
 {******************************************************************************}
 {* Clear the base resources                                                   *}
 {******************************************************************************}
 
-procedure TGDMain.ClearBaseResources();
+procedure TGDEngine.Reset();
 begin
-  LoopCallBack := nil;
-  Input.ClearInputActions();
-  Console.Clear();
-  GUI.Clear();
+  Console.Reset();
+  Modes.Reset();
+  Input.Clear();
   Map.Clear();
   Resources.Clear();
 end;
@@ -128,7 +197,7 @@ end;
 {* Main loop of the engine                                                    *}
 {******************************************************************************}
 
-procedure TGDMain.Main();
+procedure TGDEngine.Loop(aCallback : TGDCallback);
 begin
   //start timing
   Statistics.FrameStart();
@@ -137,7 +206,7 @@ begin
   Input.Update();
   Sound.Update();
   Map.Update();
-  if assigned(LoopCallBack) then LoopCallBack();
+  if assigned(aCallback) then aCallback();
   Renderer.Render();
 
   //end timing
@@ -145,4 +214,14 @@ begin
   Statistics.Update();
 end;
 
+initialization
+  Engine   := TGDEngine.Create();
+  If not(Engine.InitSystems()) then
+  begin
+    MessageBox(0, 'Error starting engine! See log for details.', 'Error', MB_OK);
+    halt;
+  end;
+finalization
+  Engine.ClearSystems();
+  FreeAndNil(Engine);
 end.

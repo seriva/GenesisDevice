@@ -213,10 +213,8 @@ type
   public
     property Color : TGDColor read FColor write FColor;
 
-    constructor Create();
+    constructor Create(aTexture : string);
     destructor  Destroy(); override;
-    function    InitFont( aTexture : string) : boolean;
-    procedure   Clear();
     procedure   Render( aLeft, aTop, aScale : Double; aString : string);
     function    TextWidth(const str : String; const scale : Single = 1): Integer;
   end;
@@ -228,19 +226,15 @@ type
   TGDMouseCursor = class
   private
     FCursorTexture : TGDTexture;
-    FShowMouse     : Boolean;
+    FVisible     : Boolean;
     FPosition      : TPoint;
     FCursorSize    : Integer;
   public
-    property ShowMouse : boolean read FShowMouse write FShowMouse;
+    property Visible : boolean read FVisible write FVisible;
     property Position : TPoint read FPosition write FPosition;
 
-    constructor Create();
+    constructor Create(aFileName: String; aCursorSize : Integer );
     destructor  Destroy(); override;
-
-    procedure InitMouse(aFileName: String; aCursorSize : Integer );
-    procedure Clear();
-
     procedure Render();
   end;
 
@@ -264,13 +258,11 @@ type
     property Position : integer read FPosition write FPosition;
     property Use : boolean read FUse write FUse;
 
-    constructor Create();
+    constructor Create(aIniFile : TIniFile);
     destructor  Destroy();override;
 
-    procedure   InitLoadingScreen(aIniFile : TIniFile);
-    procedure   Clear();
-    procedure   SetupForUse( aProcesName : String; aMax : integer );
-    procedure   UpdateBar();
+    procedure   Start( aProcesName : String; aMax : integer );
+    procedure   Update();
   end;
 
 {******************************************************************************}
@@ -303,9 +295,6 @@ type
     constructor Create();
     destructor  Destroy(); override;
 
-    procedure InitGUI();
-    procedure Clear();
-
     function  InitScreen(aFileName : String): TGDScreen;
     function  ScreenGetVisible(aScreen : TGDScreen): Boolean;
     procedure ScreenSetVisible(aScreen : TGDScreen; aVisible : Boolean);
@@ -319,17 +308,11 @@ procedure RenderTexturedQuad(x, y, width, height : Integer;
                              u4 : Single=1; v4 : Single=0);
 procedure RenderFlatQuad(x, y, width, height : Integer; inside : boolean = true; outline : boolean = true);
 
-var
-  GUI : TGDGUI;
-
 implementation
 
 uses
-  GDResources,
-  GDResource,
-  GDConsole,
-  GDRenderer,
-  GDSettings;
+  GDEngine,
+  GDResource;
 
 procedure RenderTexturedQuad(x, y, width, height : Integer;
                              u1 : Single=1; v1 : Single=1;
@@ -359,17 +342,17 @@ begin
 end;
 
 begin
-  Renderer.RenderState( RS_COLOR );
+  Engine.Renderer.RenderState( RS_COLOR );
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   glEnable(GL_BLEND);
   if inside then
   begin
-    Renderer.SetColor(GUI.FillColor);
+    Engine.Renderer.SetColor(Engine.GUI.FillColor);
     SendQuad(GL_QUADS);
   end;
   if outline then
   begin
-    Renderer.SetColor(GUI.OutlineColor);
+    Engine.Renderer.SetColor(Engine.GUI.OutlineColor);
     SendQuad(GL_LINE_LOOP);
   end;
 end;
@@ -394,7 +377,7 @@ begin
   FHeight := aIniFile.ReadInteger( aSection, 'Height', 0 );
   iStr := aIniFile.ReadString( aSection, 'Texture', '' );
   if iStr <> '' then
-    FTexture := Resources.LoadTexture(iStr, TD_HIGH, TF_TRILINEAR)
+    FTexture := Engine.Resources.LoadTexture(iStr, TD_HIGH, TF_TRILINEAR)
   else
     FTexture := nil;
 end;
@@ -402,7 +385,7 @@ end;
 destructor  TGDPanel.Destroy();
 begin
    inherited;
-   Resources.RemoveResource(TGDResource(FTexture));
+   Engine.Resources.RemoveResource(TGDResource(FTexture));
 end;
 
 procedure   TGDPanel.Render();
@@ -411,11 +394,11 @@ begin
     RenderFlatQuad(X, Y, FWidth, FHeight)
   else
   begin
-    Renderer.RenderState(RS_TEXTURE);
+    Engine.Renderer.RenderState(RS_TEXTURE);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_BLEND);
     FTexture.BindTexture( GL_TEXTURE0 );
-    Renderer.SetColor(1,1,1,1);
+    Engine.Renderer.SetColor(1,1,1,1);
     RenderTexturedQuad(X, Y, FWidth, FHeight);
     glDisable(GL_BLEND);
   end;
@@ -438,9 +421,9 @@ end;
 
 procedure   TGDLabel.Render();
 begin
-  Renderer.RenderState( RS_TEXTS );
-  GUI.Font.Color := FColor.Copy();
-  GUI.Font.Render(X,Y,FScale,FText);
+  Engine.Renderer.RenderState( RS_TEXTS );
+  Engine.GUI.Font.Color := FColor.Copy();
+  Engine.GUI.Font.Render(X,Y,FScale,FText);
 end;
 
 constructor TGDScreen.Create(aFileName : String);
@@ -489,9 +472,10 @@ end;
 {* Create the font class                                                      *}
 {******************************************************************************}
 
-constructor TGDFont.Create();
+constructor TGDFont.Create(aTexture : string);
 begin
   FColor.White();
+  FTexture := Engine.Resources.LoadTexture(aTexture, TD_HIGH, TF_TRILINEAR);
 end;
 
 {******************************************************************************}
@@ -500,27 +484,8 @@ end;
 
 destructor TGDFont.Destroy();
 begin
-  Clear();
+  Engine.Resources.RemoveResource(TGDResource(FTexture));
   inherited;
-end;
-
-
-{******************************************************************************}
-{* Init the font                                                              *}
-{******************************************************************************}
-
-function TGDFont.InitFont( aTexture : string) : boolean;
-begin
-  FTexture := Resources.LoadTexture(aTexture, TD_HIGH, TF_TRILINEAR);
-end;
-
-{******************************************************************************}
-{* Clear the font                                                             *}
-{******************************************************************************}
-
-Procedure TGDFont.Clear();
-begin
-  Resources.RemoveResource(TGDResource(FTexture));
 end;
 
 {******************************************************************************}
@@ -553,7 +518,7 @@ var
   inleft, intop, inright, inbottom : Single;
 begin
   FTexture.BindTexture(GL_TEXTURE0);
-  Renderer.SetColor(FColor);
+  Engine.Renderer.SetColor(FColor);
   x := Round(aLeft);
   y := Round(aTop);
   for i := 1 to length(aString) do
@@ -576,8 +541,11 @@ end;
 {* Create the mousecursor class                                               *}
 {******************************************************************************}
 
-constructor TGDMouseCursor.Create();
+constructor TGDMouseCursor.Create(aFileName: String; aCursorSize : Integer );
 begin
+  FVisible := false;
+  FCursorSize := aCursorSize;
+  FCursorTexture := Engine.Resources.LoadTexture(aFileName, TD_HIGH, TF_TRILINEAR);
 end;
 
 {******************************************************************************}
@@ -586,31 +554,10 @@ end;
 
 destructor  TGDMouseCursor.Destroy();
 begin
-  Clear();
+  inherited;
+  Engine.Resources.RemoveResource(TGDResource(FCursorTexture));
+  FVisible := false;
 end;
-
-{******************************************************************************}
-{* Init the mousecursor                                                       *}
-{******************************************************************************}
-
-procedure TGDMouseCursor.InitMouse(aFileName: String; aCursorSize : Integer );
-begin
-  Clear();
-  FShowMouse := false;
-  FCursorSize := aCursorSize;
-  FCursorTexture := Resources.LoadTexture(aFileName, TD_HIGH, TF_TRILINEAR);
-end;
-
-{******************************************************************************}
-{* Clear the mousecursor                                                      *}
-{******************************************************************************}
-
-procedure TGDMouseCursor.Clear();
-begin
-  Resources.RemoveResource(TGDResource(FCursorTexture));
-  FShowMouse := false;
-end;
-
 
 {******************************************************************************}
 {* Render the mousecursor                                                     *}
@@ -641,18 +588,18 @@ begin
 end;
 
 begin
-  Renderer.RenderState( RS_TEXTS );
+  Engine.Renderer.RenderState( RS_TEXTS );
   GetCursorPos(iCurPos);
-  CalculateScreenPosition(iCurPos.X-Settings.Left, iCurPos.Y-Settings.Top);
+  CalculateScreenPosition(iCurPos.X-Engine.Settings.Left, iCurPos.Y-Engine.Settings.Top);
   glDisable(GL_BLEND);
 
-  If ShowMouse or Console.Show then
+  If FVisible or Engine.Console.Show then
   begin
-    Renderer.RenderState(RS_TEXTURE);
+    Engine.Renderer.RenderState(RS_TEXTURE);
     FCursorTexture.BindTexture( GL_TEXTURE0 );
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_BLEND);
-    Renderer.SetColor(1,1,1,1);
+    Engine.Renderer.SetColor(1,1,1,1);
     RenderTexturedQuad(FPosition.x,FPosition.y,FCursorSize,FCursorSize);
     glDisable(GL_BLEND);
   end;
@@ -662,14 +609,15 @@ end;
 {* Create the loadingscreen class                                             *}
 {******************************************************************************}
 
-constructor TGDLoadingScreen.Create();
+constructor TGDLoadingScreen.Create(aIniFile : TIniFile);
 begin
   FUse := true;
-  FBarOnly := true;
   FMax  := 100;
   FPosition := 0;
-  FX := 0;
-  FY := 0;
+  FX := aIniFile.ReadInteger('Loading', 'X', 1);
+  FY := aIniFile.ReadInteger('Loading', 'Y', 1);
+  FBarOnly := false;
+  FBarColor := ReadColor(aIniFile, 'Loading', 'Bar');
 end;
 
 {******************************************************************************}
@@ -682,38 +630,10 @@ begin
 end;
 
 {******************************************************************************}
-{* Init the loadingscreen                                                     *}
-{******************************************************************************}
-
-procedure TGDLoadingScreen.InitLoadingScreen(aIniFile : TIniFile);
-begin
-  Clear();
-  FX := aIniFile.ReadInteger('Loading', 'X', 1);
-  FY := aIniFile.ReadInteger('Loading', 'Y', 1);
-  FBarOnly := false;
-  FBarColor := ReadColor(aIniFile, 'Loading', 'Bar');
-end;
-
-{******************************************************************************}
-{* Clear the loadingscreen                                                    *}
-{******************************************************************************}
-
-procedure TGDLoadingScreen.Clear();
-begin
-  FBarColor.Reset(1,1,1,1);
-  FUse := true;
-  FBarOnly := false;
-  FMax  := 100;
-  FPosition := 0;
-  FX := 0;
-  FY := 0;
-end;
-
-{******************************************************************************}
 {* Update the loadingscreen                                                   *}
 {******************************************************************************}
 
-procedure TGDLoadingScreen.UpdateBar();
+procedure TGDLoadingScreen.Update();
 begin
   If FUse = false then exit;
   FPosition := FPosition + 1;
@@ -724,7 +644,7 @@ end;
 {* Setup the loadingscreen                                                    *}
 {******************************************************************************}
 
-procedure TGDLoadingScreen.SetupForUse( aProcesName : String; aMax : integer );
+procedure TGDLoadingScreen.Start( aProcesName : String; aMax : integer );
 begin
   If FUse = false then exit;
   FMax := aMax;
@@ -743,11 +663,11 @@ var
   iPercent : Double;
 begin
   glClearColor(0.0, 0.0, 0.0, 1.0);
-  Renderer.MakeCurrent();
-  Renderer.StartFrame();
-  Renderer.SwitchToOrtho();
+  Engine.Renderer.MakeCurrent();
+  Engine.Renderer.StartFrame();
+  Engine.Renderer.SwitchToOrtho();
 
-  Renderer.RenderState( RS_COLOR );
+  Engine.Renderer.RenderState( RS_COLOR );
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   glEnable(GL_BLEND);
   glPushMatrix();
@@ -758,7 +678,7 @@ begin
 
   iProgress := 580/FMax;
   iProgress := iProgress * FPosition;
-  Renderer.SetColor(FBarColor);
+  Engine.Renderer.SetColor(FBarColor);
   glBegin(GL_QUADS);
     glVertex2f(10 + iProgress ,10 );
     glVertex2f(10 + iProgress ,60 );
@@ -772,15 +692,15 @@ begin
 
   If Not(FBarOnly) then
   begin
-    Renderer.RenderState( RS_TEXTS );
-    GUI.Font.Color := GUI.FontColor.Copy();
-    GUI.Font.Render(7+FX,65+FY,0.5,FProcesName);
-    GUI.Font.Render(270+FX,16+FY,0.5,IntToStr(round(iPercent)) + '%');
+    Engine.Renderer.RenderState( RS_TEXTS );
+    Engine.GUI.Font.Color := Engine.GUI.FontColor.Copy();
+    Engine.GUI.Font.Render(7+FX,65+FY,0.5,FProcesName);
+    Engine.GUI.Font.Render(270+FX,16+FY,0.5,IntToStr(round(iPercent)) + '%');
   end;
   glDisable(GL_BLEND);
 
-  Renderer.SwitchToPerspective();
-  Renderer.EndFrame();
+  Engine.Renderer.SwitchToPerspective();
+  Engine.Renderer.EndFrame();
 end;
 
 {******************************************************************************}
@@ -788,11 +708,23 @@ end;
 {******************************************************************************}
 
 constructor TGDGUI.Create();
+var
+  iIniFile      : TIniFile;
 begin
-  FFont          := TGDFont.Create();
-  FMouseCursor   := TGDMouseCursor.Create();
-  FLoadingScreen := TGDLoadingScreen.Create();
+  Engine.Console.Use:=false;
+  iIniFile := TIniFile.Create( PATH_INITS + GUI_INI );
+
+  FFontColor    := ReadColor(iIniFile,'DefaultColors', 'Font');
+  FOutlineColor := ReadColor(iIniFile, 'DefaultColors', 'Outline');
+  FFillColor    := ReadColor(iIniFile, 'DefaultColors', 'Fill');
+  FFont          := TGDFont.Create(iIniFile.ReadString('Font', 'Texture', 'console.fnt'));
+  FMouseCursor   := TGDMouseCursor.Create(iIniFile.ReadString('Mouse', 'Texture', 'mouse.dds'),
+                                          iIniFile.ReadInteger('Mouse', 'Size', 40));
+  FLoadingScreen := TGDLoadingScreen.Create(iIniFile);
   FScreens       := TGDScreenList.Create();
+
+  FreeAndNil(iIniFile);
+  Engine.Console.Use:=true;
 end;
 
 {******************************************************************************}
@@ -805,48 +737,6 @@ begin
   FreeAndNil(FMouseCursor);
   FreeAndNil(FLoadingScreen);
   FreeAndNil(FScreens);
-end;
-
-{******************************************************************************}
-{* Clear the GUI class                                                        *}
-{******************************************************************************}
-
-procedure TGDGUI.InitGUI();
-var
-  iIniFile      : TIniFile;
-begin
-  ShowCursor(false);
-  iIniFile := TIniFile.Create( PATH_INITS + GUI_INI );
-
-  //Default colors
-  FFontColor    := ReadColor(iIniFile,'DefaultColors', 'Font');
-  FOutlineColor := ReadColor(iIniFile, 'DefaultColors', 'Outline');
-  FFillColor    := ReadColor(iIniFile, 'DefaultColors', 'Fill');
-
-  //Font
-  Font.InitFont( iIniFile.ReadString('Font', 'Texture', 'console.fnt') );
-
-  //Mouse
-  GUI.MouseCursor.InitMouse( iIniFile.ReadString('Mouse', 'Texture', 'mouse.dds'),
-                             iIniFile.ReadInteger('Mouse', 'Size', 40) );
-
-  //Loading
-  GUI.LoadingScreen.InitLoadingScreen( iIniFile );
-
-  FreeAndNil(iIniFile);
-end;
-
-{******************************************************************************}
-{* Clear the GUI class                                                        *}
-{******************************************************************************}
-
-procedure TGDGUI.Clear();
-begin
-  ShowCursor(true);
-  FFont.Clear();
-  FMouseCursor.Clear();
-  FLoadingScreen.Clear();
-  FScreens.Clear();
 end;
 
 {******************************************************************************}

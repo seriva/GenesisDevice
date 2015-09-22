@@ -213,7 +213,7 @@ const
 implementation
 
 uses
-  GDRenderer;
+  GDEngine;
 
 function SameSide( aP1, aP2, aA, aB : TGDVector) : boolean;
 var
@@ -942,20 +942,23 @@ end;
 
 procedure TGDBoundingBox.RenderWireFrame();
 begin
-  Renderer.AddLine( Vector(Max.x, Max.y, Max.Z), Vector(Min.x, Max.y, Max.Z));
-  Renderer.AddLine( Vector(Min.x, Max.y, Max.Z), Vector(Min.x, Max.y, Min.Z));
-  Renderer.AddLine( Vector(Min.x, Max.y, Min.Z), Vector(Max.x, Max.y, Min.Z));
-  Renderer.AddLine( Vector(Max.x, Max.y, Min.Z), Vector(Max.x, Max.y, Max.Z));
+  with Engine do
+  begin
+    Renderer.AddLine( Vector(Max.x, Max.y, Max.Z), Vector(Min.x, Max.y, Max.Z));
+    Renderer.AddLine( Vector(Min.x, Max.y, Max.Z), Vector(Min.x, Max.y, Min.Z));
+    Renderer.AddLine( Vector(Min.x, Max.y, Min.Z), Vector(Max.x, Max.y, Min.Z));
+    Renderer.AddLine( Vector(Max.x, Max.y, Min.Z), Vector(Max.x, Max.y, Max.Z));
 
-  Renderer.AddLine( Vector(Max.x, Min.y, Max.Z), Vector(Min.x, Min.y, Max.Z));
-  Renderer.AddLine( Vector(Min.x, Min.y, Max.Z), Vector(Min.x, Min.y, Min.Z));
-  Renderer.AddLine( Vector(Min.x, Min.y, Min.Z), Vector(Max.x, Min.y, Min.Z));
-  Renderer.AddLine( Vector(Max.x, Min.y, Min.Z), Vector(Max.x, Min.y, Max.Z));
+    Renderer.AddLine( Vector(Max.x, Min.y, Max.Z), Vector(Min.x, Min.y, Max.Z));
+    Renderer.AddLine( Vector(Min.x, Min.y, Max.Z), Vector(Min.x, Min.y, Min.Z));
+    Renderer.AddLine( Vector(Min.x, Min.y, Min.Z), Vector(Max.x, Min.y, Min.Z));
+    Renderer.AddLine( Vector(Max.x, Min.y, Min.Z), Vector(Max.x, Min.y, Max.Z));
 
-  Renderer.AddLine( Vector(Max.x, Max.y, Max.Z), Vector(Max.x, Min.y, Max.Z ));
-  Renderer.AddLine( Vector(Min.x, Max.y, Min.Z), Vector(Min.x, Min.y, Min.Z ));
-  Renderer.AddLine( Vector(Min.x, Max.y, Max.Z), Vector(Min.x, Min.y, Max.Z ));
-  Renderer.AddLine( Vector(Max.x, Max.y, Min.Z), Vector(Max.x, Min.y, Min.Z ));
+    Renderer.AddLine( Vector(Max.x, Max.y, Max.Z), Vector(Max.x, Min.y, Max.Z ));
+    Renderer.AddLine( Vector(Min.x, Max.y, Min.Z), Vector(Min.x, Min.y, Min.Z ));
+    Renderer.AddLine( Vector(Min.x, Max.y, Max.Z), Vector(Min.x, Min.y, Max.Z ));
+    Renderer.AddLine( Vector(Max.x, Max.y, Min.Z), Vector(Max.x, Min.y, Min.Z ));
+  end;
 end;
 
 {******************************************************************************}

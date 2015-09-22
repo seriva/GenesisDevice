@@ -35,12 +35,8 @@ uses
   LCLType,
   SysUtils,
   dglOpenGL,
-  GDRenderer,
-  GDMap,
   GDConstants,
-  GDCamera,
-  GDGUI,
-  GDTiming;
+  GDGUI;
 
 type
 
@@ -60,11 +56,6 @@ type
     property FpsCount         : integer read FFpsCount write FFpsCount;
     property FrameTimeSlice   : string read FFrameTimeSlice write FFrameTimeSlice;
 
-    constructor Create();
-    destructor  Destroy(); override;
-
-    procedure InitStatistics();
-
     procedure FrameStart();
     procedure FrameStop();
 
@@ -72,40 +63,10 @@ type
     procedure Render();
   end;
 
-var
-  Statistics : TGDStatistics;
-
 implementation
 
-{******************************************************************************}
-{* Create the statistic class                                                 *}
-{******************************************************************************}
-
-constructor TGDStatistics.Create();
-begin
-  InitStatistics();
-end;
-
-{******************************************************************************}
-{* Destroy the statistic class                                                *}
-{******************************************************************************}
-
-destructor  TGDStatistics.Destroy();
-begin
-  inherited;
-end;
-
-{******************************************************************************}
-{* Init the statistic class                                                   *}
-{******************************************************************************}
-
-procedure TGDStatistics.InitStatistics();
-begin
-  FLastTime         := Timing.GetTime();
-  FFrameCount       := 0;
-  FFpsCount         := 0;
-  FFrameTimeSlice   := '0.000';
-end;
+uses
+  GDEngine;
 
 {******************************************************************************}
 {* Start and stop procedures for gathering time information                   *}
@@ -113,13 +74,13 @@ end;
 
 procedure TGDStatistics.FrameStart();
 begin
-  Timing.Start();
+  Engine.Timing.Start();
 end;
 
 procedure TGDStatistics.FrameStop();
 begin
-  Timing.Stop();
-  FFrameTimeSlice := Timing.TimeInMilliSeconds();
+  Engine.Timing.Stop();
+  FFrameTimeSlice := Engine.Timing.TimeInMilliSeconds();
 end;
 
 
@@ -132,8 +93,8 @@ var
   iDT, iTime : Integer;
 begin
   //calculate fps
-  Statistics.FrameCount := Statistics.FrameCount + 1;
-  iTime        := Timing.GetTime();
+  FrameCount   := FrameCount + 1;
+  iTime        := Engine.Timing.GetTime();
   iDT          := iTime - FLastTime;
   FLastTime    := iTime;
   FFPSTime  := FFPSTime + iDT;
@@ -152,22 +113,25 @@ end;
 procedure TGDStatistics.Render();
 begin
   RenderFlatQuad(20, 20, 375, 195);
-  Renderer.RenderState( RS_TEXTS );
-  GUI.Font.Color := GUI.FontColor.Copy();
-  GUI.Font.Render(25,215-32,0.4,'FPS');
-  GUI.Font.Render(25,190-32,0.4,'TRIS');
-  GUI.Font.Render(25,165-32,0.4,'VOBJ');
-  GUI.Font.Render(25,140-32,0.4,'FTIME');
-  GUI.Font.Render(25,115-32,0.4,'X');
-  GUI.Font.Render(25,90-32,0.4,'Y');
-  GUI.Font.Render(25,65-32,0.4,'Z');
-  GUI.Font.Render(150,215-32,0.4,': ' + IntToStr(FFpsCount));
-  GUI.Font.Render(150,190-32,0.4,': ' + IntToStr(Map.TriangleCount()));
-  GUI.Font.Render(150,165-32,0.4,': ' + IntToStr(Map.ObjectCount()));
-  GUI.Font.Render(150,140-32,0.4,': ' + FFrameTimeSlice + ' ms' );;
-  GUI.Font.Render(150,115-32,0.4,': ' + IntToStr( Round(Camera.Position.X) ));
-  GUI.Font.Render(150,90-32,0.4,': ' + IntToStr( Round(Camera.Position.Y) ));
-  GUI.Font.Render(150,65-32,0.4,': ' + IntToStr( Round(Camera.Position.Z) ));
+  Engine.Renderer.RenderState( RS_TEXTS );
+  with Engine.GUI do
+  begin
+    Font.Color := Engine.GUI.FontColor.Copy();
+    Font.Render(25,215-32,0.4,'FPS');
+    Font.Render(25,190-32,0.4,'TRIS');
+    Font.Render(25,165-32,0.4,'VOBJ');
+    Font.Render(25,140-32,0.4,'FTIME');
+    Font.Render(25,115-32,0.4,'X');
+    Font.Render(25,90-32,0.4,'Y');
+    Font.Render(25,65-32,0.4,'Z');
+    Font.Render(150,215-32,0.4,': ' + IntToStr(FFpsCount));
+    Font.Render(150,190-32,0.4,': ' + IntToStr(Engine.Map.TriangleCount()));
+    Font.Render(150,165-32,0.4,': ' + IntToStr(Engine.Map.ObjectCount()));
+    Font.Render(150,140-32,0.4,': ' + FFrameTimeSlice + ' ms' );;
+    Font.Render(150,115-32,0.4,': ' + IntToStr( Round(Engine.Camera.Position.X) ));
+    Font.Render(150,90-32,0.4,': ' + IntToStr( Round(Engine.Camera.Position.Y) ));
+    Font.Render(150,65-32,0.4,': ' + IntToStr( Round(Engine.Camera.Position.Z) ));
+  end;
   glDisable(GL_BLEND);
 end;
 

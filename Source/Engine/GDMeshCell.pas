@@ -37,12 +37,9 @@ uses
   dglOpenGL,
   GDConstants,
   GDTypes,
-  GDModes,
   GDMesh,
   GDGLWrappers,
-  GDSettings,
   GDResource,
-  GDResources,
   GDBaseCell,
   GDTypesGenerics;
 
@@ -102,8 +99,7 @@ type
 implementation
 
 uses
-  GDMap,
-  GDRenderer;
+  GDEngine;
 
 {******************************************************************************}
 {* Create the meshcell class                                                  *}
@@ -118,14 +114,14 @@ var
 begin
   OjectType   := SO_MESHCELL;
   FLODType    := LT_NONE;
-  FMesh       := Resources.LoadMesh(aInput.Model);
+  FMesh       := Engine.Resources.LoadMesh(aInput.Model);
 
   //set posible LOD types.
   if ((aInput.ModelLOD1 <> '') and (aInput.ModelLOD2 <> ''))then
   begin
     FLODType  := LT_STAGES;
-    FMeshLOD1 := Resources.LoadMesh(aInput.ModelLOD1);
-    FMeshLOD2 := Resources.LoadMesh(aInput.ModelLOD2);
+    FMeshLOD1 := Engine.Resources.LoadMesh(aInput.ModelLOD1);
+    FMeshLOD2 := Engine.Resources.LoadMesh(aInput.ModelLOD2);
   end
   else if ((aInput.FadeScale <> 0) and (aInput.FadeDistance <> 0)) then
   begin
@@ -193,7 +189,7 @@ end;
 
 destructor  TGDMeshCell.Destroy();
 begin
-  Resources.RemoveResource(TGDResource(FMesh));
+  Engine.Resources.RemoveResource(TGDResource(FMesh));
   FMesh := nil;
   Inherited;
 end;
@@ -230,11 +226,11 @@ begin
                     iFadeDistanceScale := 1 - ((Distance - (FFadeDistance - FFadeScale)) / FFadeScale);
                  end;
     LT_STAGES  :begin
-                  if ((Distance >= 0) and (Distance < Settings.LOD0)) then
+                  if ((Distance >= 0) and (Distance < Engine.Settings.LOD0)) then
                     iMesh := FMesh
-                  else if ((Distance >= Settings.LOD0) and (Distance <= Settings.LOD1)) then
+                  else if ((Distance >= Engine.Settings.LOD0) and (Distance <= Engine.Settings.LOD1)) then
                     iMesh := FMeshLOD1
-                  else if ((Distance >= Settings.LOD1) and (Distance <= Settings.LOD2)) then
+                  else if ((Distance >= Engine.Settings.LOD1) and (Distance <= Engine.Settings.LOD2)) then
                     iMesh := FMeshLOD2;
                 end;
   end;
@@ -246,49 +242,49 @@ begin
                           begin
                             iSur := iMesh.Surfaces.Items[iI];
 
-                            if Modes.RenderWireframe then
+                            if Engine.Modes.RenderWireframe then
                             begin
-                              Renderer.SetColor(1.0,1.0,1.0,1.0);
-                              SetMeshPositioning(Renderer.ColorShader);
-                              Renderer.ColorShader.SetInt('I_CUSTOM_TRANSLATE', 1);
+                              Engine.Renderer.SetColor(1.0,1.0,1.0,1.0);
+                              SetMeshPositioning(Engine.Renderer.ColorShader);
+                              Engine.Renderer.ColorShader.SetInt('I_CUSTOM_TRANSLATE', 1);
 
                               iSur.Render();
                             end
                             else
                             begin
-                              Renderer.MeshShader.Bind();
-                              Renderer.SetJoinedParams(Renderer.MeshShader,aRenderFor = RF_SHADOW);
+                              Engine.Renderer.MeshShader.Bind();
+                              Engine.Renderer.SetJoinedParams(Engine.Renderer.MeshShader,aRenderFor = RF_SHADOW);
                               iSur.Material.ApplyMaterial();
-                              SetMeshPositioning(Renderer.MeshShader);
-                              Renderer.MeshShader.SetInt('I_DO_BLOOM', 1);
+                              SetMeshPositioning(Engine.Renderer.MeshShader);
+                              Engine.Renderer.MeshShader.SetInt('I_DO_BLOOM', 1);
 
                               if self.ReceiveShadow and (aRenderFor <> RF_SHADOW) then
-                                Renderer.MeshShader.SetInt('I_RECEIVE_SHADOW', 1)
+                                Engine.Renderer.MeshShader.SetInt('I_RECEIVE_SHADOW', 1)
                               else
-                                Renderer.MeshShader.SetInt('I_RECEIVE_SHADOW', 0);
+                                Engine.Renderer.MeshShader.SetInt('I_RECEIVE_SHADOW', 0);
 
                               if aRenderFor = RF_BLOOM then
                               begin
                                if iSur.Material.DoBloom then
-                                 Renderer.MeshShader.SetInt('I_DO_BLOOM', 1)
+                                 Engine.Renderer.MeshShader.SetInt('I_DO_BLOOM', 1)
                                else
-                                 Renderer.MeshShader.SetInt('I_DO_BLOOM', 0);
+                                 Engine.Renderer.MeshShader.SetInt('I_DO_BLOOM', 0);
                               end;
 
-                              Renderer.MeshShader.SetInt('I_FLIP_NORMAL', 0);
+                              Engine.Renderer.MeshShader.SetInt('I_FLIP_NORMAL', 0);
 
                               iSur.Render();
 
                               //fix for lighting with alha based surfaces
                               if iSur.Material.HasAlpha then
                               begin
-                                if (aRenderFor = RF_WATER) and Not(Map.Water.UnderWater) then
+                                if (aRenderFor = RF_WATER) and Not(Engine.Map.Water.UnderWater) then
                                   glCullFace(GL_BACK)
                                 else
                                   glCullFace(GL_FRONT);
-                                Renderer.MeshShader.SetInt('I_FLIP_NORMAL', 1);
+                                Engine.Renderer.MeshShader.SetInt('I_FLIP_NORMAL', 1);
                                 iSur.Render();
-                                if (aRenderFor = RF_WATER) and Not(Map.Water.UnderWater) then
+                                if (aRenderFor = RF_WATER) and Not(Engine.Map.Water.UnderWater) then
                                   glCullFace(GL_FRONT)
                                 else
                                   glCullFace(GL_BACK);
@@ -315,7 +311,7 @@ begin
                               FRotation.ApplyToVector(iV2);
                               iV2.Multiply(R_NORMAL_LENGTH);
                               iV2.Add(iV1);
-                              Renderer.AddLine(iV1, iV2);
+                              Engine.Renderer.AddLine(iV1, iV2);
                             end;
                           end;
                         end;
@@ -331,11 +327,11 @@ begin
   result := FMesh.TriangleCount;
   if FLODType = LT_STAGES then
   begin
-    if ((Distance >= 0) and (Distance < Settings.LOD0)) then
+    if ((Distance >= 0) and (Distance < Engine.Settings.LOD0)) then
       result := FMesh.TriangleCount
-    else if ((Distance >= Settings.LOD0) and (Distance <= Settings.LOD1)) then
+    else if ((Distance >= Engine.Settings.LOD0) and (Distance <= Engine.Settings.LOD1)) then
       result := FMeshLOD1.TriangleCount
-    else if ((Distance >= Settings.LOD1) and (Distance <= Settings.LOD2)) then
+    else if ((Distance >= Engine.Settings.LOD1) and (Distance <= Engine.Settings.LOD2)) then
       result := FMeshLOD2.TriangleCount;
   end;
 end;

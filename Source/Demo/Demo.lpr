@@ -28,7 +28,6 @@ uses
   //heaptrc, //For debugging
   LCLIntf, LCLType, LMessages,
   Forms, Interfaces,
-  GDInterface,
   ViewPort in 'ViewPort.pas' {ViewPortForm},
   Configuration in 'Configuration.pas' {ConfigurationForm},
   Main in 'Main.pas',

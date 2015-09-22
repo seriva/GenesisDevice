@@ -75,9 +75,6 @@ type
     function    BoxInView(aBox : TGDBoundingBox): Boolean;
   end;
 
-var
- Camera : TGDCamera;
-
 implementation
 
 {******************************************************************************}

@@ -44,9 +44,7 @@ uses
   SysUtils,
   Classes,
   Windows,
-  GDConstants,
-  GDSettings,
-  GDCamera;
+  GDConstants;
 
 type
 
@@ -104,17 +102,14 @@ type
     procedure CalculateMousePosStart();
     procedure SetMouseStartPos();
 
-    procedure RegisterInputAction(aType : TGDInputTypes; aKey : integer; aAction : TGDCallback;  aConsoleDisabled : boolean );
-    procedure ClearInputActions();
+    procedure AddAction(aType : TGDInputTypes; aKey : integer; aAction : TGDCallback;  aConsoleDisabled : boolean );
+    procedure Clear();
   end;
-
-var
-  Input : TGDInput;
 
 implementation
 
 uses
-  GDConsole;
+  GDEngine;
 
 {******************************************************************************}
 {* Create inputaction class                                                   *}
@@ -158,7 +153,7 @@ Constructor TGDInput.Create();
 var
   iError : string;
 begin
-  Console.Write('Initializing input...');
+  Engine.Console.Write('Initializing input...');
   try
     FInitialized := true;
     FEnableInput := false;
@@ -177,7 +172,7 @@ begin
     end;
   end;
 
-  Console.WriteOkFail(FInitialized, iError);
+  Engine.Console.WriteOkFail(FInitialized, iError);
 end;
 
 {******************************************************************************}
@@ -190,7 +185,7 @@ var
   iResult : boolean;
 begin
   inherited;
-  Console.Write('Shutting down input...');
+  Engine.Console.Write('Shutting down input...');
   try
     iResult := true;
     FreeAndNil(FDirect);
@@ -204,7 +199,7 @@ begin
       iResult := false;
     end;
   end;
-  Console.WriteOkFail(iResult, iError);
+  Engine.Console.WriteOkFail(iResult, iError);
 end;
 
 
@@ -238,15 +233,15 @@ var
   iTempAction : TGDInputAction;
   iI : Integer;
 begin
-  if Input.EnableInput = false then exit;
+  if EnableInput = false then exit;
 
   //Keyboard
   KeyboardState();
   For iI := 0 to FSingle.Count-1 do
   begin
     iTempAction := FSingle.Items[iI];
-    if (iTempAction.FConsoleDisabled and Not(Console.Show)) or not(iTempAction.FConsoleDisabled) then
-      If Not(Input.KeyDown( iTempAction.Key )) Then
+    if (iTempAction.FConsoleDisabled and Not(Engine.Console.Show)) or not(iTempAction.FConsoleDisabled) then
+      If Not(KeyDown( iTempAction.Key )) Then
       begin
         iTempAction.CanExecute := true;
       end;
@@ -254,8 +249,8 @@ begin
   For iI := 0 to FSingle.Count-1 do
   begin
     iTempAction := FSingle.Items[iI];
-    if (iTempAction.FConsoleDisabled and Not(Console.Show)) or not(iTempAction.FConsoleDisabled) then
-      If Input.KeyDown( iTempAction.Key ) Then
+    if (iTempAction.FConsoleDisabled and Not(Engine.Console.Show)) or not(iTempAction.FConsoleDisabled) then
+      If KeyDown( iTempAction.Key ) Then
       begin
         iTempAction.Execute();
         iTempAction.CanExecute := false;
@@ -265,33 +260,33 @@ begin
   For iI := 0 to FDirect.Count-1 do
   begin
     iTempAction := FDirect.Items[iI];
-    if (iTempAction.FConsoleDisabled and Not(Console.Show)) or not(iTempAction.FConsoleDisabled) then
-      If Input.KeyDown( iTempAction.Key ) Then iTempAction.Execute();
+    if (iTempAction.FConsoleDisabled and Not(Engine.Console.Show)) or not(iTempAction.FConsoleDisabled) then
+      If KeyDown( iTempAction.Key ) Then iTempAction.Execute();
   end;
 
   For iI := 0 to FDown.Count-1 do
   begin
     iTempAction := FDown.Items[iI];
-    if (iTempAction.FConsoleDisabled and Not(Console.Show)) or not(iTempAction.FConsoleDisabled) then
-      If Input.KeyDown( iTempAction.Key ) Then iTempAction.Execute();
+    if (iTempAction.FConsoleDisabled and Not(Engine.Console.Show)) or not(iTempAction.FConsoleDisabled) then
+      If KeyDown( iTempAction.Key ) Then iTempAction.Execute();
   end;
 
   For iI := 0 to FUp.Count-1 do
   begin
     iTempAction := FUp.Items[iI];
-    if (iTempAction.FConsoleDisabled and Not(Console.Show)) or not(iTempAction.FConsoleDisabled) then
-      If Not(Input.KeyDown( iTempAction.Key )) Then iTempAction.Execute();
+    if (iTempAction.FConsoleDisabled and Not(Engine.Console.Show)) or not(iTempAction.FConsoleDisabled) then
+      If Not(KeyDown( iTempAction.Key )) Then iTempAction.Execute();
   end;
 
   //Mouse
   if FMouseLook then
   begin
-    if Console.Show then exit;
+    if Engine.Console.Show then exit;
     GetCursorPos(FMousePosCurrent);
     SetMouseStartPos();
-    Camera.MouseLook(FMousePosStart.X, FMousePosStart.Y, FMousePosCurrent.X,
-                     FMousePosCurrent.Y,Settings.MouseSensitivity,
-                     Settings.InvertMouse);
+    Engine.Camera.MouseLook(FMousePosStart.X, FMousePosStart.Y, FMousePosCurrent.X,
+                     FMousePosCurrent.Y,Engine.Settings.MouseSensitivity,
+                     Engine.Settings.InvertMouse);
     FMousePosCurrent.X := FMousePosStart.x;
     FMousePosCurrent.Y := FMousePosStart.Y;
   end;
@@ -303,8 +298,8 @@ end;
 
 procedure TGDInput.CalculateMousePosStart();
 begin
-  FMousePosStart.x := Round( Settings.Left + (Settings.Width / 2) );
-  FMousePosStart.Y := Round( Settings.Top + (Settings.Height / 2) );
+  FMousePosStart.x := Round( Engine.Settings.Left + (Engine.Settings.Width / 2) );
+  FMousePosStart.Y := Round( Engine.Settings.Top + (Engine.Settings.Height / 2) );
   FMousePosCurrent.X := FMousePosStart.x;
   FMousePosCurrent.Y := FMousePosStart.Y;
 end;
@@ -322,7 +317,7 @@ end;
 {* Register an input action                                                   *}
 {******************************************************************************}
 
-procedure TGDInput.RegisterInputAction(aType : TGDInputTypes; aKey : integer; aAction : TGDCallback; aConsoleDisabled : boolean );
+procedure TGDInput.AddAction(aType : TGDInputTypes; aKey : integer; aAction : TGDCallback; aConsoleDisabled : boolean );
 var
   iTempAction : TGDInputAction;
 begin
@@ -339,7 +334,7 @@ end;
 {* Clear the inputmanager                                                     *}
 {******************************************************************************}
 
-procedure TGDInput.ClearInputActions();
+procedure TGDInput.Clear();
 begin
   FDirect.Clear();
   FSingle.Clear();

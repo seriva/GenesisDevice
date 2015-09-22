@@ -34,18 +34,13 @@ uses
   GDStringParsing,
   SysUtils,
   dglOpenGL,
-  GDConsole,
   GDTexture,
   GDTypes,
   GDTypesGenerics,
   GDGLWrappers,
   GDConstants,
-  GDSettings,
-  GDCamera,
   GDResource,
-  GDTiming,
-  GDTerrain,
-  GDModes;
+  GDTerrain;
 
 type
 
@@ -120,8 +115,7 @@ type
 implementation
 
 uses
-  GDRenderer,
-  GDResources;
+  GDEngine;
 
 {******************************************************************************}
 {* Create the water class                                                     *}
@@ -171,8 +165,8 @@ var
   iPath, iExt : String;
   iError : string;
 begin
-  Console.Write('Loading water...');
-  Console.Use := False;
+  Engine.Console.Write('Loading water...');
+  Engine.Console.Use := False;
   try
     result        := true;
     FWaterLoaded  := true;
@@ -204,14 +198,14 @@ begin
     iPath  := aIniFile.ReadString( 'Water', 'WaterMapPath', 'textures\water\') + aIniFile.ReadString( 'Water', 'WaterMapPrefix', 'water');
     iExt   := aIniFile.ReadString( 'Water', 'WaterMapExtension', 'dds');
     for iI := 0 to iCount-1 do
-      FWaterTextures.Add( Resources.LoadTexture(iPath + IntToStr(iI) + '.' + iExt ,Settings.TextureDetail,Settings.TextureFilter) );
+      FWaterTextures.Add( Engine.Resources.LoadTexture(iPath + IntToStr(iI) + '.' + iExt ,Engine.Settings.TextureDetail,Engine.Settings.TextureFilter) );
 
     //Caustic textures
     iCount := aIniFile.ReadInteger('Water', 'CausticTexturesCount', 10 );
     iPath  := aIniFile.ReadString( 'Water', 'CausticsMapPath', 'textures\water\') + aIniFile.ReadString( 'Water', 'CausticsMapPrefix', 'caust');
     iExt   := aIniFile.ReadString( 'Water', 'CausticsMapExtension', 'dds');
     for iI := 0 to iCount-1 do
-      FCausticTextures.Add( Resources.LoadTexture(iPath + IntToStr(iI) + '.' + iExt ,Settings.TextureDetail,Settings.TextureFilter) );
+      FCausticTextures.Add( Engine.Resources.LoadTexture(iPath + IntToStr(iI) + '.' + iExt ,Engine.Settings.TextureDetail,Engine.Settings.TextureFilter) );
 
     //create VBO
     FVertexBuffer := TGDGLVertexBuffer.Create();
@@ -223,9 +217,9 @@ begin
       FWaterLoaded := false;
     end;
   end;
-  Console.Use := True;
+  Engine.Console.Use := True;
 
-  Console.WriteOkFail(result, iError);
+  Engine.Console.WriteOkFail(result, iError);
 end;
 
 {******************************************************************************}
@@ -234,19 +228,19 @@ end;
 
 procedure TGDWater.Resize();
 begin
-   case Settings.WaterDetail of
+   case Engine.Settings.WaterDetail of
      WD_LOW    : begin
-                   FWidth  := Settings.Width div 4;
-                   FHeight := Settings.Height div 4;
+                   FWidth  := Engine.Settings.Width div 4;
+                   FHeight := Engine.Settings.Height div 4;
                  end;
 
      WD_MEDIUM : begin
-                   FWidth  := Settings.Width div 2;
-                   FHeight := Settings.Height div 2;
+                   FWidth  := Engine.Settings.Width div 2;
+                   FHeight := Engine.Settings.Height div 2;
                  end;
      WD_HIGH   : begin
-                   FWidth  := Settings.Width;
-                   FHeight := Settings.Height;
+                   FWidth  := Engine.Settings.Width;
+                   FHeight := Engine.Settings.Height;
                  end;
   end;
   FreeAndNil(FRenderBuffer);
@@ -280,7 +274,7 @@ begin
   for iI := 0 to FCausticTextures.Count-1 do
   begin
     iTex := TGDTexture(FCausticTextures.Items[iI]);
-    Resources.RemoveResource(TGDResource(iTex));
+    Engine.Resources.RemoveResource(TGDResource(iTex));
   end;
   FCausticTextures.Clear();
   FCausticCounter := 0;
@@ -288,7 +282,7 @@ begin
   for iI := 0 to FWaterTextures.Count-1 do
   begin
     iTex := TGDTexture(FWaterTextures.Items[iI]);
-    Resources.RemoveResource(TGDResource(iTex));
+    Engine.Resources.RemoveResource(TGDResource(iTex));
   end;
   FWaterTextures.Clear();
   FWaterCounter := 0;
@@ -302,7 +296,7 @@ end;
 
 Function TGDWater.Visible() : boolean;
 begin
-  result := Camera.BoxInView(FBoundingBox);
+  result := Engine.Camera.BoxInView(FBoundingBox);
 end;
 
 {******************************************************************************}
@@ -314,7 +308,7 @@ var
   iDT, iTime : Integer;
 begin
   If not(FWaterLoaded) then exit;
-  iTime      := Timing.GetTime();
+  iTime      := Engine.Timing.GetTime();
   iDT        := iTime - FLastTime;
   FLastTime  := iTime;
   FWaterTime := FWaterTime + iDT;
@@ -346,7 +340,7 @@ begin
   FFrameBuffer.Status();
   glViewPort(0,0,FWidth,FHeight);
   glClear(GL_DEPTH_BUFFER_BIT or GL_COLOR_BUFFER_BIT);
-  If Camera.Position.Y > FBoundingBox.Max.Y then
+  If Engine.Camera.Position.Y > FBoundingBox.Max.Y then
   begin
     FClipPlane[0] := 0;
     FClipPlane[1] := -1;
@@ -368,14 +362,14 @@ end;
 
 procedure TGDWater.EndReflection();
 begin
-  If Camera.Position.Y > FBoundingBox.Max.Y then
+  If Engine.Camera.Position.Y > FBoundingBox.Max.Y then
   begin
     glCullFace(GL_BACK);
     glPolygonMode(GL_FRONT, GL_FILL);
     glPopMatrix();
   end;
   glDisable(GL_CLIP_PLANE0);
-  glViewPort(0,0,Settings.Width, Settings.Height);
+  glViewPort(0,0,Engine.Settings.Width, Engine.Settings.Height);
   FFrameBuffer.UnBind();
 end;
 
@@ -388,21 +382,24 @@ begin
   if Not(aRenderAttribute = RA_NORMAL) then exit;
 
   FVertexBuffer.Bind(VL_V_UV);
-  if Modes.RenderWireframe then
+  if Engine.Modes.RenderWireframe then
   begin
-    Renderer.SetColor(0.3,0.3,1,1);
+    Engine.Renderer.SetColor(0.3,0.3,1,1);
   end
   else
   begin
     case aRenderFor of
         RF_NORMAL, RF_WATER : begin
-                   Renderer.WaterShader.Bind();
-                   Renderer.SetJoinedParams(Renderer.WaterShader);
-                   Renderer.WaterShader.SetInt('T_REFLECTION', 0);
-                   Renderer.WaterShader.SetInt('T_DUDVMAP', 1);
-                   Renderer.WaterShader.SetInt('T_CAUSTICMAP', 5);
-                   Renderer.WaterShader.SetInt('I_REFRACTION_UV', RefractionUV);
-                   Renderer.WaterShader.SetInt('I_WAVES_UV', WavesUV);
+                   with Engine.Renderer do
+                   begin
+                     WaterShader.Bind();
+                     WaterShader.SetInt('T_REFLECTION', 0);
+                     WaterShader.SetInt('T_DUDVMAP', 1);
+                     WaterShader.SetInt('T_CAUSTICMAP', 5);
+                     WaterShader.SetInt('I_REFRACTION_UV', RefractionUV);
+                     WaterShader.SetInt('I_WAVES_UV', WavesUV);
+                     Engine.Renderer.SetJoinedParams(WaterShader);
+                   end;
 
                    FReflection.BindTexture(GL_TEXTURE0);
                    BindWaterTexture();
@@ -411,9 +408,9 @@ begin
                    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         end;
         RF_BLOOM : begin
-                 Renderer.RenderState( RS_COLOR );
+                 Engine.Renderer.RenderState( RS_COLOR );
                  glEnable(GL_DEPTH_TEST);
-                 Renderer.SetColor(0,0,0,1)
+                 Engine.Renderer.SetColor(0,0,0,1)
         end;
     end;
   end;
@@ -437,7 +434,7 @@ end;
 
 function TGDWater.UnderWater(): boolean;
 begin
-  If ( Camera.Position.Y < FBoundingBox.Max.Y ) then
+  If ( Engine.Camera.Position.Y < FBoundingBox.Max.Y ) then
     result := true
   else
     result := false;

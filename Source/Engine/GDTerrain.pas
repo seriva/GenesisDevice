@@ -37,12 +37,8 @@ uses
   GDTypes,
   GDGLWrappers,
   GDTypesGenerics,
-  GDConsole,
-  GDSettings,
-  GDConstants,
   GDResource,
-  GDResources,
-  GDModes;
+  GDConstants;
 
 type
 
@@ -94,8 +90,7 @@ type
 implementation
 
 uses
-  GDMap,
-  GDRenderer;
+  GDEngine;
 
 {******************************************************************************}
 {* Create the terrain class                                                   *}
@@ -141,8 +136,8 @@ var
 begin
   Clear();
 
-  Console.Write('Loading terrain...');
-  Console.Use := false;
+  Engine.Console.Write('Loading terrain...');
+  Engine.Console.Use := false;
   try
     result := true;
     FTerrainLoaded := true;
@@ -208,11 +203,11 @@ begin
       end;
     end;
 
-    FColorTexture   := Resources.LoadTexture(aIniFile.ReadString( 'Terrain', 'ColorMap', 'colormaps.bmp'), Settings.TextureDetail,Settings.TextureFilter);
-    FDetailTexture1 := Resources.LoadTexture(aIniFile.ReadString( 'Terrain', 'DetailMap1', 'detailmap1.jpg'), Settings.TextureDetail,Settings.TextureFilter);
-    FDetailTexture2 := Resources.LoadTexture(aIniFile.ReadString( 'Terrain', 'DetailMap2', 'detailmap2.jpg'), Settings.TextureDetail,Settings.TextureFilter);
-    FDetailTexture3 := Resources.LoadTexture(aIniFile.ReadString( 'Terrain', 'DetailMap3', 'detailmap3.jpg'), Settings.TextureDetail,Settings.TextureFilter);
-    FDetailLookup   := Resources.LoadTexture(aIniFile.ReadString( 'Terrain', 'DetailDistribution', 'detaillookup.jpg') ,Settings.TextureDetail,Settings.TextureFilter);
+    FColorTexture   := Engine.Resources.LoadTexture(aIniFile.ReadString( 'Terrain', 'ColorMap', 'colormaps.bmp'), Engine.Settings.TextureDetail,Engine.Settings.TextureFilter);
+    FDetailTexture1 := Engine.Resources.LoadTexture(aIniFile.ReadString( 'Terrain', 'DetailMap1', 'detailmap1.jpg'), Engine.Settings.TextureDetail,Engine.Settings.TextureFilter);
+    FDetailTexture2 := Engine.Resources.LoadTexture(aIniFile.ReadString( 'Terrain', 'DetailMap2', 'detailmap2.jpg'), Engine.Settings.TextureDetail,Engine.Settings.TextureFilter);
+    FDetailTexture3 := Engine.Resources.LoadTexture(aIniFile.ReadString( 'Terrain', 'DetailMap3', 'detailmap3.jpg'), Engine.Settings.TextureDetail,Engine.Settings.TextureFilter);
+    FDetailLookup   := Engine.Resources.LoadTexture(aIniFile.ReadString( 'Terrain', 'DetailDistribution', 'detaillookup.jpg') ,Engine.Settings.TextureDetail,Engine.Settings.TextureFilter);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
@@ -229,9 +224,9 @@ begin
     end;
   end;
 
-  Console.Use := true;
+  Engine.Console.Use := true;
 
-  Console.WriteOkFail(result, iError);
+  Engine.Console.WriteOkFail(result, iError);
 end;
 
 {******************************************************************************}
@@ -243,11 +238,11 @@ begin
   FVertices.Clear;
   FreeAndNil(FVertexBuffer);
 
-  Resources.RemoveResource(TGDResource(FColorTexture));
-  Resources.RemoveResource(TGDResource(FDetailTexture1));
-  Resources.RemoveResource(TGDResource(FDetailTexture2));
-  Resources.RemoveResource(TGDResource(FDetailTexture3));
-  Resources.RemoveResource(TGDResource(FDetailLookup));
+  Engine.Resources.RemoveResource(TGDResource(FColorTexture));
+  Engine.Resources.RemoveResource(TGDResource(FDetailTexture1));
+  Engine.Resources.RemoveResource(TGDResource(FDetailTexture2));
+  Engine.Resources.RemoveResource(TGDResource(FDetailTexture3));
+  Engine.Resources.RemoveResource(TGDResource(FDetailLookup));
 
   FTerrainLoaded := False;
 end;
@@ -408,36 +403,39 @@ begin
   if Not(aRenderAttribute = RA_NORMAL) then exit;
 
   FVertexBuffer.Bind(VL_V_UV_N);
-  if Modes.RenderWireframe then
+  if Engine.Modes.RenderWireframe then
   begin
-    Renderer.SetColor(0.2,0.8,0.2,1);
+    Engine.Renderer.SetColor(0.2,0.8,0.2,1);
   end
   else
   begin
     case aRenderFor of
      RF_NORMAL, RF_WATER : begin
-                   Renderer.TerrainShader.Bind();
-                   Renderer.SetJoinedParams(Renderer.TerrainShader);
-                   Renderer.TerrainShader.SetInt('T_COLORTEX', 0);
-                   Renderer.TerrainShader.SetInt('T_DETAILTEX1', 1);
-                   Renderer.TerrainShader.SetInt('T_DETAILTEX2', 2);
-                   Renderer.TerrainShader.SetInt('T_DETAILTEX3', 3);
-                   Renderer.TerrainShader.SetInt('T_WEIGHT_LOOKUP', 4);
-                   Renderer.TerrainShader.SetInt('T_CAUSTIC_TEX', 5);
-                   Renderer.TerrainShader.SetInt('I_DETAIL_UV', FDetailUV);
-                   Renderer.TerrainShader.SetInt('I_CAUSTIC_UV', FCausticUV);
+                   with Engine.Renderer do
+                   begin
+                     TerrainShader.Bind();
+                     SetJoinedParams(TerrainShader);
+                     TerrainShader.SetInt('T_COLORTEX', 0);
+                     TerrainShader.SetInt('T_DETAILTEX1', 1);
+                     TerrainShader.SetInt('T_DETAILTEX2', 2);
+                     TerrainShader.SetInt('T_DETAILTEX3', 3);
+                     TerrainShader.SetInt('T_WEIGHT_LOOKUP', 4);
+                     TerrainShader.SetInt('T_CAUSTIC_TEX', 5);
+                     TerrainShader.SetInt('I_DETAIL_UV', FDetailUV);
+                     TerrainShader.SetInt('I_CAUSTIC_UV', FCausticUV);
+                   end;
 
                    FColorTexture.BindTexture(GL_TEXTURE0);
                    FDetailTexture1.BindTexture(GL_TEXTURE1);
                    FDetailTexture2.BindTexture(GL_TEXTURE2);
                    FDetailTexture3.BindTexture(GL_TEXTURE3);
                    FDetailLookup.BindTexture(GL_TEXTURE4);
-                   Map.Water.BindCausticTexture();
+                   Engine.Map.Water.BindCausticTexture();
                  end;
       RF_BLOOM : begin
-                   Renderer.RenderState( RS_COLOR );
+                   Engine.Renderer.RenderState( RS_COLOR );
                    glEnable(GL_DEPTH_TEST);
-                   Renderer.SetColor(0,0,0,1)
+                   Engine.Renderer.SetColor(0,0,0,1)
                  end;
     end;
   end;

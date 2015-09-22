@@ -35,14 +35,9 @@ uses
   GDStringParsing,
   GDTexture,
   GDTypes,
-  GDConsole,
-  GDSettings,
   GDConstants,
   GDMesh,
-  GDTiming,
-  GDResources,
-  GDResource,
-  GDModes;
+  GDResource;
 
 type
 
@@ -151,7 +146,7 @@ type
 implementation
 
 uses
-  GDRenderer;
+  GDEngine;
 
 {******************************************************************************}
 {* Create the grasstype class                                                 *}
@@ -159,8 +154,8 @@ uses
 
 constructor TGDGrassType.Create(aIniFile : TIniFile; aSection : String);
 begin
-  FTexture      := Resources.LoadTexture(aIniFile.ReadString( aSection, 'Texture', ''),
-                                         TD_HIGH,Settings.TextureFilter);
+  FTexture      := Engine.Resources.LoadTexture(aIniFile.ReadString( aSection, 'Texture', ''),
+                                         TD_HIGH, Engine.Settings.TextureFilter);
   FScale        := ReadVector(aIniFile, aSection, 'Scale');
   FRandomScale  := ReadVector(aIniFile, aSection, 'RandomScale');
   FCoverOfTotal := aIniFile.ReadFloat( aSection, 'CoverOfTotal', 100 );
@@ -172,7 +167,7 @@ end;
 
 destructor  TGDGrassType.Destroy();
 begin
-  Resources.RemoveResource(TGDResource(FTexture));
+  Engine.Resources.RemoveResource(TGDResource(FTexture));
   inherited
 end;
 
@@ -182,9 +177,9 @@ end;
 
 constructor TGDMeshType.Create(aIniFile : TIniFile; aSection : String);
 begin
-  FMesh          := Resources.Loadmesh(aIniFile.ReadString( aSection, 'Model', ''));
-  FMeshLOD1      := Resources.Loadmesh(aIniFile.ReadString( aSection, 'ModelLOD1', ''));
-  FMeshLOD2      := Resources.Loadmesh(aIniFile.ReadString( aSection, 'ModelLOD2', ''));
+  FMesh          := Engine.Resources.Loadmesh(aIniFile.ReadString( aSection, 'Model', ''));
+  FMeshLOD1      := Engine.Resources.Loadmesh(aIniFile.ReadString( aSection, 'ModelLOD1', ''));
+  FMeshLOD2      := Engine.Resources.Loadmesh(aIniFile.ReadString( aSection, 'ModelLOD2', ''));
   FStartRotation := ReadVector(aIniFile, aSection, 'StartRotation');
   FScale         := aIniFile.ReadFloat( aSection, 'Scale', 0 );
   FRandomScale   := aIniFile.ReadFloat( aSection, 'RandomScale', 0 );
@@ -197,9 +192,9 @@ end;
 
 destructor  TGDMeshType.Destroy();
 begin
-  Resources.RemoveResource(TGDResource(FMesh));
-  Resources.RemoveResource(TGDResource(FMeshLOD1));
-  Resources.RemoveResource(TGDResource(FMeshLOD2));
+  Engine.Resources.RemoveResource(TGDResource(FMesh));
+  Engine.Resources.RemoveResource(TGDResource(FMeshLOD1));
+  Engine.Resources.RemoveResource(TGDResource(FMeshLOD2));
   inherited
 end;
 
@@ -238,7 +233,7 @@ var
   iError : String;
 begin
   Clear();
-  Console.Write('Loading foliage...');
+  Engine.Console.Write('Loading foliage...');
   try
     result := true;
 
@@ -298,7 +293,7 @@ begin
     end;
   end;
 
-  Console.WriteOkFail(result, iError);
+  Engine.Console.WriteOkFail(result, iError);
 end;
 
 {******************************************************************************}
@@ -335,9 +330,9 @@ procedure TGDFoliage.StartRenderingGrass( aRenderAttribute : TGDRenderAttribute 
 begin
   if Not(aRenderAttribute = RA_NORMAL) then exit;
 
-  if Modes.RenderWireframe then
+  if Engine.Modes.RenderWireframe then
   begin
-    Renderer.SetColor(0,0.25,0,1);
+    Engine.Renderer.SetColor(0,0.25,0,1);
     glDisable(GL_CULL_FACE);
   end
   else
@@ -347,11 +342,14 @@ begin
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_BLEND);
     glDisable(GL_CULL_FACE);
-    Renderer.GrassShader.Bind();
-    Renderer.SetJoinedParams(Renderer.GrassShader);
-    Renderer.GrassShader.SetInt('T_GRASSTEX', 0);
-    Renderer.GrassShader.SetFloat('F_ANIMATION_SPEED', Timing.ElapsedTime / FGrassAnimationSpeed);
-    Renderer.GrassShader.SetFloat('F_ANIMATION_STRENGTH', FGrassAnimationStrength);
+    with Engine.Renderer do
+    begin
+      GrassShader.Bind();
+      Engine.Renderer.SetJoinedParams(GrassShader);
+      GrassShader.SetInt('T_GRASSTEX', 0);
+      GrassShader.SetFloat('F_ANIMATION_SPEED', Engine.Timing.ElapsedTime / FGrassAnimationSpeed);
+      GrassShader.SetFloat('F_ANIMATION_STRENGTH', FGrassAnimationStrength);
+    end;
   end;
 end;
 

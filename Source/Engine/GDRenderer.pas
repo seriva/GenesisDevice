@@ -37,13 +37,10 @@ uses
   SysUtils,
   dglOpenGL,
   GDConstants,
-  GDSettings,
   GDTexture,
   GDGLWrappers,
   GDTypesGenerics,
-  GDTypes,
-  GDModes,
-  GDTiming;
+  GDTypes;
 
 type
 
@@ -122,7 +119,7 @@ type
 
     function    InitViewPort( aWnd  : HWND ): boolean;
     function    ShutDownViewPort() : boolean;
-    procedure   ResizeViewPort();
+    procedure   ResizeViewPort(aTop, aLeft, aWidth, aHeight : integer);
 
     procedure   SetColor(aC : TGDColor); overload;
     procedure   SetColor(aR, aG, aB, aA : Single); overload;
@@ -141,18 +138,11 @@ type
     procedure   Render();
   end;
 
-var
-  Renderer : TGDRenderer;
-
 implementation
 
 uses
   GDConsole,
-  GDMain,
-  GDCamera,
-  GDStatistics,
-  GDGUI,
-  GDMap;
+  GDEngine;
 
 {******************************************************************************}
 {* Create the renderer class                                                  *}
@@ -180,8 +170,8 @@ end;
 begin
   Inherited;
   FCanResize := false;
-  Timing.Start();
-  Console.Write('......Initializing renderer');
+  Engine.Timing.Start();
+  Engine.Console.Write('......Initializing renderer');
   try
     FInitialized := true;
     iInstance := GetModuleHandle(nil);
@@ -233,10 +223,10 @@ begin
     ReadImplementationProperties;
 
     //Print specs
-    Console.Write('Vendor: ' + String(AnsiString(glGetString(GL_VENDOR))));
-    Console.Write('Renderer: ' + String(AnsiString(glGetString(GL_RENDERER))));
-    Console.Write('Version: ' + String(AnsiString(glGetString(GL_VERSION))));
-    Console.Write('GLSL Version: ' + String(AnsiString(glGetString(GL_SHADING_LANGUAGE_VERSION))));
+    Engine.Console.Write('Vendor: ' + String(AnsiString(glGetString(GL_VENDOR))));
+    Engine.Console.Write('Renderer: ' + String(AnsiString(glGetString(GL_RENDERER))));
+    Engine.Console.Write('Version: ' + String(AnsiString(glGetString(GL_VERSION))));
+    Engine.Console.Write('GLSL Version: ' + String(AnsiString(glGetString(GL_SHADING_LANGUAGE_VERSION))));
 
     //Check requirements
     //Version
@@ -250,19 +240,19 @@ begin
 
     //Texture units
     glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, @iGLInt1);
-    Console.Write('Texture units: ' + IntToStr(iGLInt1));
+    Engine.Console.Write('Texture units: ' + IntToStr(iGLInt1));
     if iGLInt1 < MRS_TEXTURE_UNITS then
       Raise Exception.Create('Not ennough texture units! Minimal of ' + IntToStr(MRS_TEXTURE_UNITS) + ' needed.');
 
     //Anisotropic filtering
     glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, @iGLFLoat);
-    Console.Write('Anisotropic filtering: ' + FormatFloat('#####', iGLFLoat));
+    Engine.Console.Write('Anisotropic filtering: ' + FormatFloat('#####', iGLFLoat));
     if iGLFLoat < MRS_ANISOTROPIC_FILTERING then
       Raise Exception.Create('To low anisotropic filtering! Minimal of ' + IntToStr(MRS_ANISOTROPIC_FILTERING) + ' needed.');
 
     //Texture size
     glGetFloatv(GL_MAX_TEXTURE_SIZE, @iGLFLoat);
-    Console.Write('Texture size: ' + FormatFloat('#####',iGLFLoat));
+    Engine.Console.Write('Texture size: ' + FormatFloat('#####',iGLFLoat));
     if iGLFLoat < MRS_TEXTURE_SIZE then
       Raise Exception.Create('To low texture size! Minimal of ' + IntToStr(MRS_TEXTURE_SIZE) + ' needed.');
 
@@ -315,24 +305,24 @@ begin
     FSSAOOnly     := 0;
 
     //commands
-    Console.AddCommand('RBloomMult', '0.0 to 1.0 : Set the bloom multiplier value', CT_FLOAT, @FBloomStrengh);
-    Console.AddCommand('RSSAOStrength', '0.0 to 1.0 : Set SSAO strength', CT_FLOAT, @FSSAOStrength);
-    Console.AddCommand('RSSAOSamples', '8, 16, 32, 64 : Set SSAO sample count', CT_INTEGER, @FSSAOSamples);
-    Console.AddCommand('RSSAORadius', '0.0 to 10.0 : Set SSAO radius', CT_FLOAT, @FSSAORadius);
-    Console.AddCommand('RSSAOOnly', '0.0 to 1.0 : Only show SSAO', CT_INTEGER, @FSSAOOnly);
+    Engine.Console.AddCommand('RBloomMult', '0.0 to 1.0 : Set the bloom multiplier value', CT_FLOAT, @FBloomStrengh);
+    Engine.Console.AddCommand('RSSAOStrength', '0.0 to 1.0 : Set SSAO strength', CT_FLOAT, @FSSAOStrength);
+    Engine.Console.AddCommand('RSSAOSamples', '8, 16, 32, 64 : Set SSAO sample count', CT_INTEGER, @FSSAOSamples);
+    Engine.Console.AddCommand('RSSAORadius', '0.0 to 10.0 : Set SSAO radius', CT_FLOAT, @FSSAORadius);
+    Engine.Console.AddCommand('RSSAOOnly', '0.0 to 1.0 : Only show SSAO', CT_INTEGER, @FSSAOOnly);
   except
     on E: Exception do
     begin
       iError := E.Message;
       FInitialized := false;
-      Console.Write('Failed to initialize renderer: ' + iError);
+      Engine.Console.Write('Failed to initialize renderer: ' + iError);
     end;
   end;
 
   If FInitialized then
   begin
-    Timing.Stop();
-    Console.Write('......Done initializing renderer (' + Timing.TimeInSeconds + ' Sec)');
+    Engine.Timing.Stop();
+    Engine.Console.Write('......Done initializing renderer (' + Engine.Timing.TimeInSeconds + ' Sec)');
     InitShaders();
   end;
 end;
@@ -348,7 +338,7 @@ var
   iInstance   : HINST;
 begin
   inherited;
-  Console.Write('Shutting down renderer...');
+  Engine.Console.Write('Shutting down renderer...');
   try
     //Clear shaders.
     ClearShaders();
@@ -376,7 +366,7 @@ begin
       iResult := false;
     end;
   end;
-  Console.WriteOkFail(iResult, iError);
+  Engine.Console.WriteOkFail(iResult, iError);
 end;
 
 {******************************************************************************}
@@ -387,7 +377,7 @@ function TGDRenderer.InitViewPort( aWnd  : HWND ): boolean;
 var
   iError    : string;
 begin
-  Console.Write('Initializing viewport...');
+  Engine.Console.Write('Initializing viewport...');
   try
     Result := true;
 
@@ -406,7 +396,7 @@ begin
     ActivateRenderingContext(FViewPortDC, FViewPortRC);
     wglShareLists(FResourceRC, FViewPortRC);
 
-    ResizeViewPort();
+    ResizeViewPort(Engine.Settings.Top, Engine.Settings.Left, Engine.Settings.Width, Engine.Settings.Height);
     VerticalSync();
     InitFrameBuffers();
     InitShadowFrameBuffers();
@@ -419,10 +409,7 @@ begin
       result := false;
     end;
   end;
-  Console.WriteOkFail(result, iError);
-
-  if result then
-    Main.InitBaseResources();
+  Engine.Console.WriteOkFail(result, iError);
 end;
 
 {******************************************************************************}
@@ -433,11 +420,11 @@ function TGDRenderer.ShutDownViewPort() : boolean;
 var
   iError    : string;
 begin
-  Console.Write('Shutting down viewport...');
+  Engine.Console.Write('Shutting down viewport...');
   try
     FCanResize := false;
     result := true;
-    Main.ClearBaseResources();
+    Engine.Reset();
     ClearFrameBuffers();
     ClearShadowFrameBuffers();
     wglMakeCurrent(0, 0);
@@ -459,23 +446,28 @@ begin
     end;
   end;
 
-  Console.WriteOkFail(result, iError);
+  Engine.Console.WriteOkFail(result, iError);
 end;
 
 {******************************************************************************}
 {* Resize the windows viewport                                                *}
 {******************************************************************************}
 
-procedure TGDRenderer.ResizeViewPort();
+procedure TGDRenderer.ResizeViewPort(aTop, aLeft, aWidth, aHeight : integer);
 begin
   if not(FCanResize) then exit;
+  Engine.Settings.Top := aTop;
+  Engine.Settings.Left := aLeft;
+  Engine.Settings.Width := aWidth;
+  Engine.Settings.Height := aHeight;
+  Engine.Input.CalculateMousePosStart();
   MakeCurrent();
-  if (Settings.Height = 0) then
-    Settings.Height := 1;
-  glViewport(0, 0, Settings.Width, Settings.Height);
+  if (Engine.Settings.Height = 0) then
+    Engine.Settings.Height := 1;
+  glViewport(0, 0, Engine.Settings.Width, Engine.Settings.Height);
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
-  gluPerspective(40.0, Settings.Width/Settings.Height, 25, Settings.ViewDistance * R_VIEW_DISTANCE_STEP);
+  gluPerspective(40.0, Engine.Settings.Width/Engine.Settings.Height, 25, Engine.Settings.ViewDistance * R_VIEW_DISTANCE_STEP);
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
   ResizeFrameBuffers();
@@ -506,37 +498,37 @@ end;
 procedure TGDRenderer.SetJoinedParams(aShader : TGDGLShader; aForShadows : boolean = false);
 begin
   aShader.Bind();
-  aShader.SetFloat3('V_LIGHT_DIR',  Map.LightDirection.X,
-                                    Map.LightDirection.Y,
-                                    Map.LightDirection.Z);
-  aShader.SetFloat4('V_LIGHT_AMB',  Map.LightAmbient.R,
-                                    Map.LightAmbient.G,
-                                    Map.LightAmbient.B,
-                                    Map.LightAmbient.A);
-  aShader.SetFloat4('V_LIGHT_DIFF', Map.LightDiffuse.R,
-                                    Map.LightDiffuse.G,
-                                    Map.LightDiffuse.B,
-                                    Map.LightDiffuse.A);
-  aShader.SetFloat('F_LIGHT_SHADOW', Map.LightShadow);
+  aShader.SetFloat3('V_LIGHT_DIR',  Engine.Map.LightDirection.X,
+                                    Engine.Map.LightDirection.Y,
+                                    Engine.Map.LightDirection.Z);
+  aShader.SetFloat4('V_LIGHT_AMB',  Engine.Map.LightAmbient.R,
+                                    Engine.Map.LightAmbient.G,
+                                    Engine.Map.LightAmbient.B,
+                                    Engine.Map.LightAmbient.A);
+  aShader.SetFloat4('V_LIGHT_DIFF', Engine.Map.LightDiffuse.R,
+                                    Engine.Map.LightDiffuse.G,
+                                    Engine.Map.LightDiffuse.B,
+                                    Engine.Map.LightDiffuse.A);
+  aShader.SetFloat('F_LIGHT_SHADOW', Engine.Map.LightShadow);
 
-  aShader.SetFloat('F_MIN_VIEW_DISTANCE', Map.FogMinDistance);
-  aShader.SetFloat('F_MAX_VIEW_DISTANCE', Map.FogMaxDistance);
-  aShader.SetFloat4('V_FOG_COLOR', Map.FogColor.R, Map.FogColor.G, Map.FogColor.B, Map.FogColor.A);
+  aShader.SetFloat('F_MIN_VIEW_DISTANCE', Engine.Map.FogMinDistance);
+  aShader.SetFloat('F_MAX_VIEW_DISTANCE', Engine.Map.FogMaxDistance);
+  aShader.SetFloat4('V_FOG_COLOR', Engine.Map.FogColor.R, Engine.Map.FogColor.G, Engine.Map.FogColor.B, Engine.Map.FogColor.A);
 
-  If Map.Water.UnderWater() then
+  If Engine.Map.Water.UnderWater() then
     aShader.SetInt('I_UNDER_WATER', 1)
   else
     aShader.SetInt('I_UNDER_WATER', 0);
-  aShader.SetFloat('I_WATER_HEIGHT', Map.Water.WaterHeight);
-  aShader.SetFloat4('V_WATER_COLOR', Map.Water.Color.R,
-                                     Map.Water.Color.G,
-                                     Map.Water.Color.B,
-                                     Map.Water.Color.A);
-  aShader.SetFloat('I_WATER_DEPTH', Map.Water.Depth);
-  aShader.SetFloat('I_WATER_MAX', Map.Water.MaxDistance);
-  aShader.SetFloat('I_WATER_MIN', Map.Water.MinDistance);
+  aShader.SetFloat('I_WATER_HEIGHT', Engine.Map.Water.WaterHeight);
+  aShader.SetFloat4('V_WATER_COLOR', Engine.Map.Water.Color.R,
+                                     Engine.Map.Water.Color.G,
+                                     Engine.Map.Water.Color.B,
+                                     Engine.Map.Water.Color.A);
+  aShader.SetFloat('I_WATER_DEPTH', Engine.Map.Water.Depth);
+  aShader.SetFloat('I_WATER_MAX', Engine.Map.Water.MaxDistance);
+  aShader.SetFloat('I_WATER_MIN', Engine.Map.Water.MinDistance);
 
-  aShader.SetFloat3('V_CAM_POS', Camera.Position.x,  Camera.Position.Y,  Camera.Position.Z );
+  aShader.SetFloat3('V_CAM_POS', Engine.Camera.Position.x,  Engine.Camera.Position.Y,  Engine.Camera.Position.Z );
 
   if not(aForShadows) then
   begin
@@ -600,8 +592,8 @@ end;
 
 procedure TGDRenderer.InitShaders();
 begin
-  Timing.Start();
-  Console.Write('......Initializing shaders');
+  Engine.Timing.Start();
+  Engine.Console.Write('......Initializing shaders');
   FTerrainShader  := TGDGLShader.Create(SHADER_TERRAIN);
   FSkyShader      := TGDGLShader.Create(SHADER_SKY);
   FWaterShader    := TGDGLShader.Create(SHADER_WATER);
@@ -611,8 +603,8 @@ begin
   FPostShader     := TGDGLShader.Create(SHADER_POST);
   FColorShader    := TGDGLShader.Create(SHADER_COLOR);
   FTextureShader  := TGDGLShader.Create(SHADER_TEXTURE);
-  Timing.Stop();
-  Console.Write('......Done initializing shaders (' + Timing.TimeInSeconds + ' Sec)');
+  Engine.Timing.Stop();
+  Engine.Console.Write('......Done initializing shaders (' + Engine.Timing.TimeInSeconds + ' Sec)');
 end;
 
 {******************************************************************************}
@@ -640,8 +632,8 @@ procedure TGDRenderer.InitFrameBuffers();
 begin
   //Frame
   FFrameFBO := TGDGLFrameBuffer.Create();
-  FFrameTex := TGDTexture.Create(GL_RGBA, GL_RGBA, Settings.Width, Settings.Height );
-  FFrameDepthTex := TGDTexture.Create(GL_DEPTH_COMPONENT, GL_DEPTH_COMPONENT, Settings.Width, Settings.Height );
+  FFrameTex := TGDTexture.Create(GL_RGBA, GL_RGBA, Engine.Settings.Width, Engine.Settings.Height );
+  FFrameDepthTex := TGDTexture.Create(GL_DEPTH_COMPONENT, GL_DEPTH_COMPONENT, Engine.Settings.Width, Engine.Settings.Height );
   FFrameFBO.Bind();
   FFrameFBO.AttachTexture(FFrameTex,GL_COLOR_ATTACHMENT0_EXT,GL_TEXTURE_2D);
   FFrameFBO.AttachTexture(FFrameDepthTex, GL_DEPTH_ATTACHMENT_EXT, GL_TEXTURE_2D );
@@ -650,8 +642,8 @@ begin
 
   //Bloom
   FBloomFBO := TGDGLFrameBuffer.Create();
-  FBloomRBO := TGDGLRenderBuffer.Create(Settings.Width, Settings.Height, GL_DEPTH_COMPONENT24);
-  FBloomTex := TGDTexture.Create(GL_RGBA, GL_RGBA, Settings.Width, Settings.Height );
+  FBloomRBO := TGDGLRenderBuffer.Create(Engine.Settings.Width, Engine.Settings.Height, GL_DEPTH_COMPONENT24);
+  FBloomTex := TGDTexture.Create(GL_RGBA, GL_RGBA, Engine.Settings.Width, Engine.Settings.Height );
   FBloomFBO.Bind();
   FBloomFBO.AttachRenderBuffer(FBloomRBO, GL_DEPTH_ATTACHMENT_EXT);
   FBloomFBO.AttachTexture(FBloomTex,GL_COLOR_ATTACHMENT0_EXT,GL_TEXTURE_2D);
@@ -660,11 +652,11 @@ begin
 
   //Bluring
   FBlurFBO := TGDGLFrameBuffer.Create();
-  FBlurRBO := TGDGLRenderBuffer.Create(Settings.Width div 4, Settings.Height div 4, GL_DEPTH_COMPONENT24);
+  FBlurRBO := TGDGLRenderBuffer.Create(Engine.Settings.Width div 4, Engine.Settings.Height div 4, GL_DEPTH_COMPONENT24);
   FBlurFBO.Bind();
   FBlurFBO.AttachRenderBuffer(FBlurRBO, GL_DEPTH_ATTACHMENT_EXT);
   FBlurFBO.Unbind();
-  FBlurTex := TGDTexture.Create(GL_RGBA, GL_RGBA, Settings.Width div 4, Settings.Height div 4);
+  FBlurTex := TGDTexture.Create(GL_RGBA, GL_RGBA, Engine.Settings.Width div 4, Engine.Settings.Height div 4);
 end;
 
 procedure TGDRenderer.InitShadowFrameBuffers();
@@ -783,11 +775,11 @@ begin
    begin
       iI := wglGetSwapIntervalEXT;
 
-      If Settings.VerticalSync then
+      If Engine.Settings.VerticalSync then
         if iI<>1 then
           wglSwapIntervalEXT(1);
 
-      If not(Settings.VerticalSync) then
+      If not(Engine.Settings.VerticalSync) then
         if iI<>0 then
           wglSwapIntervalEXT(0);
    end;
@@ -812,7 +804,7 @@ end;
 
 procedure ApplyBlurToImage( aSourceImage : TGDTexture; aBlurStrength : double );
 begin
-  glViewport(0, 0, Settings.Width div 4, Settings.Height div 4);
+  glViewport(0, 0, Engine.Settings.Width div 4, Engine.Settings.Height div 4);
   glDisable(GL_DEPTH_TEST);
   glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT);
   FBlurShader.Bind();
@@ -822,15 +814,15 @@ begin
   FBlurFBO.Bind();
   FBlurFBO.AttachTexture(FBlurTex,GL_COLOR_ATTACHMENT0_EXT,GL_TEXTURE_2D);
   FBlurFBO.Status();
-  FBlurShader.SetFloat4('V_BLUR_OFFSET',aBlurStrength / Settings.Width, 0, 0, 1);
+  FBlurShader.SetFloat4('V_BLUR_OFFSET',aBlurStrength / Engine.Settings.Width, 0, 0, 1);
   aSourceImage.BindTexture( GL_TEXTURE0 );
   RenderQuad();
 
   //vertical
-  glViewport(0, 0, Settings.Width, Settings.Height);
+  glViewport(0, 0, Engine.Settings.Width, Engine.Settings.Height);
   FBlurFBO.AttachTexture(aSourceImage,GL_COLOR_ATTACHMENT0_EXT,GL_TEXTURE_2D);
   FBlurFBO.Status();
-  FBlurShader.SetFloat4('V_BLUR_OFFSET', 0, aBlurStrength / Settings.Height, 0, 1);
+  FBlurShader.SetFloat4('V_BLUR_OFFSET', 0, aBlurStrength / Engine.Settings.Height, 0, 1);
   FBlurTex.BindTexture( GL_TEXTURE0 );
   RenderQuad();
 
@@ -855,27 +847,27 @@ end;
 
 begin
   glLoadIdentity();
-  Camera.Translate();
+  Engine.Camera.Translate();
   RenderState( RS_COLOR );
-  If Modes.RenderNormals     then
+  If Engine.Modes.RenderNormals     then
   begin
     FLinesVertices.Clear();
-    Renderer.SetColor(1,0.5,0.25,1);
-    Map.RenderVisibleCells( RA_NORMALS, RF_NORMAL );
+    SetColor(1,0.5,0.25,1);
+    Engine.Map.RenderVisibleCells( RA_NORMALS, RF_NORMAL );
     RenderLines();
   end;
-  If Modes.RenderObjectBoxes then
+  If Engine.Modes.RenderObjectBoxes then
   begin
     FLinesVertices.Clear();
-    Renderer.SetColor(1,0,0,1);
-    Map.RenderVisibleCells( RA_FRUSTUM_BOXES, RF_NORMAL );
+    SetColor(1,0,0,1);
+    Engine.Map.RenderVisibleCells( RA_FRUSTUM_BOXES, RF_NORMAL );
     RenderLines();
   end;
-  If Modes.RenderNodeBoxes then
+  If Engine.Modes.RenderNodeBoxes then
   begin
     FLinesVertices.Clear();
-    Renderer.SetColor(1,1,0,1);
-    Map.RenderVisibleCells( RA_NODE_BOXES, RF_NORMAL );
+    SetColor(1,1,0,1);
+    Engine.Map.RenderVisibleCells( RA_NODE_BOXES, RF_NORMAL );
     RenderLines();
   end;
 end;
@@ -886,17 +878,17 @@ end;
 
 procedure RenderWaterReflection();
 begin
-  If (Modes.RenderWireframe = false) and Map.Water.Visible() then
+  If (Engine.Modes.RenderWireframe = false) and Engine.Map.Water.Visible() then
   begin
     //render reflection texture
     StartFrame();
-    Camera.Translate();
-    Map.Water.StartReflection();
-    If Modes.RenderSky then Map.SkyDome.Render();
-    Camera.CalculateFrustum();
-    Map.DetectVisibleCells();
-    Map.RenderVisibleCells( RA_NORMAL, RF_WATER );
-    Map.Water.EndReflection();
+    Engine.Camera.Translate();
+    Engine.Map.Water.StartReflection();
+    If Engine.Modes.RenderSky then Engine.Map.SkyDome.Render();
+    Engine.Camera.CalculateFrustum();
+    Engine.Map.DetectVisibleCells();
+    Engine.Map.RenderVisibleCells( RA_NORMAL, RF_WATER );
+    Engine.Map.Water.EndReflection();
   end;
 end;
 
@@ -914,7 +906,7 @@ var
 		                                 0.0, 0.0, 0.5, 0.0,
 	                                   0.5, 0.5, 0.5, 1.0);
 begin
-  If Modes.RenderWireframe = false then
+  If Engine.Modes.RenderWireframe = false then
   begin
     //render shadow texture
     FShadowFBO.Bind();
@@ -922,14 +914,14 @@ begin
     glClear(GL_DEPTH_BUFFER_BIT);
     glLoadIdentity;
 
-    If Settings.UseShadows = false then
+    If Engine.Settings.UseShadows = false then
     begin
       FShadowFBO.Unbind();
-      glViewport(0, 0, Settings.Width, Settings.Height);
+      glViewport(0, 0, Engine.Settings.Width, Engine.Settings.Height);
       exit;
     end;
 
-    iM.CreateRotation( Camera.Rotation );
+    iM.CreateRotation( Engine.Camera.Rotation );
     iV.Reset(-1,0,0);
     iM.ApplyToVector(iV);
     iV.y := 0;
@@ -942,14 +934,14 @@ begin
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
     glLoadIdentity();
-    gluLookAt(Camera.Position.x+(iV.x*9800), Camera.Position.y+7500, Camera.Position.z+(iV.z*9800),
-              Camera.Position.x+0.01+(iV.x*9800), Camera.Position.y+7500-1, Camera.Position.z+0.01+(iV.z*9800),
+    gluLookAt(Engine.Camera.Position.x+(iV.x*9800), Engine.Camera.Position.y+7500, Engine.Camera.Position.z+(iV.z*9800),
+              Engine.Camera.Position.x+0.01+(iV.x*9800), Engine.Camera.Position.y+7500-1, Engine.Camera.Position.z+0.01+(iV.z*9800),
               iV.x,0,iV.z);
-    Camera.CalculateFrustum();
+    Engine.Camera.CalculateFrustum();
 
     glColorMask(FALSE, FALSE, FALSE, FALSE);
-    Map.DetectVisibleCells();
-    Map.RenderVisibleCells( RA_NORMAL, RF_SHADOW );
+    Engine.Map.DetectVisibleCells();
+    Engine.Map.RenderVisibleCells( RA_NORMAL, RF_SHADOW );
     glColorMask(TRUE, TRUE, TRUE, TRUE);
 
     //Setup the light projection matrix.
@@ -969,7 +961,7 @@ begin
     glPopMatrix();
 
     FShadowFBO.Unbind();
-    glViewport(0, 0, Settings.Width, Settings.Height);
+    glViewport(0, 0, Engine.Settings.Width, Engine.Settings.Height);
   end;
 end;
 
@@ -980,10 +972,10 @@ end;
 procedure RenderGUI();
 begin
   SwitchToOrtho();
-    GUI.RenderScreens();
-    If Modes.RenderStats then Statistics.Render();
-    Console.Render();
-    GUI.MouseCursor.Render();
+    Engine.GUI.RenderScreens();
+    If Engine.Modes.RenderStats then Engine.Statistics.Render();
+    Engine.Console.Render();
+    Engine.GUI.MouseCursor.Render();
   SwitchToPerspective();
 end;
 
@@ -993,9 +985,9 @@ end;
 
 Procedure RenderStaticGeometry();
 begin
-  Map.ApplyDistanceFog();
-  Map.SkyDome.Render();
-  Map.RenderVisibleCells( RA_NORMAL, RF_NORMAL );
+  Engine.Map.ApplyDistanceFog();
+  Engine.Map.SkyDome.Render();
+  Engine.Map.RenderVisibleCells( RA_NORMAL, RF_NORMAL );
 end;
 
 {******************************************************************************}
@@ -1024,8 +1016,8 @@ begin
   FBloomFBO.Bind();
   glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT);
 
-  If Modes.RenderSky then Map.SkyDome.Render();
-  Map.RenderVisibleCells( RA_NORMAL, RF_BLOOM );
+  If Engine.Modes.RenderSky then Engine.Map.SkyDome.Render();
+  Engine.Map.RenderVisibleCells( RA_NORMAL, RF_BLOOM );
 
   FBloomFBO.UnBind();
 
@@ -1044,12 +1036,12 @@ begin
   FPostShader.Bind();
   FPostShader.SetInt('T_SOURCE_IMAGE',0);
 
-  If Settings.UseFXAA and not(Modes.RenderObjectBoxes or Modes.RenderNormals or Modes.RenderNodeBoxes) then
+  If Engine.Settings.UseFXAA and not(Engine.Modes.RenderObjectBoxes or Engine.Modes.RenderNormals or Engine.Modes.RenderNodeBoxes) then
     FPostShader.SetInt('I_DO_FXAA',1)
   else
     FPostShader.SetInt('I_DO_FXAA',0);
 
-  If Settings.UseBloom then
+  If Engine.Settings.UseBloom then
   begin
     FPostShader.SetInt('I_DO_BLOOM',1);
     FPostShader.SetInt('T_BLOOM_IMAGE',1);
@@ -1059,12 +1051,12 @@ begin
   else
     FPostShader.SetInt('I_DO_BLOOM',0);
 
-  if Settings.UseSSAO and not(Map.Water.UnderWater()) then
+  if Engine.Settings.UseSSAO and not(Engine.Map.Water.UnderWater()) then
   begin
     FPostShader.SetInt('I_DO_SSAO',1);
     FPostShader.SetInt('T_DEPTH_IMAGE',2);
     FPostShader.SetFloat('I_SSAO_NEAR',25);
-    FPostShader.SetFloat('I_SSAO_FAR', Settings.ViewDistance * R_VIEW_DISTANCE_STEP);
+    FPostShader.SetFloat('I_SSAO_FAR', Engine.Settings.ViewDistance * R_VIEW_DISTANCE_STEP);
     FPostShader.SetFloat('I_SSAO_STRENGTH',FSSAOStrength);
     FPostShader.SetInt('I_SSAO_SAMPLES',FSSAOSamples);
     FPostShader.SetFloat('I_SSAO_RADIUS',FSSAORadius);
@@ -1074,8 +1066,8 @@ begin
   else
     FPostShader.SetInt('I_DO_SSAO',0);
 
-  FPostShader.SetFloat2('V_SCREEN_SIZE',Settings.Width, Settings.Height);
-  FPostShader.SetFloat('I_GAMMA',Settings.Gamma);
+  FPostShader.SetFloat2('V_SCREEN_SIZE',Engine.Settings.Width, Engine.Settings.Height);
+  FPostShader.SetFloat('I_GAMMA',Engine.Settings.Gamma);
   FFrameTex.BindTexture( GL_TEXTURE0 );
 
   RenderQuad();
@@ -1093,16 +1085,16 @@ begin
 
   //detect the visible objects
   glLoadIdentity();
-  Camera.Translate();
-  Map.DetectVisibleCells();
+  Engine.Camera.Translate();
+  Engine.Map.DetectVisibleCells();
 
   //set the current rendermode
-  if not(Modes.RenderWireframe) then
+  if not(Engine.Modes.RenderWireframe) then
   begin
-    RenderSourceImage(Map.Water.UnderWater());
+    RenderSourceImage(Engine.Map.Water.UnderWater());
 
     //render bloom image.
-    If Settings.UseBloom then RenderBloomImage();
+    If Engine.Settings.UseBloom then RenderBloomImage();
 
     //render the final image
     StartFrame();
@@ -1112,9 +1104,9 @@ begin
   begin
     RenderState( RS_WIREFRAME );
     StartFrame();
-    Camera.Translate();
-    Map.SkyDome.Render();
-    Map.RenderVisibleCells( RA_NORMAL, RF_NORMAL );
+    Engine.Camera.Translate();
+    Engine.Map.SkyDome.Render();
+    Engine.Map.RenderVisibleCells( RA_NORMAL, RF_NORMAL );
   end;
 
   //render debug and ortho stuff

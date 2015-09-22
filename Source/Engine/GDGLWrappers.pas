@@ -167,7 +167,7 @@ Type
 implementation
 
 uses
-  GDConsole;
+  GDEngine;
 
 {******************************************************************************}
 {* Create shader class                                                        *}
@@ -181,7 +181,7 @@ var
   iSource : TStringList;
   iLine, iGeom, ifrag, iVert, iError : String;
 begin
-  Console.Write('Loading shader ' + ExtractFileName(aFileName) + '...');
+  Engine.Console.Write('Loading shader ' + ExtractFileName(aFileName) + '...');
 
   try
     iOk := true;
@@ -226,7 +226,7 @@ begin
   end;
 
   FreeAndNil(iSource);
-  Console.WriteOkFail(iOk, iError);
+  Engine.Console.WriteOkFail(iOk, iError);
 end;
 
 {******************************************************************************}
@@ -435,23 +435,23 @@ begin
     GL_FRAMEBUFFER_COMPLETE_EXT:
       Exit;
     GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT_EXT:
-      Console.Write('Error messages: FBO : Incomplete attachment');
+      Engine.Console.Write('Error messages: FBO : Incomplete attachment');
     GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT_EXT:
-      Console.Write('Error messages: FBO : Incomplete attachment');
+      Engine.Console.Write('Error messages: FBO : Incomplete attachment');
     GL_FRAMEBUFFER_INCOMPLETE_DUPLICATE_ATTACHMENT_EXT:
-      Console.Write('Error messages: FBO : Duplicate attachment');
+      Engine.Console.Write('Error messages: FBO : Duplicate attachment');
     GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT:
-      Console.Write('Error messages: FBO : Incomplete dimensions');
+      Engine.Console.Write('Error messages: FBO : Incomplete dimensions');
     GL_FRAMEBUFFER_INCOMPLETE_FORMATS_EXT:
-      Console.Write('Error messages: FBO : Incomplete formats');
+      Engine.Console.Write('Error messages: FBO : Incomplete formats');
     GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER_EXT:
-      Console.Write('Error messages: FBO : Incomplete draw buffer');
+      Engine.Console.Write('Error messages: FBO : Incomplete draw buffer');
     GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER_EXT:
-      Console.Write('Error messages: FBO : Incomplete read buffer');
+      Engine.Console.Write('Error messages: FBO : Incomplete read buffer');
     GL_FRAMEBUFFER_UNSUPPORTED_EXT:
-      Console.Write('Error messages: FBO : Framebuffer unsupported');
+      Engine.Console.Write('Error messages: FBO : Framebuffer unsupported');
     else
-      Console.Write('Error messages: FBO : Framebuffer unsupported');
+      Engine.Console.Write('Error messages: FBO : Framebuffer unsupported');
   end;
 end;
 

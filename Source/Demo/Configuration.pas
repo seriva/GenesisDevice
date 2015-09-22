@@ -47,7 +47,7 @@ uses
   IniFiles,
   multimon,
   GDConstants,
-  GDSettings,
+  GDEngine,
   FileUtil;
 
 type
@@ -159,18 +159,11 @@ begin
   Application.Title := 'Demo';
   self.Caption := 'Configuration';
 
-  //initialize the engine`s core systems
-  If Not( gdEngineInit()) then
-  begin
-    MessageBox(0, 'Error starting engine! See log for details.', 'Error', MB_OK);
-    Application.Terminate();
-  end;
-
   //fill settingscombos
   FillComboboxes();
 
   //load the settings and update interface
-  gdSettingsLoad();
+  Engine.Settings.Load();
   LoadConfig();
   SettingsToInterface();
 
@@ -187,11 +180,8 @@ procedure TConfigurationForm.FormDestroy(Sender: TObject);
 begin
   //save settings
   SettingsFromInterface();
-  gdSettingsSave();
+  Engine.Settings.Save();
   SaveConfig();
-
-  //shutdown engine`s core
-  gdEngineShutDown();
 end;
 
 {******************************************************************************}
@@ -291,45 +281,41 @@ end;
 
 procedure TConfigurationForm.SettingsToInterface();
 var
-  iSettings : TSettings;
   iI: Integer;
 begin
-  //get the current engine settings and set them on the interface
-  iSettings := gdSettingsGetCurrent();
-
   //viewport settings
-  FullScreenCheckBox.Checked := iSettings.FullScreen;
-  VerticalSyncCheckBox.Checked := iSettings.VerticalSync;
-  GammaTrackBar.Position := Round(iSettings.Gamma * 100);
+  FullScreenCheckBox.Checked := Engine.Settings.FullScreen;
+  VerticalSyncCheckBox.Checked := Engine.Settings.VerticalSync;
+  GammaTrackBar.Position := Round(Engine.Settings.Gamma * 100);
 
   //rendering settings
-  ViewDistanceTrackBar.Position := iSettings.ViewDistance;
-  FoliageDistanceTrackBar.Position := iSettings.FoliageDistance;
-  FoliageDensityTrackBar.Position := iSettings.FoliageDensity;
+  ViewDistanceTrackBar.Position := Engine.Settings.ViewDistance;
+  FoliageDistanceTrackBar.Position := Engine.Settings.FoliageDistance;
+  FoliageDensityTrackBar.Position := Engine.Settings.FoliageDensity;
   For  iI := 0 to TextureDetailComboBox.Items.Count-1 do
-    if  TextureDetailComboBox.Items[iI] = iSettings.TextureDetail then
+    if  TextureDetailComboBox.Items[iI] = Engine.Settings.GetTextureDetail() then
       TextureDetailComboBox.ItemIndex := iI;
 
   For  iI := 0 to TextureFilterComboBox.Items.Count-1 do
-    if  TextureFilterComboBox.Items[iI] = iSettings.TextureFilter then
+    if  TextureFilterComboBox.Items[iI] = Engine.Settings.GetTextureFilter() then
       TextureFilterComboBox.ItemIndex := iI;
 
   For  iI := 0 to WaterDetailComboBox.Items.Count-1 do
-    if  WaterDetailComboBox.Items[iI] = iSettings.WaterDetail then
+    if  WaterDetailComboBox.Items[iI] = Engine.Settings.GetWaterDetail() then
       WaterDetailComboBox.ItemIndex := iI;
 
-  BloomCheckBox.Checked := iSettings.UseBloom;
-  FXAACheckBox.Checked := iSettings.UseFXAA;
-  ShadowsCheckbox.Checked := iSettings.UseShadows;
-  SSAOCheckbox.Checked := iSettings.UseSSAO;
+  BloomCheckBox.Checked := Engine.Settings.UseBloom;
+  FXAACheckBox.Checked := Engine.Settings.UseFXAA;
+  ShadowsCheckbox.Checked := Engine.Settings.UseShadows;
+  SSAOCheckbox.Checked := Engine.Settings.UseSSAO;
 
   //input settings
-  InvertMouseCheckBox.Checked := iSettings.InvertMouse;
-  MouseSensitivityTrackBar.Position := iSettings.MouseSensitivity;
+  InvertMouseCheckBox.Checked := Engine.Settings.InvertMouse;
+  MouseSensitivityTrackBar.Position := Engine.Settings.MouseSensitivity;
 
   //sound settings
-  MuteSoundCheckBox.Checked := iSettings.MuteSound;
-  SoundVolumeTrackBar.Position := Round(100 * iSettings.SoundVolume );
+  MuteSoundCheckBox.Checked := Engine.Settings.MuteSound;
+  SoundVolumeTrackBar.Position := Round(100 * Engine.Settings.SoundVolume );
 
   //map
   For  iI := 0 to MapComboBox.Items.Count-1 do
@@ -344,44 +330,40 @@ end;
 procedure TConfigurationForm.SettingsFromInterface();
 var
   Mode: TDisplayMode;
-  iSettings : TSettings;
 begin
   //viewport settings
   if ResolutionsComboBox.ItemIndex >= 0 then
   begin
     Mode := FAvailableModi[ResolutionsComboBox.ItemIndex];
-    iSettings.Width      := Mode.Width;
-    iSettings.Height     := Mode.Height;
+    Engine.Settings.Width      := Mode.Width;
+    Engine.Settings.Height     := Mode.Height;
   end;
-  iSettings.FullScreen   := FullScreenCheckBox.Checked;
-  iSettings.VerticalSync := VerticalSyncCheckBox.Checked;
-  iSettings.Gamma        := GammaTrackBar.Position / 100;
+  Engine.Settings.FullScreen   := FullScreenCheckBox.Checked;
+  Engine.Settings.VerticalSync := VerticalSyncCheckBox.Checked;
+  Engine.Settings.Gamma        := GammaTrackBar.Position / 100;
 
   //rendering
-  iSettings.ViewDistance     := ViewDistanceTrackBar.Position;
-  iSettings.FoliageDistance  := FoliageDistanceTrackBar.Position;
-  iSettings.FoliageDensity   := FoliageDensityTrackBar.Position;
-  iSettings.TextureDetail    := TextureDetailComboBox.Text;
-  iSettings.TextureFilter    := TextureFilterComboBox.Text;
-  iSettings.WaterDetail      := WaterDetailComboBox.Text;
-  iSettings.UseBloom         := BloomCheckBox.Checked;
-  iSettings.UseFXAA          := FXAACheckBox.Checked;
-  iSettings.UseShadows       := ShadowsCheckbox.Checked;
-  iSettings.UseSSAO          := SSAOCheckbox.Checked;
+  Engine.Settings.ViewDistance     := ViewDistanceTrackBar.Position;
+  Engine.Settings.FoliageDistance  := FoliageDistanceTrackBar.Position;
+  Engine.Settings.FoliageDensity   := FoliageDensityTrackBar.Position;
+  Engine.Settings.SetTextureDetail(TextureDetailComboBox.Text);
+  Engine.Settings.SetTextureFilter(TextureFilterComboBox.Text);
+  Engine.Settings.SetWaterDetail(WaterDetailComboBox.Text);
+  Engine.Settings.UseBloom         := BloomCheckBox.Checked;
+  Engine.Settings.UseFXAA          := FXAACheckBox.Checked;
+  Engine.Settings.UseShadows       := ShadowsCheckbox.Checked;
+  Engine.Settings.UseSSAO          := SSAOCheckbox.Checked;
 
   //input settings
-  iSettings.InvertMouse      := InvertMouseCheckBox.Checked;
-  iSettings.MouseSensitivity := MouseSensitivityTrackBar.Position;
+  Engine.Settings.InvertMouse      := InvertMouseCheckBox.Checked;
+  Engine.Settings.MouseSensitivity := MouseSensitivityTrackBar.Position;
 
   //sound settings
-  iSettings.MuteSound   := MuteSoundCheckBox.Checked;
-  iSettings.SoundVolume := SoundVolumeTrackBar.Position / 100;
+  Engine.Settings.MuteSound   := MuteSoundCheckBox.Checked;
+  Engine.Settings.SoundVolume := SoundVolumeTrackBar.Position / 100;
 
   //demo
   FMap := MapComboBox.Text;
-
-  //pas the settings to the engine
-  gdSettingsSetCurrent(iSettings);
 end;
 
 {******************************************************************************}
@@ -391,7 +373,7 @@ end;
 procedure TConfigurationForm.RunButtonClick(Sender: TObject);
 begin
   SettingsFromInterface();
-  gdSettingsSave();
+  Engine.Settings.Save();
   SaveConfig();
   if FMap = '' then
   begin

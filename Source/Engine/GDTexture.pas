@@ -163,7 +163,7 @@ type
 implementation
 
 uses
-  GDConsole;
+  GDEngine;
 
 {******************************************************************************}
 {* Create the texture class                                                   *}
@@ -316,7 +316,7 @@ begin
 end;
 
 begin
-  Console.Write('Loading texture ' + aFileName + '...');
+  Engine.Console.Write('Loading texture ' + aFileName + '...');
   try
     iResult := True;
 
@@ -357,7 +357,7 @@ begin
     end;
   end;
 
-  Console.WriteOkFail(iResult, iError);
+  Engine.Console.WriteOkFail(iResult, iError);
 end;
 
 constructor TGDTexture.Create( aType, aFormat : GLEnum; aSizeW, aSizeH : integer );
