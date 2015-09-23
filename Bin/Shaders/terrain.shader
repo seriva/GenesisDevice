@@ -39,6 +39,7 @@ uniform sampler2D T_DETAILTEX2;
 uniform sampler2D T_DETAILTEX3;
 uniform sampler2D T_WEIGHT_LOOKUP;
 uniform sampler2D T_CAUSTIC_TEX;
+uniform sampler2D T_DETAILMAP;
 uniform sampler2D T_SHADOWMAP;
 
 uniform vec4 V_FOG_COLOR;
@@ -53,6 +54,8 @@ uniform vec3 V_LIGHT_DIR;
 uniform vec4 V_LIGHT_AMB;
 uniform vec4 V_LIGHT_DIFF;
 uniform float F_LIGHT_SHADOW;
+uniform float F_DETAIL_MULT;
+uniform int I_DETAIL;
 
 varying vec2 ColorUV;
 varying vec2 DetailUV;
@@ -78,8 +81,16 @@ void main(void)
 	vec4 Detail3       = texture2D(T_DETAILTEX3,    DetailUV);
 	vec4 Weights       = texture2D(T_WEIGHT_LOOKUP, ColorUV);
 	vec4 Caustic       = texture2D(T_CAUSTIC_TEX, CausticUV);
-	vec4 DetailFinal   = (Detail1*Weights.x + Detail2*Weights.y + Detail3*Weights.z); 
-    Color = (Color + DetailFinal - 0.5) * Light;
+	vec4 DetailFinal   = Detail1*Weights.x + Detail2*Weights.y + Detail3*Weights.z; 
+    
+    if (I_DETAIL==1)
+    {   
+        Color = ((Color + DetailFinal - 0.5) + texture2D(T_DETAILMAP, DetailUV * 6) - F_DETAIL_MULT) * Light;
+    }
+    else
+    {
+        Color = (Color + DetailFinal - 0.5) * Light;
+    }
     
 	vec4 shadowCoordinateWdivide = ShadowCoord / ShadowCoord.w ;
 	float distanceFromLight = texture2D(T_SHADOWMAP,shadowCoordinateWdivide.xy).z;

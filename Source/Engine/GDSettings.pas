@@ -66,6 +66,7 @@ type
     FUseFXAA          : Boolean;
     FUseShadows       : Boolean;
     FUseSSAO          : Boolean;
+    FUseDetail        : Boolean;
 
     //input settings
     FInvertMouse      : Boolean;
@@ -111,6 +112,7 @@ type
     property UseShadows : Boolean read FUseShadows write FUseShadows;
     property UseSSAO : Boolean read FUseSSAO write FUseSSAO;
 
+    property UseDetail : Boolean read FUseDetail write FUseDetail;
 
     //input settings
     property InvertMouse : Boolean read FInvertMouse write FInvertMouse;
@@ -155,6 +157,7 @@ begin
   FUseBloom         := false;
   FUseFXAA          := false;
   FUseShadows       := false;
+  FUseDetail        := false;
 
   //set right en left
   FTop := 0;
@@ -176,6 +179,7 @@ begin
   Engine.Console.AddCommand('RGamma', '0.0 to 1.0 : Set the gamma value', CT_FLOAT, @FGamma);
   Engine.Console.AddCommand('RShadows', '0,1 : Enable or disable shadows', CT_BOOLEAN, @FUseShadows);
   Engine.Console.AddCommand('RSSAO', '0,1 : Enable or disable SSAO', CT_BOOLEAN, @FUseSSAO);
+  Engine.Console.AddCommand('RDetail', '0,1 : Enable or disable detail texturing', CT_BOOLEAN, @FUseDetail);
 end;
 
 {******************************************************************************}
@@ -215,6 +219,7 @@ begin
   FUseFXAA          := iIniFile.ReadBool( 'Renderer', 'UseFXAA', False);
   FUseShadows       := iIniFile.ReadBool( 'Renderer', 'UseShadows', False);
   FUseSSAO          := iIniFile.ReadBool( 'Renderer', 'UseSSAO', False);
+  FUseDetail        := iIniFile.ReadBool( 'Renderer', 'UseDetail', False);
 
   //input settings
   FInvertMouse      := iIniFile.ReadBool( 'Controls', 'InvertMouse', False);
@@ -255,6 +260,7 @@ begin
   iIniFile.WriteBool( 'Renderer', 'UseFXAA', FUseFXAA );
   iIniFile.WriteBool( 'Renderer', 'UseShadows', FUseShadows );
   iIniFile.WriteBool( 'Renderer', 'UseSSAO', FUseSSAO );
+  iIniFile.WriteBool( 'Renderer', 'UseDetail', FUseDetail );
 
   //input settings
   iIniFile.WriteBool( 'Controls', 'InvertMouse', FInvertMouse);

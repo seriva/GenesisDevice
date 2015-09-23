@@ -43,7 +43,6 @@ uses
   Dialogs,
   ViewPort,
   SysUtils,
-  GDInterface,
   IniFiles,
   multimon,
   GDConstants,
@@ -75,6 +74,7 @@ type
     PageControl: TPageControl;
     ShadowsCheckbox: TCheckBox;
     SSAOCheckbox: TCheckBox;
+    DetailCheckbox: TCheckBox;
     WindowTabSheet: TTabSheet;
     WindowPanel: TPanel;
     ResolutionLabel: TLabel;
@@ -308,6 +308,7 @@ begin
   FXAACheckBox.Checked := Engine.Settings.UseFXAA;
   ShadowsCheckbox.Checked := Engine.Settings.UseShadows;
   SSAOCheckbox.Checked := Engine.Settings.UseSSAO;
+  DetailCheckbox.Checked:=Engine.Settings.UseDetail;
 
   //input settings
   InvertMouseCheckBox.Checked := Engine.Settings.InvertMouse;
@@ -353,6 +354,7 @@ begin
   Engine.Settings.UseFXAA          := FXAACheckBox.Checked;
   Engine.Settings.UseShadows       := ShadowsCheckbox.Checked;
   Engine.Settings.UseSSAO          := SSAOCheckbox.Checked;
+  Engine.Settings.UseDetail        := DetailCheckbox.Checked;
 
   //input settings
   Engine.Settings.InvertMouse      := InvertMouseCheckBox.Checked;

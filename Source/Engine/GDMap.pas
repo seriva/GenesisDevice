@@ -35,7 +35,10 @@ uses
   GDFoliage,
   GDConstants,
   GDSkyDome,
+  GDTexture,
   GDWater,
+  GDResource,
+  GDGLWrappers,
   GDCellManager,
   GDStringparsing,
   GDMeshCell;
@@ -65,6 +68,9 @@ type
     FWater           : TGDWater;
     FFoliage         : TGDFoliage;
     FSkyDome         : TGDSkyDome;
+
+    FDetailTexture   : TGDTexture;
+    FDetailMult      : double;
 
     FCellManager     : TGDCellManager;
   public
@@ -100,6 +106,7 @@ type
     procedure RenderVisibleCells(aRenderAttribute : TGDRenderAttribute; aRenderFor : TGDRenderFor);
 
     procedure ApplyDistanceFog();
+    procedure ApplyDetail(aShader : TGDGLShader);
   end;
 
 implementation
@@ -155,6 +162,10 @@ begin
   //spawnpoint
   FPlayerStart := ReadVector(iIniFile, 'SpawnPoint', 'Position');
   FPlayerViewAngle := ReadVector(iIniFile, 'SpawnPoint', 'ViewAngle');
+
+  //detail texture
+  FDetailTexture := Engine.Resources.LoadTexture(iIniFile.ReadString( 'Detail', 'Texture', 'detail.dds'), Engine.Settings.TextureDetail,Engine.Settings.TextureFilter);
+  FDetailMult    := iIniFile.ReadFloat( 'Detail', 'DetailMult', 0.5 );
 
   //bloom
   Engine.Renderer.BloomStrengh := iIniFile.ReadFloat( 'Bloom', 'Strengh', 0.5 );
@@ -271,6 +282,7 @@ begin
   FWater.Clear();
   FFoliage.Clear();
   FSkyDome.Clear();
+  Engine.Resources.RemoveResource(TGDResource(FDetailTexture));
 
   FCellManager.Clear();
 end;
@@ -329,6 +341,17 @@ begin
   FFogMinDistance := (((FFogDistance * R_VIEW_DISTANCE_STEP) / 10) * 5);
   FFogMaxDistance := (((FFogDistance * R_VIEW_DISTANCE_STEP) / 10) * 7.5);
   glClearColor( FFogColor.R, FFogColor.G, FFogColor.B, FFogColor.A);
+end;
+
+{******************************************************************************}
+{* Set the map detail texture                                                 *}
+{******************************************************************************}
+
+procedure TGDMap.ApplyDetail(aShader : TGDGLShader);
+begin
+  FDetailTexture.BindTexture(GL_TEXTURE6);
+  aShader.SetInt('T_DETAILMAP', 6);
+  aShader.SetFloat('F_DETAIL_MULT', FDetailMult);
 end;
 
 end.

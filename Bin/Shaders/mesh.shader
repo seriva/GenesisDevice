@@ -59,6 +59,7 @@ void main(void)
 #FRAGMENT
 
 uniform sampler2D T_COLORMAP;
+uniform sampler2D T_DETAILMAP;
 uniform sampler2D T_SHADOWMAP;
 
 uniform vec4 V_FOG_COLOR;
@@ -75,6 +76,8 @@ uniform vec4 V_LIGHT_DIFF;
 uniform int  I_RECEIVE_SHADOW;
 uniform int I_DO_BLOOM;
 uniform float F_LIGHT_SHADOW;
+uniform float F_DETAIL_MULT;
+uniform int I_DETAIL;
 
 varying vec2 UV;
 varying vec4 ShadowCoord;
@@ -91,7 +94,12 @@ void main(void)
 {
 	vec4 Light = V_LIGHT_AMB + clamp(V_LIGHT_DIFF * max(dot(N,normalize(-V_LIGHT_DIR)), 0.0), 0.0, 1.0); 
     
-	vec4 Color = texture2D(T_COLORMAP, UV) * Light;
+	vec4 Color = texture2D(T_COLORMAP, UV);
+    if (I_DETAIL==1)
+    {
+        Color.rgb  = (Color.rgb + texture2D(T_DETAILMAP, UV * 4).rgb - F_DETAIL_MULT);
+    }
+    Color  = Color * Light; 
     
     if (I_RECEIVE_SHADOW == 1) 
     {

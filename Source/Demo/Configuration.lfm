@@ -1,7 +1,7 @@
 object ConfigurationForm: TConfigurationForm
-  Left = 853
+  Left = 2793
   Height = 335
-  Top = 275
+  Top = 536
   Width = 398
   BorderIcons = [biSystemMenu]
   BorderStyle = bsSingle
@@ -386,6 +386,20 @@ object ConfigurationForm: TConfigurationForm
           ParentShowHint = False
           ShowHint = True
           TabOrder = 9
+        end
+        object DetailCheckbox: TCheckBox
+          Left = 248
+          Height = 23
+          Top = 207
+          Width = 111
+          Caption = 'Detail texturing'
+          Font.Color = clWindowText
+          Font.Height = -13
+          Font.Name = 'MS Sans Serif'
+          ParentFont = False
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 10
         end
       end
     end

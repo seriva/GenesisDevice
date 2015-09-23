@@ -527,8 +527,15 @@ begin
   aShader.SetFloat('I_WATER_DEPTH', Engine.Map.Water.Depth);
   aShader.SetFloat('I_WATER_MAX', Engine.Map.Water.MaxDistance);
   aShader.SetFloat('I_WATER_MIN', Engine.Map.Water.MinDistance);
-
   aShader.SetFloat3('V_CAM_POS', Engine.Camera.Position.x,  Engine.Camera.Position.Y,  Engine.Camera.Position.Z );
+
+  If Engine.Settings.UseDetail then
+  begin
+    aShader.SetInt('I_DETAIL', 1);
+    Engine.Map.ApplyDetail(aShader);
+  end
+  else
+    aShader.SetInt('I_DETAIL', 0);
 
   if not(aForShadows) then
   begin
