@@ -9,12 +9,10 @@ newmtl Material__Material
 colormap barkgC.dds
 has_alpha false
 alpha_func 0.7
-do_bloom false
 
 newmtl Material__Material1
 colormap leafGrC.dds
 has_alpha true
 alpha_func 0.7
-do_bloom false
 do_treeanim true
 

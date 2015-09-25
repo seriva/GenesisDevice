@@ -190,15 +190,7 @@ begin
         iMat.HasAlpha:= iStr = 'true';
         continue;
       end
-      else if iStr = 'do_bloom' then //read bloom
-      begin
-        if iMat = nil then
-          continue;
-        iStr := GetNextToken(iFile);
-        iMat.DoBloom:= iStr = 'true';
-        continue;
-      end
-      else if iStr = 'do_treeanim' then //read bloom
+      else if iStr = 'do_treeanim' then //read tree animation
       begin
         if iMat = nil then
            continue;
@@ -206,7 +198,7 @@ begin
         iMat.DoTreeAnim:= iStr = 'true';
         continue;
       end
-      else if iStr = 'alpha_func' then //read bloom
+      else if iStr = 'alpha_func' then //read alpha function
       begin
         if iMat = nil then
           continue;

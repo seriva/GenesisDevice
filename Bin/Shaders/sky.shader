@@ -14,6 +14,7 @@ void main(void)
 {
      vec4 Eye    = ftransform();
      gl_Position = Eye;
+     gl_ClipVertex  = vec4(gl_ModelViewMatrix * gl_Vertex);
      Fog         = clamp((length(Eye) - F_MIN_VIEW_DISTANCE) / F_MAX_VIEW_DISTANCE, 0.0, 1.0);
      CloudUV1    = vec2((gl_Vertex.x/F_SIZE)+F_ANIMATION_SPEED1, (gl_Vertex.z/F_SIZE)+F_ANIMATION_SPEED1);
      CloudUV2    = vec2((gl_Vertex.x/F_SIZE)+F_ANIMATION_SPEED2, (gl_Vertex.z/F_SIZE)+F_ANIMATION_SPEED2);
@@ -39,7 +40,8 @@ void main(void)
   vec4 SkyColor = vec4((1.0 - I_INTENSITY)*0.33,
 	                   (1.0 - I_INTENSITY)*0.5,
 	                    I_INTENSITY*1.0, 0.0);                     
-  SkyColor = SkyColor * (1.0 - SkyCloud.x) + SkyCloud;                      
+  SkyColor = SkyColor * (1.0 - SkyCloud.x) + SkyCloud;     
+  SkyColor = SkyColor + (SkyColor * 0.425);  
    
   gl_FragData[0] = mix(SkyColor, V_FOG_COLOR, Fog); 
   gl_FragData[1] = vec4(1.0);

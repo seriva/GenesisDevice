@@ -9,11 +9,9 @@ newmtl Material__treeMat
 colormap bBushCo.dds
 has_alpha true
 alpha_func 0.7
-do_bloom false
 do_treeanim true
 
 newmtl Material__treeMat1
 colormap bbarkCo.dds
 has_alpha false
 alpha_func 0.7
-do_bloom false

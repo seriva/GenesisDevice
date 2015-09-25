@@ -77,10 +77,6 @@ type
     FFrameShadowTex : TGDTexture;
     FFrameDepthTex : TGDTexture;
 
-    FBloomFBO      : TGDGLFrameBuffer;
-    FBloomTex      : TGDTexture;
-    FBloomRBO      : TGDGLRenderBuffer;
-
     FBlurFBO       : TGDGLFrameBuffer;
     FBlurRBO       : TGDGLRenderBuffer;
     FBlurTex       : TGDTexture;
@@ -88,7 +84,6 @@ type
     FShadowFBO     : TGDGLFrameBuffer;
     FShadowTex     : TGDTexture;
 
-    FBloomStrengh  : Single;
     FSSAOStrength  : Single;
     FSSAOSamples   : Integer;
     FSSAORadius    : Single;
@@ -108,7 +103,6 @@ type
     Procedure ResizeFrameBuffers();
   public
     property    Initialized : boolean read FInitialized;
-    property    BloomStrengh : Single read FBloomStrengh write FBloomStrengh;
 
     property    TerrainShader  : TGDGLShader read FTerrainShader;
     property    SkyShader      : TGDGLShader read FSkyShader;
@@ -302,14 +296,13 @@ begin
     FreeAndNil(iQL);
 
     //default values
-    FSSAOStrength := 0.45;
+    FSSAOStrength := 0.65;
     FSSAOSamples  := 16;
     FSSAORadius   := 2.25;
     FSSAOOnly     := 0;
     FShadowFilter := 1;
 
     //commands
-    Engine.Console.AddCommand('RBloomMult', '0.0 to 1.0 : Set the bloom multiplier value', CT_FLOAT, @FBloomStrengh);
     Engine.Console.AddCommand('RSSAOStrength', '0.0 to 1.0 : Set SSAO strength', CT_FLOAT, @FSSAOStrength);
     Engine.Console.AddCommand('RSSAOSamples', '8, 16, 32, 64 : Set SSAO sample count', CT_INTEGER, @FSSAOSamples);
     Engine.Console.AddCommand('RSSAORadius', '0.0 to 10.0 : Set SSAO radius', CT_FLOAT, @FSSAORadius);
@@ -662,16 +655,6 @@ begin
   FFrameFBO.Status();
   FFrameFBO.Unbind();
 
-  //Bloom
-  FBloomFBO := TGDGLFrameBuffer.Create();
-  FBloomRBO := TGDGLRenderBuffer.Create(Engine.Settings.Width, Engine.Settings.Height, GL_DEPTH_COMPONENT24);
-  FBloomTex := TGDTexture.Create(GL_RGBA, GL_RGBA, Engine.Settings.Width, Engine.Settings.Height );
-  FBloomFBO.Bind();
-  FBloomFBO.AttachRenderBuffer(FBloomRBO, GL_DEPTH_ATTACHMENT_EXT);
-  FBloomFBO.AttachTexture(FBloomTex,GL_COLOR_ATTACHMENT0_EXT,GL_TEXTURE_2D);
-  FBloomFBO.Status();
-  FBloomFBO.Unbind();
-
   //Bluring
   FBlurFBO := TGDGLFrameBuffer.Create();
   FBlurRBO := TGDGLRenderBuffer.Create(Engine.Settings.Width div 4, Engine.Settings.Height div 4, GL_DEPTH_COMPONENT24);
@@ -704,10 +687,6 @@ begin
   FreeAndNil(FFrameShadowTex);
   FreeAndNil(FFrameDepthTex);
 
-  FreeAndNil(FBloomFBO);
-  FreeAndNil(FBloomRBO);
-  FreeAndNil(FBloomTex);
-
   FreeAndNil(FBlurFBO);
   FreeAndNil(FBlurRBO);
   FreeAndNil(FBlurTex);
@@ -735,7 +714,7 @@ end;
 
 procedure TGDRenderer.StartFrame();
 begin
-  glClear(GL_DEPTH_BUFFER_BIT or GL_COLOR_BUFFER_BIT);
+  glClear(GL_DEPTH_BUFFER_BIT);
   glLoadIdentity;
 end;
 
@@ -907,6 +886,7 @@ begin
   begin
     //render reflection texture
     StartFrame();
+    glClear(GL_COLOR_BUFFER_BIT);
     Engine.Camera.Translate();
     Engine.Map.Water.StartReflection();
     If Engine.Modes.RenderSky then Engine.Map.SkyDome.Render();
@@ -1010,7 +990,6 @@ end;
 
 Procedure RenderStaticGeometry();
 begin
-  Engine.Map.ApplyDistanceFog();
   Engine.Map.SkyDome.Render();
   Engine.Map.RenderVisibleCells( RA_NORMAL, RF_NORMAL );
 end;
@@ -1033,24 +1012,25 @@ begin
     ApplyBlurToImage( FFrameTex, 3 );
 
   If Engine.Settings.UseShadows and (FShadowFilter = 1) then
-    ApplyBlurToImage( FFrameShadowTex, 6);
+    ApplyBlurToImage( FFrameShadowTex, 5);
 end;
 
 {******************************************************************************}
-{* Render bloom image                                                         *}
+{* Clear buffers                                                              *}
 {******************************************************************************}
 
-procedure RenderBloomImage();
+procedure ClearBuffers();
 begin
-  FBloomFBO.Bind();
-  glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT);
-
-  If Engine.Modes.RenderSky then Engine.Map.SkyDome.Render();
-  Engine.Map.RenderVisibleCells( RA_NORMAL, RF_BLOOM );
-
-  FBloomFBO.UnBind();
-
-  ApplyBlurToImage( FBloomTex, 1.5 );
+  glDisable(GL_DEPTH_TEST);
+  FFrameFBO.Bind();
+  glLoadIdentity();
+  FClearShader.Bind();
+  iC := Engine.Map.FogColor.Copy();
+  FClearShader.SetFloat4('V_COLOR', iC.R, iC.G, iC.B, iC.A);
+  RenderQuad();
+  FClearShader.Unbind();
+  FFrameFBO.Unbind();
+  glEnable(GL_DEPTH_TEST);
 end;
 
 {******************************************************************************}
@@ -1060,26 +1040,14 @@ end;
 procedure RenderFinal();
 begin
   glDisable(GL_DEPTH_TEST);
-  glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT);
-
   FPostShader.Bind();
   FPostShader.SetInt('T_SOURCE_IMAGE',0);
-  FPostShader.SetInt('T_SHADOW_IMAGE',3);
+  FPostShader.SetInt('T_SHADOW_IMAGE',1);
 
   If Engine.Settings.UseFXAA and not(Engine.Modes.RenderObjectBoxes or Engine.Modes.RenderNormals or Engine.Modes.RenderNodeBoxes) then
     FPostShader.SetInt('I_DO_FXAA',1)
   else
     FPostShader.SetInt('I_DO_FXAA',0);
-
-  If Engine.Settings.UseBloom then
-  begin
-    FPostShader.SetInt('I_DO_BLOOM',1);
-    FPostShader.SetInt('T_BLOOM_IMAGE',1);
-    FPostShader.SetFloat('I_BLOOM_STENGTH',FBloomStrengh);
-    FBloomTex.BindTexture( GL_TEXTURE1 );
-  end
-  else
-    FPostShader.SetInt('I_DO_BLOOM',0);
 
   if Engine.Settings.UseSSAO and not(Engine.Map.Water.UnderWater()) then
   begin
@@ -1099,7 +1067,7 @@ begin
   FPostShader.SetFloat2('V_SCREEN_SIZE',Engine.Settings.Width, Engine.Settings.Height);
   FPostShader.SetFloat('I_GAMMA',Engine.Settings.Gamma);
   FFrameTex.BindTexture( GL_TEXTURE0 );
-  FFrameShadowTex.BindTexture( GL_TEXTURE3 );
+  FFrameShadowTex.BindTexture( GL_TEXTURE1 );
 
   RenderQuad();
 
@@ -1115,16 +1083,7 @@ begin
   RenderWaterReflection();
 
   //clear buffer
-  glDisable(GL_DEPTH_TEST);
-  FFrameFBO.Bind();
-  glLoadIdentity();
-  FClearShader.Bind();
-  iC := Engine.Map.FogColor.Copy();
-  FClearShader.SetFloat4('V_COLOR', iC.R, iC.G, iC.B, iC.A);
-  RenderQuad();
-  FClearShader.Unbind();
-  FFrameFBO.Unbind();
-  glEnable(GL_DEPTH_TEST);
+  ClearBuffers();
 
   //detect the visible objects
   Engine.Camera.Translate();
@@ -1135,9 +1094,6 @@ begin
   begin
     RenderSourceImage(Engine.Map.Water.UnderWater());
 
-    //render bloom image.
-    If Engine.Settings.UseBloom then RenderBloomImage();
-
     //render the final image
     StartFrame();
     RenderFinal();
@@ -1146,9 +1102,9 @@ begin
   begin
     RenderState( RS_WIREFRAME );
     StartFrame();
+    glClear(GL_COLOR_BUFFER_BIT);
     Engine.Camera.Translate();
-    Engine.Map.SkyDome.Render();
-    Engine.Map.RenderVisibleCells( RA_NORMAL, RF_NORMAL );
+    RenderStaticGeometry();
   end;
 
   //render debug and ortho stuff

@@ -222,7 +222,7 @@ begin
   glDisable(GL_DEPTH_TEST);
   glDepthMask(GLboolean(FALSE));
   glTranslatef(Engine.Camera.Position.x, Engine.Camera.Position.y, Engine.Camera.Position.z);
-  glScalef(0.95,0.175,0.95);
+  glScalef(0.90,0.125,0.90);
   FVertexBuffer.Bind(VL_V);
   FIndexBuffer.Bind();
   FIndexBuffer.Render(GL_TRIANGLES);

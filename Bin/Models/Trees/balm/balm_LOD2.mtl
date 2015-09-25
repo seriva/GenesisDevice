@@ -9,4 +9,3 @@ newmtl balm_lod2_surface
 colormap bLod2Co.dds
 has_alpha true
 alpha_func 0.7
-do_bloom false

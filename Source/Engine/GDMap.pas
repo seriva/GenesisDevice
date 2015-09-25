@@ -105,7 +105,6 @@ type
     procedure DetectVisibleCells();
     procedure RenderVisibleCells(aRenderAttribute : TGDRenderAttribute; aRenderFor : TGDRenderFor);
 
-    procedure ApplyDistanceFog();
     procedure ApplyDetail(aShader : TGDGLShader);
   end;
 
@@ -168,7 +167,7 @@ begin
   FDetailMult    := iIniFile.ReadFloat( 'Detail', 'DetailMult', 0.5 );
 
   //bloom
-  Engine.Renderer.BloomStrengh := iIniFile.ReadFloat( 'Bloom', 'Strengh', 0.5 );
+  //Engine.Renderer.BloomStrengh := iIniFile.ReadFloat( 'Bloom', 'Strengh', 0.5 );
 
   //directional light
   FLightDirection := ReadVector(iIniFile, 'Light', 'Direction');
@@ -179,7 +178,8 @@ begin
   //init fog
   FFogColor    := ReadColor(iIniFile, 'Fog', 'Color');
   FFogDistance := Engine.Settings.ViewDistance;
-  ApplyDistanceFog();
+  FFogMinDistance := (((FFogDistance * R_VIEW_DISTANCE_STEP) / 10) * 5);
+  FFogMaxDistance := (((FFogDistance * R_VIEW_DISTANCE_STEP) / 10) * 7.5);
   Engine.GUI.LoadingScreen.Update();
 
   //init terrain
@@ -330,17 +330,6 @@ end;
 procedure TGDMap.RenderVisibleCells(aRenderAttribute : TGDRenderAttribute; aRenderFor : TGDRenderFor);
 begin
   FCellManager.RenderVisibleCells(aRenderAttribute, aRenderFor, FTerrain, FWater, FFoliage);
-end;
-
-{******************************************************************************}
-{* Set the distance fog                                                       *}
-{******************************************************************************}
-
-procedure TGDMap.ApplyDistanceFog();
-begin
-  FFogMinDistance := (((FFogDistance * R_VIEW_DISTANCE_STEP) / 10) * 5);
-  FFogMaxDistance := (((FFogDistance * R_VIEW_DISTANCE_STEP) / 10) * 7.5);
-  glClearColor( FFogColor.R, FFogColor.G, FFogColor.B, FFogColor.A);
 end;
 
 {******************************************************************************}

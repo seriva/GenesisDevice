@@ -256,20 +256,11 @@ begin
                               Engine.Renderer.SetJoinedParams(Engine.Renderer.MeshShader,aRenderFor = RF_SHADOW);
                               iSur.Material.ApplyMaterial();
                               SetMeshPositioning(Engine.Renderer.MeshShader);
-                              Engine.Renderer.MeshShader.SetInt('I_DO_BLOOM', 1);
 
                               if self.ReceiveShadow and (aRenderFor <> RF_SHADOW) then
                                 Engine.Renderer.MeshShader.SetInt('I_RECEIVE_SHADOW', 1)
                               else
                                 Engine.Renderer.MeshShader.SetInt('I_RECEIVE_SHADOW', 0);
-
-                              if aRenderFor = RF_BLOOM then
-                              begin
-                               if iSur.Material.DoBloom then
-                                 Engine.Renderer.MeshShader.SetInt('I_DO_BLOOM', 1)
-                               else
-                                 Engine.Renderer.MeshShader.SetInt('I_DO_BLOOM', 0);
-                              end;
 
                               Engine.Renderer.MeshShader.SetInt('I_FLIP_NORMAL', 0);
 

@@ -51,13 +51,11 @@ Type
     FTexture : TGDTexture;
     FHasAlpha : Boolean;
     FAlphaFunc : double;
-    FDoBloom : boolean;
     FDoTreeAnim : boolean;
   public
     property Texture : TGDTexture read FTexture write FTexture;
     property HasAlpha : Boolean read FHasAlpha write FHasAlpha;
     property AlphaFunc : double read FAlphaFunc write FAlphaFunc;
-    property DoBloom : Boolean read FDoBloom write FDoBloom;
     property DoTreeAnim : Boolean read FDoTreeAnim write FDoTreeAnim;
 
     constructor Create();
@@ -89,7 +87,6 @@ begin
   Engine.Resources.RemoveResource(TGDResource(FTexture));
   FHasAlpha := false;
   FAlphaFunc := 1.0;
-  FDoBloom := false;
   FDoTreeAnim := false;
   inherited;
 end;

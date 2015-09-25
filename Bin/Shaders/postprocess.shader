@@ -28,14 +28,11 @@ void main(void)
 
 uniform sampler2D T_SOURCE_IMAGE;
 uniform sampler2D T_SHADOW_IMAGE;
-uniform sampler2D T_BLOOM_IMAGE;
 uniform sampler2D T_DEPTH_IMAGE;
 uniform vec2 V_SCREEN_SIZE;
-uniform int I_DO_BLOOM;
 uniform int I_DO_SSAO;
 uniform int I_DO_FXAA;
 uniform float I_GAMMA;
-uniform float I_BLOOM_STENGTH;
 uniform float I_SSAO_NEAR;
 uniform float I_SSAO_FAR;
 uniform float I_SSAO_STRENGTH;
@@ -189,12 +186,6 @@ void main()
 	}
     
     color = color * texture2D(T_SHADOW_IMAGE, gl_TexCoord[0].xy).rgb;
-    
-	if (I_DO_BLOOM == 1)
-	{ 
-        vec3 bloom = texture2D(T_BLOOM_IMAGE, gl_TexCoord[0].xy).rgb;
-        color = color + (bloom * I_BLOOM_STENGTH);
-    }
     
     if (I_DO_SSAO == 1)
     {

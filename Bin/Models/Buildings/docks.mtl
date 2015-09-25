@@ -8,6 +8,5 @@ newmtl _1___Default_Smoothing
 colormap docks1_diff.dds
 has_alpha false
 alpha_func 0.7
-do_bloom false
 
 # num_materials: 1

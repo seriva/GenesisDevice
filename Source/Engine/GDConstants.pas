@@ -32,7 +32,7 @@ type
   //render types
   TGDRenderState     = (RS_COLOR, RS_WIREFRAME, RS_TEXTS, RS_TEXTURE);
   TGDRenderAttribute = (RA_NORMAL, RA_FRUSTUM_BOXES, RA_NODE_BOXES, RA_NORMALS);
-  TGDRenderFor       = (RF_NORMAL, RF_WATER, RF_BLOOM, RF_SHADOW);
+  TGDRenderFor       = (RF_NORMAL, RF_WATER, RF_SHADOW);
 
   //settings types
   TGDTextureDetail   = (TD_LOW=1, TD_MEDIUM=2,TD_HIGH=3);
@@ -82,7 +82,7 @@ const
   R_LOD0_DISTANCE         = 15;
   R_LOD1_DISTANCE         = 50;
   R_LOD2_DISTANCE         = 100;
-  R_SHADOW_SIZE           = 2048;
+  R_SHADOW_SIZE           = 1024;
 
   //sound constants
   S_MAX_SOURCES = 16;

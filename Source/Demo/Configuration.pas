@@ -99,7 +99,6 @@ type
     TextureFilterComboBox: TComboBox;
     WaterReflectionComboBox: TComboBox;
     WaterDetailComboBox: TComboBox;
-    BloomCheckBox: TCheckBox;
     InputTabSheet: TTabSheet;
     InputPanel: TPanel;
     MouseSensitivityLabel: TLabel;
@@ -304,7 +303,6 @@ begin
     if  WaterDetailComboBox.Items[iI] = Engine.Settings.GetWaterDetail() then
       WaterDetailComboBox.ItemIndex := iI;
 
-  BloomCheckBox.Checked := Engine.Settings.UseBloom;
   FXAACheckBox.Checked := Engine.Settings.UseFXAA;
   ShadowsCheckbox.Checked := Engine.Settings.UseShadows;
   SSAOCheckbox.Checked := Engine.Settings.UseSSAO;
@@ -350,7 +348,6 @@ begin
   Engine.Settings.SetTextureDetail(TextureDetailComboBox.Text);
   Engine.Settings.SetTextureFilter(TextureFilterComboBox.Text);
   Engine.Settings.SetWaterDetail(WaterDetailComboBox.Text);
-  Engine.Settings.UseBloom         := BloomCheckBox.Checked;
   Engine.Settings.UseFXAA          := FXAACheckBox.Checked;
   Engine.Settings.UseShadows       := ShadowsCheckbox.Checked;
   Engine.Settings.UseSSAO          := SSAOCheckbox.Checked;

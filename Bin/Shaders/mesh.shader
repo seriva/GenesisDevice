@@ -74,7 +74,6 @@ uniform vec3 V_LIGHT_DIR;
 uniform vec4 V_LIGHT_AMB;
 uniform vec4 V_LIGHT_DIFF;
 uniform int  I_RECEIVE_SHADOW;
-uniform int I_DO_BLOOM;
 uniform float F_LIGHT_SHADOW;
 uniform float F_DETAIL_MULT;
 uniform int I_DETAIL;
@@ -114,35 +113,29 @@ void main(void)
         gl_FragData[1] = vec4(1.0);
     }
     
-	if (I_DO_BLOOM == 1)
-	{
-		if(I_UNDER_WATER == 0)
-		{
-            if (VWorld.y > I_WATER_HEIGHT)
-            {
-                gl_FragData[0] = mix(Color, V_FOG_COLOR, Fog);
-            }
-            else
-            {
-                CalcUnderWaterColor(Color);
-            }       
-		}
-		else
-		{
-            if (VWorld.y > I_WATER_HEIGHT)
-            {
-                gl_FragData[0] = mix(Color, V_WATER_COLOR, 0.85);
-            }
-            else
-            {
-                CalcUnderWaterColor(Color);
-            }       
-		}
-	}
-	else
-	{
-		gl_FragData[0] = mix( vec4(0.0, 0.0, 0.0, 0.0), V_FOG_COLOR, Fog);
-	}
+    if(I_UNDER_WATER == 0)
+    {
+        if (VWorld.y > I_WATER_HEIGHT)
+        {
+            gl_FragData[0] = mix(Color, V_FOG_COLOR, Fog);
+        }
+        else
+        {
+            CalcUnderWaterColor(Color);
+        }       
+    }
+    else
+    {
+        if (VWorld.y > I_WATER_HEIGHT)
+        {
+            gl_FragData[0] = mix(Color, V_WATER_COLOR, 0.85);
+        }
+        else
+        {
+            CalcUnderWaterColor(Color);
+        }       
+    }
+
 	gl_FragData[0].a = Color.a;
 }
 

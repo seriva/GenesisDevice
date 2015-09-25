@@ -1,7 +1,7 @@
 object ConfigurationForm: TConfigurationForm
-  Left = 2793
+  Left = 1452
   Height = 335
-  Top = 536
+  Top = 777
   Width = 398
   BorderIcons = [biSystemMenu]
   BorderStyle = bsSingle
@@ -331,20 +331,6 @@ object ConfigurationForm: TConfigurationForm
           Style = csDropDownList
           TabOrder = 5
         end
-        object BloomCheckBox: TCheckBox
-          Left = 8
-          Height = 23
-          Top = 239
-          Width = 63
-          Caption = 'Bloom'
-          Font.Color = clWindowText
-          Font.Height = -13
-          Font.Name = 'MS Sans Serif'
-          ParentFont = False
-          ParentShowHint = False
-          ShowHint = True
-          TabOrder = 6
-        end
         object FXAACheckBox: TCheckBox
           Left = 8
           Height = 23
@@ -357,7 +343,7 @@ object ConfigurationForm: TConfigurationForm
           ParentFont = False
           ParentShowHint = False
           ShowHint = True
-          TabOrder = 7
+          TabOrder = 6
         end
         object ShadowsCheckbox: TCheckBox
           Left = 136
@@ -371,7 +357,7 @@ object ConfigurationForm: TConfigurationForm
           ParentFont = False
           ParentShowHint = False
           ShowHint = True
-          TabOrder = 8
+          TabOrder = 7
         end
         object SSAOCheckbox: TCheckBox
           Left = 136
@@ -385,12 +371,12 @@ object ConfigurationForm: TConfigurationForm
           ParentFont = False
           ParentShowHint = False
           ShowHint = True
-          TabOrder = 9
+          TabOrder = 8
         end
         object DetailCheckbox: TCheckBox
-          Left = 248
+          Left = 8
           Height = 23
-          Top = 207
+          Top = 239
           Width = 111
           Caption = 'Detail texturing'
           Font.Color = clWindowText
@@ -399,7 +385,7 @@ object ConfigurationForm: TConfigurationForm
           ParentFont = False
           ParentShowHint = False
           ShowHint = True
-          TabOrder = 10
+          TabOrder = 9
         end
       end
     end

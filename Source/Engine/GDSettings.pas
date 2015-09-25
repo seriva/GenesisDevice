@@ -62,7 +62,6 @@ type
     FTextureDetail    : TGDTextureDetail;
     FWaterDetail      : TGDWaterDetail;
     FTextureFilter    : TGDTextureFilter;
-    FUseBloom         : Boolean;
     FUseFXAA          : Boolean;
     FUseShadows       : Boolean;
     FUseSSAO          : Boolean;
@@ -107,7 +106,6 @@ type
     property WaterDetail : TGDWaterDetail read FWaterDetail write FWaterDetail;
     property TextureDetail : TGDTextureDetail read FTextureDetail write FTextureDetail;
     property TextureFilter : TGDTextureFilter read FTextureFilter write FTextureFilter;
-    property UseBloom : Boolean read FUseBloom write FUseBloom;
     property UseFXAA : Boolean read FUseFXAA write FUseFXAA;
     property UseShadows : Boolean read FUseShadows write FUseShadows;
     property UseSSAO : Boolean read FUseSSAO write FUseSSAO;
@@ -154,7 +152,6 @@ begin
   FTextureDetail    := TD_LOW;
   FWaterDetail      := WD_LOW;
   FTextureFilter    := TF_BILINEAR;
-  FUseBloom         := false;
   FUseFXAA          := false;
   FUseShadows       := false;
   FUseDetail        := false;
@@ -173,7 +170,6 @@ begin
   FSoundVolume := 0.5;
 
   //console commands
-  Engine.Console.AddCommand('RBloom', '0,1 : Enable or disable bloom', CT_BOOLEAN, @FUseBloom);
   Engine.Console.AddCommand('RFXAA', '0,1 : Enable or disable FXAA', CT_BOOLEAN, @FUseFXAA);
   Engine.Console.AddCommand('RVSync', '0,1 : Enable or disable vertical sync', CT_BOOLEAN, @FVerticalSync);
   Engine.Console.AddCommand('RGamma', '0.0 to 1.0 : Set the gamma value', CT_FLOAT, @FGamma);
@@ -215,7 +211,6 @@ begin
   SetTextureDetail( iIniFile.ReadString('Renderer', 'TextureDetail', TGDTextureDetailStrings[1]) );
   SetTextureFilter(iIniFile.ReadString('Renderer', 'TextureFilter', TGDTextureFilterStrings[1]));
   SetWaterDetail(iIniFile.ReadString('Renderer', 'WaterDetail', TGDWaterDetailStrings[1]));
-  FUseBloom         := iIniFile.ReadBool( 'Renderer', 'UseBloom', False);
   FUseFXAA          := iIniFile.ReadBool( 'Renderer', 'UseFXAA', False);
   FUseShadows       := iIniFile.ReadBool( 'Renderer', 'UseShadows', False);
   FUseSSAO          := iIniFile.ReadBool( 'Renderer', 'UseSSAO', False);
@@ -256,7 +251,6 @@ begin
   iIniFile.WriteString('Renderer', 'TextureDetail', GetTextureDetail());
   iIniFile.WriteString('Renderer', 'TextureFilter', GetTextureFilter());
   iIniFile.WriteString('Renderer', 'WaterDetail', GetWaterDetail());
-  iIniFile.WriteBool( 'Renderer', 'UseBloom', FUseBloom );
   iIniFile.WriteBool( 'Renderer', 'UseFXAA', FUseFXAA );
   iIniFile.WriteBool( 'Renderer', 'UseShadows', FUseShadows );
   iIniFile.WriteBool( 'Renderer', 'UseSSAO', FUseSSAO );

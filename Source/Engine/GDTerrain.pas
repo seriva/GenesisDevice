@@ -432,11 +432,6 @@ begin
                    FDetailLookup.BindTexture(GL_TEXTURE4);
                    Engine.Map.Water.BindCausticTexture();
                  end;
-      RF_BLOOM : begin
-                   Engine.Renderer.RenderState( RS_COLOR );
-                   glEnable(GL_DEPTH_TEST);
-                   Engine.Renderer.SetColor(0,0,0,1)
-                 end;
     end;
   end;
 end;
