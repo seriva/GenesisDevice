@@ -64,7 +64,7 @@ const
   TWaterDetail     : array[1..3] of String  = ('Low', 'Medium','High');
 
   //engine constants
-  ENGINE_INFO     = '81 - 22 September 2015';
+  ENGINE_INFO     = '82 - 25 September 2015';
 
   //renderer constants
   R_HUDWIDTH              = 1600;
@@ -82,7 +82,7 @@ const
   R_LOD0_DISTANCE         = 15;
   R_LOD1_DISTANCE         = 50;
   R_LOD2_DISTANCE         = 100;
-  R_SHADOW_SIZE           = 1024;
+  R_SHADOW_SIZE           = 2048;
 
   //sound constants
   S_MAX_SOURCES = 16;

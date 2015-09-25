@@ -116,10 +116,11 @@
       <Unit10>
         <Filename Value="..\Engine\GDConstants.pas"/>
         <IsPartOfProject Value="True"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="2"/>
         <WindowIndex Value="1"/>
         <TopLine Value="58"/>
-        <CursorPos X="33" Y="85"/>
+        <CursorPos X="29" Y="67"/>
         <UsageCount Value="165"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -228,10 +229,9 @@
       <Unit21>
         <Filename Value="..\Engine\GDRenderer.pas"/>
         <IsPartOfProject Value="True"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="6"/>
         <WindowIndex Value="1"/>
-        <TopLine Value="1001"/>
+        <TopLine Value="1000"/>
         <CursorPos X="41" Y="1015"/>
         <UsageCount Value="165"/>
         <Loaded Value="True"/>
