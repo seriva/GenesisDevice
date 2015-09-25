@@ -141,6 +141,7 @@ const
   SHADER_MESH     = PATH_SHADERS + 'mesh.shader';
   SHADER_COLOR    = PATH_SHADERS + 'color.shader';
   SHADER_TEXTURE  = PATH_SHADERS + 'texture.shader';
+  SHADER_CLEAR    = PATH_SHADERS + 'clear.shader';
 
 implementation
 end.

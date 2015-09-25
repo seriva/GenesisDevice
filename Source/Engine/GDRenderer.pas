@@ -70,9 +70,11 @@ type
     FPostShader    : TGDGLShader;
     FColorShader   : TGDGLShader;
     FTextureShader : TGDGLShader;
+    FClearShader   : TGDGLShader;
 
     FFrameFBO      : TGDGLFrameBuffer;
     FFrameTex      : TGDTexture;
+    FFrameShadowTex : TGDTexture;
     FFrameDepthTex : TGDTexture;
 
     FBloomFBO      : TGDGLFrameBuffer;
@@ -91,6 +93,7 @@ type
     FSSAOSamples   : Integer;
     FSSAORadius    : Single;
     FSSAOOnly      : Integer;
+    FShadowFilter  : Integer;
 
     FLinesVertices     : TGDVertex_V_List;
     FLinesVertexBuffer : TGDGLVertexBuffer;
@@ -299,10 +302,11 @@ begin
     FreeAndNil(iQL);
 
     //default values
-    FSSAOStrength := 0.65;
+    FSSAOStrength := 0.45;
     FSSAOSamples  := 16;
     FSSAORadius   := 2.25;
     FSSAOOnly     := 0;
+    FShadowFilter := 1;
 
     //commands
     Engine.Console.AddCommand('RBloomMult', '0.0 to 1.0 : Set the bloom multiplier value', CT_FLOAT, @FBloomStrengh);
@@ -310,6 +314,7 @@ begin
     Engine.Console.AddCommand('RSSAOSamples', '8, 16, 32, 64 : Set SSAO sample count', CT_INTEGER, @FSSAOSamples);
     Engine.Console.AddCommand('RSSAORadius', '0.0 to 10.0 : Set SSAO radius', CT_FLOAT, @FSSAORadius);
     Engine.Console.AddCommand('RSSAOOnly', '0.0 to 1.0 : Only show SSAO', CT_INTEGER, @FSSAOOnly);
+    Engine.Console.AddCommand('RShadowFilter', '0.0 to 1.0 : For shadow filtering', CT_INTEGER, @FShadowFilter);
   except
     on E: Exception do
     begin
@@ -610,6 +615,7 @@ begin
   FPostShader     := TGDGLShader.Create(SHADER_POST);
   FColorShader    := TGDGLShader.Create(SHADER_COLOR);
   FTextureShader  := TGDGLShader.Create(SHADER_TEXTURE);
+  FClearShader    := TGDGLShader.Create(SHADER_CLEAR);
   Engine.Timing.Stop();
   Engine.Console.Write('......Done initializing shaders (' + Engine.Timing.TimeInSeconds + ' Sec)');
 end;
@@ -629,6 +635,7 @@ begin
   FreeAndNil(FPostShader);
   FreeAndNil(FColorShader);
   FreeAndNil(FTextureShader);
+  FreeAndNil(FClearShader);
 end;
 
 {******************************************************************************}
@@ -636,14 +643,22 @@ end;
 {******************************************************************************}
 
 procedure TGDRenderer.InitFrameBuffers();
+var
+  iBuffers : array[0..1] of GLEnum;
 begin
   //Frame
   FFrameFBO := TGDGLFrameBuffer.Create();
   FFrameTex := TGDTexture.Create(GL_RGBA, GL_RGBA, Engine.Settings.Width, Engine.Settings.Height );
+  FFrameShadowTex := TGDTexture.Create(GL_RGBA, GL_RGBA, Engine.Settings.Width, Engine.Settings.Height );
   FFrameDepthTex := TGDTexture.Create(GL_DEPTH_COMPONENT, GL_DEPTH_COMPONENT, Engine.Settings.Width, Engine.Settings.Height );
   FFrameFBO.Bind();
   FFrameFBO.AttachTexture(FFrameTex,GL_COLOR_ATTACHMENT0_EXT,GL_TEXTURE_2D);
+  FFrameFBO.AttachTexture(FFrameShadowTex,GL_COLOR_ATTACHMENT1_EXT,GL_TEXTURE_2D);
   FFrameFBO.AttachTexture(FFrameDepthTex, GL_DEPTH_ATTACHMENT_EXT, GL_TEXTURE_2D );
+  iBuffers[0] := GL_COLOR_ATTACHMENT0_EXT;
+  iBuffers[1] := GL_COLOR_ATTACHMENT1_EXT;
+	glDrawBuffers(2, @iBuffers);
+	glReadBuffer(GL_NONE);
   FFrameFBO.Status();
   FFrameFBO.Unbind();
 
@@ -686,6 +701,7 @@ procedure TGDRenderer.ClearFrameBuffers();
 begin
   FreeAndNil(FFrameFBO);
   FreeAndNil(FFrameTex);
+  FreeAndNil(FFrameShadowTex);
   FreeAndNil(FFrameDepthTex);
 
   FreeAndNil(FBloomFBO);
@@ -793,6 +809,8 @@ begin
 end;
 
 procedure TGDRenderer.Render();
+var
+  iC : TGDColor;
 
 {******************************************************************************}
 {* Render the screen quad for post processing                                 *}
@@ -1002,9 +1020,10 @@ end;
 {******************************************************************************}
 
 procedure RenderSourceImage(aUnderWater : boolean);
+
 begin
   FFrameFBO.Bind();
-  glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT);
+  glClear(GL_DEPTH_BUFFER_BIT);
 
   RenderStaticGeometry();
 
@@ -1012,6 +1031,9 @@ begin
 
   if aUnderWater then
     ApplyBlurToImage( FFrameTex, 3 );
+
+  If Engine.Settings.UseShadows and (FShadowFilter = 1) then
+    ApplyBlurToImage( FFrameShadowTex, 6);
 end;
 
 {******************************************************************************}
@@ -1042,6 +1064,7 @@ begin
 
   FPostShader.Bind();
   FPostShader.SetInt('T_SOURCE_IMAGE',0);
+  FPostShader.SetInt('T_SHADOW_IMAGE',3);
 
   If Engine.Settings.UseFXAA and not(Engine.Modes.RenderObjectBoxes or Engine.Modes.RenderNormals or Engine.Modes.RenderNodeBoxes) then
     FPostShader.SetInt('I_DO_FXAA',1)
@@ -1076,6 +1099,7 @@ begin
   FPostShader.SetFloat2('V_SCREEN_SIZE',Engine.Settings.Width, Engine.Settings.Height);
   FPostShader.SetFloat('I_GAMMA',Engine.Settings.Gamma);
   FFrameTex.BindTexture( GL_TEXTURE0 );
+  FFrameShadowTex.BindTexture( GL_TEXTURE3 );
 
   RenderQuad();
 
@@ -1090,8 +1114,19 @@ begin
   //create the water reflection texture
   RenderWaterReflection();
 
-  //detect the visible objects
+  //clear buffer
+  glDisable(GL_DEPTH_TEST);
+  FFrameFBO.Bind();
   glLoadIdentity();
+  FClearShader.Bind();
+  iC := Engine.Map.FogColor.Copy();
+  FClearShader.SetFloat4('V_COLOR', iC.R, iC.G, iC.B, iC.A);
+  RenderQuad();
+  FClearShader.Unbind();
+  FFrameFBO.Unbind();
+  glEnable(GL_DEPTH_TEST);
+
+  //detect the visible objects
   Engine.Camera.Translate();
   Engine.Map.DetectVisibleCells();
 

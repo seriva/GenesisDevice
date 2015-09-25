@@ -62,11 +62,12 @@ void main()
 	
 	if(I_UNDER_WATER == 0)
 	{
-		gl_FragColor = mix(ReflectionColor, V_FOG_COLOR, Fog);
+		gl_FragData[0] = mix(ReflectionColor, V_FOG_COLOR, Fog);
 	}
 	else
 	{
-		gl_FragColor = ReflectionColor;
+		gl_FragData[0] = ReflectionColor;
 	}
-	gl_FragColor.a        = V_WATER_COLOR.a;
+	gl_FragData[0].a = V_WATER_COLOR.a;
+    gl_FragData[1] = vec4(1.0);
 }

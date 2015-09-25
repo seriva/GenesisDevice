@@ -68,7 +68,7 @@ varying vec4 ShadowCoord;
 
 void CalcUnderWaterColor(vec4 Color){
     float waterFog = clamp((log((length(VWorld - V_CAM_POS) * (I_WATER_HEIGHT - VWorld.y)/I_WATER_DEPTH) * I_WATER_MIN) - 1) * I_WATER_MAX, 0, 1); 
-    gl_FragColor = mix(Color, V_WATER_COLOR, waterFog);   
+    gl_FragData[0] = mix(Color, V_WATER_COLOR, waterFog);   
 }
 
 void main(void)
@@ -94,14 +94,17 @@ void main(void)
     
 	vec4 shadowCoordinateWdivide = ShadowCoord / ShadowCoord.w ;
 	float distanceFromLight = texture2D(T_SHADOWMAP,shadowCoordinateWdivide.xy).z;
-    if(ShadowCoord.x >= 0.0 && ShadowCoord.x <= 1.0 && ShadowCoord.y >= 0.0 && ShadowCoord.y <= 1.0 && (distanceFromLight < (shadowCoordinateWdivide.z + 0.001)))
-        Color = Color * (F_LIGHT_SHADOW + ((1-F_LIGHT_SHADOW) * ShadowCoord.y));
-      
+    if(ShadowCoord.x >= 0.0 && ShadowCoord.x <= 1.0 && ShadowCoord.y >= 0.0 && ShadowCoord.y <= 1.0 && (distanceFromLight < (shadowCoordinateWdivide.z + 0.001))){
+        gl_FragData[1].rgb = vec3(F_LIGHT_SHADOW);
+    } else {
+        gl_FragData[1] = vec4(1.0);
+    }
+     
     if(I_UNDER_WATER == 0)
 	{
 		if (VWorld.y > I_WATER_HEIGHT)
 		{
-			gl_FragColor = mix(Color, V_FOG_COLOR, Fog);
+			gl_FragData[0] = mix(Color, V_FOG_COLOR, Fog);
 		}
 		else
 		{
@@ -112,7 +115,7 @@ void main(void)
 	{
 		if (VWorld.y > I_WATER_HEIGHT)
 		{
-            gl_FragColor = mix(Color, V_WATER_COLOR, 0.85);
+            gl_FragData[0] = mix(Color, V_WATER_COLOR, 0.85);
 		}
 		else
 		{

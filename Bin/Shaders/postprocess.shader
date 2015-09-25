@@ -27,6 +27,7 @@ void main(void)
 #extension GL_EXT_gpu_shader4 : enable
 
 uniform sampler2D T_SOURCE_IMAGE;
+uniform sampler2D T_SHADOW_IMAGE;
 uniform sampler2D T_BLOOM_IMAGE;
 uniform sampler2D T_DEPTH_IMAGE;
 uniform vec2 V_SCREEN_SIZE;
@@ -186,6 +187,8 @@ void main()
 	{
 		color = texture2D(T_SOURCE_IMAGE, gl_TexCoord[0].xy).rgb;
 	}
+    
+    color = color * texture2D(T_SHADOW_IMAGE, gl_TexCoord[0].xy).rgb;
     
 	if (I_DO_BLOOM == 1)
 	{ 

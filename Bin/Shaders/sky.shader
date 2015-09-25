@@ -41,7 +41,8 @@ void main(void)
 	                    I_INTENSITY*1.0, 0.0);                     
   SkyColor = SkyColor * (1.0 - SkyCloud.x) + SkyCloud;                      
    
-  gl_FragColor = mix(SkyColor, V_FOG_COLOR, Fog); 
+  gl_FragData[0] = mix(SkyColor, V_FOG_COLOR, Fog); 
+  gl_FragData[1] = vec4(1.0);
 }
 
 
