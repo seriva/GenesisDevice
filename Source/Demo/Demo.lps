@@ -34,7 +34,7 @@
         <ComponentName Value="ConfigurationForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <EditorIndex Value="11"/>
+        <EditorIndex Value="12"/>
         <WindowIndex Value="1"/>
         <TopLine Value="332"/>
         <CursorPos X="31" Y="360"/>
@@ -126,7 +126,6 @@
       <Unit11>
         <Filename Value="..\Engine\GDGLWrappers.pas"/>
         <IsPartOfProject Value="True"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="3"/>
         <WindowIndex Value="1"/>
         <TopLine Value="275"/>
@@ -147,11 +146,13 @@
       <Unit13>
         <Filename Value="..\Engine\GDGUI.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="-1"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="4"/>
         <WindowIndex Value="1"/>
-        <TopLine Value="736"/>
-        <CursorPos X="27" Y="727"/>
+        <TopLine Value="657"/>
+        <CursorPos X="35" Y="668"/>
         <UsageCount Value="165"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit13>
       <Unit14>
@@ -197,7 +198,7 @@
       <Unit18>
         <Filename Value="..\Engine\GDMeshCell.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="8"/>
+        <EditorIndex Value="9"/>
         <WindowIndex Value="1"/>
         <TopLine Value="233"/>
         <CursorPos X="90" Y="264"/>
@@ -228,10 +229,10 @@
       <Unit21>
         <Filename Value="..\Engine\GDRenderer.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="6"/>
+        <EditorIndex Value="7"/>
         <WindowIndex Value="1"/>
-        <TopLine Value="1000"/>
-        <CursorPos X="41" Y="1015"/>
+        <TopLine Value="1061"/>
+        <CursorPos X="5" Y="1105"/>
         <UsageCount Value="165"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -250,7 +251,7 @@
       <Unit23>
         <Filename Value="..\Engine\GDSkyDome.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="10"/>
+        <EditorIndex Value="11"/>
         <WindowIndex Value="1"/>
         <TopLine Value="205"/>
         <CursorPos X="27" Y="225"/>
@@ -280,7 +281,7 @@
       <Unit26>
         <Filename Value="..\Engine\GDTerrain.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="12"/>
+        <EditorIndex Value="13"/>
         <WindowIndex Value="1"/>
         <TopLine Value="406"/>
         <CursorPos X="22" Y="434"/>
@@ -301,7 +302,7 @@
       <Unit28>
         <Filename Value="..\Engine\GDTexture.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="7"/>
+        <EditorIndex Value="8"/>
         <WindowIndex Value="1"/>
         <TopLine Value="136"/>
         <CursorPos X="15" Y="158"/>
@@ -332,7 +333,7 @@
       <Unit31>
         <Filename Value="..\Engine\GDWater.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="9"/>
+        <EditorIndex Value="10"/>
         <WindowIndex Value="1"/>
         <TopLine Value="337"/>
         <CursorPos X="43" Y="333"/>
@@ -372,6 +373,7 @@
       <Unit35>
         <Filename Value="..\Libraries\OpenAL\mpg123.pas"/>
         <IsPartOfProject Value="True"/>
+        <IsVisibleTab Value="True"/>
         <UsageCount Value="165"/>
       </Unit35>
       <Unit36>
@@ -387,7 +389,7 @@
       <Unit37>
         <Filename Value="..\Engine\GDResources.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="5"/>
+        <EditorIndex Value="6"/>
         <WindowIndex Value="1"/>
         <TopLine Value="177"/>
         <CursorPos X="41" Y="188"/>
@@ -398,12 +400,13 @@
       <Unit38>
         <Filename Value="..\Engine\GDResource.pas"/>
         <IsPartOfProject Value="True"/>
+        <IsVisibleTab Value="True"/>
         <UsageCount Value="165"/>
       </Unit38>
       <Unit39>
         <Filename Value="..\Engine\GDMaterial.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="4"/>
+        <EditorIndex Value="5"/>
         <WindowIndex Value="1"/>
         <TopLine Value="89"/>
         <CursorPos X="93" Y="114"/>
@@ -445,6 +448,9 @@
         <UsageCount Value="4"/>
       </Unit43>
     </Units>
+    <General>
+      <ActiveWindowIndexAtStart Value="1"/>
+    </General>
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
         <Filename Value="..\Engine\GDRenderer.pas"/>

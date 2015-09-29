@@ -12,12 +12,12 @@ varying float Fog;
 
 void main(void)
 {
-     vec4 Eye    = ftransform();
-     gl_Position = Eye;
-     gl_ClipVertex  = vec4(gl_ModelViewMatrix * gl_Vertex);
-     Fog         = clamp((length(Eye) - F_MIN_VIEW_DISTANCE) / F_MAX_VIEW_DISTANCE, 0.0, 1.0);
-     CloudUV1    = vec2((gl_Vertex.x/F_SIZE)+F_ANIMATION_SPEED1, (gl_Vertex.z/F_SIZE)+F_ANIMATION_SPEED1);
-     CloudUV2    = vec2((gl_Vertex.x/F_SIZE)+F_ANIMATION_SPEED2, (gl_Vertex.z/F_SIZE)+F_ANIMATION_SPEED2);
+     vec4 Eye      = ftransform();
+     gl_Position   = Eye;
+     gl_ClipVertex = vec4(gl_ModelViewMatrix * gl_Vertex);
+     Fog           = clamp((length(Eye) - F_MIN_VIEW_DISTANCE) / F_MAX_VIEW_DISTANCE, 0.0, 1.0);
+     CloudUV1      = vec2((gl_Vertex.x/F_SIZE)+F_ANIMATION_SPEED1, (gl_Vertex.z/F_SIZE)+F_ANIMATION_SPEED1);
+     CloudUV2      = vec2((gl_Vertex.x/F_SIZE)+F_ANIMATION_SPEED2, (gl_Vertex.z/F_SIZE)+F_ANIMATION_SPEED2);
 }
 
 

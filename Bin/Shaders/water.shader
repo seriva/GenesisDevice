@@ -11,7 +11,6 @@ uniform int I_WAVES_UV;
 varying vec4  RefrCoords; 
 varying vec2  WavesCoords;
 varying vec4  ViewCoords;
-varying vec3  ViewVector;
 varying float Fog;
 
 void main()
@@ -22,7 +21,7 @@ void main()
 
     vec4 FogEye = ftransform();
 	Fog         = clamp((length(FogEye) - F_MIN_VIEW_DISTANCE) / F_MAX_VIEW_DISTANCE, 0.0, 1.0);
-	gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
+	gl_Position = ViewCoords;
 }
 
 
@@ -63,5 +62,5 @@ void main()
 		gl_FragData[0] = ReflectionColor;
 	}
 	gl_FragData[0].a = V_WATER_COLOR.a;
-    gl_FragData[1] = vec4(1.0);
+    gl_FragData[1]   = vec4(1.0);
 }

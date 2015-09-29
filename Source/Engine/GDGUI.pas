@@ -666,6 +666,7 @@ begin
   Engine.Renderer.MakeCurrent();
   Engine.Renderer.StartFrame();
   Engine.Renderer.SwitchToOrtho();
+  glClear(GL_COLOR_BUFFER_BIT);
 
   Engine.Renderer.RenderState( RS_COLOR );
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
