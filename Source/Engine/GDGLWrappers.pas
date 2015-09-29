@@ -289,7 +289,7 @@ begin
   glCompileShaderARB(iShader);
   glGetObjectParameterivARB(iShader, GL_OBJECT_COMPILE_STATUS_ARB, @iCompiled);
   iLog := GetInfoLog(iShader);
-  if iCompiled <> GL_TRUE then
+  if iCompiled <> 1 then
      raise Exception.Create(iLog);
   glAttachObjectARB(FProgramObject,iShader);
   result := iShader;
