@@ -12,7 +12,7 @@
         <WindowIndex Value="1"/>
         <TopLine Value="18"/>
         <CursorPos X="47" Y="24"/>
-        <UsageCount Value="165"/>
+        <UsageCount Value="166"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit0>
       <Unit1>
@@ -25,7 +25,7 @@
         <WindowIndex Value="1"/>
         <TopLine Value="30"/>
         <CursorPos X="15" Y="45"/>
-        <UsageCount Value="165"/>
+        <UsageCount Value="166"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit1>
       <Unit2>
@@ -38,7 +38,7 @@
         <WindowIndex Value="1"/>
         <TopLine Value="332"/>
         <CursorPos X="31" Y="360"/>
-        <UsageCount Value="165"/>
+        <UsageCount Value="166"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit2>
@@ -49,7 +49,7 @@
         <WindowIndex Value="1"/>
         <TopLine Value="34"/>
         <CursorPos X="8" Y="44"/>
-        <UsageCount Value="165"/>
+        <UsageCount Value="166"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit3>
       <Unit4>
@@ -59,7 +59,7 @@
         <WindowIndex Value="1"/>
         <TopLine Value="30"/>
         <CursorPos X="5" Y="33"/>
-        <UsageCount Value="165"/>
+        <UsageCount Value="166"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit4>
       <Unit5>
@@ -69,7 +69,7 @@
         <WindowIndex Value="1"/>
         <TopLine Value="8813"/>
         <CursorPos X="89" Y="8830"/>
-        <UsageCount Value="165"/>
+        <UsageCount Value="166"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit5>
       <Unit6>
@@ -79,7 +79,7 @@
         <WindowIndex Value="1"/>
         <TopLine Value="33"/>
         <CursorPos X="105" Y="63"/>
-        <UsageCount Value="165"/>
+        <UsageCount Value="166"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit6>
       <Unit7>
@@ -89,7 +89,7 @@
         <WindowIndex Value="1"/>
         <TopLine Value="69"/>
         <CursorPos X="7" Y="76"/>
-        <UsageCount Value="165"/>
+        <UsageCount Value="166"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit7>
       <Unit8>
@@ -99,7 +99,7 @@
         <WindowIndex Value="1"/>
         <TopLine Value="362"/>
         <CursorPos X="36" Y="372"/>
-        <UsageCount Value="165"/>
+        <UsageCount Value="166"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit8>
       <Unit9>
@@ -109,7 +109,7 @@
         <WindowIndex Value="1"/>
         <TopLine Value="132"/>
         <CursorPos X="48" Y="217"/>
-        <UsageCount Value="165"/>
+        <UsageCount Value="166"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit9>
       <Unit10>
@@ -119,7 +119,7 @@
         <WindowIndex Value="1"/>
         <TopLine Value="58"/>
         <CursorPos X="29" Y="67"/>
-        <UsageCount Value="165"/>
+        <UsageCount Value="166"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit10>
@@ -130,7 +130,7 @@
         <WindowIndex Value="1"/>
         <TopLine Value="275"/>
         <CursorPos X="20" Y="292"/>
-        <UsageCount Value="165"/>
+        <UsageCount Value="166"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit11>
@@ -140,18 +140,17 @@
         <EditorIndex Value="-1"/>
         <WindowIndex Value="1"/>
         <CursorPos X="37" Y="113"/>
-        <UsageCount Value="165"/>
+        <UsageCount Value="166"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit12>
       <Unit13>
         <Filename Value="..\Engine\GDGUI.pas"/>
         <IsPartOfProject Value="True"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="4"/>
         <WindowIndex Value="1"/>
         <TopLine Value="657"/>
         <CursorPos X="35" Y="668"/>
-        <UsageCount Value="165"/>
+        <UsageCount Value="166"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit13>
@@ -162,7 +161,7 @@
         <WindowIndex Value="1"/>
         <TopLine Value="41"/>
         <CursorPos X="14" Y="47"/>
-        <UsageCount Value="165"/>
+        <UsageCount Value="166"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit14>
       <Unit15>
@@ -172,16 +171,16 @@
         <WindowIndex Value="1"/>
         <TopLine Value="37"/>
         <CursorPos X="23" Y="93"/>
-        <UsageCount Value="165"/>
+        <UsageCount Value="166"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit15>
       <Unit16>
         <Filename Value="..\Engine\GDMap.pas"/>
         <IsPartOfProject Value="True"/>
         <WindowIndex Value="1"/>
-        <TopLine Value="314"/>
+        <TopLine Value="51"/>
         <CursorPos X="64" Y="325"/>
-        <UsageCount Value="165"/>
+        <UsageCount Value="166"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit16>
@@ -192,7 +191,7 @@
         <WindowIndex Value="1"/>
         <TopLine Value="225"/>
         <CursorPos X="36" Y="235"/>
-        <UsageCount Value="165"/>
+        <UsageCount Value="166"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit17>
       <Unit18>
@@ -202,7 +201,7 @@
         <WindowIndex Value="1"/>
         <TopLine Value="233"/>
         <CursorPos X="90" Y="264"/>
-        <UsageCount Value="165"/>
+        <UsageCount Value="166"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit18>
@@ -213,7 +212,7 @@
         <WindowIndex Value="1"/>
         <TopLine Value="76"/>
         <CursorPos X="13" Y="87"/>
-        <UsageCount Value="165"/>
+        <UsageCount Value="166"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit19>
       <Unit20>
@@ -223,17 +222,18 @@
         <WindowIndex Value="1"/>
         <TopLine Value="290"/>
         <CursorPos X="16" Y="301"/>
-        <UsageCount Value="165"/>
+        <UsageCount Value="166"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit20>
       <Unit21>
         <Filename Value="..\Engine\GDRenderer.pas"/>
         <IsPartOfProject Value="True"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="7"/>
         <WindowIndex Value="1"/>
-        <TopLine Value="1061"/>
-        <CursorPos X="5" Y="1105"/>
-        <UsageCount Value="165"/>
+        <TopLine Value="874"/>
+        <CursorPos X="18" Y="888"/>
+        <UsageCount Value="166"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit21>
@@ -244,7 +244,7 @@
         <WindowIndex Value="1"/>
         <TopLine Value="221"/>
         <CursorPos X="69" Y="253"/>
-        <UsageCount Value="165"/>
+        <UsageCount Value="166"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit22>
@@ -255,7 +255,7 @@
         <WindowIndex Value="1"/>
         <TopLine Value="205"/>
         <CursorPos X="27" Y="225"/>
-        <UsageCount Value="165"/>
+        <UsageCount Value="166"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit23>
@@ -266,7 +266,7 @@
         <WindowIndex Value="1"/>
         <TopLine Value="120"/>
         <CursorPos X="5" Y="127"/>
-        <UsageCount Value="165"/>
+        <UsageCount Value="166"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit24>
       <Unit25>
@@ -275,7 +275,7 @@
         <EditorIndex Value="-1"/>
         <WindowIndex Value="1"/>
         <CursorPos X="70" Y="26"/>
-        <UsageCount Value="165"/>
+        <UsageCount Value="166"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit25>
       <Unit26>
@@ -285,7 +285,7 @@
         <WindowIndex Value="1"/>
         <TopLine Value="406"/>
         <CursorPos X="22" Y="434"/>
-        <UsageCount Value="165"/>
+        <UsageCount Value="166"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit26>
@@ -296,7 +296,7 @@
         <WindowIndex Value="1"/>
         <TopLine Value="36"/>
         <CursorPos X="13" Y="38"/>
-        <UsageCount Value="165"/>
+        <UsageCount Value="166"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit27>
       <Unit28>
@@ -306,7 +306,7 @@
         <WindowIndex Value="1"/>
         <TopLine Value="136"/>
         <CursorPos X="15" Y="158"/>
-        <UsageCount Value="165"/>
+        <UsageCount Value="166"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit28>
@@ -317,7 +317,7 @@
         <WindowIndex Value="1"/>
         <TopLine Value="62"/>
         <CursorPos X="7" Y="67"/>
-        <UsageCount Value="165"/>
+        <UsageCount Value="166"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit29>
       <Unit30>
@@ -327,7 +327,7 @@
         <WindowIndex Value="1"/>
         <TopLine Value="214"/>
         <CursorPos X="12" Y="216"/>
-        <UsageCount Value="165"/>
+        <UsageCount Value="166"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit30>
       <Unit31>
@@ -337,7 +337,7 @@
         <WindowIndex Value="1"/>
         <TopLine Value="337"/>
         <CursorPos X="43" Y="333"/>
-        <UsageCount Value="165"/>
+        <UsageCount Value="166"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit31>
@@ -348,7 +348,7 @@
         <WindowIndex Value="1"/>
         <TopLine Value="61"/>
         <CursorPos X="16" Y="81"/>
-        <UsageCount Value="165"/>
+        <UsageCount Value="166"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit32>
       <Unit33>
@@ -358,7 +358,7 @@
         <WindowIndex Value="1"/>
         <TopLine Value="186"/>
         <CursorPos X="10" Y="197"/>
-        <UsageCount Value="165"/>
+        <UsageCount Value="166"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit33>
       <Unit34>
@@ -367,14 +367,14 @@
         <EditorIndex Value="-1"/>
         <WindowIndex Value="1"/>
         <TopLine Value="31"/>
-        <UsageCount Value="165"/>
+        <UsageCount Value="166"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit34>
       <Unit35>
         <Filename Value="..\Libraries\OpenAL\mpg123.pas"/>
         <IsPartOfProject Value="True"/>
-        <IsVisibleTab Value="True"/>
-        <UsageCount Value="165"/>
+        <WindowIndex Value="1"/>
+        <UsageCount Value="166"/>
       </Unit35>
       <Unit36>
         <Filename Value="..\Libraries\OpenAL\openal.pas"/>
@@ -383,7 +383,7 @@
         <WindowIndex Value="1"/>
         <TopLine Value="2134"/>
         <CursorPos X="133" Y="1859"/>
-        <UsageCount Value="165"/>
+        <UsageCount Value="166"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit36>
       <Unit37>
@@ -393,15 +393,15 @@
         <WindowIndex Value="1"/>
         <TopLine Value="177"/>
         <CursorPos X="41" Y="188"/>
-        <UsageCount Value="165"/>
+        <UsageCount Value="166"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit37>
       <Unit38>
         <Filename Value="..\Engine\GDResource.pas"/>
         <IsPartOfProject Value="True"/>
-        <IsVisibleTab Value="True"/>
-        <UsageCount Value="165"/>
+        <WindowIndex Value="1"/>
+        <UsageCount Value="166"/>
       </Unit38>
       <Unit39>
         <Filename Value="..\Engine\GDMaterial.pas"/>
@@ -410,7 +410,7 @@
         <WindowIndex Value="1"/>
         <TopLine Value="89"/>
         <CursorPos X="93" Y="114"/>
-        <UsageCount Value="165"/>
+        <UsageCount Value="166"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit39>
@@ -421,7 +421,7 @@
         <WindowIndex Value="1"/>
         <TopLine Value="7"/>
         <CursorPos X="22" Y="43"/>
-        <UsageCount Value="165"/>
+        <UsageCount Value="166"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit40>
       <Unit41>
@@ -448,129 +448,126 @@
         <UsageCount Value="4"/>
       </Unit43>
     </Units>
-    <General>
-      <ActiveWindowIndexAtStart Value="1"/>
-    </General>
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
         <Filename Value="..\Engine\GDRenderer.pas"/>
-        <Caret Line="305" Column="15" TopLine="285"/>
+        <Caret Line="1005" Column="3" TopLine="980"/>
       </Position1>
       <Position2>
         <Filename Value="..\Engine\GDRenderer.pas"/>
-        <Caret Line="656" Column="22" TopLine="638"/>
+        <Caret Line="918" Column="5" TopLine="900"/>
       </Position2>
       <Position3>
         <Filename Value="..\Engine\GDRenderer.pas"/>
-        <Caret Line="688" Column="30" TopLine="668"/>
+        <Caret Line="128" Column="17" TopLine="111"/>
       </Position3>
       <Position4>
         <Filename Value="..\Engine\GDRenderer.pas"/>
-        <Caret Line="1098" TopLine="1083"/>
+        <Caret Line="1106" Column="5" TopLine="1076"/>
       </Position4>
       <Position5>
         <Filename Value="..\Engine\GDRenderer.pas"/>
-        <Caret Line="1072" Column="43" TopLine="1056"/>
+        <Caret Line="1100" Column="5" TopLine="1076"/>
       </Position5>
       <Position6>
-        <Filename Value="Configuration.pas"/>
-        <Caret Line="345" Column="141" TopLine="322"/>
+        <Filename Value="..\Engine\GDRenderer.pas"/>
+        <Caret Line="888" Column="5" TopLine="870"/>
       </Position6>
       <Position7>
-        <Filename Value="Configuration.pas"/>
-        <Caret Line="306" TopLine="286"/>
+        <Filename Value="..\Engine\GDRenderer.pas"/>
+        <Caret Line="996" Column="61" TopLine="988"/>
       </Position7>
       <Position8>
-        <Filename Value="Configuration.pas"/>
-        <Caret Line="361" Column="31" TopLine="332"/>
+        <Filename Value="..\Engine\GDRenderer.pas"/>
+        <Caret Line="715" Column="23" TopLine="696"/>
       </Position8>
       <Position9>
-        <Filename Value="Configuration.pas"/>
-        <Caret Line="360" Column="31" TopLine="331"/>
+        <Filename Value="..\Engine\GDRenderer.pas"/>
+        <Caret Line="128" Column="17" TopLine="111"/>
       </Position9>
       <Position10>
         <Filename Value="..\Engine\GDRenderer.pas"/>
-        <Caret Line="1005" Column="3" TopLine="980"/>
+        <Caret Line="888" Column="5" TopLine="870"/>
       </Position10>
       <Position11>
         <Filename Value="..\Engine\GDRenderer.pas"/>
-        <Caret Line="918" Column="5" TopLine="900"/>
+        <Caret Line="717" Column="30" TopLine="696"/>
       </Position11>
       <Position12>
         <Filename Value="..\Engine\GDRenderer.pas"/>
-        <Caret Line="128" Column="17" TopLine="111"/>
+        <Caret Line="1106" Column="5" TopLine="988"/>
       </Position12>
       <Position13>
-        <Filename Value="..\Engine\GDRenderer.pas"/>
-        <Caret Line="1106" Column="5" TopLine="1076"/>
+        <Filename Value="..\Engine\GDMap.pas"/>
+        <Caret Line="108" Column="15" TopLine="92"/>
       </Position13>
       <Position14>
-        <Filename Value="..\Engine\GDRenderer.pas"/>
-        <Caret Line="1100" Column="5" TopLine="1076"/>
+        <Filename Value="..\Engine\GDMap.pas"/>
+        <Caret Line="107" Column="5" TopLine="82"/>
       </Position14>
       <Position15>
         <Filename Value="..\Engine\GDRenderer.pas"/>
-        <Caret Line="888" Column="5" TopLine="870"/>
+        <Caret Line="1106" Column="5" TopLine="988"/>
       </Position15>
       <Position16>
-        <Filename Value="..\Engine\GDRenderer.pas"/>
-        <Caret Line="996" Column="61" TopLine="988"/>
+        <Filename Value="..\Engine\GDSkyDome.pas"/>
+        <Caret Line="233" Column="5" TopLine="205"/>
       </Position16>
       <Position17>
-        <Filename Value="..\Engine\GDRenderer.pas"/>
-        <Caret Line="715" Column="23" TopLine="696"/>
+        <Filename Value="..\Engine\GDMap.pas"/>
+        <Caret Line="107" TopLine="83"/>
       </Position17>
       <Position18>
-        <Filename Value="..\Engine\GDRenderer.pas"/>
-        <Caret Line="128" Column="17" TopLine="111"/>
+        <Filename Value="..\Engine\GDGLWrappers.pas"/>
+        <Caret Line="293" TopLine="271"/>
       </Position18>
       <Position19>
-        <Filename Value="..\Engine\GDRenderer.pas"/>
-        <Caret Line="888" Column="5" TopLine="870"/>
+        <Filename Value="..\Engine\GDGLWrappers.pas"/>
+        <Caret Line="292" Column="15" TopLine="275"/>
       </Position19>
       <Position20>
-        <Filename Value="..\Engine\GDRenderer.pas"/>
-        <Caret Line="717" Column="30" TopLine="696"/>
+        <Filename Value="..\Engine\GDGLWrappers.pas"/>
+        <Caret Line="290" Column="12" TopLine="275"/>
       </Position20>
       <Position21>
-        <Filename Value="..\Engine\GDRenderer.pas"/>
-        <Caret Line="1106" Column="5" TopLine="988"/>
+        <Filename Value="..\Engine\GDGLWrappers.pas"/>
+        <Caret Line="292" Column="21" TopLine="275"/>
       </Position21>
       <Position22>
-        <Filename Value="..\Engine\GDMap.pas"/>
-        <Caret Line="108" Column="15" TopLine="92"/>
+        <Filename Value="..\Engine\GDRenderer.pas"/>
+        <Caret Line="889" Column="20" TopLine="869"/>
       </Position22>
       <Position23>
-        <Filename Value="..\Engine\GDMap.pas"/>
-        <Caret Line="107" Column="5" TopLine="82"/>
+        <Filename Value="..\Engine\GDRenderer.pas"/>
+        <Caret Line="900" Column="96" TopLine="886"/>
       </Position23>
       <Position24>
         <Filename Value="..\Engine\GDRenderer.pas"/>
-        <Caret Line="1106" Column="5" TopLine="988"/>
+        <Caret Line="809" Column="23" TopLine="793"/>
       </Position24>
       <Position25>
-        <Filename Value="..\Engine\GDSkyDome.pas"/>
-        <Caret Line="233" Column="5" TopLine="205"/>
+        <Filename Value="..\Engine\GDRenderer.pas"/>
+        <Caret Line="907" Column="17" TopLine="881"/>
       </Position25>
       <Position26>
-        <Filename Value="..\Engine\GDMap.pas"/>
-        <Caret Line="107" TopLine="83"/>
+        <Filename Value="..\Engine\GDRenderer.pas"/>
+        <Caret Line="1086" Column="15" TopLine="1060"/>
       </Position26>
       <Position27>
-        <Filename Value="..\Engine\GDGLWrappers.pas"/>
-        <Caret Line="293" TopLine="271"/>
+        <Filename Value="..\Engine\GDRenderer.pas"/>
+        <Caret Line="809" Column="23" TopLine="794"/>
       </Position27>
       <Position28>
-        <Filename Value="..\Engine\GDGLWrappers.pas"/>
-        <Caret Line="292" Column="15" TopLine="275"/>
+        <Filename Value="..\Engine\GDRenderer.pas"/>
+        <Caret Line="907" Column="17" TopLine="881"/>
       </Position28>
       <Position29>
-        <Filename Value="..\Engine\GDGLWrappers.pas"/>
-        <Caret Line="290" Column="12" TopLine="275"/>
+        <Filename Value="..\Engine\GDRenderer.pas"/>
+        <Caret Line="1086" Column="15" TopLine="1060"/>
       </Position29>
       <Position30>
-        <Filename Value="..\Engine\GDGLWrappers.pas"/>
-        <Caret Line="292" Column="21" TopLine="275"/>
+        <Filename Value="..\Engine\GDRenderer.pas"/>
+        <Caret Line="891" Column="4" TopLine="878"/>
       </Position30>
     </JumpHistory>
   </ProjectSession>

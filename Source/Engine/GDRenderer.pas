@@ -886,6 +886,8 @@ begin
   begin
     //render reflection texture
     StartFrame();
+    iC := Engine.Map.FogColor.Copy();
+    glClearColor(iC.R, iC.G, iC.B, iC.A);
     glClear(GL_COLOR_BUFFER_BIT);
     Engine.Camera.Translate();
     Engine.Map.Water.StartReflection();
@@ -907,9 +909,9 @@ var
   iM : TGDMatrix;
   iProj, iModl : array[0..15] of glDouble;
   iBias : array[0..15] of glDouble = (0.5, 0.0, 0.0, 0.0,
-		                                 0.0, 0.5, 0.0, 0.0,
-		                                 0.0, 0.0, 0.5, 0.0,
-	                                   0.5, 0.5, 0.5, 1.0);
+		                      0.0, 0.5, 0.0, 0.0,
+		                      0.0, 0.0, 0.5, 0.0,
+	                              0.5, 0.5, 0.5, 1.0);
 begin
   If Engine.Modes.RenderWireframe = false then
   begin
