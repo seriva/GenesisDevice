@@ -4,9 +4,7 @@ uniform float F_MIN_VIEW_DISTANCE;
 uniform float F_MAX_VIEW_DISTANCE;
 uniform int I_DETAIL_UV;
 uniform int I_CAUSTIC_UV;
-uniform vec3 V_LIGHT_DIR;
-uniform vec4 V_LIGHT_AMB;
-uniform vec4 V_LIGHT_DIFF;
+#INCLUDE Inc\lighting_uniforms.inc
 
 varying vec2  ColorUV;
 varying vec2  DetailUV;
@@ -19,25 +17,23 @@ varying vec3  VWorld;
 void main(void)
 {
     //UV
-	ColorUV        = gl_MultiTexCoord0.xy;
-	DetailUV       = ColorUV * I_DETAIL_UV;
-	CausticUV      = ColorUV * I_CAUSTIC_UV;
+	ColorUV    = gl_MultiTexCoord0.xy;
+	DetailUV   = ColorUV * I_DETAIL_UV;
+	CausticUV  = ColorUV * I_CAUSTIC_UV;
 
     //Lighting
 	vec3 N = normalize(gl_Normal);
-    Light  = V_LIGHT_AMB + clamp(V_LIGHT_DIFF * max(dot(N,normalize(-V_LIGHT_DIR)), 0.0), 0.0, 1.0); 
+    #INCLUDE Inc\lighting.inc
     
     //Vertex
-    vec4 Eye = gl_Vertex;
-    VWorld        = Eye.xyz;   
-	gl_Position   = gl_ModelViewProjectionMatrix * Eye;
-	gl_ClipVertex = gl_ModelViewMatrix * Eye;  
+    vec4 Eye      = gl_Vertex;
+    #INCLUDE Inc\vertex.inc
 
     //Shadows
     ShadowCoord = gl_TextureMatrix[7] * Eye;     
 
     //Fog
-    Fog  = clamp((length(gl_Position) - F_MIN_VIEW_DISTANCE) / F_MAX_VIEW_DISTANCE, 0.0, 1.0);
+    #INCLUDE Inc\fog.inc
 }
 
 
@@ -61,12 +57,9 @@ uniform float I_WATER_DEPTH;
 uniform float I_WATER_MAX;
 uniform float I_WATER_MIN;
 uniform vec3 V_CAM_POS;
-uniform vec3 V_LIGHT_DIR;
-uniform vec4 V_LIGHT_AMB;
-uniform vec4 V_LIGHT_DIFF;
-
 uniform float F_DETAIL_MULT;
 uniform int   I_DETAIL;
+#INCLUDE Inc\lighting_uniforms.inc
 
 varying vec2  ColorUV;
 varying vec2  DetailUV;
@@ -93,27 +86,8 @@ void main(void)
     Color = Color * Light;
     
     gl_FragData[1] = vec4(1.0);
-	vec4 shadowCoordinateWdivide = ShadowCoord / ShadowCoord.w ;
-	float distanceFromLight = texture2D(T_SHADOWMAP,shadowCoordinateWdivide.xy).z;
-    if(ShadowCoord.x >= 0.0 && ShadowCoord.x <= 1.0 && ShadowCoord.y >= 0.0 && ShadowCoord.y <= 1.0 && (distanceFromLight < (shadowCoordinateWdivide.z + 0.001))){
-        gl_FragData[1].rgb = vec3(V_LIGHT_AMB);
-    }
+	#INCLUDE Inc\shadows.inc
      
-    if (VWorld.y > I_WATER_HEIGHT)
-    {
-        if(I_UNDER_WATER == 0)
-        {       
-            gl_FragData[0] = mix(Color, V_FOG_COLOR, Fog);
-        }
-        else
-        {
-            gl_FragData[0] = mix(Color, V_WATER_COLOR, 0.85);
-        }
-    }
-    else
-    {
-        float waterFog = clamp((log((length(VWorld - V_CAM_POS) * (I_WATER_HEIGHT - VWorld.y)/I_WATER_DEPTH) * I_WATER_MIN) - 1) * I_WATER_MAX, 0, 1); 
-        gl_FragData[0] = mix(Color * clamp(Caustic, 0.7, 0.85), V_WATER_COLOR, waterFog);  
-    }	    
+    #INCLUDE Inc\water_logic.inc
 }
 

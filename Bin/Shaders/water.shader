@@ -10,18 +10,16 @@ uniform int I_WAVES_UV;
 
 varying vec4  RefrCoords; 
 varying vec2  WavesCoords;
-varying vec4  ViewCoords;
+varying vec4  VWorld;
 varying float Fog;
 
 void main()
 {
 	RefrCoords  = gl_MultiTexCoord0 * I_REFRACTION_UV;
     WavesCoords = gl_MultiTexCoord0.xy * I_WAVES_UV;
-	ViewCoords  = gl_ModelViewProjectionMatrix * gl_Vertex;
-
-    vec4 FogEye = ftransform();
-	Fog         = clamp((length(FogEye) - F_MIN_VIEW_DISTANCE) / F_MAX_VIEW_DISTANCE, 0.0, 1.0);
-	gl_Position = ViewCoords;
+	gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
+	VWorld      = gl_Position;
+	#INCLUDE Inc\fog.inc
 }
 
 
@@ -36,7 +34,7 @@ uniform vec4 V_WATER_COLOR;
 
 varying vec4  RefrCoords; 
 varying vec2  WavesCoords; 
-varying vec4  ViewCoords;
+varying vec4  VWorld;
 varying float Fog;
 
 void main()
@@ -46,7 +44,7 @@ void main()
 	vec4 DistOffset       = texture2D(T_DUDVMAP, vec2(0,0) ) * CDistortion;
 	vec4 DUDVColor        = texture2D(T_DUDVMAP, vec2(RefrCoords + DistOffset ));
 	DUDVColor             = normalize(DUDVColor * 2.0  - 1.0) * CRefraction ;
-	vec4 ProjCoord        = ViewCoords / ViewCoords.q;
+	vec4 ProjCoord        = VWorld / VWorld.q;
 	ProjCoord             = (ProjCoord + 1.0) * 0.5;
 	ProjCoord             += DUDVColor;
 	ProjCoord             = clamp(ProjCoord , 0.001, 0.999);

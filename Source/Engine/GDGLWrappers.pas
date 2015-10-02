@@ -179,7 +179,11 @@ var
   iCur : TGDShaderType;
   iI   : Integer;
   iSource : TStringList;
+  iInc    : TStringList;
+  iSplit  : TStringList;
   iLine, iGeom, ifrag, iVert, iError : String;
+label
+  IncludeLines;
 begin
   Engine.Console.Write('Loading shader ' + ExtractFileName(aFileName) + '...');
 
@@ -187,6 +191,8 @@ begin
     iOk := true;
     FProgramObject := glCreateProgramObjectARB();
     iSource := TStringList.Create;
+    iInc    := TStringList.Create;
+    iSplit  := TStringList.Create;
     iSource.LoadFromFile(aFileName);
 
     iGeom := '';
@@ -196,14 +202,22 @@ begin
     for iI := 0 to iSource.Count-1 do
     begin
       iLine := iSource.Strings[iI];
-      if iLine = '#GEOMETRY' then
+      if Pos('#GEOMETRY', UpperCase(iLine)) > 0 then
        iCur := ST_GEOM
-      else if iLine = '#VERTEX' then
+      else if Pos('#VERTEX', UpperCase(iLine)) > 0 then
         iCur := ST_VERT
-      else if iLine = '#FRAGMENT' then
+      else if Pos('#FRAGMENT', UpperCase(iLine)) > 0 then
         iCur := ST_FRAG
+      else if Pos('#INCLUDE', UpperCase(iLine)) > 0 then
+      begin
+        iSplit.Text := StringReplace(iLine, #32, #13#10, [rfReplaceAll]);
+        iInc.LoadFromFile( PATH_SHADERS + iSplit.Strings[ iSplit.Count-1 ] );
+        iLine := iInc.Text;
+        goto IncludeLines;
+      end
       else
       begin
+        IncludeLines:
         case iCur of
           ST_GEOM : iGeom := iGeom + #13#10 + iLine;
           ST_VERT : iVert := iVert + #13#10 + iLine;
@@ -225,6 +239,8 @@ begin
     end;
   end;
 
+  FreeAndNil(iSplit);
+  FreeAndNil(iInc);
   FreeAndNil(iSource);
   Engine.Console.WriteOkFail(iOk, iError);
 end;

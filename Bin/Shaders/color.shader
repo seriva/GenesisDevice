@@ -6,13 +6,7 @@ uniform mat4 M_ROTATION;
 uniform vec3 V_POSITION;
 uniform vec3 V_SCALE;
 
-vec3 transformVector(vec3 n, mat4 mat){
-  vec3 newNorm;
-  newNorm.x = n.x * mat[0][0] + n.y * mat[1][0] + n.z * mat[2][0] + mat[3][0];
-  newNorm.y = n.x * mat[0][1] + n.y * mat[1][1] + n.z * mat[2][1] + mat[3][1];
-  newNorm.z = n.x * mat[0][2] + n.y * mat[1][2] + n.z * mat[2][2] + mat[3][2];
-  return newNorm;
-}
+#INCLUDE Inc\transform.inc
 
 void main()
 {
