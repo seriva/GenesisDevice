@@ -1,12 +1,9 @@
 #VERTEX
 
-uniform float F_MIN_VIEW_DISTANCE;
-uniform float F_MAX_VIEW_DISTANCE;
-uniform vec3 V_LIGHT_DIR;
-uniform vec4 V_LIGHT_AMB;
-uniform vec4 V_LIGHT_DIFF;
 uniform int I_REFRACTION_UV;
 uniform int I_WAVES_UV;
+#INCLUDE Inc\lighting_uniforms.inc
+#INCLUDE Inc\fog_uniforms.inc
 
 varying vec4  RefrCoords; 
 varying vec2  WavesCoords;
@@ -28,9 +25,10 @@ void main()
 uniform sampler2D T_REFLECTION;
 uniform sampler2D T_DUDVMAP;
 uniform sampler2D T_CAUSTICMAP;
-uniform vec4 V_FOG_COLOR;
 uniform int I_UNDER_WATER;
 uniform vec4 V_WATER_COLOR;
+#INCLUDE Inc\lighting_uniforms.inc
+#INCLUDE Inc\fog_uniforms.inc
 
 varying vec4  RefrCoords; 
 varying vec2  WavesCoords; 

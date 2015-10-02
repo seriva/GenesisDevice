@@ -1,18 +1,14 @@
 #VERTEX
 
-uniform float F_MIN_VIEW_DISTANCE;
-uniform float F_MAX_VIEW_DISTANCE;
 uniform int I_DETAIL_UV;
 uniform int I_CAUSTIC_UV;
 #INCLUDE Inc\lighting_uniforms.inc
+#INCLUDE Inc\fog_uniforms.inc
 
 varying vec2  ColorUV;
 varying vec2  DetailUV;
 varying vec2  CausticUV;
-varying vec4  Light;
-varying vec4  ShadowCoord;
-varying float Fog;
-varying vec3  VWorld;
+#INCLUDE Inc\varying.inc
 
 void main(void)
 {
@@ -49,25 +45,15 @@ uniform sampler2D T_CAUSTICMAP;
 uniform sampler2D T_DETAILMAP;
 uniform sampler2D T_SHADOWMAP;
 
-uniform vec4 V_FOG_COLOR;
-uniform int I_UNDER_WATER;
-uniform float I_WATER_HEIGHT;
-uniform vec4 V_WATER_COLOR;
-uniform float I_WATER_DEPTH;
-uniform float I_WATER_MAX;
-uniform float I_WATER_MIN;
-uniform vec3 V_CAM_POS;
-uniform float F_DETAIL_MULT;
-uniform int   I_DETAIL;
 #INCLUDE Inc\lighting_uniforms.inc
+#INCLUDE Inc\fog_uniforms.inc
+#INCLUDE Inc\detail_uniforms.inc
+#INCLUDE Inc\water_uniforms.inc
 
 varying vec2  ColorUV;
 varying vec2  DetailUV;
 varying vec2  CausticUV;
-varying vec4  Light;
-varying vec4  ShadowCoord;
-varying float Fog;
-varying vec3  VWorld;
+#INCLUDE Inc\varying.inc
 
 void main(void)
 { 
@@ -79,10 +65,9 @@ void main(void)
 	vec4 Caustic = texture2D(T_CAUSTICMAP,    CausticUV);
 	Color        += (Detail1*Weights.x + Detail2*Weights.y + Detail3*Weights.z) - 0.5; 
     
+	vec2 DUV = DetailUV * 6;
     if (I_DETAIL==1)
-    {   
-        Color = (Color + texture2D(T_DETAILMAP, DetailUV * 6) - F_DETAIL_MULT);
-    }
+    #INCLUDE Inc\detail.inc
     Color = Color * Light;
     
     gl_FragData[1] = vec4(1.0);

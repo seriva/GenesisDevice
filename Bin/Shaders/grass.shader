@@ -1,16 +1,11 @@
 #VERTEX
 
-uniform float F_MIN_VIEW_DISTANCE;
-uniform float F_MAX_VIEW_DISTANCE;
-uniform float F_ANIMATION_SPEED;
-uniform float F_ANIMATION_STRENGTH;
+#INCLUDE Inc\foliage_animation_uniform.inc
 #INCLUDE Inc\lighting_uniforms.inc
+#INCLUDE Inc\fog_uniforms.inc
 
 varying vec2  ColorUV;
-varying vec4  Light;
-varying vec4  ShadowCoord;
-varying float Fog;
-varying vec3  VWorld;
+#INCLUDE Inc\varying.inc
 
 vec2 uv[4] = {
                 vec2(0.99, 0.99),
@@ -50,14 +45,11 @@ void main(void)
 
 uniform sampler2D T_GRASSTEX;
 uniform sampler2D T_SHADOWMAP;
-uniform vec4 V_FOG_COLOR;
 #INCLUDE Inc\lighting_uniforms.inc
+#INCLUDE Inc\fog_uniforms.inc
 
 varying vec2  ColorUV;
-varying vec4  Light;
-varying vec4  ShadowCoord;
-varying float Fog;
-varying vec3  VWorld;
+#INCLUDE Inc\varying.inc
 
 void main(void)
 {
@@ -68,6 +60,3 @@ void main(void)
         
     gl_FragData[0] = mix(Color, V_FOG_COLOR, Fog);
 }
-
-
-
