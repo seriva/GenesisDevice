@@ -210,7 +210,7 @@ procedure SetMeshPositioning(aShader : TGDGLShader);
 begin
   aShader.SetMatrix('M_ROTATION', FRotation);
   aShader.SetFloat3('V_POSITION', FPosition.x, FPosition.y, FPosition.z);
-  aShader.SetFloat3('V_SCALE', FScale.x * iFadeDistanceScale, FScale.y * iFadeDistanceScale, FScale.z * iFadeDistanceScale);
+  aShader.SetFloat3('V_SCALE', (FScale.x * iFadeDistanceScale) / 100, (FScale.y * iFadeDistanceScale) / 100, (FScale.z * iFadeDistanceScale) / 100);
 end;
 
 begin

@@ -9,12 +9,15 @@ uniform float F_ANIMATION_STRENGTH;
 uniform mat4 M_ROTATION;
 uniform vec3 V_POSITION;
 uniform vec3 V_SCALE;
+uniform vec3 V_LIGHT_DIR;
+uniform vec4 V_LIGHT_AMB;
+uniform vec4 V_LIGHT_DIFF;
 
-varying vec2  UV;
-varying vec4 ShadowCoord;
+varying vec2  ColorUV;
+varying vec4  Light;
+varying vec4  ShadowCoord;
 varying float Fog;
-varying vec3 N;
-varying vec3 VWorld;
+varying vec3  VWorld;
 
 vec3 transformVector(vec3 n, mat4 mat){
   vec3 newNorm;
@@ -26,31 +29,34 @@ vec3 transformVector(vec3 n, mat4 mat){
 
 void main(void)
 {
-	if(I_FLIP_NORMAL == 0)	
+    //UV
+    ColorUV = gl_MultiTexCoord0.xy;
+
+    //Lighting
+    vec3 N = normalize(transformVector(gl_Normal, M_ROTATION));
+	if(I_FLIP_NORMAL == 1)	
 	{
-        N = normalize(transformVector(gl_Normal, M_ROTATION));
+        N = -N;
 	}
-    else
-    {
-        N = normalize(transformVector(-gl_Normal, M_ROTATION));
-    }
-	
-    vec4 Eye     = gl_Vertex;
-    Eye.xyz = (gl_Vertex.xyz * V_SCALE) / 100.0;
-    Eye.xyz = transformVector(Eye.xyz, M_ROTATION);
-    Eye.xyz = Eye.xyz + V_POSITION;   
-    if(I_DO_TREE_ANIM == 1){
-        Eye.x        += cos(F_ANIMATION_SPEED * gl_Color.r)*F_ANIMATION_STRENGTH * gl_Color.g;
-        Eye.z        += sin(F_ANIMATION_SPEED * gl_Color.r)*F_ANIMATION_STRENGTH * gl_Color.b;    
-    }
-    vec4 Pos = gl_ModelViewProjectionMatrix * Eye;
-    VWorld = Eye.xyz;
+    Light = V_LIGHT_AMB + clamp(V_LIGHT_DIFF * max(dot(N,normalize(-V_LIGHT_DIR)), 0.0), 0.0, 1.0); 
     
-	gl_Position    = Pos;
-	gl_ClipVertex  = vec4(gl_ModelViewMatrix * Eye);
-	Fog = clamp((length(Pos) - F_MIN_VIEW_DISTANCE) / F_MAX_VIEW_DISTANCE, 0.0, 1.0);
-	UV  = gl_MultiTexCoord0.xy;
-    ShadowCoord = gl_TextureMatrix[7] * Eye;
+    //Vertex
+    vec4 Eye = gl_Vertex;
+    Eye.xyz = (transformVector(Eye.xyz * V_SCALE, M_ROTATION)) + V_POSITION;
+    if(I_DO_TREE_ANIM == 1){
+        float AniSpeed = F_ANIMATION_SPEED * gl_Color.r;
+        Eye.x          += cos(AniSpeed)*F_ANIMATION_STRENGTH * gl_Color.g;
+        Eye.z          += sin(AniSpeed)*F_ANIMATION_STRENGTH * gl_Color.b;    
+    }
+    VWorld        = Eye.xyz;
+	gl_Position   = gl_ModelViewProjectionMatrix * Eye;
+	gl_ClipVertex = gl_ModelViewMatrix * Eye;
+    
+    //Shadows
+    ShadowCoord = gl_TextureMatrix[7] * Eye;     
+
+    //Fog 
+    Fog = clamp((length(gl_Position) - F_MIN_VIEW_DISTANCE) / F_MAX_VIEW_DISTANCE, 0.0, 1.0);
 }
 
 
@@ -59,6 +65,7 @@ void main(void)
 #FRAGMENT
 
 uniform sampler2D T_COLORMAP;
+uniform sampler2D T_CAUSTICMAP;
 uniform sampler2D T_DETAILMAP;
 uniform sampler2D T_SHADOWMAP;
 
@@ -77,63 +84,49 @@ uniform int  I_RECEIVE_SHADOW;
 uniform float F_DETAIL_MULT;
 uniform int I_DETAIL;
 
-varying vec2 UV;
-varying vec4 ShadowCoord;
+varying vec2  ColorUV;
+varying vec4  Light;
+varying vec4  ShadowCoord;
 varying float Fog;
-varying vec3 N;
-varying vec3 VWorld;
-
-void CalcUnderWaterColor(vec4 Color){
-    float waterFog = clamp((log((length(VWorld - V_CAM_POS) * (I_WATER_HEIGHT - VWorld.y)/I_WATER_DEPTH) * I_WATER_MIN) - 1) * I_WATER_MAX, 0, 1); 
-    gl_FragData[0] = mix(Color, V_WATER_COLOR, waterFog);
-}
+varying vec3  VWorld;
 
 void main(void)
 {
-	vec4 Light = V_LIGHT_AMB + clamp(V_LIGHT_DIFF * max(dot(N,normalize(-V_LIGHT_DIR)), 0.0), 0.0, 1.0); 
+	vec4 Color   = texture2D(T_COLORMAP, ColorUV);
+    vec4 Caustic = texture2D(T_CAUSTICMAP, ColorUV*10);
     
-	vec4 Color = texture2D(T_COLORMAP, UV);
     if (I_DETAIL==1)
     {
-        Color.rgb  = (Color.rgb + texture2D(T_DETAILMAP, UV * 4).rgb - F_DETAIL_MULT);
+        Color.rgb  = (Color.rgb + texture2D(T_DETAILMAP, ColorUV * 4).rgb - F_DETAIL_MULT);
     }
     Color  = Color * Light; 
     
+    gl_FragData[1] = vec4(1.0);
     if (I_RECEIVE_SHADOW == 1) 
     {
         vec4 shadowCoordinateWdivide = ShadowCoord / ShadowCoord.w ;
         float distanceFromLight = texture2D(T_SHADOWMAP,shadowCoordinateWdivide.xy).z;
         if(ShadowCoord.x >= 0.0 && ShadowCoord.x <= 1.0 && ShadowCoord.y >= 0.0 && ShadowCoord.y <= 1.0 && (distanceFromLight < (shadowCoordinateWdivide.z + 0.001))){
             gl_FragData[1].rgb = vec3(V_LIGHT_AMB);
-        } else {
-            gl_FragData[1] = vec4(1.0);
         }
-    } else {
-        gl_FragData[1] = vec4(1.0);
     }
     
-    if(I_UNDER_WATER == 0)
+    if (VWorld.y > I_WATER_HEIGHT)
     {
-        if (VWorld.y > I_WATER_HEIGHT)
-        {
+        if(I_UNDER_WATER == 0)
+        {       
             gl_FragData[0] = mix(Color, V_FOG_COLOR, Fog);
         }
         else
         {
-            CalcUnderWaterColor(Color);
-        }       
+            gl_FragData[0] = mix(Color, V_WATER_COLOR, 0.85);
+        }
     }
     else
     {
-        if (VWorld.y > I_WATER_HEIGHT)
-        {
-            gl_FragData[0] = mix(Color, V_WATER_COLOR, 0.85);
-        }
-        else
-        {
-            CalcUnderWaterColor(Color);
-        }       
-    }
+        float waterFog = clamp((log((length(VWorld - V_CAM_POS) * (I_WATER_HEIGHT - VWorld.y)/I_WATER_DEPTH) * I_WATER_MIN) - 1) * I_WATER_MAX, 0, 1); 
+        gl_FragData[0] = mix(Color * clamp(Caustic, 0.7, 0.85), V_WATER_COLOR, waterFog);  
+    }	
 
 	gl_FragData[0].a = Color.a;
 }

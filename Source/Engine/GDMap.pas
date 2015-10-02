@@ -90,6 +90,9 @@ type
     property Foliage     : TGDFoliage read FFoliage;
     property SkyDome     : TGDSkyDome read FSkyDome;
 
+    property DetailTexture : TGDTexture read FDetailTexture;
+    property DetailMult    : double read FDetailMult;
+
     constructor Create();
     destructor  Destroy(); override;
 
@@ -102,8 +105,6 @@ type
     procedure Update();
     procedure DetectVisibleCells();
     procedure RenderVisibleCells(aRenderAttribute : TGDRenderAttribute; aRenderFor : TGDRenderFor);
-
-    procedure ApplyDetail(aShader : TGDGLShader);
   end;
 
 implementation
@@ -326,17 +327,6 @@ end;
 procedure TGDMap.RenderVisibleCells(aRenderAttribute : TGDRenderAttribute; aRenderFor : TGDRenderFor);
 begin
   FCellManager.RenderVisibleCells(aRenderAttribute, aRenderFor, FTerrain, FWater, FFoliage);
-end;
-
-{******************************************************************************}
-{* Set the map detail texture                                                 *}
-{******************************************************************************}
-
-procedure TGDMap.ApplyDetail(aShader : TGDGLShader);
-begin
-  FDetailTexture.BindTexture(GL_TEXTURE6);
-  aShader.SetInt('T_DETAILMAP', 6);
-  aShader.SetFloat('F_DETAIL_MULT', FDetailMult);
 end;
 
 end.

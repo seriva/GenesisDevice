@@ -495,6 +495,7 @@ end;
 
 procedure TGDRenderer.SetJoinedParams(aShader : TGDGLShader; aForShadows : boolean = false);
 begin
+  //Ligthing
   aShader.Bind();
   aShader.SetFloat3('V_LIGHT_DIR',  Engine.Map.LightDirection.X,
                                     Engine.Map.LightDirection.Y,
@@ -508,10 +509,12 @@ begin
                                     Engine.Map.LightDiffuse.B,
                                     Engine.Map.LightDiffuse.A);
 
+  //Fog
   aShader.SetFloat('F_MIN_VIEW_DISTANCE', Engine.Map.FogMinDistance);
   aShader.SetFloat('F_MAX_VIEW_DISTANCE', Engine.Map.FogMaxDistance);
   aShader.SetFloat4('V_FOG_COLOR', Engine.Map.FogColor.R, Engine.Map.FogColor.G, Engine.Map.FogColor.B, Engine.Map.FogColor.A);
 
+  //Water
   If Engine.Map.Water.UnderWater() then
     aShader.SetInt('I_UNDER_WATER', 1)
   else
@@ -525,15 +528,21 @@ begin
   aShader.SetFloat('I_WATER_MAX', Engine.Map.Water.MaxDistance);
   aShader.SetFloat('I_WATER_MIN', Engine.Map.Water.MinDistance);
   aShader.SetFloat3('V_CAM_POS', Engine.Camera.Position.x,  Engine.Camera.Position.Y,  Engine.Camera.Position.Z );
+  aShader.SetInt('T_CAUSTICMAP', 5);
+  Engine.Map.Water.BindCausticTexture();
 
+  //Detail
   If Engine.Settings.UseDetail then
   begin
     aShader.SetInt('I_DETAIL', 1);
-    Engine.Map.ApplyDetail(aShader);
+    Engine.Map.DetailTexture.BindTexture(GL_TEXTURE6);
+    aShader.SetInt('T_DETAILMAP', 6);
+    aShader.SetFloat('F_DETAIL_MULT', Engine.Map.DetailMult);
   end
   else
     aShader.SetInt('I_DETAIL', 0);
 
+  //Shadows
   if not(aForShadows) then
   begin
     aShader.SetInt('T_SHADOWMAP', 7);
@@ -885,6 +894,8 @@ begin
   begin
     //render reflection texture
     StartFrame();
+    iC := Engine.Map.FogColor.Copy();
+    glClearColor(iC.R, iC.G, iC.B, iC.A);
     glClear(GL_COLOR_BUFFER_BIT);
     Engine.Camera.Translate();
     Engine.Map.Water.StartReflection();
