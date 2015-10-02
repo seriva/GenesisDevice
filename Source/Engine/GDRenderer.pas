@@ -507,7 +507,6 @@ begin
                                     Engine.Map.LightDiffuse.G,
                                     Engine.Map.LightDiffuse.B,
                                     Engine.Map.LightDiffuse.A);
-  aShader.SetFloat('F_LIGHT_SHADOW', Engine.Map.LightShadow);
 
   aShader.SetFloat('F_MIN_VIEW_DISTANCE', Engine.Map.FogMinDistance);
   aShader.SetFloat('F_MAX_VIEW_DISTANCE', Engine.Map.FogMaxDistance);

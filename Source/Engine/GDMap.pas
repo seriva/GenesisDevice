@@ -57,7 +57,6 @@ type
     FLightDirection  : TGDVector;
     FLightAmbient    : TGDColor;
     FLightDiffuse    : TGDColor;
-    FLightShadow     : Double;
 
     FFogDistance     : Integer;
     FFogColor        : TGDColor;
@@ -80,7 +79,6 @@ type
     property LightDirection : TGDVector read FLightDirection;
     property LightAmbient   : TGDColor read FLightAmbient;
     property LightDiffuse   : TGDColor read FLightDiffuse;
-    property LightShadow    : Double read FLightShadow;
 
     property FogDistance    : Integer read FFogDistance;
     property FogColor       : TGDColor read FFogColor;
@@ -173,7 +171,6 @@ begin
   FLightDirection := ReadVector(iIniFile, 'Light', 'Direction');
   FLightAmbient   := ReadColor(iIniFile, 'Light', 'Ambient');
   FLightDiffuse   := ReadColor(iIniFile, 'Light', 'Diffuse');
-  FLightShadow    := iIniFile.ReadFloat( 'Light', 'Shadow', 0.5 );
 
   //init fog
   FFogColor    := ReadColor(iIniFile, 'Fog', 'Color');
@@ -271,7 +268,6 @@ begin
   FLightDirection.Reset(-1,-1,-1);
   FLightAmbient.Reset(1, 1, 1, 1);
   FLightDiffuse.Reset(1, 1, 1, 1);
-  FLightShadow := 0.75;
 
   FFogMinDistance := (((Engine.Settings.ViewDistance * R_VIEW_DISTANCE_STEP) / 10) *5);
   FFogMaxDistance := (((Engine.Settings.ViewDistance * R_VIEW_DISTANCE_STEP) / 10) *8);

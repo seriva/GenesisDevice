@@ -53,7 +53,7 @@ uniform vec3 V_CAM_POS;
 uniform vec3 V_LIGHT_DIR;
 uniform vec4 V_LIGHT_AMB;
 uniform vec4 V_LIGHT_DIFF;
-uniform float F_LIGHT_SHADOW;
+
 uniform float F_DETAIL_MULT;
 uniform int I_DETAIL;
 
@@ -95,7 +95,7 @@ void main(void)
 	vec4 shadowCoordinateWdivide = ShadowCoord / ShadowCoord.w ;
 	float distanceFromLight = texture2D(T_SHADOWMAP,shadowCoordinateWdivide.xy).z;
     if(ShadowCoord.x >= 0.0 && ShadowCoord.x <= 1.0 && ShadowCoord.y >= 0.0 && ShadowCoord.y <= 1.0 && (distanceFromLight < (shadowCoordinateWdivide.z + 0.001))){
-        gl_FragData[1].rgb = vec3(F_LIGHT_SHADOW);
+        gl_FragData[1].rgb = vec3(V_LIGHT_AMB);
     } else {
         gl_FragData[1] = vec4(1.0);
     }

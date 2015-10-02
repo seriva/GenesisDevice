@@ -146,7 +146,6 @@
       <Unit13>
         <Filename Value="..\Engine\GDGUI.pas"/>
         <IsPartOfProject Value="True"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="4"/>
         <WindowIndex Value="1"/>
         <TopLine Value="657"/>
@@ -179,8 +178,8 @@
         <Filename Value="..\Engine\GDMap.pas"/>
         <IsPartOfProject Value="True"/>
         <WindowIndex Value="1"/>
-        <TopLine Value="314"/>
-        <CursorPos X="64" Y="325"/>
+        <TopLine Value="255"/>
+        <CursorPos X="35" Y="270"/>
         <UsageCount Value="165"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -229,10 +228,11 @@
       <Unit21>
         <Filename Value="..\Engine\GDRenderer.pas"/>
         <IsPartOfProject Value="True"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="7"/>
         <WindowIndex Value="1"/>
-        <TopLine Value="1061"/>
-        <CursorPos X="5" Y="1105"/>
+        <TopLine Value="494"/>
+        <CursorPos X="64" Y="509"/>
         <UsageCount Value="165"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -373,7 +373,7 @@
       <Unit35>
         <Filename Value="..\Libraries\OpenAL\mpg123.pas"/>
         <IsPartOfProject Value="True"/>
-        <IsVisibleTab Value="True"/>
+        <WindowIndex Value="-1"/>
         <UsageCount Value="165"/>
       </Unit35>
       <Unit36>
@@ -400,7 +400,7 @@
       <Unit38>
         <Filename Value="..\Engine\GDResource.pas"/>
         <IsPartOfProject Value="True"/>
-        <IsVisibleTab Value="True"/>
+        <WindowIndex Value="-1"/>
         <UsageCount Value="165"/>
       </Unit38>
       <Unit39>
@@ -448,129 +448,126 @@
         <UsageCount Value="4"/>
       </Unit43>
     </Units>
-    <General>
-      <ActiveWindowIndexAtStart Value="1"/>
-    </General>
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
         <Filename Value="..\Engine\GDRenderer.pas"/>
-        <Caret Line="305" Column="15" TopLine="285"/>
+        <Caret Line="1098" TopLine="1083"/>
       </Position1>
       <Position2>
         <Filename Value="..\Engine\GDRenderer.pas"/>
-        <Caret Line="656" Column="22" TopLine="638"/>
+        <Caret Line="1072" Column="43" TopLine="1056"/>
       </Position2>
       <Position3>
-        <Filename Value="..\Engine\GDRenderer.pas"/>
-        <Caret Line="688" Column="30" TopLine="668"/>
+        <Filename Value="Configuration.pas"/>
+        <Caret Line="345" Column="141" TopLine="322"/>
       </Position3>
       <Position4>
-        <Filename Value="..\Engine\GDRenderer.pas"/>
-        <Caret Line="1098" TopLine="1083"/>
+        <Filename Value="Configuration.pas"/>
+        <Caret Line="306" TopLine="286"/>
       </Position4>
       <Position5>
-        <Filename Value="..\Engine\GDRenderer.pas"/>
-        <Caret Line="1072" Column="43" TopLine="1056"/>
+        <Filename Value="Configuration.pas"/>
+        <Caret Line="361" Column="31" TopLine="332"/>
       </Position5>
       <Position6>
         <Filename Value="Configuration.pas"/>
-        <Caret Line="345" Column="141" TopLine="322"/>
+        <Caret Line="360" Column="31" TopLine="331"/>
       </Position6>
       <Position7>
-        <Filename Value="Configuration.pas"/>
-        <Caret Line="306" TopLine="286"/>
+        <Filename Value="..\Engine\GDRenderer.pas"/>
+        <Caret Line="1005" Column="3" TopLine="980"/>
       </Position7>
       <Position8>
-        <Filename Value="Configuration.pas"/>
-        <Caret Line="361" Column="31" TopLine="332"/>
+        <Filename Value="..\Engine\GDRenderer.pas"/>
+        <Caret Line="918" Column="5" TopLine="900"/>
       </Position8>
       <Position9>
-        <Filename Value="Configuration.pas"/>
-        <Caret Line="360" Column="31" TopLine="331"/>
+        <Filename Value="..\Engine\GDRenderer.pas"/>
+        <Caret Line="128" Column="17" TopLine="111"/>
       </Position9>
       <Position10>
         <Filename Value="..\Engine\GDRenderer.pas"/>
-        <Caret Line="1005" Column="3" TopLine="980"/>
+        <Caret Line="1106" Column="5" TopLine="1076"/>
       </Position10>
       <Position11>
         <Filename Value="..\Engine\GDRenderer.pas"/>
-        <Caret Line="918" Column="5" TopLine="900"/>
+        <Caret Line="1100" Column="5" TopLine="1076"/>
       </Position11>
       <Position12>
         <Filename Value="..\Engine\GDRenderer.pas"/>
-        <Caret Line="128" Column="17" TopLine="111"/>
+        <Caret Line="888" Column="5" TopLine="870"/>
       </Position12>
       <Position13>
         <Filename Value="..\Engine\GDRenderer.pas"/>
-        <Caret Line="1106" Column="5" TopLine="1076"/>
+        <Caret Line="996" Column="61" TopLine="988"/>
       </Position13>
       <Position14>
         <Filename Value="..\Engine\GDRenderer.pas"/>
-        <Caret Line="1100" Column="5" TopLine="1076"/>
+        <Caret Line="715" Column="23" TopLine="696"/>
       </Position14>
       <Position15>
         <Filename Value="..\Engine\GDRenderer.pas"/>
-        <Caret Line="888" Column="5" TopLine="870"/>
+        <Caret Line="128" Column="17" TopLine="111"/>
       </Position15>
       <Position16>
         <Filename Value="..\Engine\GDRenderer.pas"/>
-        <Caret Line="996" Column="61" TopLine="988"/>
+        <Caret Line="888" Column="5" TopLine="870"/>
       </Position16>
       <Position17>
         <Filename Value="..\Engine\GDRenderer.pas"/>
-        <Caret Line="715" Column="23" TopLine="696"/>
+        <Caret Line="717" Column="30" TopLine="696"/>
       </Position17>
       <Position18>
         <Filename Value="..\Engine\GDRenderer.pas"/>
-        <Caret Line="128" Column="17" TopLine="111"/>
+        <Caret Line="1106" Column="5" TopLine="988"/>
       </Position18>
       <Position19>
-        <Filename Value="..\Engine\GDRenderer.pas"/>
-        <Caret Line="888" Column="5" TopLine="870"/>
+        <Filename Value="..\Engine\GDMap.pas"/>
+        <Caret Line="108" Column="15" TopLine="92"/>
       </Position19>
       <Position20>
-        <Filename Value="..\Engine\GDRenderer.pas"/>
-        <Caret Line="717" Column="30" TopLine="696"/>
+        <Filename Value="..\Engine\GDMap.pas"/>
+        <Caret Line="107" Column="5" TopLine="82"/>
       </Position20>
       <Position21>
         <Filename Value="..\Engine\GDRenderer.pas"/>
         <Caret Line="1106" Column="5" TopLine="988"/>
       </Position21>
       <Position22>
-        <Filename Value="..\Engine\GDMap.pas"/>
-        <Caret Line="108" Column="15" TopLine="92"/>
+        <Filename Value="..\Engine\GDSkyDome.pas"/>
+        <Caret Line="233" Column="5" TopLine="205"/>
       </Position22>
       <Position23>
         <Filename Value="..\Engine\GDMap.pas"/>
-        <Caret Line="107" Column="5" TopLine="82"/>
+        <Caret Line="107" TopLine="83"/>
       </Position23>
       <Position24>
-        <Filename Value="..\Engine\GDRenderer.pas"/>
-        <Caret Line="1106" Column="5" TopLine="988"/>
+        <Filename Value="..\Engine\GDGLWrappers.pas"/>
+        <Caret Line="293" TopLine="271"/>
       </Position24>
       <Position25>
-        <Filename Value="..\Engine\GDSkyDome.pas"/>
-        <Caret Line="233" Column="5" TopLine="205"/>
+        <Filename Value="..\Engine\GDGLWrappers.pas"/>
+        <Caret Line="292" Column="15" TopLine="275"/>
       </Position25>
       <Position26>
-        <Filename Value="..\Engine\GDMap.pas"/>
-        <Caret Line="107" TopLine="83"/>
+        <Filename Value="..\Engine\GDGLWrappers.pas"/>
+        <Caret Line="290" Column="12" TopLine="275"/>
       </Position26>
       <Position27>
         <Filename Value="..\Engine\GDGLWrappers.pas"/>
-        <Caret Line="293" TopLine="271"/>
+        <Caret Line="292" Column="21" TopLine="275"/>
       </Position27>
       <Position28>
-        <Filename Value="..\Engine\GDGLWrappers.pas"/>
-        <Caret Line="292" Column="15" TopLine="275"/>
+        <Filename Value="..\Engine\GDMap.pas"/>
+        <Caret Line="59" Column="33" TopLine="57"/>
       </Position28>
       <Position29>
-        <Filename Value="..\Engine\GDGLWrappers.pas"/>
-        <Caret Line="290" Column="12" TopLine="275"/>
+        <Filename Value="..\Engine\GDMap.pas"/>
+        <Caret Line="173" Column="62" TopLine="159"/>
       </Position29>
       <Position30>
-        <Filename Value="..\Engine\GDGLWrappers.pas"/>
-        <Caret Line="292" Column="21" TopLine="275"/>
+        <Filename Value="..\Engine\GDRenderer.pas"/>
+        <Caret Line="1105" Column="5" TopLine="1061"/>
       </Position30>
     </JumpHistory>
   </ProjectSession>
