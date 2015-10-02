@@ -917,9 +917,9 @@ var
   iM : TGDMatrix;
   iProj, iModl : array[0..15] of glDouble;
   iBias : array[0..15] of glDouble = (0.5, 0.0, 0.0, 0.0,
-		                                 0.0, 0.5, 0.0, 0.0,
-		                                 0.0, 0.0, 0.5, 0.0,
-	                                   0.5, 0.5, 0.5, 1.0);
+		                      0.0, 0.5, 0.0, 0.0,
+		                      0.0, 0.0, 0.5, 0.0,
+	                              0.5, 0.5, 0.5, 1.0);
 begin
   If Engine.Modes.RenderWireframe = false then
   begin
