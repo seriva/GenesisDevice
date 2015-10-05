@@ -750,7 +750,6 @@ end;
 
 procedure TGDRenderer.SwitchToOrtho();
 begin
-  glEnable(GL_DEPTH_TEST);
   glMatrixMode(GL_PROJECTION);
   glPushMatrix();
   glLoadIdentity();
@@ -766,7 +765,6 @@ end;
 
 procedure TGDRenderer.SwitchToPerspective();
 begin
-  glEnable(GL_DEPTH_TEST);
   glMatrixMode(GL_PROJECTION);
   glPopMatrix();
   glMatrixMode(GL_MODELVIEW);
@@ -798,6 +796,16 @@ end;
 procedure TGDRenderer.Render();
 var
   iC : TGDColor;
+
+{******************************************************************************}
+{* Render static geometry                                                     *}
+{******************************************************************************}
+
+Procedure RenderStaticGeometry();
+begin
+  If Engine.Modes.RenderSky then Engine.Map.SkyDome.Render();
+  Engine.Map.RenderVisibleCells( RA_NORMAL, RF_NORMAL );
+end;
 
 {******************************************************************************}
 {* Render the screen quad for post processing                                 *}
@@ -849,8 +857,11 @@ end;
 
 Procedure RenderDebug();
 
-procedure RenderLines();
+procedure RenderLines(aR, aG, aB, aA : single; aRA : TGDRenderAttribute);
 begin
+  FLinesVertices.Clear();
+  SetColor(aR, aG, aB, aA);
+  Engine.Map.RenderVisibleCells(aRA, RF_NORMAL);
   FLinesVertexBuffer.Bind(VL_V);
   FLinesVertexBuffer.Update(FLinesVertices, GL_DYNAMIC_DRAW);
   FLinesVertexBuffer.Render(GL_LINES);
@@ -861,27 +872,9 @@ begin
   glLoadIdentity();
   Engine.Camera.Translate();
   RenderState( RS_COLOR );
-  If Engine.Modes.RenderNormals     then
-  begin
-    FLinesVertices.Clear();
-    SetColor(1,0.5,0.25,1);
-    Engine.Map.RenderVisibleCells( RA_NORMALS, RF_NORMAL );
-    RenderLines();
-  end;
-  If Engine.Modes.RenderObjectBoxes then
-  begin
-    FLinesVertices.Clear();
-    SetColor(1,0,0,1);
-    Engine.Map.RenderVisibleCells( RA_FRUSTUM_BOXES, RF_NORMAL );
-    RenderLines();
-  end;
-  If Engine.Modes.RenderNodeBoxes then
-  begin
-    FLinesVertices.Clear();
-    SetColor(1,1,0,1);
-    Engine.Map.RenderVisibleCells( RA_NODE_BOXES, RF_NORMAL );
-    RenderLines();
-  end;
+  If Engine.Modes.RenderNormals then RenderLines(1,0.5,0.25,1,RA_NORMALS);
+  If Engine.Modes.RenderObjectBoxes then RenderLines(1,0,0,1, RA_FRUSTUM_BOXES);
+  If Engine.Modes.RenderNodeBoxes then RenderLines(1,1,0,1, RA_NODE_BOXES);
 end;
 
 {******************************************************************************}
@@ -899,10 +892,9 @@ begin
     glClear(GL_COLOR_BUFFER_BIT);
     Engine.Camera.Translate();
     Engine.Map.Water.StartReflection();
-    If Engine.Modes.RenderSky then Engine.Map.SkyDome.Render();
     Engine.Camera.CalculateFrustum();
     Engine.Map.DetectVisibleCells();
-    Engine.Map.RenderVisibleCells( RA_NORMAL, RF_WATER );
+    RenderStaticGeometry();
     Engine.Map.Water.EndReflection();
   end;
 end;
@@ -992,16 +984,6 @@ begin
     Engine.Console.Render();
     Engine.GUI.MouseCursor.Render();
   SwitchToPerspective();
-end;
-
-{******************************************************************************}
-{* Render static geometry                                                     *}
-{******************************************************************************}
-
-Procedure RenderStaticGeometry();
-begin
-  Engine.Map.SkyDome.Render();
-  Engine.Map.RenderVisibleCells( RA_NORMAL, RF_NORMAL );
 end;
 
 {******************************************************************************}

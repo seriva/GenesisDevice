@@ -16,19 +16,21 @@ uniform vec4      V_BLUR_OFFSET;
 const int   Samples = 8;
 const float Sum = 3.0359;
 
+float Weights[9] = {
+    1.0000,
+    0.9394,
+    0.7788,
+    0.5697,
+    0.3678,
+    0.2096,
+    0.1053,
+    0.0467,
+    0.0183
+};
+
+
 void main(void)
 {
-    float Weights[9];
-    Weights[0] = 1.0000;
-    Weights[1] = 0.9394;
-    Weights[2] = 0.7788;
-    Weights[3] = 0.5697;
-    Weights[4] = 0.3678;
-    Weights[5] = 0.2096;
-    Weights[6] = 0.1053;
-    Weights[7] = 0.0467;
-    Weights[8] = 0.0183;
-
     vec4 Color = texture2D(T_BLUR_IMAGE, gl_TexCoord[0].xy) * Weights[0];
     vec2 TC;
     vec2 Offset;
