@@ -211,7 +211,7 @@ begin
       else if Pos('#INCLUDE', UpperCase(iLine)) > 0 then
       begin
         iSplit.Text := StringReplace(iLine, #32, #13#10, [rfReplaceAll]);
-        iInc.LoadFromFile( PATH_SHADERS + iSplit.Strings[ iSplit.Count-1 ] );
+        iInc.LoadFromFile( PATH_SHADERS + Trim(iSplit.Strings[ iSplit.Count-1 ]) );
         iLine := iInc.Text;
         goto IncludeLines;
       end
