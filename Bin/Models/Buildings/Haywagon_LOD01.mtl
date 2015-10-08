@@ -8,15 +8,18 @@ newmtl Metal_MetalWorn01_D_tga_Smoothing
 colormap MetalWorn01_D.dds
 has_alpha false
 alpha_func 0.7
+detail_uv_mult 4
 
 newmtl Planks02_PlanksOld02_D_tga
 colormap PlanksOld02_D.dds
 has_alpha false
 alpha_func 0.7
+detail_uv_mult 4
 
 newmtl Wheel_Wheel01_D_tga_Smoothing
 colormap Wheel01_D.dds
 has_alpha false
 alpha_func 0.7
+detail_uv_mult 4
 
 # num_materials: 3

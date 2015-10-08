@@ -8,5 +8,6 @@ newmtl barrel01_Barrel01_D_tga_Smoothing
 colormap Barrel01_D.dds
 has_alpha false
 alpha_func 0.7
+detail_uv_mult 4
 
 # num_materials: 1

@@ -64,7 +64,7 @@ void main(void)
 	vec4 Color   = texture2D(T_COLORMAP, ColorUV);
     vec4 Caustic = texture2D(T_CAUSTICMAP, ColorUV*10);
     
-	vec2 DUV = ColorUV * 4;
+	vec2 DUV = ColorUV * I_DETAIL_UV_MULT;
 	#INCLUDE Inc\detail.inc
     Color  = Color * Light; 
     

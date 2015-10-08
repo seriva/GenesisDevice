@@ -10,8 +10,10 @@ colormap bBushCo.dds
 has_alpha true
 alpha_func 0.7
 do_treeanim true
+detail_uv_mult 4
 
 newmtl Material__treeMat1
 colormap bbarkCo.dds
 has_alpha false
 alpha_func 0.7
+detail_uv_mult 4

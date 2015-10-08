@@ -8,40 +8,48 @@ newmtl Beam02_Beam02_D_tga
 colormap Beam02_D.dds
 has_alpha false
 alpha_func 0.7
+detail_uv_mult 4
 
 newmtl DirtDec_DirtDec01_tga
 colormap DirtDec01.dds
 has_alpha true
 alpha_func 0.7
+detail_uv_mult 4
 
 newmtl DirtDec2_DirtDec02_tga
 colormap DirtDec02.dds
 has_alpha true
 alpha_func 0.7
+detail_uv_mult 4
 
 newmtl MossDec02_MossDec02_tga
 colormap MossDec02.dds
 has_alpha true
 alpha_func 0.7
+detail_uv_mult 4
 
 newmtl Mud01_Mud01_D_tga
 colormap Mud01_D.dds
 has_alpha true
 alpha_func 0.7
+detail_uv_mult 4
 
 newmtl Plank01_PlanksOld01_D_tga
 colormap PlanksOld01_D.dds
 has_alpha false
 alpha_func 0.7
+detail_uv_mult 4
 
 newmtl Planks02_PlanksOld02_D_tga
 colormap PlanksOld02_D.dds
 has_alpha false
 alpha_func 0.7
+detail_uv_mult 4
 
 newmtl Roof01_Roof01_D_tga
 colormap Roof01_D.dds
 has_alpha false
 alpha_func 0.7
+detail_uv_mult 4
 
 # num_materials: 8

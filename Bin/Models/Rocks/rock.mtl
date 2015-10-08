@@ -2,3 +2,4 @@ newmtl rock
 colormap rock.dds
 has_alpha false
 alpha_func 0.7
+detail_uv_mult 50

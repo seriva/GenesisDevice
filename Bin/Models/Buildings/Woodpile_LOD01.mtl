@@ -8,15 +8,18 @@ newmtl Barkend01_BarkEnd01_D_tga_Smoothing
 colormap BarkEnd01_D.dds
 has_alpha false
 alpha_func 0.7
+detail_uv_mult 4
 
 newmtl barkstripped_01_BarkStripped01_D_tga_Smoothing
 colormap BarkStripped01_D.dds
 has_alpha false
 alpha_func 0.7
+detail_uv_mult 4
 
 newmtl Planks_old2_PlanksOld02_D_tga_Smoothing
 colormap PlanksOld02_D.dds
 has_alpha false
 alpha_func 0.7
+detail_uv_mult 4
 
 # num_materials: 3

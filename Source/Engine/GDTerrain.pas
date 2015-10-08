@@ -58,8 +58,9 @@ type
     FDetailTexture3    : TGDTexture;
     FDetailLookup      : TGDTexture;
     FTerrainLoaded     : Boolean;
-    FDetailUV          : Integer;
-    FCausticUV         : Integer;
+    FDetailUVMult      : Integer;
+    FDetailMapUV       : Integer;
+    FCausticMapUV      : Integer;
     FTriangleSize      : Integer;
     FHeightScale       : Integer;
     FVertices          : TGDVertex_V_UV_N_List;
@@ -68,8 +69,9 @@ type
     property TerrainWidth  : Integer read FTerrainWidth;
     property TerrainHeight : Integer read FTerrainHeight;
     property TerrainLoaded : Boolean read FTerrainLoaded;
-    property DetailUV      : integer read FDetailUV;
-    property CausticUV     : integer read FCausticUV;
+    property DetailMapUV   : integer read FDetailMapUV;
+    property DetailUVMult  : integer read FDetailUVMult;
+    property CausticMapUV  : integer read FCausticMapUV;
     property TriangleSize  : Integer read FTriangleSize;
     property HeightScale   : Integer read FHeightScale;
 
@@ -103,7 +105,7 @@ begin
   FTerrainTop    := 0;
   FTerrainBottom := 0;
   FTerrainLoaded := False;
-  FDetailUV      := 0;
+  FDetailMapUV   := 0;
   FTriangleSize  := 0;
   FHeightScale   := 0;
   FVertices      := TGDVertex_V_UV_N_List.Create();
@@ -149,8 +151,9 @@ begin
     FHeightScale   := aIniFile.ReadInteger('Terrain', 'HeightScale',  64 );
     FTerrainWidth  := iBmp.Width;
     FTerrainHeight := iBmp.Height;
-    FDetailUV      := aIniFile.ReadInteger('Terrain', 'DetailMapUV', 100 );
-    FCausticUV     := aIniFile.ReadInteger('Terrain', 'CausticUV', 100 );
+    FDetailUVMult  := aIniFile.ReadInteger('Terrain', 'DetailUVMult', 5 );
+    FDetailMapUV   := aIniFile.ReadInteger('Terrain', 'DetailMapUV', 100 );
+    FCausticMapUV  := aIniFile.ReadInteger('Terrain', 'CausticMapUV', 100 );
 
     if ((FTerrainWidth mod 2) <> 1) or ((FTerrainHeight mod 2) <> 1) then
       Raise Exception.Create('Heightmap dimensions are incorrect!');
@@ -421,8 +424,9 @@ begin
                      TerrainShader.SetInt('T_DETAILTEX3', 3);
                      TerrainShader.SetInt('T_WEIGHT_LOOKUP', 4);
                      TerrainShader.SetInt('T_CAUSTICMAP', 5);
-                     TerrainShader.SetInt('I_DETAIL_UV', FDetailUV);
-                     TerrainShader.SetInt('I_CAUSTIC_UV', FCausticUV);
+                     TerrainShader.SetInt('I_DETAIL_UV', FDetailMapUV);
+                     TerrainShader.SetInt('I_CAUSTIC_UV', FCausticMapUV);
+                     TerrainShader.SetInt('I_DETAIL_UV_MULT', FDetailUVMult);
                    end;
 
                    FColorTexture.BindTexture(GL_TEXTURE0);

@@ -534,13 +534,13 @@ begin
   //Detail
   If Engine.Settings.UseDetail then
   begin
-    aShader.SetInt('I_DETAIL', 1);
+    aShader.SetInt('I_DO_DETAIL', 1);
     Engine.Map.DetailTexture.BindTexture(GL_TEXTURE6);
     aShader.SetInt('T_DETAILMAP', 6);
     aShader.SetFloat('F_DETAIL_MULT', Engine.Map.DetailMult);
   end
   else
-    aShader.SetInt('I_DETAIL', 0);
+    aShader.SetInt('I_DO_DETAIL', 0);
 
   //Shadows
   if not(aForShadows) then

@@ -22,7 +22,7 @@ void main(void)
     #INCLUDE Inc\lighting.inc
     
     //Vertex
-    vec4 Eye      = gl_Vertex;
+    vec4 Eye = gl_Vertex;
     #INCLUDE Inc\vertex.inc
 
     //Shadows
@@ -65,8 +65,7 @@ void main(void)
 	vec4 Caustic = texture2D(T_CAUSTICMAP,    CausticUV);
 	Color        += (Detail1*Weights.x + Detail2*Weights.y + Detail3*Weights.z) - 0.5; 
     
-	vec2 DUV = DetailUV * 6;
-    if (I_DETAIL==1)
+	vec2 DUV = DetailUV * I_DETAIL_UV_MULT;
     #INCLUDE Inc\detail.inc
     Color = Color * Light;
     

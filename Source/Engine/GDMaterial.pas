@@ -52,11 +52,13 @@ Type
     FHasAlpha : Boolean;
     FAlphaFunc : double;
     FDoTreeAnim : boolean;
+    FDetailUVMult : Integer;
   public
     property Texture : TGDTexture read FTexture write FTexture;
     property HasAlpha : Boolean read FHasAlpha write FHasAlpha;
     property AlphaFunc : double read FAlphaFunc write FAlphaFunc;
     property DoTreeAnim : Boolean read FDoTreeAnim write FDoTreeAnim;
+    property DetailUVMult : integer read FDetailUVMult write FDetailUVMult;
 
     constructor Create();
     destructor  Destroy(); override;
@@ -76,6 +78,10 @@ uses
 
 constructor TGDMaterial.Create();
 begin
+  FHasAlpha := false;
+  FAlphaFunc := 1.0;
+  DetailUVMult := 4;
+  FDoTreeAnim := false;
 end;
 
 {******************************************************************************}
@@ -85,9 +91,6 @@ end;
 destructor TGDMaterial.Destroy();
 begin
   Engine.Resources.RemoveResource(TGDResource(FTexture));
-  FHasAlpha := false;
-  FAlphaFunc := 1.0;
-  FDoTreeAnim := false;
   inherited;
 end;
 
@@ -106,6 +109,7 @@ begin
       MeshShader.SetInt('I_DO_TREE_ANIM', 0);
     MeshShader.SetFloat('F_ANIMATION_SPEED', Engine.Timing.ElapsedTime / Engine.Map.Foliage.TreeAnimationSpeed);
     MeshShader.SetFloat('F_ANIMATION_STRENGTH', Engine.Map.Foliage.TreeAnimationStrength);
+    MeshShader.SetInt('I_DETAIL_UV_MULT', FDetailUVMult);
   end;
   FTexture.BindTexture( GL_TEXTURE0 );
   if FHasAlpha then

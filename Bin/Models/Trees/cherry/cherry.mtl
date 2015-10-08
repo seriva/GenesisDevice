@@ -9,9 +9,11 @@ newmtl Material__Material_cherry
 colormap chBarkCo.dds
 has_alpha false
 alpha_func 0.7
+detail_uv_mult 4
 
 newmtl Material__Material1_cherry
 colormap cherryCo.dds
 has_alpha true
 alpha_func 0.7
 do_treeanim true
+detail_uv_mult 4

@@ -205,6 +205,13 @@ begin
         iStr := GetNextToken(iFile);
         iMat.AlphaFunc := StrToFloat(iStr);
         continue;
+      end else if iStr = 'detail_uv_mult' then //read detail uv mult
+      begin
+        if iMat = nil then
+          continue;
+        iStr := GetNextToken(iFile);
+        iMat.DetailUVMult := StrToInt(iStr);
+        continue;
       end;
     end;
     FreeAndNil(iFile);
