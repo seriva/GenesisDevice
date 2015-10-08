@@ -173,13 +173,19 @@ begin
         iMat := TGDMaterial.Create();
         AddResource(iStr, iMat);
         continue;
-      end
-      else if iStr = 'colormap' then //load the material texture
+      end else if iStr = 'colormap' then //load the material texture
       begin
         if iMat = nil then
           continue;
         iStr := GetNextToken(iFile);
-        iMat.Texture := Engine.Resources.LoadTexture(ExtractFilePath(aFileName) + iStr , Engine.Settings.TextureDetail,Engine.Settings.TextureFilter);
+        iMat.Texture := Engine.Resources.LoadTexture(iStr , Engine.Settings.TextureDetail,Engine.Settings.TextureFilter);
+        continue;
+      end else if iStr = 'detailmap' then //load the material detail
+      begin
+        if iMat = nil then
+          continue;
+        iStr := GetNextToken(iFile);
+        iMat.Detail := Engine.Resources.LoadTexture(iStr , Engine.Settings.TextureDetail,Engine.Settings.TextureFilter);
         continue;
       end
       else if iStr = 'has_alpha' then //read alpha
@@ -211,6 +217,13 @@ begin
           continue;
         iStr := GetNextToken(iFile);
         iMat.DetailUVMult := StrToInt(iStr);
+        continue;
+      end else if iStr = 'detail_mult' then //read detail mult
+      begin
+        if iMat = nil then
+          continue;
+        iStr := GetNextToken(iFile);
+        iMat.DetailMult := StrToFloat(iStr);
         continue;
       end;
     end;

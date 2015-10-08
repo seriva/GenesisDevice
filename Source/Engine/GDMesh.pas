@@ -90,8 +90,7 @@ Type
 implementation
 
 uses
-  GDEngine,
-  GDResources;
+  GDEngine;
 
 {******************************************************************************}
 {* Create surface                                                             *}

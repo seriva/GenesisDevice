@@ -5,9 +5,11 @@
 # num_materials: 1
 
 newmtl crate_crate01_D_tga
-colormap crate01_D.dds
+colormap Models\Buildings\crate01_D.dds
+detailmap Textures\Detail\detail.dds    
 has_alpha false
 alpha_func 0.7
 detail_uv_mult 4
+detail_mult 0.4
 
 # num_materials: 1

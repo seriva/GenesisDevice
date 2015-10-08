@@ -57,7 +57,8 @@ type
     FDetailTexture2    : TGDTexture;
     FDetailTexture3    : TGDTexture;
     FDetailLookup      : TGDTexture;
-    FTerrainLoaded     : Boolean;
+    FDetailTexture     : TGDTexture;
+    FDetailMult        : double;
     FDetailUVMult      : Integer;
     FDetailMapUV       : Integer;
     FCausticMapUV      : Integer;
@@ -65,12 +66,11 @@ type
     FHeightScale       : Integer;
     FVertices          : TGDVertex_V_UV_N_List;
     FVertexBuffer      : TGDGLVertexBuffer;
+    FTerrainLoaded     : Boolean;
   public
     property TerrainWidth  : Integer read FTerrainWidth;
     property TerrainHeight : Integer read FTerrainHeight;
     property TerrainLoaded : Boolean read FTerrainLoaded;
-    property DetailMapUV   : integer read FDetailMapUV;
-    property DetailUVMult  : integer read FDetailUVMult;
     property CausticMapUV  : integer read FCausticMapUV;
     property TriangleSize  : Integer read FTriangleSize;
     property HeightScale   : Integer read FHeightScale;
@@ -151,6 +151,7 @@ begin
     FHeightScale   := aIniFile.ReadInteger('Terrain', 'HeightScale',  64 );
     FTerrainWidth  := iBmp.Width;
     FTerrainHeight := iBmp.Height;
+    FDetailMult    := aIniFile.ReadFloat( 'Terrain', 'DetailMult', 0.5 );
     FDetailUVMult  := aIniFile.ReadInteger('Terrain', 'DetailUVMult', 5 );
     FDetailMapUV   := aIniFile.ReadInteger('Terrain', 'DetailMapUV', 100 );
     FCausticMapUV  := aIniFile.ReadInteger('Terrain', 'CausticMapUV', 100 );
@@ -210,6 +211,7 @@ begin
     FDetailTexture1 := Engine.Resources.LoadTexture(aIniFile.ReadString( 'Terrain', 'DetailMap1', 'detailmap1.jpg'), Engine.Settings.TextureDetail,Engine.Settings.TextureFilter);
     FDetailTexture2 := Engine.Resources.LoadTexture(aIniFile.ReadString( 'Terrain', 'DetailMap2', 'detailmap2.jpg'), Engine.Settings.TextureDetail,Engine.Settings.TextureFilter);
     FDetailTexture3 := Engine.Resources.LoadTexture(aIniFile.ReadString( 'Terrain', 'DetailMap3', 'detailmap3.jpg'), Engine.Settings.TextureDetail,Engine.Settings.TextureFilter);
+    FDetailTexture  := Engine.Resources.LoadTexture(aIniFile.ReadString( 'Terrain', 'DetailMap', 'detail.dds'), Engine.Settings.TextureDetail,Engine.Settings.TextureFilter);
     FDetailLookup   := Engine.Resources.LoadTexture(aIniFile.ReadString( 'Terrain', 'DetailDistribution', 'detaillookup.jpg') ,Engine.Settings.TextureDetail,Engine.Settings.TextureFilter);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
@@ -245,6 +247,7 @@ begin
   Engine.Resources.RemoveResource(TGDResource(FDetailTexture1));
   Engine.Resources.RemoveResource(TGDResource(FDetailTexture2));
   Engine.Resources.RemoveResource(TGDResource(FDetailTexture3));
+  Engine.Resources.RemoveResource(TGDResource(FDetailTexture));
   Engine.Resources.RemoveResource(TGDResource(FDetailLookup));
 
   FTerrainLoaded := False;
@@ -426,6 +429,7 @@ begin
                      TerrainShader.SetInt('T_CAUSTICMAP', 5);
                      TerrainShader.SetInt('I_DETAIL_UV', FDetailMapUV);
                      TerrainShader.SetInt('I_CAUSTIC_UV', FCausticMapUV);
+                     TerrainShader.SetFloat('F_DETAIL_MULT', FDetailMult);
                      TerrainShader.SetInt('I_DETAIL_UV_MULT', FDetailUVMult);
                    end;
 
@@ -435,6 +439,7 @@ begin
                    FDetailTexture3.BindTexture(GL_TEXTURE3);
                    FDetailLookup.BindTexture(GL_TEXTURE4);
                    Engine.Map.Water.BindCausticTexture();
+                   FDetailTexture.BindTexture(GL_TEXTURE6);
                  end;
     end;
   end;

@@ -1,0 +1,1 @@
+ShadowCoord = gl_TextureMatrix[7] * Eye; 

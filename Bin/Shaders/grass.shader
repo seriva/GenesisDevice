@@ -32,7 +32,7 @@ void main(void)
 	#INCLUDE Inc\vertex.inc
     
     //Shadows
-    ShadowCoord = gl_TextureMatrix[7] * Eye;      
+    #INCLUDE Inc\shadows_coords.inc
     
     //Fog
 	#INCLUDE Inc\fog.inc
@@ -47,6 +47,7 @@ uniform sampler2D T_GRASSTEX;
 uniform sampler2D T_SHADOWMAP;
 #INCLUDE Inc\lighting_uniforms.inc
 #INCLUDE Inc\fog_uniforms.inc
+#INCLUDE Inc\water_uniforms.inc
 
 varying vec2  ColorUV;
 #INCLUDE Inc\varying.inc

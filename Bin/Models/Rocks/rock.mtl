@@ -1,5 +1,7 @@
 newmtl rock
-colormap rock.dds
+colormap Models\Rocks\rock.dds
+detailmap Textures\Detail\detail.dds
 has_alpha false
 alpha_func 0.7
-detail_uv_mult 50
+detail_uv_mult 60
+detail_mult 0.4

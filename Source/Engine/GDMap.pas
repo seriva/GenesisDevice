@@ -68,9 +68,6 @@ type
     FFoliage         : TGDFoliage;
     FSkyDome         : TGDSkyDome;
 
-    FDetailTexture   : TGDTexture;
-    FDetailMult      : double;
-
     FCellManager     : TGDCellManager;
   public
     property PlayerStart : TGDVector read FPlayerStart;
@@ -89,9 +86,6 @@ type
     property Water       : TGDWater read FWater;
     property Foliage     : TGDFoliage read FFoliage;
     property SkyDome     : TGDSkyDome read FSkyDome;
-
-    property DetailTexture : TGDTexture read FDetailTexture;
-    property DetailMult    : double read FDetailMult;
 
     constructor Create();
     destructor  Destroy(); override;
@@ -160,13 +154,6 @@ begin
   //spawnpoint
   FPlayerStart := ReadVector(iIniFile, 'SpawnPoint', 'Position');
   FPlayerViewAngle := ReadVector(iIniFile, 'SpawnPoint', 'ViewAngle');
-
-  //detail texture
-  FDetailTexture := Engine.Resources.LoadTexture(iIniFile.ReadString( 'Detail', 'Texture', 'detail.dds'), Engine.Settings.TextureDetail,Engine.Settings.TextureFilter);
-  FDetailMult    := iIniFile.ReadFloat( 'Detail', 'DetailMult', 0.5 );
-
-  //bloom
-  //Engine.Renderer.BloomStrengh := iIniFile.ReadFloat( 'Bloom', 'Strengh', 0.5 );
 
   //directional light
   FLightDirection := ReadVector(iIniFile, 'Light', 'Direction');
@@ -279,7 +266,6 @@ begin
   FWater.Clear();
   FFoliage.Clear();
   FSkyDome.Clear();
-  Engine.Resources.RemoveResource(TGDResource(FDetailTexture));
 
   FCellManager.Clear();
 end;

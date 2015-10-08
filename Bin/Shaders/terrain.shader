@@ -26,7 +26,7 @@ void main(void)
     #INCLUDE Inc\vertex.inc
 
     //Shadows
-    ShadowCoord = gl_TextureMatrix[7] * Eye;     
+    #INCLUDE Inc\shadows_coords.inc
 
     //Fog
     #INCLUDE Inc\fog.inc

@@ -6,14 +6,18 @@
 # 
 
 newmtl Material__treeMat
-colormap bBushCo.dds
+colormap Models\Trees\balm\bBushCo.dds
+detailmap Textures\Detail\detail.dds    
 has_alpha true
 alpha_func 0.7
 do_treeanim true
 detail_uv_mult 4
+detail_mult 0.4
 
 newmtl Material__treeMat1
-colormap bbarkCo.dds
+colormap Models\Trees\balm\bbarkCo.dds
+detailmap Textures\Detail\detail.dds    
 has_alpha false
 alpha_func 0.7
 detail_uv_mult 4
+detail_mult 0.4

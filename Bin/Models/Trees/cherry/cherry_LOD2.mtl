@@ -6,8 +6,10 @@
 # 
 
 newmtl cherry_lod2_surface
-colormap chLod2Co.dds
+colormap Models\Trees\cherry\chLod2Co.dds
+detailmap Textures\Detail\detail.dds    
 has_alpha true
 alpha_func 0.7
 detail_uv_mult 4
+detail_mult 0.4
 

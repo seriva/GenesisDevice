@@ -49,16 +49,20 @@ Type
   TGDMaterial = class (TGDResource)
   private
     FTexture : TGDTexture;
+    FDetail  : TGDTexture;
     FHasAlpha : Boolean;
     FAlphaFunc : double;
     FDoTreeAnim : boolean;
     FDetailUVMult : Integer;
+    FDetailMult   : double;
   public
     property Texture : TGDTexture read FTexture write FTexture;
+    property Detail : TGDTexture read FDetail write FDetail;
     property HasAlpha : Boolean read FHasAlpha write FHasAlpha;
     property AlphaFunc : double read FAlphaFunc write FAlphaFunc;
     property DoTreeAnim : Boolean read FDoTreeAnim write FDoTreeAnim;
     property DetailUVMult : integer read FDetailUVMult write FDetailUVMult;
+    property DetailMult : Double read FDetailMult write FDetailMult;
 
     constructor Create();
     destructor  Destroy(); override;
@@ -78,10 +82,13 @@ uses
 
 constructor TGDMaterial.Create();
 begin
+  FTexture  := nil;
+  FDetail   := nil;
   FHasAlpha := false;
-  FAlphaFunc := 1.0;
-  DetailUVMult := 4;
-  FDoTreeAnim := false;
+  FAlphaFunc   := 1.0;
+  DetailUVMult := 1;
+  DetailMult   := 0.5;
+  FDoTreeAnim  := false;
 end;
 
 {******************************************************************************}
@@ -91,6 +98,7 @@ end;
 destructor TGDMaterial.Destroy();
 begin
   Engine.Resources.RemoveResource(TGDResource(FTexture));
+  Engine.Resources.RemoveResource(TGDResource(FDetail));
   inherited;
 end;
 
@@ -110,8 +118,10 @@ begin
     MeshShader.SetFloat('F_ANIMATION_SPEED', Engine.Timing.ElapsedTime / Engine.Map.Foliage.TreeAnimationSpeed);
     MeshShader.SetFloat('F_ANIMATION_STRENGTH', Engine.Map.Foliage.TreeAnimationStrength);
     MeshShader.SetInt('I_DETAIL_UV_MULT', FDetailUVMult);
+    MeshShader.SetFloat('F_DETAIL_MULT', FDetailMult);
   end;
-  FTexture.BindTexture( GL_TEXTURE0 );
+  if assigned(FTexture) then FTexture.BindTexture( GL_TEXTURE0 );
+  if assigned(FDetail) then FDetail.BindTexture(GL_TEXTURE6);
   if FHasAlpha then
   begin
     glEnable(GL_ALPHA_TEST);

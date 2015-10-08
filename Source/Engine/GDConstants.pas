@@ -64,7 +64,7 @@ const
   TWaterDetail     : array[1..3] of String  = ('Low', 'Medium','High');
 
   //engine constants
-  ENGINE_INFO     = '83 - 5 October 2015';
+  ENGINE_INFO     = '84 - 8 October 2015';
 
   //renderer constants
   R_HUDWIDTH              = 1600;
