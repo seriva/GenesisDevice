@@ -56,6 +56,7 @@ type
     FDetailTexture1    : TGDTexture;
     FDetailTexture2    : TGDTexture;
     FDetailTexture3    : TGDTexture;
+    FDetailTexture4    : TGDTexture;
     FDetailLookup      : TGDTexture;
     FDetailTexture     : TGDTexture;
     FDetailMult        : double;
@@ -211,6 +212,7 @@ begin
     FDetailTexture1 := Engine.Resources.LoadTexture(aIniFile.ReadString( 'Terrain', 'DetailMap1', 'detailmap1.jpg'), Engine.Settings.TextureDetail,Engine.Settings.TextureFilter);
     FDetailTexture2 := Engine.Resources.LoadTexture(aIniFile.ReadString( 'Terrain', 'DetailMap2', 'detailmap2.jpg'), Engine.Settings.TextureDetail,Engine.Settings.TextureFilter);
     FDetailTexture3 := Engine.Resources.LoadTexture(aIniFile.ReadString( 'Terrain', 'DetailMap3', 'detailmap3.jpg'), Engine.Settings.TextureDetail,Engine.Settings.TextureFilter);
+    FDetailTexture4 := Engine.Resources.LoadTexture(aIniFile.ReadString( 'Terrain', 'DetailMap4', 'detailmap4.jpg'), Engine.Settings.TextureDetail,Engine.Settings.TextureFilter);
     FDetailTexture  := Engine.Resources.LoadTexture(aIniFile.ReadString( 'Terrain', 'DetailMap', 'detail.dds'), Engine.Settings.TextureDetail,Engine.Settings.TextureFilter);
     FDetailLookup   := Engine.Resources.LoadTexture(aIniFile.ReadString( 'Terrain', 'DetailDistribution', 'detaillookup.jpg') ,Engine.Settings.TextureDetail,Engine.Settings.TextureFilter);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -247,6 +249,7 @@ begin
   Engine.Resources.RemoveResource(TGDResource(FDetailTexture1));
   Engine.Resources.RemoveResource(TGDResource(FDetailTexture2));
   Engine.Resources.RemoveResource(TGDResource(FDetailTexture3));
+  Engine.Resources.RemoveResource(TGDResource(FDetailTexture4));
   Engine.Resources.RemoveResource(TGDResource(FDetailTexture));
   Engine.Resources.RemoveResource(TGDResource(FDetailLookup));
 
@@ -425,21 +428,21 @@ begin
                      TerrainShader.SetInt('T_DETAILTEX1', 1);
                      TerrainShader.SetInt('T_DETAILTEX2', 2);
                      TerrainShader.SetInt('T_DETAILTEX3', 3);
-                     TerrainShader.SetInt('T_WEIGHT_LOOKUP', 4);
-                     TerrainShader.SetInt('T_CAUSTICMAP', 5);
+                     TerrainShader.SetInt('T_DETAILTEX4', 4);
+                     TerrainShader.SetInt('T_WEIGHT_LOOKUP', 5);
                      TerrainShader.SetInt('I_DETAIL_UV', FDetailMapUV);
                      TerrainShader.SetInt('I_CAUSTIC_UV', FCausticMapUV);
                      TerrainShader.SetFloat('F_DETAIL_MULT', FDetailMult);
                      TerrainShader.SetInt('I_DETAIL_UV_MULT', FDetailUVMult);
                    end;
-
                    FColorTexture.BindTexture(GL_TEXTURE0);
                    FDetailTexture1.BindTexture(GL_TEXTURE1);
                    FDetailTexture2.BindTexture(GL_TEXTURE2);
                    FDetailTexture3.BindTexture(GL_TEXTURE3);
-                   FDetailLookup.BindTexture(GL_TEXTURE4);
+                   FDetailTexture4.BindTexture(GL_TEXTURE4);
+                   FDetailLookup.BindTexture(GL_TEXTURE5);
                    Engine.Map.Water.BindCausticTexture();
-                   FDetailTexture.BindTexture(GL_TEXTURE6);
+                   FDetailTexture.BindTexture(GL_TEXTURE7);
                  end;
     end;
   end;

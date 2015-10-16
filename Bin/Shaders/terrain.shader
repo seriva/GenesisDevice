@@ -40,6 +40,7 @@ uniform sampler2D T_COLORTEX;
 uniform sampler2D T_DETAILTEX1;
 uniform sampler2D T_DETAILTEX2;
 uniform sampler2D T_DETAILTEX3;
+uniform sampler2D T_DETAILTEX4;
 uniform sampler2D T_WEIGHT_LOOKUP;
 uniform sampler2D T_CAUSTICMAP;
 uniform sampler2D T_DETAILMAP;
@@ -61,9 +62,10 @@ void main(void)
 	vec4 Detail1 = texture2D(T_DETAILTEX1,    DetailUV);
 	vec4 Detail2 = texture2D(T_DETAILTEX2,    DetailUV);
 	vec4 Detail3 = texture2D(T_DETAILTEX3,    DetailUV);
+    vec4 Detail4 = texture2D(T_DETAILTEX4,    DetailUV);
 	vec4 Weights = texture2D(T_WEIGHT_LOOKUP, ColorUV);
 	vec4 Caustic = texture2D(T_CAUSTICMAP,    CausticUV);
-	Color        += (Detail1*Weights.x + Detail2*Weights.y + Detail3*Weights.z) - 0.5; 
+	Color        += (Detail1*Weights.r + Detail2*Weights.g + Detail3*Weights.b + Detail4 * Weights.a) - 0.5; 
     
 	vec2 DUV = DetailUV * I_DETAIL_UV_MULT;
     #INCLUDE Inc\detail.inc

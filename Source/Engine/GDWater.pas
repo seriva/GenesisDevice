@@ -463,7 +463,7 @@ procedure TGDWater.BindCausticTexture();
 begin
   If FWaterLoaded then
   begin
-    TGDTexture(FCausticTextures.Items[ FCausticCounter ]).BindTexture(GL_TEXTURE5);
+    TGDTexture(FCausticTextures.Items[ FCausticCounter ]).BindTexture(GL_TEXTURE6);
   end;
 end;
 

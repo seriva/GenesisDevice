@@ -528,14 +528,14 @@ begin
   aShader.SetFloat('I_WATER_MAX', Engine.Map.Water.MaxDistance);
   aShader.SetFloat('I_WATER_MIN', Engine.Map.Water.MinDistance);
   aShader.SetFloat3('V_CAM_POS', Engine.Camera.Position.x,  Engine.Camera.Position.Y,  Engine.Camera.Position.Z );
-  aShader.SetInt('T_CAUSTICMAP', 5);
+  aShader.SetInt('T_CAUSTICMAP', 6);
   Engine.Map.Water.BindCausticTexture();
 
   //Detail
   If Engine.Settings.UseDetail then
   begin
     aShader.SetInt('I_DO_DETAIL', 1);
-    aShader.SetInt('T_DETAILMAP', 6);
+    aShader.SetInt('T_DETAILMAP', 7);
   end
   else
     aShader.SetInt('I_DO_DETAIL', 0);
@@ -543,12 +543,12 @@ begin
   //Shadows
   if not(aForShadows) then
   begin
-    aShader.SetInt('T_SHADOWMAP', 7);
-    FShadowTex.BindTexture(GL_TEXTURE7);
+    aShader.SetInt('T_SHADOWMAP', 8);
+    FShadowTex.BindTexture(GL_TEXTURE8);
   end
   else
   begin
-    glActiveTexture(GL_TEXTURE7);
+    glActiveTexture(GL_TEXTURE8);
     glBindTexture(GL_TEXTURE_2D, 0);
   end;
 end;

@@ -121,7 +121,7 @@ begin
     MeshShader.SetFloat('F_DETAIL_MULT', FDetailMult);
   end;
   if assigned(FTexture) then FTexture.BindTexture( GL_TEXTURE0 );
-  if assigned(FDetail) then FDetail.BindTexture(GL_TEXTURE6);
+  if assigned(FDetail) then FDetail.BindTexture(GL_TEXTURE7);
   if FHasAlpha then
   begin
     glEnable(GL_ALPHA_TEST);
