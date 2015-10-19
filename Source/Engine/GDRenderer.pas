@@ -935,7 +935,7 @@ begin
     glMatrixMode(GL_PROJECTION);
     glPushMatrix();
     glLoadIdentity();
-    glOrtho(-10000, 10000, -10000, 10000, -15000, 15000);
+    glOrtho(-10000, 10000, -10000, 10000, -1000000, 1000000);
     glMatrixMode(GL_MODELVIEW);
     glPushMatrix();
     glLoadIdentity();
