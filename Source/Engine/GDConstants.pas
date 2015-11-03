@@ -80,8 +80,8 @@ const
   R_CAUSTIC_TIME          = 50;
   R_NORMAL_LENGTH         = 32;
   R_LOD0_DISTANCE         = 15;
-  R_LOD1_DISTANCE         = 50;
-  R_LOD2_DISTANCE         = 100;
+  R_LOD1_DISTANCE         = 35;
+  R_LOD2_DISTANCE         = 65;
   R_SHADOW_SIZE           = 2048;
 
   //sound constants

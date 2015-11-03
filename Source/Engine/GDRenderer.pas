@@ -72,10 +72,10 @@ type
     FTextureShader : TGDGLShader;
     FClearShader   : TGDGLShader;
 
-    FFrameFBO      : TGDGLFrameBuffer;
-    FFrameTex      : TGDTexture;
+    FFrameFBO       : TGDGLFrameBuffer;
+    FFrameTex       : TGDTexture;
     FFrameShadowTex : TGDTexture;
-    FFrameDepthTex : TGDTexture;
+    FFrameDepthTex  : TGDTexture;
 
     FBlurFBO       : TGDGLFrameBuffer;
     FBlurRBO       : TGDGLRenderBuffer;
