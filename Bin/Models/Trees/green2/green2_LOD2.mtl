@@ -7,8 +7,5 @@
 
 newmtl green2_lod2_surface
 colormap Models\Trees\green2\grLod2Co.dds
-detailmap Textures\Detail\detail.dds    
 has_alpha true
 alpha_func 0.7
-detail_uv_mult 4
-detail_mult 0.4

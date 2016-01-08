@@ -5,7 +5,14 @@
 # http://www.righthemisphere.com/
 # 
 
-newmtl balm_lod2_surface
-colormap Models\Trees\balm\bLod2Co.dds
+newmtl Material__Material_LOD1
+colormap Models\Trees\green2\barkgC.dds
+has_alpha false
+alpha_func 0.7
+
+newmtl Material__Material1_LOD1
+colormap Models\Trees\green2\leafGrC.dds
 has_alpha true
 alpha_func 0.7
+do_treeanim true
+
