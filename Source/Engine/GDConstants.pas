@@ -139,6 +139,7 @@ const
   SHADER_BLUR     = PATH_SHADERS + 'blur.shader';
   SHADER_POST     = PATH_SHADERS + 'postprocess.shader';
   SHADER_MESH     = PATH_SHADERS + 'mesh.shader';
+  SHADER_SUN      = PATH_SHADERS + 'sun.shader';
   SHADER_COLOR    = PATH_SHADERS + 'color.shader';
   SHADER_TEXTURE  = PATH_SHADERS + 'texture.shader';
   SHADER_CLEAR    = PATH_SHADERS + 'clear.shader';

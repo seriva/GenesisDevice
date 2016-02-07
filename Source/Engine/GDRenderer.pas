@@ -67,6 +67,7 @@ type
     FGrassShader   : TGDGLShader;
     FBlurShader    : TGDGLShader;
     FMeshShader    : TGDGLShader;
+    FSunShader     : TGDGLShader;
     FPostShader    : TGDGLShader;
     FColorShader   : TGDGLShader;
     FTextureShader : TGDGLShader;
@@ -110,6 +111,7 @@ type
     property    GrassShader    : TGDGLShader read FGrassShader;
     property    MeshShader     : TGDGLShader read FMeshShader;
     property    ColorShader    : TGDGLShader read FColorShader;
+    property    SunShader      : TGDGLShader read FSunShader;
 
     Constructor Create();
     Destructor  Destroy();override;
@@ -580,7 +582,7 @@ begin
                      FTextureShader.Bind();
                      FTextureShader.SetInt('T_COLORMAP', 0);
                    end;
-     RS_TEXTURE  : begin
+    RS_TEXTURE   : begin
                      FTextureShader.Bind();
                      FTextureShader.SetInt('T_COLORMAP', 0);
                    end;
@@ -611,6 +613,7 @@ begin
   FGrassShader    := TGDGLShader.Create(SHADER_GRASS);
   FBlurShader     := TGDGLShader.Create(SHADER_BLUR);
   FMeshShader     := TGDGLShader.Create(SHADER_MESH);
+  FSunShader      := TGDGLShader.Create(SHADER_SUN);
   FPostShader     := TGDGLShader.Create(SHADER_POST);
   FColorShader    := TGDGLShader.Create(SHADER_COLOR);
   FTextureShader  := TGDGLShader.Create(SHADER_TEXTURE);
@@ -631,6 +634,7 @@ begin
   FreeAndNil(FGrassShader);
   FreeAndNil(FBlurShader);
   FreeAndNil(FMeshShader);
+  FreeAndNil(FSunShader);
   FreeAndNil(FPostShader);
   FreeAndNil(FColorShader);
   FreeAndNil(FTextureShader);

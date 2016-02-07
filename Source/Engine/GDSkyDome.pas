@@ -50,14 +50,18 @@ type
 
   TGDSkyDome = class
   private
-    FIndexBuffer   : TGDGLIndexBuffer;
-    FVertexBuffer  : TGDGLVertexBuffer;
-    FCloudTexture  : TGDTexture;
-    FSize          : Single;
-    FIntensity     : Single;
-    FCloudUV       : Single;
+    FIndexBuffer     : TGDGLIndexBuffer;
+    FVertexBuffer    : TGDGLVertexBuffer;
+    FCloudTexture    : TGDTexture;
+    FSunFlareTexture : TGDTexture;
+    FSunTexture      : TGDTexture;
+    FSize            : Single;
+    FIntensity       : Single;
+    FCloudUV         : Single;
     FAniSpeed1, FAniSpeed2 : Single;
-    FTriangleCount : Integer;
+    FTriangleCount   : Integer;
+    FSunQuery        : GLuint;
+    FSunSize         : Single;
 
     procedure CalculateDome(aSize : Double );
   public
@@ -68,7 +72,10 @@ type
 
     procedure InitSkyDome( aIniFile : TIniFile; aSize : Double );
     procedure Clear();
-    Procedure Render();
+    procedure Render();
+
+    procedure RenderSun();
+    procedure RenderSunFlare();
   end;
 
 implementation
@@ -105,6 +112,10 @@ begin
   FreeAndNil(FVertexBuffer);
   FTriangleCount := 0;
   Engine.Resources.RemoveResource(TGDResource(FCloudTexture));
+  Engine.Resources.RemoveResource(TGDResource(FSunTexture));
+  Engine.Resources.RemoveResource(TGDResource(FSunFlareTexture));
+  glDeleteQueries(1, @FSunQuery);
+  FSunSize := 0.5;
 end;
 
 {******************************************************************************}
@@ -181,7 +192,7 @@ end;
 procedure TGDSkyDome.InitSkyDome(  aIniFile : TIniFile; aSize : Double );
 begin
   Clear();
-  FCloudTexture := Engine.Resources.LoadTexture(aIniFile.ReadString( 'Sky', 'CloudMap', 'sky.jpg' ), Engine.Settings.TextureDetail, Engine.Settings.TextureFilter);
+  FCloudTexture := Engine.Resources.LoadTexture(aIniFile.ReadString( 'Sky', 'CloudMap', 'sky.dds' ), Engine.Settings.TextureDetail, Engine.Settings.TextureFilter);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
   FIntensity := aIniFile.ReadFloat( 'Sky', 'Intensity', 0.5 );
@@ -189,6 +200,11 @@ begin
   FAniSpeed1 := aIniFile.ReadFloat( 'Sky', 'AniSpeed1', 1000.0 );
   FAniSpeed2 := aIniFile.ReadFloat( 'Sky', 'AniSpeed2', 1000.0 );
   CalculateDome(aSize);
+
+  FSunTexture := Engine.Resources.LoadTexture(aIniFile.ReadString( 'Sky', 'SunMap', 'sun.dds' ), Engine.Settings.TextureDetail, Engine.Settings.TextureFilter);
+  FSunFlareTexture := Engine.Resources.LoadTexture(aIniFile.ReadString( 'Sky', 'SunFlareMap', 'sunflare.dds' ), Engine.Settings.TextureDetail, Engine.Settings.TextureFilter);
+  glGenQueries(1, @FSunQuery);
+  FSunSize := aIniFile.ReadFloat( 'Sky', 'SunSize', 0.5 );
 end;
 
 {******************************************************************************}
@@ -231,6 +247,89 @@ begin
   glDepthMask(GLboolean(TRUE));
   glEnable(GL_DEPTH_TEST);
   glPopMatrix();
+end;
+
+{******************************************************************************}
+{* Render the sun                                                             *}
+{******************************************************************************}
+
+procedure TGDSkyDome.RenderSun();
+var
+  iSunPos, iTemp : TGDVector;
+begin
+  iSunPos := Engine.Camera.Position.Copy();
+  iTemp := Engine.Map.LightDirection.inverse();
+  iTemp.Multiply(50000);
+  iSunPos.Add(iTemp);
+
+  glEnable(GL_POINT_SPRITE);
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_ONE, GL_ONE);
+
+  Engine.Renderer.SunShader.Bind();
+  Engine.Renderer.SunShader.SetInt('T_SUNMAP', 0);
+
+  FSunTexture.BindTexture(GL_TEXTURE0);
+  glPointSize( Round(Engine.Settings.Width * FSunSize)  );
+  glBegin( GL_POINTS );
+    glVertex3f( iSunPos.X, iSunPos.Y, iSunPos.z);
+  glEnd();
+  glPointSize( 1.0 );
+
+  glDisable(GL_POINT_SPRITE);
+  glDisable(GL_BLEND);
+  glEnable(GL_DEPTH_TEST);
+end;
+
+{******************************************************************************}
+{* Render the sunflare                                                        *}
+{******************************************************************************}
+
+procedure TGDSkyDome.RenderSunFlare();
+var
+  iSunPos, iTemp : TGDVector;
+  iResults : Integer;
+begin
+  iSunPos := Engine.Camera.Position.Copy();
+  iTemp := Engine.Map.LightDirection.inverse();
+  iTemp.Multiply(50000);
+  iSunPos.Add(iTemp);
+
+  glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+  glDepthMask(GL_FALSE);
+
+  glBeginQuery(GL_SAMPLES_PASSED, FSunQuery);
+  glPointSize( 5.0 );
+  glBegin( GL_POINTS );
+    glVertex3f( iSunPos.X, iSunPos.Y, iSunPos.z);
+  glEnd();
+  glEndQuery(GL_SAMPLES_PASSED);
+
+  glDepthMask(GL_TRUE);
+  glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+
+  glEnable(GL_POINT_SPRITE);
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_ONE, GL_ONE);
+  glDisable(GL_DEPTH_TEST);
+
+  Engine.Renderer.SunShader.Bind();
+  Engine.Renderer.SunShader.SetInt('T_SUNMAP', 0);
+
+  glGetQueryObjectiv(FSunQuery, GL_QUERY_RESULT, @iResults);
+  if (iResults > 5) then
+  begin
+    FSunFlareTexture.BindTexture(GL_TEXTURE0);
+    glPointSize( Round(Engine.Settings.Width * FSunSize)  );
+    glBegin( GL_POINTS );
+      glVertex3f( iSunPos.X, iSunPos.Y, iSunPos.z);
+    glEnd();
+    glPointSize( 1.0 );
+  end;
+
+  glDisable(GL_POINT_SPRITE);
+  glDisable(GL_BLEND);
+  glEnable(GL_DEPTH_TEST);
 end;
 
 end.

@@ -62,6 +62,7 @@ type
     function    Angle(const aVector : TGDVector ) : Single;
     procedure   Normalize();
     function    Magnitude(): Single;
+    function    Inverse(): TGDVector;
 
     function    ArrayPointer() : PGLfloat;
     class operator Equal (v1, v2: TGDVector) B: Boolean;
@@ -455,6 +456,17 @@ begin
     exit;
   end;
 	result :=  iAngle;
+end;
+
+{******************************************************************************}
+{* Vector inverse                                                             *}
+{******************************************************************************}
+
+function TGDVector.Inverse(): TGDVector;
+begin
+  result.x := -self.x;
+  result.y := -self.y;
+  result.z := -self.z;
 end;
 
 {******************************************************************************}

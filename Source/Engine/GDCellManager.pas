@@ -485,6 +485,11 @@ Begin
     end;
   end;
 
+  if (aRenderFor = RF_NORMAL) and not(Engine.Modes.RenderWireframe) then
+  begin
+    Engine.Map.SkyDome.RenderSun();
+  end;
+
   //render the visible water cells
   If (Engine.Modes.RenderWater) and (aRenderFor <> RF_WATER) and (aRenderFor <> RF_SHADOW) then
   begin
@@ -496,6 +501,11 @@ Begin
       TriangleCount := TriangleCount + 2;
     end;
     aWater.EndRendering();
+  end;
+
+  if (aRenderFor = RF_NORMAL) and not(Engine.Modes.RenderWireframe) then
+  begin
+    Engine.Map.SkyDome.RenderSunFlare();
   end;
 End;
 
