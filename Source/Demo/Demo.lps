@@ -4,7 +4,7 @@
     <PathDelim Value="\"/>
     <Version Value="9"/>
     <BuildModes Active="Default"/>
-    <Units Count="43">
+    <Units Count="42">
       <Unit0>
         <Filename Value="Demo.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -94,11 +94,10 @@
       <Unit8>
         <Filename Value="..\Engine\GDCellManager.pas"/>
         <IsPartOfProject Value="True"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="8"/>
         <WindowIndex Value="1"/>
-        <TopLine Value="477"/>
-        <CursorPos X="68" Y="506"/>
+        <TopLine Value="438"/>
+        <CursorPos X="143" Y="485"/>
         <UsageCount Value="207"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -249,8 +248,9 @@
       <Unit23>
         <Filename Value="..\Engine\GDSkyDome.pas"/>
         <IsPartOfProject Value="True"/>
+        <IsVisibleTab Value="True"/>
         <WindowIndex Value="1"/>
-        <TopLine Value="257"/>
+        <TopLine Value="230"/>
         <CursorPos Y="310"/>
         <UsageCount Value="207"/>
         <Loaded Value="True"/>
@@ -428,17 +428,9 @@
         <WindowIndex Value="1"/>
         <TopLine Value="9"/>
         <CursorPos X="10" Y="27"/>
-        <UsageCount Value="134"/>
+        <UsageCount Value="133"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit41>
-      <Unit42>
-        <Filename Value="C:\lazarus\fpc\2.6.4\source\rtl\objpas\fgl.pp"/>
-        <EditorIndex Value="-1"/>
-        <WindowIndex Value="1"/>
-        <TopLine Value="510"/>
-        <CursorPos X="11" Y="106"/>
-        <UsageCount Value="1"/>
-      </Unit42>
     </Units>
     <JumpHistory Count="28" HistoryIndex="27">
       <Position1>
