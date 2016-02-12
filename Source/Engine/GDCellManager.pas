@@ -485,10 +485,9 @@ Begin
     end;
   end;
 
-  if (aRenderFor = RF_NORMAL) and not(Engine.Modes.RenderWireframe) then
-  begin
+  //Render the sun
+  if (aRenderFor = RF_NORMAL) and not(Engine.Modes.RenderWireframe) and (aRenderAttribute = RA_NORMAL) then
     Engine.Map.SkyDome.RenderSun();
-  end;
 
   //render the visible water cells
   If (Engine.Modes.RenderWater) and (aRenderFor <> RF_WATER) and (aRenderFor <> RF_SHADOW) then
@@ -503,10 +502,9 @@ Begin
     aWater.EndRendering();
   end;
 
-  if (aRenderFor = RF_NORMAL) and not(Engine.Modes.RenderWireframe) then
-  begin
+  //Render the sunflare
+  if (aRenderFor = RF_NORMAL) and not(Engine.Modes.RenderWireframe) and (aRenderAttribute = RA_NORMAL) then
     Engine.Map.SkyDome.RenderSunFlare();
-  end;
 End;
 
 end.

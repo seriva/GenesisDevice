@@ -265,7 +265,7 @@ begin
   glEnable(GL_POINT_SPRITE);
   glEnable(GL_BLEND);
   glBlendFunc(GL_ONE, GL_ONE);
-
+  glEnable(GL_DEPTH_TEST);
   Engine.Renderer.SunShader.Bind();
   Engine.Renderer.SunShader.SetInt('T_SUNMAP', 0);
 
@@ -276,9 +276,9 @@ begin
   glEnd();
   glPointSize( 1.0 );
 
+  Engine.Renderer.SunShader.Unbind();
   glDisable(GL_POINT_SPRITE);
   glDisable(GL_BLEND);
-  glEnable(GL_DEPTH_TEST);
 end;
 
 {******************************************************************************}
@@ -312,7 +312,6 @@ begin
   glEnable(GL_BLEND);
   glBlendFunc(GL_ONE, GL_ONE);
   glDisable(GL_DEPTH_TEST);
-
   Engine.Renderer.SunShader.Bind();
   Engine.Renderer.SunShader.SetInt('T_SUNMAP', 0);
 
@@ -327,6 +326,7 @@ begin
     glPointSize( 1.0 );
   end;
 
+  Engine.Renderer.SunShader.Unbind();
   glDisable(GL_POINT_SPRITE);
   glDisable(GL_BLEND);
   glEnable(GL_DEPTH_TEST);
