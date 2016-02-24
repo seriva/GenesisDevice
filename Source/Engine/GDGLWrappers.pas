@@ -163,6 +163,21 @@ Type
     procedure Render(aPrimitive : cardinal);
   end;
 
+{******************************************************************************}
+{* Occlusion Query class                                                      *}
+{******************************************************************************}
+
+  TGDGLOcclusionQuery = class
+  private
+    FOQID  : GLuint;
+    FSTATE : TGDOcclusionState;
+  public
+    constructor Create();
+    destructor  Destroy(); override;
+
+    procedure Bind();
+    procedure Unbind();
+  end;
 
 implementation
 
@@ -710,6 +725,48 @@ end;
 procedure TGDGLIndexBuffer.Render(aPrimitive : cardinal);
 begin
   glDrawElements(aPrimitive, FCount, GL_UNSIGNED_INT, nil);
+end;
+
+{******************************************************************************}
+{* Create the OcclusionQuery class                                            *}
+{******************************************************************************}
+
+constructor TGDGLOcclusionQuery.Create();
+begin
+  glGenQueries(1, &FOQID);
+  FState := OS_HIDDEN;
+end;
+
+{******************************************************************************}
+{* Destroy the OcclusionQuery class                                           *}
+{******************************************************************************}
+
+destructor TGDGLOcclusionQuery.Destroy();
+begin
+  inherited;
+  glDeleteQueries(1, @FOQID);
+end;
+
+{******************************************************************************}
+{* Enable the OcclusionQuery                                                  *}
+{******************************************************************************}
+
+procedure TGDGLShader.Bind();
+begin
+  glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+  glDepthMask(GL_FALSE);
+  glBeginQuery(GL_SAMPLES_PASSED, FOQID);
+end;
+
+{******************************************************************************}
+{* Disable the OcclusionQuery                                                 *}
+{******************************************************************************}
+
+procedure TGDGLShader.UnBind();
+begin
+  glEndQuery(GL_SAMPLES_PASSED);
+  glDepthMask(GL_TRUE);
+  glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 end;
 
 end.

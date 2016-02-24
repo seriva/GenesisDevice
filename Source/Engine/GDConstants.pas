@@ -48,6 +48,9 @@ type
   //Mesh LOD type
   TGDMeshLODType = (LT_NONE, LT_FADE_IN, LT_STAGES);
 
+  //Occlusion state
+  TGDOcclusionState = (OS_WAITING, OS_HIDDEN, OS_VISIBLE);
+
   //Sound type
   TGDSoundResourceType = (SR_BUFFER, SR_STREAM);
 
