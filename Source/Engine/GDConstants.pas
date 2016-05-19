@@ -66,9 +66,6 @@ const
   TTextureFilter   : array[1..6] of String  = ('Bilinear', 'Trilinear','Anisotropic 2x','Anisotropic 4x','Anisotropic 8x','Anisotropic 16x');
   TWaterDetail     : array[1..3] of String  = ('Low', 'Medium','High');
 
-  //engine constants
-  ENGINE_INFO     = '84 - 8 October 2015';
-
   //renderer constants
   R_HUDWIDTH              = 1600;
   R_HUDHEIGHT             = 1200;

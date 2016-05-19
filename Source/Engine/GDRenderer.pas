@@ -79,7 +79,6 @@ type
     FFrameDepthTex  : TGDTexture;
 
     FBlurFBO       : TGDGLFrameBuffer;
-    FBlurRBO       : TGDGLRenderBuffer;
     FBlurTex       : TGDTexture;
 
     FShadowFBO     : TGDGLFrameBuffer;
@@ -667,10 +666,6 @@ begin
 
   //Bluring
   FBlurFBO := TGDGLFrameBuffer.Create();
-  FBlurRBO := TGDGLRenderBuffer.Create(Engine.Settings.Width div 4, Engine.Settings.Height div 4, GL_DEPTH_COMPONENT24);
-  FBlurFBO.Bind();
-  FBlurFBO.AttachRenderBuffer(FBlurRBO, GL_DEPTH_ATTACHMENT_EXT);
-  FBlurFBO.Unbind();
   FBlurTex := TGDTexture.Create(GL_RGBA, GL_RGBA, Engine.Settings.Width div 4, Engine.Settings.Height div 4);
 end;
 
@@ -698,7 +693,6 @@ begin
   FreeAndNil(FFrameDepthTex);
 
   FreeAndNil(FBlurFBO);
-  FreeAndNil(FBlurRBO);
   FreeAndNil(FBlurTex);
 end;
 

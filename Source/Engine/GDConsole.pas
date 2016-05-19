@@ -143,7 +143,6 @@ begin
   FCursorUpdate := False;
   AddCommand('Help', 'Show help', CT_FUNCTION, @Help);
   Write('Log started at ' + DateToStr(Date()) + ', ' + TimeToStr(Time()));
-  Write('Build: ' + ENGINE_INFO);
   Reset();
 end;
 

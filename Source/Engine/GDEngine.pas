@@ -74,15 +74,12 @@ type
     FMap        : TGDMap;
     FGUI        : TGDGUI;
 
-    function GetVersion(): String;
-
     constructor Create();
     destructor  Destroy(); override;
 
     function  InitSystems(): boolean;
     procedure ClearSystems();
   public
-    property Version    : String read GetVersion;
     property Timing     : TGDTiming read FTiming;
     property Console    : TGDConsole read FConsole;
     property Settings   : TGDSettings read FSettings;
@@ -107,15 +104,6 @@ var
   Engine : TGDEngine;
 
 implementation
-
-{******************************************************************************}
-{* Get engine version                                                         *}
-{******************************************************************************}
-
-function TGDEngine.GetVersion(): String;
-begin
-  result := ENGINE_INFO;
-end;
 
 {******************************************************************************}
 {* Create engine class                                                        *}

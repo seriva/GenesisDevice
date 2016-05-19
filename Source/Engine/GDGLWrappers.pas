@@ -414,7 +414,7 @@ end;
 destructor TGDGLFrameBuffer.Destroy();
 begin
   inherited;
-  glDeleteFrameBuffersEXT(1, @FBufferID);
+  glDeleteFrameBuffers(1, @FBufferID);
 end;
 
 {******************************************************************************}
@@ -423,7 +423,7 @@ end;
 
 procedure TGDGLFrameBuffer.Bind();
 begin
-  glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, FBufferID);
+  glBindFramebuffer(GL_FRAMEBUFFER, FBufferID);
 end;
 
 {******************************************************************************}
@@ -432,7 +432,7 @@ end;
 
 procedure TGDGLFrameBuffer.Unbind();
 begin
-  glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
+  glBindFramebuffer(GL_FRAMEBUFFER, 0);
 end;
 
 {******************************************************************************}
@@ -441,7 +441,7 @@ end;
 
 procedure TGDGLFrameBuffer.AttachTexture( aTexture : TGDTexture; aAttachement, aTexTarget : cardinal);
 begin
-  glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, aAttachement, aTexTarget, aTexture.Texture, 0);
+  glFramebufferTexture2D(GL_FRAMEBUFFER, aAttachement, aTexTarget, aTexture.Texture, 0);
 end;
 
 {******************************************************************************}
@@ -450,7 +450,7 @@ end;
 
 procedure TGDGLFrameBuffer.AttachRenderBuffer(aRenderBuffer : TGDGLRenderBuffer; aAttachement : cardinal);
 begin
-  glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT,aAttachement,GL_RENDERBUFFER_EXT,aRenderBuffer.FBufferID);
+  glFramebufferRenderbuffer(GL_FRAMEBUFFER,aAttachement,GL_RENDERBUFFER,aRenderBuffer.FBufferID);
 end;
 
 {******************************************************************************}
@@ -461,13 +461,13 @@ procedure TGDGLFrameBuffer.Status();
 var
   iM: GLenum;
 begin
-  iM := glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT);
+  iM := glCheckFramebufferStatus(GL_FRAMEBUFFER);
   case iM of
-    GL_FRAMEBUFFER_COMPLETE_EXT:
+    GL_FRAMEBUFFER_COMPLETE:
       Exit;
-    GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT_EXT:
+    GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT:
       Engine.Console.Write('Error messages: FBO : Incomplete attachment');
-    GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT_EXT:
+    GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT:
       Engine.Console.Write('Error messages: FBO : Incomplete attachment');
     GL_FRAMEBUFFER_INCOMPLETE_DUPLICATE_ATTACHMENT_EXT:
       Engine.Console.Write('Error messages: FBO : Duplicate attachment');
@@ -492,9 +492,9 @@ end;
 
 constructor TGDGLRenderBuffer.Create(aSizeW, aSizeH : Integer; aFormat  : cardinal);
 begin
-  glGenRenderBuffersEXT(1, @FBufferID);
-  glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, FBufferID);
-  glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, aFormat,aSizeW, aSizeH);
+  glGenRenderBuffers(1, @FBufferID);
+  glBindRenderbuffer(GL_RENDERBUFFER, FBufferID);
+  glRenderbufferStorage(GL_RENDERBUFFER, aFormat,aSizeW, aSizeH);
 end;
 
 {******************************************************************************}
@@ -504,7 +504,7 @@ end;
 destructor  TGDGLRenderBuffer.Destroy();
 begin
   inherited;
-  glDeleteRenderBuffersEXT(1, @FBufferID);
+  glDeleteRenderBuffers(1, @FBufferID);
 end;
 
 {******************************************************************************}
@@ -513,7 +513,7 @@ end;
 
 procedure TGDGLRenderBuffer.Bind();
 begin
-  glBindRenderBufferEXT(GL_RENDERBUFFER_EXT, FBufferID);
+  glBindRenderBuffer(GL_RENDERBUFFER, FBufferID);
 end;
 
 {******************************************************************************}
@@ -522,7 +522,7 @@ end;
 
 procedure TGDGLRenderBuffer.Unbind();
 begin
-  glBindRenderBufferEXT(GL_RENDERBUFFER_EXT, 0);
+  glBindRenderBuffer(GL_RENDERBUFFER, 0);
 end;
 
 {******************************************************************************}
