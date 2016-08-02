@@ -733,7 +733,7 @@ end;
 
 constructor TGDGLOcclusionQuery.Create();
 begin
-  glGenQueries(1, &FOQID);
+  glGenQueries(1, @FOQID);
   FState := OS_HIDDEN;
 end;
 
@@ -751,7 +751,7 @@ end;
 {* Enable the OcclusionQuery                                                  *}
 {******************************************************************************}
 
-procedure TGDGLShader.Bind();
+procedure TGDGLOcclusionQuery.Bind();
 begin
   glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
   glDepthMask(GL_FALSE);
@@ -762,7 +762,7 @@ end;
 {* Disable the OcclusionQuery                                                 *}
 {******************************************************************************}
 
-procedure TGDGLShader.UnBind();
+procedure TGDGLOcclusionQuery.UnBind();
 begin
   glEndQuery(GL_SAMPLES_PASSED);
   glDepthMask(GL_TRUE);
