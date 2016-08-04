@@ -36,6 +36,7 @@ uses
   LCLIntf,
   LCLType,
   SysUtils,
+  sdl2,
   dglOpenGL,
   GDRenderer,
   GDConsole,
@@ -128,15 +129,32 @@ end;
 {******************************************************************************}
 
 function TGDEngine.InitSystems(): boolean;
+var
+  iSDLInit : boolean;
+  iVersion : TSDL_Version;
 begin
-  FTiming     := TGDTiming.Create();
   FConsole    := TGDConsole.Create();
   FSettings   := TGDSettings.Create();
 
+  Engine.Console.Write('.....Initializing SDL');
+  iSDLInit := not(SDL_Init(SDL_INIT_VIDEO or SDL_INIT_TIMER) < 0);
+  if iSDLInit then
+  begin
+    SDL_GetVersion(@iVersion);
+    Engine.Console.Write('Version: ' + IntToStr(iVersion.major) + '.' +
+                         IntToStr(iVersion.minor) + '.' +
+                         IntToStr(iVersion.patch));
+    Engine.Console.Write('......Done initializing SDL');
+
+  end
+  else
+    Engine.Console.Write('Failed to initialize SDL: ' + SDL_GetError());
+
+  FTiming     := TGDTiming.Create();
   FInput      := TGDInput.Create();
   FSound      := TGDSound.Create();
   FRenderer   := TGDRenderer.Create();
-  result      := FSound.Initialized and FInput.Initialized and FRenderer.Initialized;
+  result      := FSound.Initialized and FInput.Initialized and FRenderer.Initialized and iSDLInit;
 
   FStatistics := TGDStatistics.Create();
   FModes      := TGDModes.Create();
@@ -166,6 +184,9 @@ begin
   FreeAndNil(FGUI);
   FreeAndNil(FMap);
   FreeAndNil(FResources);
+
+  SDL_Quit();
+  Engine.Console.Write('Shutting down SDL...Ok');
 end;
 
 {******************************************************************************}

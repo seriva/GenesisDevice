@@ -319,7 +319,9 @@ begin
   try
     FInitialized := true;
     if not(InitOpenAL()) then
-      Raise Exception.Create('Error initializing OpenAL! Is OpenAL installed?');
+      Raise Exception.Create('OpenAL library is missing!');
+    if not(InitMPG123()) then
+      Raise Exception.Create('mpg123 library is missing!');
     FDevice := alcOpenDevice(nil); //for now only default device.
     if not(alGetError() = AL_NO_ERROR) then
       Raise Exception.Create('Error initializing sound device!');
@@ -391,6 +393,9 @@ begin
     alcCloseDevice(FDevice);
     if not(alGetError() = AL_NO_ERROR) then
       Raise Exception.Create('Error destroying device!');
+
+    FreeMPG123();
+    FreeOpenAL();
   except
     on E: Exception do
     begin

@@ -47,7 +47,7 @@ uses
   multimon,
   GDConstants,
   GDEngine,
-  FileUtil;
+  LazFileUtils;
 
 type
 {******************************************************************************}

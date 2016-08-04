@@ -35,10 +35,7 @@ uses
   GDFoliage,
   GDConstants,
   GDSkyDome,
-  GDTexture,
   GDWater,
-  GDResource,
-  GDGLWrappers,
   GDCellManager,
   GDStringparsing,
   GDMeshCell;

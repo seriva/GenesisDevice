@@ -31,9 +31,7 @@ unit GDTiming;
 interface
 
 uses
-  LCLIntf,
-  LCLType,
-  Windows,
+  sdl2,
   SysUtils;
 
 type
@@ -75,7 +73,7 @@ implementation
 constructor TGDTiming.Create();
 begin
   inherited;
-  FDemoStart   := GetTickCount();
+  FDemoStart   := SDL_GetTicks();
   FElapsedTime := 0;
   FLastTime    := 0;
   FFrameTime   := 0;
@@ -99,7 +97,7 @@ end;
 procedure TGDTiming.CalculateFrameTime();
 begin
   FLastTime    := FElapsedTime;
-  FElapsedTime := GetTickCount() - FDemoStart;
+  FElapsedTime := SDL_GetTicks() - FDemoStart;
   FElapsedTime := (FLastTime + FElapsedTime) div 2;
   FFrameTime   := FELapsedTime - FLastTime;
 end;
@@ -110,7 +108,7 @@ end;
 
 Procedure TGDTiming.Start();
 begin
-  FStart := GetTickCount();
+  FStart := SDL_GetTicks();
 end;
 
 {******************************************************************************}
@@ -119,7 +117,7 @@ end;
 
 Procedure TGDTiming.Stop();
 begin
-  FStop := GetTickCount();
+  FStop := SDL_GetTicks();
 end;
 
 {******************************************************************************}
@@ -146,7 +144,7 @@ end;
 
 function TGDTiming.GetTime(): integer;
 begin
-  result := GetTickCount();
+  result := SDL_GetTicks();
 end;
 
 end.

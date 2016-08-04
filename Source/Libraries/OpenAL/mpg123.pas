@@ -5,9 +5,6 @@ uses
   Windows,
   SysUtils;
 
-  // INITIAL CONVERSION BY ARTHUR 17/02/2008
-  // USE http://www.mpg123.de/api/ FOR DOCUMENTATION SINCE I STRIPED ALL THE COMMENTS FROM THE UNIT
-
 type
   PDWord = ^DWORD;
   PPbyte = ^PByte;
@@ -386,91 +383,96 @@ var
 
   mpg123_outblock: function(mh: Pmpg123_handle): size_t; cdecl;
 
-  //mpg123_replace_reader : function(mh:Pmpg123_handle; r_read:function (_para1:longint; _para2:pointer; _para3:size_t):Tssize_t; r_lseek:function (_para1:longint; _para2:off_t; _para3:longint):off_t):longint;
+
+  function  InitMPG123(lib: PChar = 'libmpg123.dll'): boolean;
+  procedure FreeMPG123();
 
 implementation
 
 var
   hlib: THandle;
 
-procedure Freempg123;
+procedure FreeMPG123();
 begin
   FreeLibrary(hlib);
 end;
 
-procedure Loadmpg123(lib: PChar);
+function InitMPG123(lib: PChar = 'libmpg123.dll'): boolean;
 begin
+  Result := False;
+  if hlib <> 0 then
+    FreeMPG123();
   hlib := LoadLibrary(lib);
-  mpg123_init := GetProcAddress(hlib, 'mpg123_init');
-  mpg123_exit := GetProcAddress(hlib, 'mpg123_exit');
-  mpg123_new := GetProcAddress(hlib, 'mpg123_new');
-  mpg123_delete := GetProcAddress(hlib, 'mpg123_delete');
-  mpg123_param := GetProcAddress(hlib, 'mpg123_param');
-  mpg123_getparam := GetProcAddress(hlib, 'mpg123_getparam');
-  mpg123_plain_strerror := GetProcAddress(hlib, 'mpg123_plain_strerror');
-  mpg123_strerror := GetProcAddress(hlib, 'mpg123_strerror');
-  mpg123_errcode := GetProcAddress(hlib, 'mpg123_errcode');
-  mpg123_decoders := GetProcAddress(hlib, 'mpg123_decoders');
-  mpg123_supported_decoders := GetProcAddress(hlib, 'mpg123_supported_decoders');
-  mpg123_decoder := GetProcAddress(hlib, 'mpg123_decoder');
-  mpg123_rates := GetProcAddress(hlib, 'mpg123_rates');
-  mpg123_encodings := GetProcAddress(hlib, 'mpg123_encodings');
-  mpg123_format_none := GetProcAddress(hlib, 'mpg123_format_none');
-  mpg123_format_all := GetProcAddress(hlib, 'mpg123_format_all');
-  mpg123_format := GetProcAddress(hlib, 'mpg123_format');
-  mpg123_format_support := GetProcAddress(hlib, 'mpg123_format_support');
-  mpg123_getformat := GetProcAddress(hlib, 'mpg123_getformat');
-  mpg123_open := GetProcAddress(hlib, 'mpg123_open');
-  mpg123_open_fd := GetProcAddress(hlib, 'mpg123_open_fd');
-  mpg123_open_feed := GetProcAddress(hlib, 'mpg123_open_feed');
-  mpg123_close := GetProcAddress(hlib, 'mpg123_close');
-  mpg123_read := GetProcAddress(hlib, 'mpg123_read');
-  mpg123_decode := GetProcAddress(hlib, 'mpg123_decode');
-  mpg123_decode_frame := GetProcAddress(hlib, 'mpg123_decode_frame');
-  mpg123_tell := GetProcAddress(hlib, 'mpg123_tell');
-  mpg123_tellframe := GetProcAddress(hlib, 'mpg123_tellframe');
-  mpg123_seek := GetProcAddress(hlib, 'mpg123_seek');
-  mpg123_feedseek := GetProcAddress(hlib, 'mpg123_feedseek');
-  mpg123_seek_frame := GetProcAddress(hlib, 'mpg123_seek_frame');
-  mpg123_timeframe := GetProcAddress(hlib, 'mpg123_timeframe');
-  mpg123_index := GetProcAddress(hlib, 'mpg123_index');
-  mpg123_position := GetProcAddress(hlib, 'mpg123_position');
-  mpg123_eq := GetProcAddress(hlib, 'mpg123_eq');
-  mpg123_reset_eq := GetProcAddress(hlib, 'mpg123_reset_eq');
-  mpg123_volume := GetProcAddress(hlib, 'mpg123_volume');
-  mpg123_volume_change := GetProcAddress(hlib, 'mpg123_volume_change');
-  mpg123_getvolume := GetProcAddress(hlib, 'mpg123_getvolume');
-  mpg123_info := GetProcAddress(hlib, 'mpg123_info');
-  mpg123_safe_buffer := GetProcAddress(hlib, 'mpg123_safe_buffer');
-  mpg123_scan := GetProcAddress(hlib, 'mpg123_scan');
-  mpg123_length := GetProcAddress(hlib, 'mpg123_length');
-  mpg123_tpf := GetProcAddress(hlib, 'mpg123_tpf');
-  mpg123_clip := GetProcAddress(hlib, 'mpg123_clip');
-  mpg123_init_string := GetProcAddress(hlib, 'mpg123_init_string');
-  mpg123_free_string := GetProcAddress(hlib, 'mpg123_free_string');
-  mpg123_resize_string := GetProcAddress(hlib, 'mpg123_resize_string');
-  mpg123_copy_string := GetProcAddress(hlib, 'mpg123_copy_string');
-  mpg123_add_string := GetProcAddress(hlib, 'mpg123_add_string');
-  mpg123_set_string := GetProcAddress(hlib, 'mpg123_set_string');
-  mpg123_meta_check := GetProcAddress(hlib, 'mpg123_meta_check');
-  mpg123_id3_ := GetProcAddress(hlib, 'mpg123_id3');
-  mpg123_icy_ := GetProcAddress(hlib, 'mpg123_icy');
-  mpg123_parnew := GetProcAddress(hlib, 'mpg123_parnew');
-  mpg123_new_pars := GetProcAddress(hlib, 'mpg123_new_pars');
-  mpg123_delete_pars := GetProcAddress(hlib, 'mpg123_delete_pars');
-  mpg123_fmt_none := GetProcAddress(hlib, 'mpg123_fmt_none');
-  mpg123_fmt_all := GetProcAddress(hlib, 'mpg123_fmt_all');
-  mpg123_fmt := GetProcAddress(hlib, 'mpg123_fmt');
-  mpg123_fmt_support := GetProcAddress(hlib, 'mpg123_fmt_support');
-  mpg123_par := GetProcAddress(hlib, 'mpg123_par');
-  mpg123_getpar := GetProcAddress(hlib, 'mpg123_getpar');
-  mpg123_replace_buffer := GetProcAddress(hlib, 'mpg123_replace_buffer');
-  mpg123_outblock := GetProcAddress(hlib, 'mpg123_outblock');
-  //mpg123_replace_reader := GetProcAddress(hlib,'mpg123_replace_reader');
+
+  if (hlib <> 0) then
+  begin
+    mpg123_init := GetProcAddress(hlib, 'mpg123_init');
+    mpg123_exit := GetProcAddress(hlib, 'mpg123_exit');
+    mpg123_new := GetProcAddress(hlib, 'mpg123_new');
+    mpg123_delete := GetProcAddress(hlib, 'mpg123_delete');
+    mpg123_param := GetProcAddress(hlib, 'mpg123_param');
+    mpg123_getparam := GetProcAddress(hlib, 'mpg123_getparam');
+    mpg123_plain_strerror := GetProcAddress(hlib, 'mpg123_plain_strerror');
+    mpg123_strerror := GetProcAddress(hlib, 'mpg123_strerror');
+    mpg123_errcode := GetProcAddress(hlib, 'mpg123_errcode');
+    mpg123_decoders := GetProcAddress(hlib, 'mpg123_decoders');
+    mpg123_supported_decoders := GetProcAddress(hlib, 'mpg123_supported_decoders');
+    mpg123_decoder := GetProcAddress(hlib, 'mpg123_decoder');
+    mpg123_rates := GetProcAddress(hlib, 'mpg123_rates');
+    mpg123_encodings := GetProcAddress(hlib, 'mpg123_encodings');
+    mpg123_format_none := GetProcAddress(hlib, 'mpg123_format_none');
+    mpg123_format_all := GetProcAddress(hlib, 'mpg123_format_all');
+    mpg123_format := GetProcAddress(hlib, 'mpg123_format');
+    mpg123_format_support := GetProcAddress(hlib, 'mpg123_format_support');
+    mpg123_getformat := GetProcAddress(hlib, 'mpg123_getformat');
+    mpg123_open := GetProcAddress(hlib, 'mpg123_open');
+    mpg123_open_fd := GetProcAddress(hlib, 'mpg123_open_fd');
+    mpg123_open_feed := GetProcAddress(hlib, 'mpg123_open_feed');
+    mpg123_close := GetProcAddress(hlib, 'mpg123_close');
+    mpg123_read := GetProcAddress(hlib, 'mpg123_read');
+    mpg123_decode := GetProcAddress(hlib, 'mpg123_decode');
+    mpg123_decode_frame := GetProcAddress(hlib, 'mpg123_decode_frame');
+    mpg123_tell := GetProcAddress(hlib, 'mpg123_tell');
+    mpg123_tellframe := GetProcAddress(hlib, 'mpg123_tellframe');
+    mpg123_seek := GetProcAddress(hlib, 'mpg123_seek');
+    mpg123_feedseek := GetProcAddress(hlib, 'mpg123_feedseek');
+    mpg123_seek_frame := GetProcAddress(hlib, 'mpg123_seek_frame');
+    mpg123_timeframe := GetProcAddress(hlib, 'mpg123_timeframe');
+    mpg123_index := GetProcAddress(hlib, 'mpg123_index');
+    mpg123_position := GetProcAddress(hlib, 'mpg123_position');
+    mpg123_eq := GetProcAddress(hlib, 'mpg123_eq');
+    mpg123_reset_eq := GetProcAddress(hlib, 'mpg123_reset_eq');
+    mpg123_volume := GetProcAddress(hlib, 'mpg123_volume');
+    mpg123_volume_change := GetProcAddress(hlib, 'mpg123_volume_change');
+    mpg123_getvolume := GetProcAddress(hlib, 'mpg123_getvolume');
+    mpg123_info := GetProcAddress(hlib, 'mpg123_info');
+    mpg123_safe_buffer := GetProcAddress(hlib, 'mpg123_safe_buffer');
+    mpg123_scan := GetProcAddress(hlib, 'mpg123_scan');
+    mpg123_length := GetProcAddress(hlib, 'mpg123_length');
+    mpg123_tpf := GetProcAddress(hlib, 'mpg123_tpf');
+    mpg123_clip := GetProcAddress(hlib, 'mpg123_clip');
+    mpg123_init_string := GetProcAddress(hlib, 'mpg123_init_string');
+    mpg123_free_string := GetProcAddress(hlib, 'mpg123_free_string');
+    mpg123_resize_string := GetProcAddress(hlib, 'mpg123_resize_string');
+    mpg123_copy_string := GetProcAddress(hlib, 'mpg123_copy_string');
+    mpg123_add_string := GetProcAddress(hlib, 'mpg123_add_string');
+    mpg123_set_string := GetProcAddress(hlib, 'mpg123_set_string');
+    mpg123_meta_check := GetProcAddress(hlib, 'mpg123_meta_check');
+    mpg123_id3_ := GetProcAddress(hlib, 'mpg123_id3');
+    mpg123_icy_ := GetProcAddress(hlib, 'mpg123_icy');
+    mpg123_parnew := GetProcAddress(hlib, 'mpg123_parnew');
+    mpg123_new_pars := GetProcAddress(hlib, 'mpg123_new_pars');
+    mpg123_delete_pars := GetProcAddress(hlib, 'mpg123_delete_pars');
+    mpg123_fmt_none := GetProcAddress(hlib, 'mpg123_fmt_none');
+    mpg123_fmt_all := GetProcAddress(hlib, 'mpg123_fmt_all');
+    mpg123_fmt := GetProcAddress(hlib, 'mpg123_fmt');
+    mpg123_fmt_support := GetProcAddress(hlib, 'mpg123_fmt_support');
+    mpg123_par := GetProcAddress(hlib, 'mpg123_par');
+    mpg123_getpar := GetProcAddress(hlib, 'mpg123_getpar');
+    mpg123_replace_buffer := GetProcAddress(hlib, 'mpg123_replace_buffer');
+    mpg123_outblock := GetProcAddress(hlib, 'mpg123_outblock');
+    Result := True;
+  end;
 end;
 
-initialization
-  Loadmpg123('libmpg123.dll');
-finalization
-  Freempg123;
 end.
