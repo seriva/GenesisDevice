@@ -35,7 +35,7 @@ Uses
   GDConstants,
   GDMaterial,
   GDGLWrappers,
-  FileUtil,
+  LazFileUtils,
   GDTypesGenerics,
   GDResource,
   GDStringParsing;

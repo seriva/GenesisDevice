@@ -201,6 +201,7 @@ begin
   if PlayerInWater() then
     Engine.Camera.Position.SetY(Engine.Camera.Position.y - FSinkSpeed);
 
+  iTerrainHeight := 0;
   Engine.Map.Terrain.GetHeight(Engine.Camera.Position.X, Engine.Camera.Position.Z, iTerrainHeight);
 
   if iTerrainHeight > Engine.Map.Water.WaterHeight then

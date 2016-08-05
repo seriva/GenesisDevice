@@ -74,12 +74,6 @@ type
     FCamera     : TGDCamera;
     FMap        : TGDMap;
     FGUI        : TGDGUI;
-
-    constructor Create();
-    destructor  Destroy(); override;
-
-    function  InitSystems(): boolean;
-    procedure ClearSystems();
   public
     property Timing     : TGDTiming read FTiming;
     property Console    : TGDConsole read FConsole;
@@ -95,6 +89,12 @@ type
     property Camera     : TGDCamera read FCamera;
     property Map        : TGDMap read FMap;
     property GUI        : TGDGUI read FGUI;
+
+    constructor Create();
+    destructor  Destroy(); override;
+
+    function  InitSystems(): boolean;
+    procedure ClearSystems();
 
     procedure Reset();
 
@@ -145,7 +145,6 @@ begin
                          IntToStr(iVersion.minor) + '.' +
                          IntToStr(iVersion.patch));
     Engine.Console.Write('......Done initializing SDL');
-
   end
   else
     Engine.Console.Write('Failed to initialize SDL: ' + SDL_GetError());
@@ -177,6 +176,9 @@ begin
   FreeAndNil(FSound);
   FreeAndNil(FRenderer);
 
+  SDL_Quit();
+  Engine.Console.Write('Shutting down SDL...Ok');
+
   FreeAndNil(FTiming);
   FreeAndNil(FConsole);
   FreeAndNil(FSettings);
@@ -184,9 +186,6 @@ begin
   FreeAndNil(FGUI);
   FreeAndNil(FMap);
   FreeAndNil(FResources);
-
-  SDL_Quit();
-  Engine.Console.Write('Shutting down SDL...Ok');
 end;
 
 {******************************************************************************}

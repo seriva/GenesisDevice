@@ -201,7 +201,6 @@ end;
 procedure TConfigurationForm.FillComboboxes();
 var
  iI: LongInt;
- iStr: string;
 begin
   //fill monitors combobox
   FillDisplays();

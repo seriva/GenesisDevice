@@ -17,6 +17,7 @@ object ConfigurationForm: TConfigurationForm
   OnDestroy = FormDestroy
   OnShow = FormShow
   Position = poDefault
+  LCLVersion = '1.7'
   Visible = False
   object RunButton: TButton
     Left = 328
@@ -96,9 +97,9 @@ object ConfigurationForm: TConfigurationForm
         end
         object FullScreenCheckBox: TCheckBox
           Left = 6
-          Height = 23
+          Height = 20
           Top = 80
-          Width = 146
+          Width = 142
           Caption = 'Fullscreen                    '
           Font.Color = clWindowText
           Font.Height = -13
@@ -110,9 +111,9 @@ object ConfigurationForm: TConfigurationForm
         end
         object VerticalSyncCheckBox: TCheckBox
           Left = 6
-          Height = 23
+          Height = 20
           Top = 112
-          Width = 102
+          Width = 98
           Caption = 'Vertical Sync'
           Font.Color = clWindowText
           Font.Height = -13

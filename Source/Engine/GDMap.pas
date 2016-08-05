@@ -87,7 +87,7 @@ type
     constructor Create();
     destructor  Destroy(); override;
 
-    function  Load( aFileName : String ) : boolean;
+    procedure Load( aFileName : String );
     procedure Clear();
 
     function  ObjectCount(): integer;
@@ -135,7 +135,7 @@ end;
 {* Init the map                                                               *}
 {******************************************************************************}
 
-function TGDMap.Load( aFileName : String ) : boolean;
+procedure TGDMap.Load( aFileName : String );
 var
   iIniFile : TIniFile;
   iI : Integer;

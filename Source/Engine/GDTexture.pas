@@ -32,11 +32,9 @@ interface
 
 Uses
  fgl,
- Windows,
  Classes,
  LCLIntf,
  LCLType,
- Graphics,
  GDResource,
  SysUtils,
  dglOpenGL,
@@ -187,36 +185,36 @@ type
 
 function LoadTextureFromFile( aName: string; aDetail : TGDTextureDetail ): GLuint;
 var
-  iDDSD          : TDDSurfaceDesc2;
-  iFileCode      : array[0..3] of AnsiChar;
-  iBufferSize    : integer;
-  iReadBufferSize: integer;
-  iPFile         : THandle;
-  iReadBytes     : Longword;
-  iDDSData       : TDDSData;
-  iBlockSize : Integer;
-  iHeight    : Integer;
-  iWidth     : Integer;
-  iOffset    : Integer;
-  iSize      : Integer;
+  iDDSD            : TDDSurfaceDesc2;
+  iFileCode        : array[0..3] of AnsiChar;
+  iBufferSize      : integer;
+  iReadBufferSize  : integer;
+  iDDSData         : TDDSData;
+  iBlockSize       : Integer;
+  iHeight          : Integer;
+  iWidth           : Integer;
+  iOffset          : Integer;
+  iSize            : Integer;
   iI, iLevelOffset : Integer;
+  iData            : TMemoryStream;
 begin
+  	result := 0;
+
     //check if the file exists
     if Not(FileExists( aName )) then
       Raise Exception.Create( aName + ' doesn`t exists.');
 
     //load the texture
-    iPFile := CreateFile(PChar(AnsiString(aName)), GENERIC_READ, FILE_SHARE_READ, nil, OPEN_EXISTING, 0, 0);
-    if (iPFile = INVALID_HANDLE_VALUE) then
-      Raise Exception.Create('Failed to load texture ' + aName);
+    iData := TMemoryStream.Create();
+    iData.LoadFromFile(aName);
 
     //verify if it is a true DDS file
-    ReadFile( iPFile, iFileCode, 4, iReadBytes, nil);
+    iData.Read(iFileCode, SizeOf(byte) * 4);
     if (iFileCode[0] + iFileCode[1] + iFileCode[2] <> 'DDS') then
       Raise Exception.Create('File ' + aName + ' is not a valid DDS file.');
 
     //read surface descriptor
-    ReadFile( iPFile, iDDSD, sizeof(iDDSD), iReadBytes, nil );
+    iData.Read(iDDSD, SizeOf(iDDSD));
     case iDDSD.ddpfPixelFormat.dwFourCC of
     FOURCC_DXT1 : begin
                     //DXT1's compression ratio is 8:1
@@ -252,9 +250,8 @@ begin
     //read the buffer data
     iReadBufferSize := iBufferSize * sizeof(Byte);
     setLength(iDDSData.Data, iReadBufferSize);
-    if Not(ReadFile( iPFile, iDDSData.Data[0] , iReadBufferSize, iReadBytes, nil)) then
-      Raise Exception.Create('Failed to read image data from file ' + aName);
-    CloseHandle(iPFile);
+    iData.Read(iDDSData.Data[0], iReadBufferSize);
+    FreeAndNil(iData);
 
     //more output info }
     iDDSData.Width      := iDDSD.dwWidth;

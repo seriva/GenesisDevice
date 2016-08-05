@@ -128,7 +128,6 @@ var
   iRotationZ, iRotationY : Double;
   iStartPoint : TGDVector;
   iI, iJ, iX, iY : Integer;
-  iUStep, iVStep: Double;
   iMatrix : TGDMatrix;
   iIndexes : TGDIndexList;
   iVertices : TGDVertex_V_List;
@@ -142,8 +141,6 @@ begin
 
   iRotationStep := 360/SKY_COMPLEXITY;
   iStartPoint.Reset(aSize, 0, 0 );
-  iUStep := 1 / (SKY_COMPLEXITY);
-  iVStep := 1 / (SKY_COMPLEXITY div 4);
   iRotationZ := 0;
   For iI := (SKY_COMPLEXITY div 4) downto 0 do
   begin

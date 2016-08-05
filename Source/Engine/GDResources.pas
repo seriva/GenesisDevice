@@ -33,7 +33,7 @@ uses
   GDResource,
   GDTexture,
   GDMesh,
-  FileUtil,
+  LazFileUtils,
   GDMaterial,
   GDConstants,
   GDSound,
