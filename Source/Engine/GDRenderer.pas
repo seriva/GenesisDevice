@@ -34,6 +34,7 @@ interface
 uses
   Graphics,
   Windows,
+  sdl2,
   SysUtils,
   dglOpenGL,
   GDConstants,
@@ -50,8 +51,8 @@ type
 
   TGDRenderer  = Class
   private
-    FResourceWND   : HWND;
-    FResourceDC    : HDC;
+    FResourceWND   : PSDL_Window;
+    FResourceDC    : TSDL_GLContext;
     FResourceRC    : HGLRC;
 
     FViewPortWND   : HWND;
@@ -149,21 +150,12 @@ uses
 constructor TGDRenderer.Create();
 var
   iError      : string;
-  iWndClass   : TWndClass;
-  iDWStyle    : DWORD;
-  iDWExStyle  : DWORD;
-  iInstance   : HINST;
   iStr, iV    : String;
   iGLInt1, iGLInt2 : GLInt;
   iGLFLoat    : GLFLoat;
   iI : Integer;
   iQ  : TGDVertex_V_UV;
   iQL : TGDVertex_V_UV_List;
-
-function WndProc(aWnd: HWND; aMsg: UINT;  aWParam: WPARAM;  aLParam: LPARAM): LRESULT; stdcall;
-begin
-  Result := 1;
-end;
 
 begin
   Inherited;
@@ -172,53 +164,27 @@ begin
   Engine.Console.Write('......Initializing renderer');
   try
     FInitialized := true;
-    iInstance := GetModuleHandle(nil);
-    ZeroMemory(@iWndClass, SizeOf(wndClass));
 
-    with iWndClass do
-    begin
-      style         := CS_HREDRAW or CS_VREDRAW or CS_OWNDC;
-      lpfnWndProc   := @WndProc;
-      hInstance     := iInstance;
-      hCursor       := LoadCursor(0, IDC_ARROW);
-      lpszClassName := 'OpenGL';
-    end;
+    //Create SDL resource window
+    FResourceWND := SDL_CreateWindow('resources', 0, 0, 10, 10, SDL_WINDOW_OPENGL);
+    if FResourceWND = nil then
+       Raise Exception.Create('Error creating resource window.');
+    SDL_HideWindow(FResourceWND);
 
-    if (RegisterClass(iWndClass) = 0) then
-      Raise Exception.Create('Failed to register reource windows class');
+    //Create OGL context
+    FResourceDC := SDL_GL_CreateContext(FResourceWND);
+    if FResourceDC = nil then
+       Raise Exception.Create('Error creating resource context.');
 
-    iDWStyle   := WS_OVERLAPPEDWINDOW or WS_CLIPCHILDREN or WS_CLIPSIBLINGS;
-    iDWExStyle := WS_EX_APPWINDOW or WS_EX_WINDOWEDGE;
-    FResourceWND := CreateWindowEx(iDWExStyle,
-                                      'OpenGL',
-                                      'Window',
-                                      iDWStyle,
-                                      0, 0,
-                                      50, 50,
-                                      0,
-                                      0,
-                                      iInstance,
-                                      nil);
-
-    if FResourceWND = 0 then
-      Raise Exception.Create('Failed to create resource window');
-
-    //Get the device context
-    FResourceDC := GetDC(FResourceWND);
-    if (FResourceDC = 0) then
-      Raise Exception.Create('Failed to get a device context');
-
-    //Create the OpenGL rendering context
-    FResourceRC := CreateRenderingContext(FResourceDC, [opDoubleBuffered, opStereo], 32, 32, 0, 0, 0, 0);;
-    if (FResourceRC = 0) then
-      Raise Exception.Create('Failed to create a rendering context');
-
-    //Activate the rendering context
-    ActivateRenderingContext(FResourceDC, FResourceRC);
+    //Make conect current
+    SDL_GL_MakeCurrent(FResourceWND, FResourceDC);
 
     //Read OpenGL properties and implementation
+    InitOpenGL;
     ReadExtensions;
-    ReadImplementationProperties;
+
+    //TEMP: Get the windows RC to share contexts for now.
+    FResourceRC := wglGetCurrentContext();
 
     //Print specs
     Engine.Console.Write('Vendor: ' + String(AnsiString(glGetString(GL_VENDOR))));
@@ -334,7 +300,6 @@ Destructor TGDRenderer.Destroy();
 var
   iError  : string;
   iResult : boolean;
-  iInstance   : HINST;
 begin
   inherited;
   Engine.Console.Write('Shutting down renderer...');
@@ -347,17 +312,9 @@ begin
     FreeAndNil(FLinesVertexBuffer);
     FreeAndNil(FQuadVertexBuffer);
 
-    //Destroy rendering context
-    DeactivateRenderingContext();
-    DestroyRenderingContext(FResourceRC);
-
-    //destroy the window
-    if ((FResourceWND <> 0) and (not DestroyWindow(FResourceWND))) then
-      Raise Exception.Create('Failed to destroy window');
-
-    iInstance := GetModuleHandle(nil);
-    if (not UnRegisterClass('OpenGL', iInstance)) then
-      Raise Exception.Create('Failed to unregister window class');
+    //Destroy sdl resource win
+    SDL_GL_DeleteContext(FResourceDC);
+    SDL_DestroyWindow(FResourceWND);
   except
     on E: Exception do
     begin

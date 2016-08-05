@@ -76,7 +76,7 @@ procedure TViewPortForm.FormCreate(Sender: TObject);
 var
   iDMScreenSettings : DEVMODE;
 begin
-  self.Caption := 'Genesis Device Engine';
+  self.Caption := 'Demo';
 
   //initialize the renderer with the current settings
   If Not(Engine.Renderer.InitViewPort( self.Handle )) then

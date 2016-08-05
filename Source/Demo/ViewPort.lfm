@@ -5,6 +5,8 @@ object ViewPortForm: TViewPortForm
   Top = 754
   Width = 480
   Caption = 'ViewPortForm'
+  ClientHeight = 247
+  ClientWidth = 480
   Color = clBtnFace
   Font.Color = clWindowText
   Font.Height = -11
@@ -17,7 +19,7 @@ object ViewPortForm: TViewPortForm
   OnKeyPress = FormKeyPress
   OnResize = FormResize
   ShowInTaskBar = stAlways
-  LCLVersion = '1.4.2.0'
+  Visible = False
   object ApplicationEvents: TApplicationProperties
     OnIdle = ApplicationEventsIdle
     left = 24

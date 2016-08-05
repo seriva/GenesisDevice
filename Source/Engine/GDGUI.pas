@@ -37,7 +37,6 @@ uses
   fgl,
   LCLIntf,
   LCLType,
-  Windows,
   Classes,
   IniFiles,
   SysUtils,

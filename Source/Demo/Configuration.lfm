@@ -3,6 +3,7 @@ object ConfigurationForm: TConfigurationForm
   Height = 335
   Top = 777
   Width = 398
+  ActiveControl = RunButton
   BorderIcons = [biSystemMenu]
   BorderStyle = bsSingle
   Caption = 'Genesis Device Configuration'
@@ -16,7 +17,6 @@ object ConfigurationForm: TConfigurationForm
   OnDestroy = FormDestroy
   OnShow = FormShow
   Position = poDefault
-  LCLVersion = '1.7'
   Visible = False
   object RunButton: TButton
     Left = 328
@@ -162,17 +162,17 @@ object ConfigurationForm: TConfigurationForm
     end
     object RenderingTabSheet: TTabSheet
       Caption = 'Rendering'
-      ClientHeight = 268
+      ClientHeight = 271
       ClientWidth = 392
       ImageIndex = 1
       object RenderingPanel: TPanel
         Left = 0
-        Height = 268
+        Height = 271
         Top = 0
         Width = 392
         Align = alClient
         BevelOuter = bvNone
-        ClientHeight = 268
+        ClientHeight = 271
         ClientWidth = 392
         TabOrder = 0
         object WaterDetailLabel: TLabel
@@ -392,17 +392,17 @@ object ConfigurationForm: TConfigurationForm
     end
     object InputTabSheet: TTabSheet
       Caption = 'Input'
-      ClientHeight = 268
+      ClientHeight = 271
       ClientWidth = 392
       ImageIndex = 2
       object InputPanel: TPanel
         Left = 0
-        Height = 268
+        Height = 271
         Top = 0
         Width = 392
         Align = alClient
         BevelOuter = bvNone
-        ClientHeight = 268
+        ClientHeight = 271
         ClientWidth = 392
         TabOrder = 0
         object MouseSensitivityLabel: TLabel
@@ -445,17 +445,17 @@ object ConfigurationForm: TConfigurationForm
     end
     object SoundTabSheet: TTabSheet
       Caption = 'Sound'
-      ClientHeight = 268
+      ClientHeight = 271
       ClientWidth = 392
       ImageIndex = 3
       object SoundPanel: TPanel
         Left = 0
-        Height = 268
+        Height = 271
         Top = 0
         Width = 392
         Align = alClient
         BevelOuter = bvNone
-        ClientHeight = 268
+        ClientHeight = 271
         ClientWidth = 392
         TabOrder = 0
         object SoundVolumeLabel: TLabel
@@ -494,46 +494,6 @@ object ConfigurationForm: TConfigurationForm
           Position = 50
           TickStyle = tsNone
           TabOrder = 1
-        end
-      end
-    end
-    object DemoTabSheet: TTabSheet
-      Caption = 'Demo'
-      ClientHeight = 268
-      ClientWidth = 392
-      ImageIndex = 4
-      object DemoPanel: TPanel
-        Left = 0
-        Height = 268
-        Top = 0
-        Width = 392
-        Align = alClient
-        BevelOuter = bvNone
-        ClientHeight = 268
-        ClientWidth = 392
-        TabOrder = 0
-        object MapLabel: TLabel
-          Left = 6
-          Height = 16
-          Top = 9
-          Width = 86
-          Caption = 'Map Selection'
-          Font.Color = clWindowText
-          Font.Height = -13
-          Font.Name = 'MS Sans Serif'
-          ParentColor = False
-          ParentFont = False
-        end
-        object MapComboBox: TComboBox
-          Left = 134
-          Height = 21
-          Top = 5
-          Width = 245
-          ItemHeight = 13
-          ParentShowHint = False
-          ShowHint = True
-          Style = csDropDownList
-          TabOrder = 0
         end
       end
     end

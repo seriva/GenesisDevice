@@ -66,53 +66,49 @@ type
   { TConfigurationForm }
 
   TConfigurationForm = class(TForm)
-    ShadowCheckBox: TCheckBox;
-    FXAACheckBox: TCheckBox;
-    MonitorLabel: TLabel;
-    MonitorComboBox: TComboBox;
-    RunButton: TButton;
-    PageControl: TPageControl;
-    ShadowsCheckbox: TCheckBox;
-    SSAOCheckbox: TCheckBox;
     DetailCheckbox: TCheckBox;
-    WindowTabSheet: TTabSheet;
-    WindowPanel: TPanel;
-    ResolutionLabel: TLabel;
-    GammaLabel: TLabel;
-    ResolutionsComboBox: TComboBox;
-    FullScreenCheckBox: TCheckBox;
-    VerticalSyncCheckBox: TCheckBox;
-    GammaTrackBar: TTrackBar;
-    RenderingTabSheet: TTabSheet;
-    RenderingPanel: TPanel;
-    WaterDetailLabel: TLabel;
-    ViewDistanceLabel: TLabel;
-    GrassDistanceLabel: TLabel;
     FoliageDensityLabel: TLabel;
-    TextureDetailLabel: TLabel;
-    TextureFilteringLabel: TLabel;
-    WaterReflectionLabel: TLabel;
-    ViewDistanceTrackBar: TTrackBar;
-    FoliageDistanceTrackBar: TTrackBar;
     FoliageDensityTrackBar: TTrackBar;
-    TextureDetailComboBox: TComboBox;
-    TextureFilterComboBox: TComboBox;
-    WaterReflectionComboBox: TComboBox;
-    WaterDetailComboBox: TComboBox;
-    InputTabSheet: TTabSheet;
+    FoliageDistanceTrackBar: TTrackBar;
+    FullScreenCheckBox: TCheckBox;
+    FXAACheckBox: TCheckBox;
+    GammaLabel: TLabel;
+    GammaTrackBar: TTrackBar;
+    GrassDistanceLabel: TLabel;
     InputPanel: TPanel;
+    InputTabSheet: TTabSheet;
+    InvertMouseCheckBox: TCheckBox;
+    MonitorComboBox: TComboBox;
+    MonitorLabel: TLabel;
     MouseSensitivityLabel: TLabel;
     MouseSensitivityTrackBar: TTrackBar;
-    InvertMouseCheckBox: TCheckBox;
-    SoundTabSheet: TTabSheet;
-    SoundPanel: TPanel;
-    SoundVolumeLabel: TLabel;
     MuteSoundCheckBox: TCheckBox;
+    PageControl: TPageControl;
+    RenderingPanel: TPanel;
+    RenderingTabSheet: TTabSheet;
+    ResolutionLabel: TLabel;
+    ResolutionsComboBox: TComboBox;
+    ShadowCheckBox: TCheckBox;
+    RunButton: TButton;
+    ShadowsCheckbox: TCheckBox;
+    SoundPanel: TPanel;
+    SoundTabSheet: TTabSheet;
+    SoundVolumeLabel: TLabel;
     SoundVolumeTrackBar: TTrackBar;
-    DemoTabSheet: TTabSheet;
-    DemoPanel: TPanel;
-    MapLabel: TLabel;
-    MapComboBox: TComboBox;
+    SSAOCheckbox: TCheckBox;
+    TextureDetailComboBox: TComboBox;
+    TextureDetailLabel: TLabel;
+    TextureFilterComboBox: TComboBox;
+    TextureFilteringLabel: TLabel;
+    VerticalSyncCheckBox: TCheckBox;
+    ViewDistanceLabel: TLabel;
+    ViewDistanceTrackBar: TTrackBar;
+    WaterDetailComboBox: TComboBox;
+    WaterDetailLabel: TLabel;
+    WaterReflectionLabel: TLabel;
+    WaterReflectionComboBox: TComboBox;
+    WindowPanel: TPanel;
+    WindowTabSheet: TTabSheet;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -120,16 +116,12 @@ type
 
     procedure RunButtonClick(Sender: TObject);
   private
-    FMap : String;
-
     procedure FillComboboxes();
     procedure FillDisplays();
     procedure FillDisplayModi();
   public
     FMonitorInfos      : array of TMonitorInfoEx;
     FAvailableModi     : array of TDisplayMode;
-
-    property Map         : String read FMap;
 
     procedure SettingsToInterface();
     procedure SettingsFromInterface();
@@ -156,7 +148,7 @@ procedure TConfigurationForm.FormCreate(Sender: TObject);
 begin
   //set some form basics
   Application.Title := 'Demo';
-  self.Caption := 'Configuration';
+  self.Caption := 'Demo';
 
   //fill settingscombos
   FillComboboxes();
@@ -210,33 +202,6 @@ procedure TConfigurationForm.FillComboboxes();
 var
  iI: LongInt;
  iStr: string;
- iResult : TStringList;
-
-Procedure FindFiles(aPath, aFindMask: String; aWithSub: Boolean; aResult: tStrings);
-var
-FindRec: tSearchRec;
-Begin
-    If (aPath = '') or (aFindMask = '') or Not Assigned (aResult) Then
-      Exit;
-    If aPath[Length (aPath)] <> '\' Then
-      aPath := aPath + '\';
-    If FindFirstUTF8(aPath + aFindMask,faAnyFile,FindRec) = 0 Then
-      Repeat
-        If (FindRec.Name <> '.') and (FindRec.Name <> '..') Then
-          aResult.Add (aPath + FindRec.Name);
-      Until FindNextUTF8(FindRec) <> 0;
-    FindCloseUTF8(FindRec);
-    If Not aWithSub Then
-      Exit;
-    If FindFirstUTF8(aPath + '*.*',faAnyFile,FindRec) = 0 Then
-      Repeat
-        If (FindRec.Name <> '.') and (FindRec.Name <> '..') Then
-          If Boolean (FindRec.Attr and faDirectory) Then
-            FindFiles (aPath + FindRec.Name, aFindMask, aWithSub, aResult);
-      Until FindNextUTF8(FindRec) <> 0;
-    FindCloseUTF8(FindRec);
-End;
-
 begin
   //fill monitors combobox
   FillDisplays();
@@ -258,20 +223,6 @@ begin
   WaterDetailComboBox.Clear;
   for iI := Low(TWaterDetail) to High(TWaterDetail) do
     WaterDetailComboBox.Items.Add(TWaterDetail[iI]);
-
-  //detect maps
-  MapComboBox.Items.Clear();
-  iResult := TStringList.Create();
-  FindFiles ('Maps\', '*.*', false , iResult);
-  For iI := 0 to iResult.Count-1 do
-  begin
-    iResult.Strings[iI] := copy(iResult.Strings[iI], length('Maps\')+1, length(iResult.Strings[iI]));
-    iStr := 'Maps\' + iResult.Strings[iI] + '\map.ini';
-    If FileExistsUTF8(iStr ) then
-    begin
-      MapComboBox.Items.Add( iResult.Strings[iI] );
-    end;
-  end;
 end;
 
 {******************************************************************************}
@@ -315,11 +266,6 @@ begin
   //sound settings
   MuteSoundCheckBox.Checked := Engine.Settings.MuteSound;
   SoundVolumeTrackBar.Position := Round(100 * Engine.Settings.SoundVolume );
-
-  //map
-  For  iI := 0 to MapComboBox.Items.Count-1 do
-    if  MapComboBox.Items[iI] = FMap then
-      MapComboBox.ItemIndex := iI;
 end;
 
 {******************************************************************************}
@@ -360,9 +306,6 @@ begin
   //sound settings
   Engine.Settings.MuteSound   := MuteSoundCheckBox.Checked;
   Engine.Settings.SoundVolume := SoundVolumeTrackBar.Position / 100;
-
-  //demo
-  FMap := MapComboBox.Text;
 end;
 
 {******************************************************************************}
@@ -374,11 +317,6 @@ begin
   SettingsFromInterface();
   Engine.Settings.Save();
   SaveConfig();
-  if FMap = '' then
-  begin
-    ShowMessage('Select a map first.');
-    exit
-  end;
   Visible := false;
   Application.CreateForm(TViewPortForm, ViewPortForm);
   ViewPortForm.ShowOnTop();
@@ -404,9 +342,6 @@ begin
   MonitorComboBox.ItemIndex     := iIniFile.ReadInteger('Monitor', 'MonitorId', 0);
   ResolutionsComboBox.ItemIndex := iIniFile.ReadInteger('Monitor', 'ResolutionId', 0);
 
-  //maps
-  FMap := iIniFile.ReadString('Demo', 'SelectedMap', '');
-
   FreeAndNil(iIniFile);
 end;
 
@@ -424,9 +359,6 @@ begin
    //monitor
   iIniFile.WriteInteger('Monitor', 'MonitorId', MonitorComboBox.ItemIndex);
   iIniFile.WriteInteger('Monitor', 'ResolutionId', ResolutionsComboBox.ItemIndex);
-
-  //map
-  iIniFile.WriteString('Demo', 'SelectedMap', FMap);
 
   FreeAndNil(iIniFile);
 end;

@@ -43,7 +43,6 @@ uses
   LCLType,
   SysUtils,
   Classes,
-  Windows,
   GDConstants;
 
 type
@@ -212,7 +211,7 @@ var
   iI : integer;
 begin
   For iI := 0 to 255 do
-    FKeyBuffer[iI] := GetAsyncKeyState(iI) and $8000 <> 0;
+    FKeyBuffer[iI] := GetKeyState(iI) and $8000 <> 0;
 end;
 
 {******************************************************************************}

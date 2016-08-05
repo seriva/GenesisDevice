@@ -286,9 +286,8 @@ end;
 
 procedure TGDMesh.CreateBuffers();
 var
-  iI, iJ, iIdx : Integer;
+  iI : Integer;
   iSur   : TGDSurface;
-  iV : TGDVertex_V_UV_N_C;
 begin
   for iI := 0 to FSurfaces.Count - 1 do
   begin
