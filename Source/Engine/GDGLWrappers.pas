@@ -200,7 +200,7 @@ var
 label
   IncludeLines;
 begin
-  Engine.Console.Write('Loading shader ' + ExtractFileName(aFileName) + '...');
+  Engine.Console.Write('  Loading shader ' + ExtractFileName(aFileName) + '...');
 
   try
     iOk := true;

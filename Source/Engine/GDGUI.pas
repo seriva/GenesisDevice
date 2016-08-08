@@ -44,6 +44,7 @@ uses
   GDTexture,
   GDStringParsing,
   GDConstants,
+  GDWindow,
   GDTypes;
 
 const
@@ -662,8 +663,8 @@ var
   iPercent : Double;
 begin
   glClearColor(0.0, 0.0, 0.0, 1.0);
-  Engine.Renderer.MakeCurrent();
-  Engine.Renderer.StartFrame();
+  Engine.Window.MakeCurrent();
+  Engine.Renderer.ClearFrame();
   Engine.Renderer.SwitchToOrtho();
   glClear(GL_COLOR_BUFFER_BIT);
 
@@ -700,7 +701,7 @@ begin
   glDisable(GL_BLEND);
 
   Engine.Renderer.SwitchToPerspective();
-  Engine.Renderer.EndFrame();
+  Engine.Window.Swap();
 end;
 
 {******************************************************************************}

@@ -33,7 +33,6 @@ interface
 uses
   LCLIntf,
   LCLType,
-  Windows,
   Forms,
   ComCtrls,
   ExtCtrls,
@@ -43,21 +42,11 @@ uses
   Dialogs,
   ViewPort,
   SysUtils,
-  IniFiles,
-  multimon,
   GDConstants,
   GDEngine,
   LazFileUtils;
 
 type
-{******************************************************************************}
-{* Records that holds a displaymode                                           *}
-{******************************************************************************}
-
-  TDisplayMode = record
-    Width: LongInt;
-    Height: LongInt;
-  end;
 
 {******************************************************************************}
 {* COnfiguration form                                                         *}
@@ -120,18 +109,12 @@ type
     procedure FillDisplays();
     procedure FillDisplayModi();
   public
-    FMonitorInfos      : array of TMonitorInfoEx;
-    FAvailableModi     : array of TDisplayMode;
-
     procedure SettingsToInterface();
     procedure SettingsFromInterface();
-    procedure LoadConfig();
-    procedure SaveConfig();
   end;
 
 var
   ConfigurationForm: TConfigurationForm;
-  ViewPortForm : TViewPortForm;
 
 implementation
 
@@ -155,7 +138,6 @@ begin
 
   //load the settings and update interface
   Engine.Settings.Load();
-  LoadConfig();
   SettingsToInterface();
 
   //show the form and set the focus
@@ -172,7 +154,6 @@ begin
   //save settings
   SettingsFromInterface();
   Engine.Settings.Save();
-  SaveConfig();
 end;
 
 {******************************************************************************}
@@ -181,8 +162,8 @@ end;
 
 procedure TConfigurationForm.FormShow(Sender: TObject);
 begin
-  self.Left:=10;
-  self.Top:=10;
+  self.Left:=0;
+  self.Top:=0;
 end;
 
 {******************************************************************************}
@@ -200,13 +181,14 @@ end;
 
 procedure TConfigurationForm.FillComboboxes();
 var
- iI: LongInt;
+  iI: LongInt;
+  iStr: string;
 begin
   //fill monitors combobox
-  FillDisplays();
+  //FillDisplays();
 
   //fill resolutions combobox
-  FillDisplayModi();
+  //FillDisplayModi();
 
   //fill texturedetail combobox
   TextureDetailComboBox.Clear;
@@ -272,19 +254,14 @@ end;
 {******************************************************************************}
 
 procedure TConfigurationForm.SettingsFromInterface();
-var
-  Mode: TDisplayMode;
 begin
-  //viewport settings
-  if ResolutionsComboBox.ItemIndex >= 0 then
-  begin
-    Mode := FAvailableModi[ResolutionsComboBox.ItemIndex];
-    Engine.Settings.Width      := Mode.Width;
-    Engine.Settings.Height     := Mode.Height;
-  end;
-  Engine.Settings.FullScreen   := FullScreenCheckBox.Checked;
-  Engine.Settings.VerticalSync := VerticalSyncCheckBox.Checked;
-  Engine.Settings.Gamma        := GammaTrackBar.Position / 100;
+  //window settings
+  //TEMP: resolution
+  Engine.Settings.Width            := 800;
+  Engine.Settings.Height           := 600;
+  Engine.Settings.FullScreen       := FullScreenCheckBox.Checked;
+  Engine.Settings.VerticalSync     := VerticalSyncCheckBox.Checked;
+  Engine.Settings.Gamma            := GammaTrackBar.Position / 100;
 
   //rendering
   Engine.Settings.ViewDistance     := ViewDistanceTrackBar.Position;
@@ -303,8 +280,8 @@ begin
   Engine.Settings.MouseSensitivity := MouseSensitivityTrackBar.Position;
 
   //sound settings
-  Engine.Settings.MuteSound   := MuteSoundCheckBox.Checked;
-  Engine.Settings.SoundVolume := SoundVolumeTrackBar.Position / 100;
+  Engine.Settings.MuteSound        := MuteSoundCheckBox.Checked;
+  Engine.Settings.SoundVolume      := SoundVolumeTrackBar.Position / 100;
 end;
 
 {******************************************************************************}
@@ -315,51 +292,8 @@ procedure TConfigurationForm.RunButtonClick(Sender: TObject);
 begin
   SettingsFromInterface();
   Engine.Settings.Save();
-  SaveConfig();
   Visible := false;
-  Application.CreateForm(TViewPortForm, ViewPortForm);
-  ViewPortForm.ShowOnTop();
-  ViewPortForm.Visible := true;
-  ViewPortForm.Repaint();
-
-  //initialize the gameresources
-  InitGame();
-end;
-
-{******************************************************************************}
-{* Load the input from the config file (IS NOT DONE IN THE ENGINE BECAUSE     *}
-{* ACTIONS CAN BE DIFFERENT FROM GAME TO GAME))                               *}
-{******************************************************************************}
-
-procedure TConfigurationForm.LoadConfig();
-var
-  iIniFile : TIniFile;
-begin
-  iIniFile := TIniFile.Create( ExtractFilePath(Application.ExeName) + 'Ini\Game.ini' );
-
-  //monitor
-  MonitorComboBox.ItemIndex     := iIniFile.ReadInteger('Monitor', 'MonitorId', 0);
-  ResolutionsComboBox.ItemIndex := iIniFile.ReadInteger('Monitor', 'ResolutionId', 0);
-
-  FreeAndNil(iIniFile);
-end;
-
-{******************************************************************************}
-{* Save the input to the config file (IS NOT DONE IN THE ENGINE BECAUSE       *}
-{* ACTIONS CAN BE DIFFERENT FROM GAME TO GAME))                               *}
-{******************************************************************************}
-
-procedure TConfigurationForm.SaveConfig();
-var
-  iIniFile : TIniFile;
-begin
-  iIniFile := TIniFile.Create( ExtractFilePath(Application.ExeName) + 'Ini\Game.ini');
-
-   //monitor
-  iIniFile.WriteInteger('Monitor', 'MonitorId', MonitorComboBox.ItemIndex);
-  iIniFile.WriteInteger('Monitor', 'ResolutionId', ResolutionsComboBox.ItemIndex);
-
-  FreeAndNil(iIniFile);
+  Engine.Run(@InitGame ,@GameLoop, @ClearGame);
 end;
 
 {******************************************************************************}
@@ -370,6 +304,7 @@ procedure TConfigurationForm.FillDisplays();
 var
   iI : Integer;
 begin
+  {
   for iI := 0 to Screen.MonitorCount-1 do
   begin
     if Screen.Monitors[iI].Primary then
@@ -382,6 +317,7 @@ begin
     GetMonitorInfo(Screen.Monitors[iI].Handle, @FMonitorInfos[High(FMonitorInfos)]);
   end;
   MonitorComboBox.ItemIndex := 0;
+  }
 end;
 
 {******************************************************************************}
@@ -390,11 +326,10 @@ end;
 
 procedure TConfigurationForm.FillDisplayModi();
 var
- iDevMode: TDeviceMode;
- iModes: array of TDisplayMode;
  iModeIdx, iI: LongInt;
  iStr: string;
 begin
+  {
   //fill resolutions combobox
   SetLength(iModes, 0);
   SetLength(FAvailableModi, 0);
@@ -428,6 +363,7 @@ begin
   SetLength(iModes, 0);
 
   ResolutionsComboBox.ItemIndex := 0;
+  }
 end;
 
 end.

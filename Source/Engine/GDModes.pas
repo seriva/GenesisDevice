@@ -27,7 +27,7 @@ unit GDModes;
 interface
 
 {******************************************************************************}
-{* Holds the main modes vars of the engine                                    *}
+{* Holds the main mode vars of the engine                                     *}
 {******************************************************************************}
 
 uses

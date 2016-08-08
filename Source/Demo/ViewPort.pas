@@ -31,8 +31,6 @@ unit ViewPort;
 interface
 
 uses
-  Windows,
-  multimon,
   LCLIntf,
   LCLType,
   Controls,
@@ -73,10 +71,9 @@ uses
 {******************************************************************************}
 
 procedure TViewPortForm.FormCreate(Sender: TObject);
-var
-  iDMScreenSettings : DEVMODE;
 begin
   self.Caption := 'Demo';
+  {
 
   //initialize the renderer with the current settings
   If Not(Engine.Renderer.InitViewPort( self.Handle )) then
@@ -85,48 +82,17 @@ begin
     Application.Terminate();
   end;
 
-  //if fullscreen remove the border
-  If Engine.Settings.FullScreen then
-  begin
-    ZeroMemory(@iDMScreenSettings, SizeOf(iDMScreenSettings));
-    with iDMScreenSettings do begin
-            dmSize       := SizeOf(iDMScreenSettings);
-            dmPelsWidth  := Engine.Settings.Width;
-            dmPelsHeight := Engine.Settings.Height;
-            dmBitsPerPel := 32;
-            dmFields     := DM_PELSWIDTH or DM_PELSHEIGHT or DM_BITSPERPEL;
-    end;
-
-    if (ChangeDisplaySettingsEx( @ConfigurationForm.FMonitorInfos[ConfigurationForm.MonitorComboBox.ItemIndex].szDevice[0], &iDMScreenSettings, 0, CDS_FULLSCREEN, nil) <> DISP_CHANGE_SUCCESSFUL) then
-      Raise Exception.Create('Unable to make window fullscreen');
-
-    SetWindowLong(self.Handle, GWL_STYLE, GetWindowLong(Handle, GWL_STYLE) and not WS_BORDER and not WS_SIZEBOX and not WS_DLGFRAME );
-    SetWindowPos(self.Handle, HWND_TOP, 0,
-                                        Screen.Monitors[ConfigurationForm.MonitorComboBox.ItemIndex].Left,
-                                        ConfigurationForm.FAvailableModi[ConfigurationForm.ResolutionsComboBox.ItemIndex].Width,
-                                        ConfigurationForm.FAvailableModi[ConfigurationForm.ResolutionsComboBox.ItemIndex].Height,
-                                        SWP_FRAMECHANGED);
-
-    //remove the border, place and size window.
-    SetWindowLong(self.Handle, GWL_STYLE, GetWindowLong(Handle, GWL_STYLE) and not WS_BORDER and not WS_SIZEBOX and not WS_DLGFRAME );
-    self.Top    := 0;
-    self.Left   := Screen.Monitors[ConfigurationForm.MonitorComboBox.ItemIndex].Left;
-    WindowState:=wsMaximized;
-  end
-  else
-  begin
-    //remove the border, place and size window.
-    self.Top    := 0;
-    self.Left   := Screen.Monitors[ConfigurationForm.MonitorComboBox.ItemIndex].Left;
-    self.Width  := ConfigurationForm.FAvailableModi[ConfigurationForm.ResolutionsComboBox.ItemIndex].Width;
-    self.Height := ConfigurationForm.FAvailableModi[ConfigurationForm.ResolutionsComboBox.ItemIndex].Height;
-  end;
+  self.Top    := 0;
+  self.Left   := 0;
+  self.Width  := Engine.Settings.Width;
+  self.Height := Engine.Settings.Height;
 
   //get the engine settings and set the right windowsettings
   Engine.Renderer.ResizeViewPort(self.Top, self.Left, self.Width, self.Height);
 
   //show the form
   self.Show();
+  }
 end;
 
 {******************************************************************************}
@@ -135,9 +101,7 @@ end;
 
 procedure TViewPortForm.FormDestroy(Sender: TObject);
 begin
-  //exit fullscreen
-  ChangeDisplaySettings(devmode(nil^), 0);
-
+  {
   //Set settings changed via the console to the configuration interface
   ConfigurationForm.SettingsToInterface();
 
@@ -150,6 +114,7 @@ begin
   //back to configuration
   ConfigurationForm.Visible := true;
   ConfigurationForm.Repaint();
+  }
 end;
 
 {******************************************************************************}
@@ -183,7 +148,7 @@ begin
   Done := false;
 
   //do the mainloop
-  Engine.Loop( @GameLoop );
+  //Engine.Loop( @GameLoop );
 end;
 
 {******************************************************************************}

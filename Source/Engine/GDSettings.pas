@@ -24,11 +24,6 @@ unit GDSettings;
 
 {$MODE Delphi}
 
-{******************************************************************************}
-{* Holds the settings class. It detects the current system and checks if it   *}
-{* meets the requirements. It also has the settings for the engine.           *}
-{******************************************************************************}
-
 interface
 
 uses
@@ -46,7 +41,7 @@ type
 
   TGDSettings = class
   private
-    //viewport settings
+    //window settings
     FTop              : Integer;
     FLeft             : Integer;
     FWidth            : Integer;
@@ -87,7 +82,7 @@ type
     procedure SetTextureFilter(aStr : String);
     function  GetTextureFilter() : String;
 
-    //viewport settings
+    //window settings
     property Top : Integer read FTop write FTop;
     property Left : Integer read FLeft write FLeft;
     property Width : Integer read FWidth write FWidth;
@@ -139,7 +134,7 @@ uses
 
 constructor TGDSettings.Create();
 begin
-  //viewport settings
+  //window settings
   FWidth            := 800;
   FHeight           := 600;
   FFullScreen       := false;
@@ -197,18 +192,18 @@ var
 begin
   iIniFile := TIniFile.Create( PATH_INITS + ENGINE_INI );
 
-  //viewport settings
-  FWidth :=        iIniFile.ReadInteger('ViewPort', 'Width', 800);
-  FHeight :=       iIniFile.ReadInteger('ViewPort', 'Height', 600);
-  FFullScreen :=   iIniFile.ReadBool('ViewPort', 'Fullscreen', False);
-  FVerticalSync := iIniFile.ReadBool('ViewPort', 'VerticalSync', False);
-  FGamma :=        iIniFile.ReadFloat('ViewPort', 'Gamma', 0.60);
+  //window settings
+  FWidth :=        iIniFile.ReadInteger('Window', 'Width', 800);
+  FHeight :=       iIniFile.ReadInteger('Window', 'Height', 600);
+  FFullScreen :=   iIniFile.ReadBool('Window', 'Fullscreen', False);
+  FVerticalSync := iIniFile.ReadBool('Window', 'VerticalSync', False);
+  FGamma :=        iIniFile.ReadFloat('Window', 'Gamma', 0.60);
 
   //render settings
   ViewDistance     := iIniFile.ReadInteger('Renderer', 'ViewDistance', 5);
   FFoliageDistance := iIniFile.ReadInteger('Renderer', 'FoliageDistance', 1);
   FFoliageDensity  := iIniFile.ReadInteger('Renderer',  'FoliageDensity', 5);
-  SetTextureDetail( iIniFile.ReadString('Renderer', 'TextureDetail', TGDTextureDetailStrings[1]) );
+  SetTextureDetail(iIniFile.ReadString('Renderer', 'TextureDetail', TGDTextureDetailStrings[1]));
   SetTextureFilter(iIniFile.ReadString('Renderer', 'TextureFilter', TGDTextureFilterStrings[1]));
   SetWaterDetail(iIniFile.ReadString('Renderer', 'WaterDetail', TGDWaterDetailStrings[1]));
   FUseFXAA          := iIniFile.ReadBool( 'Renderer', 'UseFXAA', False);
@@ -237,12 +232,12 @@ var
 begin
   iIniFile := TIniFile.Create(PATH_INITS + ENGINE_INI);
 
-  //viewport
-  iIniFile.WriteInteger('ViewPort', 'Width', FWidth);
-  iIniFile.WriteInteger('ViewPort', 'Height', FHeight);
-  iIniFile.WriteBool('ViewPort', 'Fullscreen', FFullScreen);
-  iIniFile.WriteBool('ViewPort', 'VerticalSync', FVerticalSync);
-  iIniFile.WriteFloat('ViewPort', 'Gamma', FGamma);
+  //window
+  iIniFile.WriteInteger('Window', 'Width', FWidth);
+  iIniFile.WriteInteger('Window', 'Height', FHeight);
+  iIniFile.WriteBool('Window', 'Fullscreen', FFullScreen);
+  iIniFile.WriteBool('Window', 'VerticalSync', FVerticalSync);
+  iIniFile.WriteFloat('Window', 'Gamma', FGamma);
 
   //render settings
   iIniFile.WriteInteger('Renderer', 'ViewDistance', FViewDistance);

@@ -19,6 +19,7 @@ object ViewPortForm: TViewPortForm
   OnKeyPress = FormKeyPress
   OnResize = FormResize
   ShowInTaskBar = stAlways
+  LCLVersion = '1.7'
   Visible = False
   object ApplicationEvents: TApplicationProperties
     OnIdle = ApplicationEventsIdle

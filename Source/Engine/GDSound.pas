@@ -315,7 +315,7 @@ var
   iI : Integer;
 begin
   Engine.Timing.Start();
-  Engine.Console.Write('......Initializing sound');
+  Engine.Console.Write('.....Initializing sound');
   try
     FInitialized := true;
     if not(InitOpenAL()) then
@@ -333,9 +333,9 @@ begin
       Raise Exception.Create('Error making the sound context current!');
 
     //Print specs
-    Engine.Console.Write('Vendor: ' + String(AnsiString(alGetString(AL_VENDOR))));
-    Engine.Console.Write('Renderer: ' + String(AnsiString(alGetString(AL_RENDERER))));
-    Engine.Console.Write('Version: ' + String(AnsiString(alGetString(AL_VERSION))));
+    Engine.Console.Write('  Vendor: ' + String(AnsiString(alGetString(AL_VENDOR))));
+    Engine.Console.Write('  Renderer: ' + String(AnsiString(alGetString(AL_RENDERER))));
+    Engine.Console.Write('  Version: ' + String(AnsiString(alGetString(AL_VERSION))));
 
     //Check requirements
     //Version
@@ -366,7 +366,7 @@ begin
   If FInitialized then
   begin
     Engine.Timing.Stop();
-    Engine.Console.Write('......Done initializing sound (' + Engine.Timing.TimeInSeconds + ' Sec)');
+    Engine.Console.Write('.....Done initializing sound (' + Engine.Timing.TimeInSeconds + ' Sec)');
   end;
 end;
 
@@ -426,7 +426,7 @@ begin
   AlListenerfv( AL_ORIENTATION, @iListenerOri);
   AlListenerf( AL_GAIN, Engine.Settings.SoundVolume);
 
-  //Update posible steams
+  //Update possible steams
   for iI := 0 to S_MAX_SOURCES-1 do
   begin
     iSource := FSources[iI];

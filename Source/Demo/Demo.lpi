@@ -37,7 +37,7 @@
         <PackageName Value="LCL"/>
       </Item1>
     </RequiredPackages>
-    <Units Count="79">
+    <Units Count="80">
       <Unit0>
         <Filename Value="Demo.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -191,7 +191,6 @@
       <Unit36>
         <Filename Value="..\Libraries\OpenAL\openal.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="OpenAL"/>
       </Unit36>
       <Unit37>
         <Filename Value="..\Engine\GDResources.pas"/>
@@ -361,6 +360,10 @@
         <Filename Value="..\Libraries\SDL\sdlvideo.inc"/>
         <IsPartOfProject Value="True"/>
       </Unit78>
+      <Unit79>
+        <Filename Value="..\Engine\GDWindow.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit79>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -391,7 +394,7 @@
     </Other>
   </CompilerOptions>
   <Debugging>
-    <Exceptions Count="3">
+    <Exceptions Count="4">
       <Item1>
         <Name Value="EAbort"/>
       </Item1>
@@ -401,6 +404,9 @@
       <Item3>
         <Name Value="EFOpenError"/>
       </Item3>
+      <Item4>
+        <Name Value="Exception"/>
+      </Item4>
     </Exceptions>
   </Debugging>
 </CONFIG>

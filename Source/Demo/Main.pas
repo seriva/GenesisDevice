@@ -80,7 +80,7 @@ uses
 
 procedure ExitCallback();
 begin
-  Configuration.ViewPortForm.Close();
+  Engine.Running := false;
 end;
 
 {******************************************************************************}
@@ -234,8 +234,8 @@ begin
     Engine.Sound.Resume(AmbientSource);
   end;
 
-  If (ViewPortForm.Focused = False) or (ViewPortForm.WindowState = wsMinimized) then
-    Sleep(50);
+  //If (ViewPortForm.Focused = False) or (ViewPortForm.WindowState = wsMinimized) then
+  //  Sleep(50);
 
   //calculate player collision and response
   Player.DoPlayerCollisionAndPhysics();
@@ -257,7 +257,7 @@ begin
   //initialize the gamerecources
   Engine.Timing.Start();
   Engine.GUI.LoadingScreen.Start('Loading game...', 3);
-  Engine.Console.Write('......Initializing game resources');
+  Engine.Console.Write('.....Initializing game resources');
 
   //sounds
   AmbientBuffer    := Engine.Sound.Load( 'Sounds\ambient.wav');
@@ -277,7 +277,7 @@ begin
   Player  := TPlayer.Create();
   Engine.GUI.LoadingScreen.Update();
   Engine.Timing.Stop();
-  Engine.Console.Write( '......Done initializing game resources (' +  Engine.Timing.TimeInSeconds() + ' Sec)' );
+  Engine.Console.Write( '.....Done initializing game resources (' +  Engine.Timing.TimeInSeconds() + ' Sec)' );
 
   //map
   Engine.Map.Load( 'Maps\Demo\map.ini' );
@@ -288,7 +288,7 @@ begin
   Engine.Input.MouseLook :=  false;
   Engine.GUI.MouseCursor.Visible := true;
 
-  //input funtions
+  //input functions
   Engine.Input.AddAction(IT_SINGLE,VK_ESCAPE,@ExitCallback, false );
   Engine.Input.AddAction(IT_DIRECT,VK_W,@PlayerForward, true );
   Engine.Input.AddAction(IT_DIRECT,VK_S,@PlayerBackward, true );
@@ -319,6 +319,10 @@ begin
   Engine.Sound.Remove(AmbientBuffer);
   Engine.Sound.Remove(UnderWaterBuffer);
   Engine.Sound.Remove(MusicBuffer);
+
+  ConfigurationForm.SettingsToInterface();
+  ConfigurationForm.Visible := true;
+  ConfigurationForm.Repaint();
 end;
 
 end.

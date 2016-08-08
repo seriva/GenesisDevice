@@ -51,45 +51,40 @@ type
 
   TGDRenderer  = Class
   private
-    FResourceWND   : PSDL_Window;
-    FResourceDC    : TSDL_GLContext;
-    FResourceRC    : HGLRC;
+    FResourceWND    : PSDL_Window;
+    FResourceDC     : TSDL_GLContext;
 
-    FViewPortWND   : HWND;
-    FViewPortDC    : HDC;
-    FViewPortRC    : HGLRC;
-    FCanResize     : boolean;
-    FState         : TGDRenderState;
-    FInitialized   : boolean;
+    FState          : TGDRenderState;
+    FInitialized    : boolean;
     
-    FTerrainShader : TGDGLShader;
-    FSkyShader     : TGDGLShader;
-    FWaterShader   : TGDGLShader;
-    FGrassShader   : TGDGLShader;
-    FBlurShader    : TGDGLShader;
-    FMeshShader    : TGDGLShader;
-    FSunShader     : TGDGLShader;
-    FPostShader    : TGDGLShader;
-    FColorShader   : TGDGLShader;
-    FTextureShader : TGDGLShader;
-    FClearShader   : TGDGLShader;
+    FTerrainShader  : TGDGLShader;
+    FSkyShader      : TGDGLShader;
+    FWaterShader    : TGDGLShader;
+    FGrassShader    : TGDGLShader;
+    FBlurShader     : TGDGLShader;
+    FMeshShader     : TGDGLShader;
+    FSunShader      : TGDGLShader;
+    FPostShader     : TGDGLShader;
+    FColorShader    : TGDGLShader;
+    FTextureShader  : TGDGLShader;
+    FClearShader    : TGDGLShader;
 
     FFrameFBO       : TGDGLFrameBuffer;
     FFrameTex       : TGDTexture;
     FFrameShadowTex : TGDTexture;
     FFrameDepthTex  : TGDTexture;
 
-    FBlurFBO       : TGDGLFrameBuffer;
-    FBlurTex       : TGDTexture;
+    FBlurFBO        : TGDGLFrameBuffer;
+    FBlurTex        : TGDTexture;
 
-    FShadowFBO     : TGDGLFrameBuffer;
-    FShadowTex     : TGDTexture;
+    FShadowFBO      : TGDGLFrameBuffer;
+    FShadowTex      : TGDTexture;
 
-    FSSAOStrength  : Single;
-    FSSAOSamples   : Integer;
-    FSSAORadius    : Single;
-    FSSAOOnly      : Integer;
-    FShadowFilter  : Integer;
+    FSSAOStrength   : Single;
+    FSSAOSamples    : Integer;
+    FSSAORadius     : Single;
+    FSSAOOnly       : Integer;
+    FShadowFilter   : Integer;
 
     FLinesVertices     : TGDVertex_V_List;
     FLinesVertexBuffer : TGDGLVertexBuffer;
@@ -116,8 +111,8 @@ type
     Constructor Create();
     Destructor  Destroy();override;
 
-    function    InitViewPort( aWnd  : HWND ): boolean;
-    function    ShutDownViewPort() : boolean;
+    procedure   InitViewPort();
+    procedure   ClearViewPort;
     procedure   ResizeViewPort(aTop, aLeft, aWidth, aHeight : integer);
 
     procedure   SetColor(aC : TGDColor); overload;
@@ -127,12 +122,9 @@ type
 
     procedure   AddLine(aV1, aV2 : TGDVector);
 
-    procedure   StartFrame();
-    procedure   EndFrame();
-    function    MakeCurrent() : boolean;
+    procedure   ClearFrame();
     procedure   SwitchToOrtho();
     procedure   SwitchToPerspective();
-    procedure   VerticalSync();
 
     procedure   Render();
   end;
@@ -159,17 +151,15 @@ var
 
 begin
   Inherited;
-  FCanResize := false;
   Engine.Timing.Start();
-  Engine.Console.Write('......Initializing renderer');
+  Engine.Console.Write('.....Initializing renderer');
   try
     FInitialized := true;
 
     //Create SDL resource window
-    FResourceWND := SDL_CreateWindow('resources', 0, 0, 10, 10, SDL_WINDOW_OPENGL);
+    FResourceWND := SDL_CreateWindow('resources', 0, 0, 10, 10, SDL_WINDOW_OPENGL or SDL_WINDOW_HIDDEN);
     if FResourceWND = nil then
        Raise Exception.Create('Error creating resource window.');
-    SDL_HideWindow(FResourceWND);
 
     //Create OGL context
     FResourceDC := SDL_GL_CreateContext(FResourceWND);
@@ -183,14 +173,11 @@ begin
     InitOpenGL;
     ReadExtensions;
 
-    //TEMP: Get the windows RC to share contexts for now.
-    FResourceRC := wglGetCurrentContext();
-
     //Print specs
-    Engine.Console.Write('Vendor: ' + String(AnsiString(glGetString(GL_VENDOR))));
-    Engine.Console.Write('Renderer: ' + String(AnsiString(glGetString(GL_RENDERER))));
-    Engine.Console.Write('Version: ' + String(AnsiString(glGetString(GL_VERSION))));
-    Engine.Console.Write('GLSL Version: ' + String(AnsiString(glGetString(GL_SHADING_LANGUAGE_VERSION))));
+    Engine.Console.Write('  Vendor: ' + String(AnsiString(glGetString(GL_VENDOR))));
+    Engine.Console.Write('  Renderer: ' + String(AnsiString(glGetString(GL_RENDERER))));
+    Engine.Console.Write('  Version: ' + String(AnsiString(glGetString(GL_VERSION))));
+    Engine.Console.Write('  GLSL Version: ' + String(AnsiString(glGetString(GL_SHADING_LANGUAGE_VERSION))));
 
     //Check requirements
     //Version
@@ -204,19 +191,19 @@ begin
 
     //Texture units
     glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, @iGLInt1);
-    Engine.Console.Write('Texture units: ' + IntToStr(iGLInt1));
+    Engine.Console.Write('  Texture units: ' + IntToStr(iGLInt1));
     if iGLInt1 < MRS_TEXTURE_UNITS then
       Raise Exception.Create('Not ennough texture units! Minimal of ' + IntToStr(MRS_TEXTURE_UNITS) + ' needed.');
 
     //Anisotropic filtering
     glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, @iGLFLoat);
-    Engine.Console.Write('Anisotropic filtering: ' + FormatFloat('#####', iGLFLoat));
+    Engine.Console.Write('  Anisotropic filtering: ' + FormatFloat('#####', iGLFLoat));
     if iGLFLoat < MRS_ANISOTROPIC_FILTERING then
       Raise Exception.Create('To low anisotropic filtering! Minimal of ' + IntToStr(MRS_ANISOTROPIC_FILTERING) + ' needed.');
 
     //Texture size
     glGetFloatv(GL_MAX_TEXTURE_SIZE, @iGLFLoat);
-    Engine.Console.Write('Texture size: ' + FormatFloat('#####',iGLFLoat));
+    Engine.Console.Write('  Texture size: ' + FormatFloat('#####',iGLFLoat));
     if iGLFLoat < MRS_TEXTURE_SIZE then
       Raise Exception.Create('To low texture size! Minimal of ' + IntToStr(MRS_TEXTURE_SIZE) + ' needed.');
 
@@ -287,7 +274,7 @@ begin
   If FInitialized then
   begin
     Engine.Timing.Stop();
-    Engine.Console.Write('......Done initializing renderer (' + Engine.Timing.TimeInSeconds + ' Sec)');
+    Engine.Console.Write('.....Done initializing renderer (' + Engine.Timing.TimeInSeconds + ' Sec)');
     InitShaders();
   end;
 end;
@@ -329,80 +316,20 @@ end;
 {* Init the viewport                                                          *}
 {******************************************************************************}
 
-function TGDRenderer.InitViewPort( aWnd  : HWND ): boolean;
-var
-  iError    : string;
+procedure TGDRenderer.InitViewPort();
 begin
-  Engine.Console.Write('Initializing viewport...');
-  try
-    Result := true;
-
-    //get the device context
-    FViewPortWND := aWnd;
-    FViewPortDC := GetDC(FViewPortWND);
-    if (FViewPortDC = 0) then
-      Raise Exception.Create('Failed to get a device context');
-
-    //Create the OpenGL rendering context
-    FViewPortRC := CreateRenderingContext(FViewPortDC, [opDoubleBuffered, opStereo], 32, 32, 0, 0, 0, 0);;
-    if (FViewPortRC = 0) then
-      Raise Exception.Create('Failed to create a rendering context');
-
-    //Activate and share the rendering context
-    ActivateRenderingContext(FViewPortDC, FViewPortRC);
-    wglShareLists(FResourceRC, FViewPortRC);
-
-    ResizeViewPort(Engine.Settings.Top, Engine.Settings.Left, Engine.Settings.Width, Engine.Settings.Height);
-    VerticalSync();
-    InitFrameBuffers();
-    InitShadowFrameBuffers();
-
-    FCanResize := true;
-  except
-    on E: Exception do
-    begin
-      iError := E.Message;
-      result := false;
-    end;
-  end;
-  Engine.Console.WriteOkFail(result, iError);
+  InitFrameBuffers();
+  InitShadowFrameBuffers();
 end;
 
 {******************************************************************************}
 {* Shutdown the renderer                                                      *}
 {******************************************************************************}
 
-function TGDRenderer.ShutDownViewPort() : boolean;
-var
-  iError    : string;
+procedure TGDRenderer.ClearViewPort();
 begin
-  Engine.Console.Write('Shutting down viewport...');
-  try
-    FCanResize := false;
-    result := true;
-    Engine.Reset();
-    ClearFrameBuffers();
-    ClearShadowFrameBuffers();
-    wglMakeCurrent(0, 0);
-    if (not wglDeleteContext(FViewPortRC)) then
-    begin
-      FViewPortRC := 0;
-      Raise Exception.Create('Unable to activate OpenGL rendering context!');
-    end;
-    if ((FViewPortDC > 1) and (ReleaseDC(FViewPortWND, FViewPortDC) = 0)) then
-    begin
-      FViewPortDC := 0;
-      Raise Exception.Create('Release of device context failed!');
-    end;
-  except
-    on E: Exception do
-    begin
-      iError := E.Message;
-      result := false;
-    end;
-  end;
-
-  Engine.Console.WriteOkFail(result, iError);
+  ClearFrameBuffers();
+  ClearShadowFrameBuffers();
 end;
 
 {******************************************************************************}
@@ -411,13 +338,11 @@ end;
 
 procedure TGDRenderer.ResizeViewPort(aTop, aLeft, aWidth, aHeight : integer);
 begin
-  if not(FCanResize) then exit;
   Engine.Settings.Top := aTop;
   Engine.Settings.Left := aLeft;
   Engine.Settings.Width := aWidth;
   Engine.Settings.Height := aHeight;
   Engine.Input.CalculateMousePosStart();
-  MakeCurrent();
   if (Engine.Settings.Height = 0) then
     Engine.Settings.Height := 1;
   glViewport(0, 0, Engine.Settings.Width, Engine.Settings.Height);
@@ -562,7 +487,7 @@ end;
 procedure TGDRenderer.InitShaders();
 begin
   Engine.Timing.Start();
-  Engine.Console.Write('......Initializing shaders');
+  Engine.Console.Write('.....Initializing shaders');
   FTerrainShader  := TGDGLShader.Create(SHADER_TERRAIN);
   FSkyShader      := TGDGLShader.Create(SHADER_SKY);
   FWaterShader    := TGDGLShader.Create(SHADER_WATER);
@@ -575,7 +500,7 @@ begin
   FTextureShader  := TGDGLShader.Create(SHADER_TEXTURE);
   FClearShader    := TGDGLShader.Create(SHADER_CLEAR);
   Engine.Timing.Stop();
-  Engine.Console.Write('......Done initializing shaders (' + Engine.Timing.TimeInSeconds + ' Sec)');
+  Engine.Console.Write('.....Done initializing shaders (' + Engine.Timing.TimeInSeconds + ' Sec)');
 end;
 
 {******************************************************************************}
@@ -670,31 +595,13 @@ begin
 end;
 
 {******************************************************************************}
-{* Start a frame                                                              *}
+{* Clear frame                                                                *}
 {******************************************************************************}
 
-procedure TGDRenderer.StartFrame();
+procedure TGDRenderer.ClearFrame();
 begin
   glClear(GL_DEPTH_BUFFER_BIT);
   glLoadIdentity;
-end;
-
-{******************************************************************************}
-{* End a frame                                                                *}
-{******************************************************************************}
-
-procedure TGDRenderer.EndFrame();
-begin
-  SwapBuffers(FViewPortDC);
-end;
-
-{******************************************************************************}
-{* Make the rendercontext current                                             *}
-{******************************************************************************}
-
-function TGDRenderer.MakeCurrent() : boolean;
-begin
-  Result := wglMakeCurrent(FViewPortDC, FViewPortRC);
 end;
 
 {******************************************************************************}
@@ -722,28 +629,6 @@ begin
   glPopMatrix();
   glMatrixMode(GL_MODELVIEW);
   glPopMatrix();
-end;
-
-{******************************************************************************}
-{* Set vertical sync on or off                                                *}
-{******************************************************************************}
-
-procedure TGDRenderer.VerticalSync();
-var
-   iI : Integer;
-begin
-   if WGL_EXT_swap_control then
-   begin
-      iI := wglGetSwapIntervalEXT;
-
-      If Engine.Settings.VerticalSync then
-        if iI<>1 then
-          wglSwapIntervalEXT(1);
-
-      If not(Engine.Settings.VerticalSync) then
-        if iI<>0 then
-          wglSwapIntervalEXT(0);
-   end;
 end;
 
 procedure TGDRenderer.Render();
@@ -839,7 +724,7 @@ begin
   If (Engine.Modes.RenderWireframe = false) and Engine.Map.Water.Visible() then
   begin
     //render reflection texture
-    StartFrame();
+    ClearFrame();
     iC := Engine.Map.FogColor.Copy();
     glClearColor(iC.R, iC.G, iC.B, iC.A);
     glClear(GL_COLOR_BUFFER_BIT);
@@ -1040,13 +925,13 @@ begin
     RenderSourceImage(Engine.Map.Water.UnderWater());
 
     //render the final image
-    StartFrame();
+    ClearFrame();
     RenderFinal();
   end
   else
   begin
     RenderState( RS_WIREFRAME );
-    StartFrame();
+    ClearFrame();
     glClear(GL_COLOR_BUFFER_BIT);
     Engine.Camera.Translate();
     RenderStaticGeometry();
@@ -1055,9 +940,6 @@ begin
   //render debug and ortho stuff
   RenderDebug();
   RenderGUI();
-
-  //end the frame and increment the framecounter
-  EndFrame();
 end;
 
 end.

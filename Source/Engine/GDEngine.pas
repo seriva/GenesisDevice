@@ -35,6 +35,7 @@ interface
 uses
   LCLIntf,
   LCLType,
+  Forms,
   SysUtils,
   sdl2,
   dglOpenGL,
@@ -45,6 +46,7 @@ uses
   GDInput,
   GDGUI,
   GDMap,
+  GDWindow,
   GDResources,
   GDSound,
   GDModes,
@@ -58,8 +60,10 @@ type
 {* Engine class                                                               *}
 {******************************************************************************}
 
-  TGDEngine  = Class
+  TGDEngine = Class
   private
+    FRunning    : boolean;
+
     FTiming     : TGDTiming;
     FConsole    : TGDConsole;
     FSettings   : TGDSettings;
@@ -67,6 +71,7 @@ type
     FInput      : TGDInput;
     FSound      : TGDSound;
     FRenderer   : TGDRenderer;
+    FWindow			: TGDWindow;
 
     FStatistics : TGDStatistics;
     FModes      : TGDModes;
@@ -74,7 +79,12 @@ type
     FCamera     : TGDCamera;
     FMap        : TGDMap;
     FGUI        : TGDGUI;
+
+    function  InitSystems(): boolean;
+    procedure ClearSystems();
   public
+    property Running    : boolean read FRunning write FRunning;
+
     property Timing     : TGDTiming read FTiming;
     property Console    : TGDConsole read FConsole;
     property Settings   : TGDSettings read FSettings;
@@ -82,6 +92,7 @@ type
     property Input      : TGDInput read FInput;
     property Sound      : TGDSound read FSound;
     property Renderer   : TGDRenderer read FRenderer;
+    property Window			: TGDWindow read FWindow;
 
     property Statistics : TGDStatistics read FStatistics;
     property Modes      : TGDModes read FModes;
@@ -93,12 +104,9 @@ type
     constructor Create();
     destructor  Destroy(); override;
 
-    function  InitSystems(): boolean;
-    procedure ClearSystems();
-
     procedure Reset();
 
-    procedure Loop(aCallback : TGDCallback);
+    procedure Run(aInit, aLoop, aClose : TGDCallback);
   end;
 
 var
@@ -141,10 +149,11 @@ begin
   if iSDLInit then
   begin
     SDL_GetVersion(@iVersion);
-    Engine.Console.Write('Version: ' + IntToStr(iVersion.major) + '.' +
+    Engine.Console.Write('  Version: ' + IntToStr(iVersion.major) + '.' +
                          IntToStr(iVersion.minor) + '.' +
                          IntToStr(iVersion.patch));
-    Engine.Console.Write('......Done initializing SDL');
+    Engine.Console.Write('.....Done initializing SDL');
+
   end
   else
     Engine.Console.Write('Failed to initialize SDL: ' + SDL_GetError());
@@ -153,7 +162,8 @@ begin
   FInput      := TGDInput.Create();
   FSound      := TGDSound.Create();
   FRenderer   := TGDRenderer.Create();
-  result      := FSound.Initialized and FInput.Initialized and FRenderer.Initialized and iSDLInit;
+  FWindow			:= TGDWindow.Create();
+  result      := FSound.Initialized and FInput.Initialized and FRenderer.Initialized and FWindow.Initialized and iSDLInit;
 
   FStatistics := TGDStatistics.Create();
   FModes      := TGDModes.Create();
@@ -172,12 +182,10 @@ begin
   FreeAndNil(FStatistics);
   FreeAndNil(FModes);
 
+  FreeAndNil(FWindow);
   FreeAndNil(FInput);
   FreeAndNil(FSound);
   FreeAndNil(FRenderer);
-
-  SDL_Quit();
-  Engine.Console.Write('Shutting down SDL...Ok');
 
   FreeAndNil(FTiming);
   FreeAndNil(FConsole);
@@ -186,6 +194,9 @@ begin
   FreeAndNil(FGUI);
   FreeAndNil(FMap);
   FreeAndNil(FResources);
+
+  SDL_Quit();
+  Engine.Console.Write('Shutting down SDL...Ok');
 end;
 
 {******************************************************************************}
@@ -205,21 +216,42 @@ end;
 {* Main loop of the engine                                                    *}
 {******************************************************************************}
 
-procedure TGDEngine.Loop(aCallback : TGDCallback);
+procedure TGDEngine.Run(aInit, aLoop, aClose : TGDCallback);
 begin
-  //start timing
-  Statistics.FrameStart();
-  Timing.CalculateFrameTime();
+  FRunning := true;
+  Window.Show();
+  Renderer.InitViewPort();
+  Renderer.ResizeViewPort(0,0,Settings.Width, Settings.Height);
 
-  Input.Update();
-  Sound.Update();
-  Map.Update();
-  if assigned(aCallback) then aCallback();
-  Renderer.Render();
+  if assigned(aInit) then aInit();
 
-  //end timing
-  Statistics.FrameStop();
-  Statistics.Update();
+  while FRunning do
+  begin
+    //start timing
+    Statistics.FrameStart();
+    Timing.CalculateFrameTime();
+
+    //Update all systems
+    Window.Update();
+    Input.Update();
+    Sound.Update();
+    Map.Update();
+    Application.HandleMessage;
+    if assigned(aLoop) then aLoop();
+
+    //Render the scene
+    Window.MakeCurrent();
+    Renderer.Render();
+    Window.Swap();
+
+    //end timing
+    Statistics.FrameStop();
+    Statistics.Update();
+  end;
+
+  if assigned(aClose) then aClose();
+  Renderer.ClearViewPort();
+  Window.Hide();
 end;
 
 initialization
