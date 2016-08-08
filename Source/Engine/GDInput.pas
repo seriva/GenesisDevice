@@ -39,6 +39,7 @@ interface
 
 uses
   FGL,
+  SDL2,
   LCLIntf,
   LCLType,
   SysUtils,
@@ -78,7 +79,7 @@ type
     FEnableInput     : Boolean;
     FMouseLook       : boolean;
     FKeyBuffer       : array[0..255] of Boolean;
-    FMousePosStart   : TPoint;
+    //FMousePosStart   : TPoint;
     FMousePosCurrent : TPoint;
 
     FSingle          : TGDInputActionList;
@@ -97,9 +98,6 @@ type
     function  KeyDown(aKey: byte): boolean;
 
     procedure Update();
-
-    procedure CalculateMousePosStart();
-    procedure SetMouseStartPos();
 
     procedure AddAction(aType : TGDInputTypes; aKey : integer; aAction : TGDCallback;  aConsoleDisabled : boolean );
     procedure Clear();
@@ -162,7 +160,6 @@ begin
     FSingle := TGDInputActionList.Create();
     FUp     := TGDInputActionList.Create();
     FDown   := TGDInputActionList.Create();
-    CalculateMousePosStart();
   except
     on E: Exception do
     begin
@@ -281,35 +278,12 @@ begin
   if FMouseLook then
   begin
     if Engine.Console.Show then exit;
-    GetCursorPos(FMousePosCurrent);
-    SetMouseStartPos();
-    Engine.Camera.MouseLook(FMousePosStart.X, FMousePosStart.Y, FMousePosCurrent.X,
+    SDL_GetMouseState(@FMousePosCurrent.x, @FMousePosCurrent.y);
+    Engine.Window.SetMouse();
+    Engine.Camera.MouseLook(Engine.Settings.Width div 2, Engine.Settings.Height div 2, FMousePosCurrent.X,
                      FMousePosCurrent.Y,Engine.Settings.MouseSensitivity,
                      Engine.Settings.InvertMouse);
-    FMousePosCurrent.X := FMousePosStart.x;
-    FMousePosCurrent.Y := FMousePosStart.Y;
   end;
-end;
-
-{******************************************************************************}
-{* Calculate the mousestart position                                          *}
-{******************************************************************************}
-
-procedure TGDInput.CalculateMousePosStart();
-begin
-  FMousePosStart.x := Round( Engine.Settings.Left + (Engine.Settings.Width / 2) );
-  FMousePosStart.Y := Round( Engine.Settings.Top + (Engine.Settings.Height / 2) );
-  FMousePosCurrent.X := FMousePosStart.x;
-  FMousePosCurrent.Y := FMousePosStart.Y;
-end;
-
-{******************************************************************************}
-{* Set mouse at the mousestart position                                       *}
-{******************************************************************************}
-
-procedure TGDInput.SetMouseStartPos();
-begin
-  SetCursorPos(FMousePosStart.X, FMousePosStart.Y);
 end;
 
 {******************************************************************************}
@@ -339,7 +313,6 @@ begin
   FSingle.Clear();
   FDown.Clear();
   FUp.Clear();
-  CalculateMousePosStart();
 end;
 
 end.

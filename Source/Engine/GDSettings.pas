@@ -42,8 +42,6 @@ type
   TGDSettings = class
   private
     //window settings
-    FTop              : Integer;
-    FLeft             : Integer;
     FWidth            : Integer;
     FHeight           : Integer;
     FFullScreen       : Boolean;
@@ -83,8 +81,6 @@ type
     function  GetTextureFilter() : String;
 
     //window settings
-    property Top : Integer read FTop write FTop;
-    property Left : Integer read FLeft write FLeft;
     property Width : Integer read FWidth write FWidth;
     property Height : Integer read FHeight write FHeight;
     property FullScreen : Boolean read FFullScreen write FFullScreen;
@@ -139,6 +135,7 @@ begin
   FHeight           := 600;
   FFullScreen       := false;
   FVerticalSync     := false;
+  FGamma            := 0.50;
 
   //renderer
   ViewDistance      := 5;
@@ -150,11 +147,6 @@ begin
   FUseFXAA          := false;
   FUseShadows       := false;
   FUseDetail        := false;
-
-  //set right en left
-  FTop := 0;
-  FLeft := 0;
-  FGamma := 0.50;
 
   //input
   FInvertMouse      := False;

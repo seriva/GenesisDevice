@@ -32,6 +32,7 @@ type
     procedure MakeCurrent();
     procedure Swap();
     procedure Update();
+    procedure SetMouse();
   end;
 
 implementation
@@ -54,7 +55,7 @@ begin
     Engine.Console.Write('Initializing window...');
 
   	//create window
-  	FWindow := SDL_CreateWindow('', 0, 0, 100, 75, SDL_WINDOW_OPENGL or SDL_WINDOW_RESIZABLE or SDL_WINDOW_HIDDEN);
+  	FWindow := SDL_CreateWindow('', 25, 50, 800, 600, SDL_WINDOW_OPENGL or SDL_WINDOW_RESIZABLE or SDL_WINDOW_HIDDEN);
     if FWindow = nil then
       Engine.Console.Write('Failed to initialize SDL window: ' + SDL_GetError());
 
@@ -113,7 +114,10 @@ procedure TGDWindow.Show();
 begin
   SDL_ShowWindow(FWindow);
   SDL_SetWindowSize(FWindow, Engine.Settings.Width, Engine.Settings.Height);
-  //SDL_SetWindowTitle(FWindow, 'test');
+  if Engine.Settings.VerticalSync then
+    SDL_GL_SetSwapInterval(1)
+  else
+    SDL_GL_SetSwapInterval(0);
   MakeCurrent();
 end;
 
@@ -149,8 +153,36 @@ end;
 {******************************************************************************}
 
 procedure TGDWindow.Update();
-begin
+var
+  event : TSDL_Event;
+begin;
+  while ( SDL_PollEvent( @event ) = 1 ) do
+  begin
+    case event.type_ of
+      SDL_QUITEV          : Engine.Done := True;
+      //SDL_KEYDOWN         : HandleKeyDown(event.key.keysym);
+      //SDL_KEYUP           : HandleKeyUp(event.key.keysym);
+      //SDL_MOUSEMOTION     : HandleMouse(event.motion);
+      //SDL_MOUSEBUTTONDOWN : HandleMouseButtons(event.button);
+      //SDL_MOUSEWHEEL      : HandleMouseWheel(event.wheel);
+      SDL_WINDOWEVENT     : begin
+                              case event.window.event of
+                                SDL_WINDOWEVENT_RESIZED:
+                                  Engine.Renderer.ResizeViewPort(event.window.data1, event.window.data2);
+                              end;
+      											end;
+      SDL_TEXTINPUT       : Engine.Console.AddChar(event.text.text[0]);
+    end;
+  end;
+end;
 
+{******************************************************************************}
+{* Set the mouse in the center of the windows                                 *}
+{******************************************************************************}
+
+procedure TGDWindow.SetMouse();
+begin
+  SDL_WarpMouseInWindow(FWindow, Engine.Settings.Width div 2, Engine.Settings.Height div 2);
 end;
 
 end.

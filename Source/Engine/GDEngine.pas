@@ -62,8 +62,7 @@ type
 
   TGDEngine = Class
   private
-    FRunning    : boolean;
-
+    FDone 			: boolean;
     FTiming     : TGDTiming;
     FConsole    : TGDConsole;
     FSettings   : TGDSettings;
@@ -83,7 +82,7 @@ type
     function  InitSystems(): boolean;
     procedure ClearSystems();
   public
-    property Running    : boolean read FRunning write FRunning;
+    property Done       : Boolean read FDone write FDone;
 
     property Timing     : TGDTiming read FTiming;
     property Console    : TGDConsole read FConsole;
@@ -106,7 +105,9 @@ type
 
     procedure Reset();
 
-    procedure Run(aInit, aLoop, aClose : TGDCallback);
+    procedure Init(aInit : TGDCallback);
+		procedure Clear(aClear : TGDCallback);
+    procedure Loop(aLoop : TGDCallback);
   end;
 
 var
@@ -153,7 +154,6 @@ begin
                          IntToStr(iVersion.minor) + '.' +
                          IntToStr(iVersion.patch));
     Engine.Console.Write('.....Done initializing SDL');
-
   end
   else
     Engine.Console.Write('Failed to initialize SDL: ' + SDL_GetError());
@@ -187,6 +187,9 @@ begin
   FreeAndNil(FSound);
   FreeAndNil(FRenderer);
 
+  SDL_Quit();
+  Engine.Console.Write('Shutting down SDL...Ok');
+
   FreeAndNil(FTiming);
   FreeAndNil(FConsole);
   FreeAndNil(FSettings);
@@ -194,9 +197,6 @@ begin
   FreeAndNil(FGUI);
   FreeAndNil(FMap);
   FreeAndNil(FResources);
-
-  SDL_Quit();
-  Engine.Console.Write('Shutting down SDL...Ok');
 end;
 
 {******************************************************************************}
@@ -213,45 +213,57 @@ begin
 end;
 
 {******************************************************************************}
-{* Main loop of the engine                                                    *}
+{* Init                                                                       *}
 {******************************************************************************}
 
-procedure TGDEngine.Run(aInit, aLoop, aClose : TGDCallback);
+procedure TGDEngine.Init(aInit : TGDCallback);
 begin
-  FRunning := true;
   Window.Show();
   Renderer.InitViewPort();
-  Renderer.ResizeViewPort(0,0,Settings.Width, Settings.Height);
-
+  Renderer.ResizeViewPort(Settings.Width, Settings.Height);
+  SDL_ShowCursor(0);
+  Engine.Done := false;
   if assigned(aInit) then aInit();
+end;
 
-  while FRunning do
-  begin
-    //start timing
-    Statistics.FrameStart();
-    Timing.CalculateFrameTime();
+{******************************************************************************}
+{* Clear                                                                      *}
+{******************************************************************************}
 
-    //Update all systems
-    Window.Update();
-    Input.Update();
-    Sound.Update();
-    Map.Update();
-    Application.HandleMessage;
-    if assigned(aLoop) then aLoop();
-
-    //Render the scene
-    Window.MakeCurrent();
-    Renderer.Render();
-    Window.Swap();
-
-    //end timing
-    Statistics.FrameStop();
-    Statistics.Update();
-  end;
-
-  if assigned(aClose) then aClose();
+procedure TGDEngine.Clear(aClear : TGDCallback);
+begin
+  if assigned(aClear) then aClear();
+  Reset();
   Renderer.ClearViewPort();
   Window.Hide();
+  SDL_ShowCursor(1);
+end;
+
+{******************************************************************************}
+{* Loop                                                                       *}
+{******************************************************************************}
+
+procedure TGDEngine.Loop(aLoop : TGDCallback);
+begin
+  //start timing
+  Statistics.FrameStart();
+  Timing.CalculateFrameTime();
+
+  //Update all systems
+  Window.Update();
+  Input.Update();
+  Sound.Update();
+  Map.Update();
+  if assigned(aLoop) then aLoop();
+
+  //Render the scene
+  Window.MakeCurrent();
+  Renderer.Render();
+  Window.Swap();
+
+  //end timing
+  Statistics.FrameStop();
+  Statistics.Update();
 end;
 
 initialization

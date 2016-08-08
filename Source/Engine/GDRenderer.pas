@@ -113,7 +113,7 @@ type
 
     procedure   InitViewPort();
     procedure   ClearViewPort;
-    procedure   ResizeViewPort(aTop, aLeft, aWidth, aHeight : integer);
+    procedure   ResizeViewPort(aWidth, aHeight : integer);
 
     procedure   SetColor(aC : TGDColor); overload;
     procedure   SetColor(aR, aG, aB, aA : Single); overload;
@@ -336,13 +336,11 @@ end;
 {* Resize the windows viewport                                                *}
 {******************************************************************************}
 
-procedure TGDRenderer.ResizeViewPort(aTop, aLeft, aWidth, aHeight : integer);
+procedure TGDRenderer.ResizeViewPort(aWidth, aHeight : integer);
 begin
-  Engine.Settings.Top := aTop;
-  Engine.Settings.Left := aLeft;
   Engine.Settings.Width := aWidth;
   Engine.Settings.Height := aHeight;
-  Engine.Input.CalculateMousePosStart();
+ // Engine.Input.CalculateMousePosStart();
   if (Engine.Settings.Height = 0) then
     Engine.Settings.Height := 1;
   glViewport(0, 0, Engine.Settings.Width, Engine.Settings.Height);

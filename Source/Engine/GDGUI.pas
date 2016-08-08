@@ -35,6 +35,7 @@ interface
 
 uses
   fgl,
+  sdl2,
   LCLIntf,
   LCLType,
   Classes,
@@ -589,8 +590,9 @@ end;
 
 begin
   Engine.Renderer.RenderState( RS_TEXTS );
-  GetCursorPos(iCurPos);
-  CalculateScreenPosition(iCurPos.X-Engine.Settings.Left, iCurPos.Y-Engine.Settings.Top);
+  //GetCursorPos(iCurPos);
+  SDL_GetMouseState(@iCurPos.x, @iCurPos.y);
+  CalculateScreenPosition(iCurPos.X, iCurPos.Y);
   glDisable(GL_BLEND);
 
   If FVisible or Engine.Console.Show then
@@ -600,7 +602,7 @@ begin
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_BLEND);
     Engine.Renderer.SetColor(1,1,1,1);
-    RenderTexturedQuad(FPosition.x,FPosition.y,FCursorSize,FCursorSize);
+    RenderTexturedQuad(FPosition.x,FPosition.y-FCursorSize,FCursorSize,FCursorSize);
     glDisable(GL_BLEND);
   end;
 end;

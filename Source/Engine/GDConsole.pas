@@ -248,7 +248,7 @@ begin
     FShow := not(FShow);
     If Not(FShow) then
     begin
-      Engine.Input.SetMouseStartPos();
+      Engine.Window.SetMouse();
       Exit;
     end
     else

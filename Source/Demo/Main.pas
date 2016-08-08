@@ -80,7 +80,7 @@ uses
 
 procedure ExitCallback();
 begin
-  Engine.Running := false;
+  Engine.Done := true;
 end;
 
 {******************************************************************************}
@@ -212,7 +212,6 @@ procedure ToggleIntroText();
 begin
   IntroScreen.Visible := not(IntroScreen.Visible);
   Engine.Input.MouseLook := not(IntroScreen.Visible);
-  Engine.Input.CalculateMousePosStart();
   Engine.GUI.MouseCursor.Visible := IntroScreen.Visible;
 end;
 
@@ -233,9 +232,6 @@ begin
     Engine.Sound.Pause( UnderWaterSource );
     Engine.Sound.Resume(AmbientSource);
   end;
-
-  //If (ViewPortForm.Focused = False) or (ViewPortForm.WindowState = wsMinimized) then
-  //  Sleep(50);
 
   //calculate player collision and response
   Player.DoPlayerCollisionAndPhysics();
@@ -304,6 +300,8 @@ begin
   Engine.Input.AddAction(IT_SINGLE,VK_P,@ToggleIntroText, true  );
 
   MusicSource := Engine.Sound.Play( MusicBuffer, true );
+
+  Application.EnableIdleHandler;
 end;
 
 {******************************************************************************}
@@ -312,6 +310,8 @@ end;
 
 procedure ClearGame();
 begin
+  Application.DisableIdleHandler;
+
   FreeAndNil(Player);
   Engine.Sound.Stop(AmbientSource);
   Engine.Sound.Stop(UnderWaterSource);

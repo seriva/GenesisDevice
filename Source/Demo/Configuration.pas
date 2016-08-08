@@ -40,7 +40,6 @@ uses
   StdCtrls,
   Classes,
   Dialogs,
-  ViewPort,
   SysUtils,
   GDConstants,
   GDEngine,
@@ -55,6 +54,7 @@ type
   { TConfigurationForm }
 
   TConfigurationForm = class(TForm)
+    ApplicationProperties: TApplicationProperties;
     DetailCheckbox: TCheckBox;
     FoliageDensityLabel: TLabel;
     FoliageDensityTrackBar: TTrackBar;
@@ -98,6 +98,8 @@ type
     WaterReflectionComboBox: TComboBox;
     WindowPanel: TPanel;
     WindowTabSheet: TTabSheet;
+    procedure ApplicationPropertiesIdle(Sender: TObject; var Done: Boolean);
+    procedure ApplicationPropertiesIdleEnd(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -143,6 +145,7 @@ begin
   //show the form and set the focus
   self.Show();
   RunButton.SetFocus();
+  Application.DisableIdleHandler;
 end;
 
 {******************************************************************************}
@@ -162,8 +165,8 @@ end;
 
 procedure TConfigurationForm.FormShow(Sender: TObject);
 begin
-  self.Left:=0;
-  self.Top:=0;
+  self.Left:=25;
+  self.Top:=25;
 end;
 
 {******************************************************************************}
@@ -293,7 +296,20 @@ begin
   SettingsFromInterface();
   Engine.Settings.Save();
   Visible := false;
-  Engine.Run(@InitGame ,@GameLoop, @ClearGame);
+  Engine.Init(@InitGame);
+end;
+
+procedure TConfigurationForm.ApplicationPropertiesIdle(Sender: TObject;
+  var Done: Boolean);
+begin
+	Done := Engine.Done;
+
+  Engine.Loop(@GameLoop);
+end;
+
+procedure TConfigurationForm.ApplicationPropertiesIdleEnd(Sender: TObject);
+begin
+  Engine.Clear(@ClearGame);
 end;
 
 {******************************************************************************}
