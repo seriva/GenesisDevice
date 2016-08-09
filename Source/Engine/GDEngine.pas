@@ -232,10 +232,10 @@ end;
 
 procedure TGDEngine.Clear(aClear : TGDCallback);
 begin
-  if assigned(aClear) then aClear();
-  Reset();
-  Renderer.ClearViewPort();
   Window.Hide();
+  if assigned(aClear) then aClear();
+  Renderer.ClearViewPort();
+  Reset();
   SDL_ShowCursor(1);
 end;
 

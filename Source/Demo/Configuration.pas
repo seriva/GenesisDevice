@@ -31,6 +31,7 @@ unit Configuration;
 interface
 
 uses
+  SDL2,
   LCLIntf,
   LCLType,
   Forms,
@@ -107,6 +108,8 @@ type
 
     procedure RunButtonClick(Sender: TObject);
   private
+    FDisplayModes : array of TSDL_DisplayMode;
+
     procedure FillComboboxes();
     procedure FillDisplays();
     procedure FillDisplayModi();
@@ -165,8 +168,8 @@ end;
 
 procedure TConfigurationForm.FormShow(Sender: TObject);
 begin
-  self.Left:=25;
-  self.Top:=25;
+  //self.Left:=25;
+  //self.Top:=25;
 end;
 
 {******************************************************************************}
@@ -185,13 +188,12 @@ end;
 procedure TConfigurationForm.FillComboboxes();
 var
   iI: LongInt;
-  iStr: string;
 begin
   //fill monitors combobox
-  //FillDisplays();
+  FillDisplays();
 
   //fill resolutions combobox
-  //FillDisplayModi();
+  FillDisplayModi();
 
   //fill texturedetail combobox
   TextureDetailComboBox.Clear;
@@ -217,7 +219,9 @@ procedure TConfigurationForm.SettingsToInterface();
 var
   iI: Integer;
 begin
-  //viewport settings
+  //window settings
+  MonitorComboBox.ItemIndex := Engine.Settings.Display;
+  ResolutionsComboBox.ItemIndex := Engine.Settings.DisplayMode;
   FullScreenCheckBox.Checked := Engine.Settings.FullScreen;
   VerticalSyncCheckBox.Checked := Engine.Settings.VerticalSync;
   GammaTrackBar.Position := Round(Engine.Settings.Gamma * 100);
@@ -259,9 +263,10 @@ end;
 procedure TConfigurationForm.SettingsFromInterface();
 begin
   //window settings
-  //TEMP: resolution
-  Engine.Settings.Width            := 800;
-  Engine.Settings.Height           := 600;
+  Engine.Settings.Display          := MonitorComboBox.ItemIndex;
+  Engine.Settings.DisplayMode      := ResolutionsComboBox.ItemIndex;
+  Engine.Settings.Width            := FDisplayModes[ResolutionsComboBox.ItemIndex].w;
+  Engine.Settings.Height           := FDisplayModes[ResolutionsComboBox.ItemIndex].h;
   Engine.Settings.FullScreen       := FullScreenCheckBox.Checked;
   Engine.Settings.VerticalSync     := VerticalSyncCheckBox.Checked;
   Engine.Settings.Gamma            := GammaTrackBar.Position / 100;
@@ -320,20 +325,11 @@ procedure TConfigurationForm.FillDisplays();
 var
   iI : Integer;
 begin
-  {
-  for iI := 0 to Screen.MonitorCount-1 do
+  for iI := 0 to SDL_GetNumVideoDisplays()-1 do
   begin
-    if Screen.Monitors[iI].Primary then
-      MonitorComboBox.Items.Add('Monitor ' + IntToStr(iI+1) + ' (Primary)')
-    else
-      MonitorComboBox.Items.Add('Monitor ' + IntToStr(iI+1));
-
-    SetLength(FMonitorInfos, Length(FMonitorInfos) + 1);
-    FMonitorInfos[High(FMonitorInfos)].cbSize := SizeOf(TMonitorInfoEx);
-    GetMonitorInfo(Screen.Monitors[iI].Handle, @FMonitorInfos[High(FMonitorInfos)]);
+    MonitorComboBox.Items.Add(SDL_GetDisplayName(iI));
   end;
   MonitorComboBox.ItemIndex := 0;
-  }
 end;
 
 {******************************************************************************}
@@ -342,44 +338,17 @@ end;
 
 procedure TConfigurationForm.FillDisplayModi();
 var
- iModeIdx, iI: LongInt;
- iStr: string;
+  iI, iJ   : Integer;
 begin
-  {
-  //fill resolutions combobox
-  SetLength(iModes, 0);
-  SetLength(FAvailableModi, 0);
-  iModeIdx := 0;
-  while EnumDisplaySettings( @FMonitorInfos[MonitorComboBox.ItemIndex].szDevice[0], iModeIdx, iDevMode) do
-  begin
-    if (iDevMode.dmBitsPerPel = 32) and (iDevMode.dmPelsWidth >= 800) and (iDevMode.dmPelsHeight >= 600) then
-    begin
-      SetLength(iModes, Length(iModes) + 1);
-      with iModes[High(iModes)] do
-      begin
-        Width        := iDevMode.dmPelsWidth;
-        Height       := iDevMode.dmPelsHeight;
-      end;
-    end;
-    Inc(iModeIdx);
-  end;
-
   ResolutionsComboBox.Items.Clear;
-  for iI := Low(iModes) to High(iModes) do
-  with iModes[iI] do
+  setLength(FDisplayModes, SDL_GetNumDisplayModes(MonitorComboBox.ItemIndex));
+  iJ := SDL_GetNumDisplayModes(MonitorComboBox.ItemIndex)-1;
+  for iI := iJ downto 0 do
   begin
-    iStr := IntToStr(Width) + ' x ' + IntToStr(Height);
-    if ResolutionsComboBox.Items.IndexOf(iStr) < 0 then
-    begin
-      ResolutionsComboBox.Items.Add(iStr);
-      SetLength(FAvailableModi, Length(FAvailableModi) + 1);
-      FAvailableModi[High(FAvailableModi)] := iModes[iI];
-    end;
+    SDL_GetDisplayMode(MonitorComboBox.ItemIndex, iI, @FDisplayModes[iJ-iI]);
+    ResolutionsComboBox.Items.Add(IntToStr(FDisplayModes[iJ-iI].w) + ' x ' + IntToStr(FDisplayModes[iJ-iI].h));
   end;
-  SetLength(iModes, 0);
-
   ResolutionsComboBox.ItemIndex := 0;
-  }
 end;
 
 end.

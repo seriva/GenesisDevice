@@ -55,7 +55,7 @@ begin
     Engine.Console.Write('Initializing window...');
 
   	//create window
-  	FWindow := SDL_CreateWindow('', 25, 50, 800, 600, SDL_WINDOW_OPENGL or SDL_WINDOW_RESIZABLE or SDL_WINDOW_HIDDEN);
+  	FWindow := SDL_CreateWindow('', SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 640, 480, SDL_WINDOW_OPENGL or SDL_WINDOW_RESIZABLE or SDL_WINDOW_HIDDEN);
     if FWindow = nil then
       Engine.Console.Write('Failed to initialize SDL window: ' + SDL_GetError());
 
@@ -114,6 +114,7 @@ procedure TGDWindow.Show();
 begin
   SDL_ShowWindow(FWindow);
   SDL_SetWindowSize(FWindow, Engine.Settings.Width, Engine.Settings.Height);
+  SDL_SetWindowPosition(FWindow ,SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
   if Engine.Settings.VerticalSync then
     SDL_GL_SetSwapInterval(1)
   else
@@ -165,9 +166,6 @@ begin;
                               Engine.Input.KeyState(event.key.keysym.scancode, True);
      											  end;
       SDL_KEYUP           : Engine.Input.KeyState(event.key.keysym.scancode, False);
-      //SDL_MOUSEMOTION     : HandleMouse(event.motion);
-      //SDL_MOUSEBUTTONDOWN : HandleMouseButtons(event.button);
-      //SDL_MOUSEWHEEL      : HandleMouseWheel(event.wheel);
       SDL_WINDOWEVENT     : begin
                               case event.window.event of
                                 SDL_WINDOWEVENT_RESIZED:

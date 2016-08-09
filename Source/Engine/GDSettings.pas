@@ -42,6 +42,8 @@ type
   TGDSettings = class
   private
     //window settings
+    FDisplay					: Integer;
+    FDisplayMode      : Integer;
     FWidth            : Integer;
     FHeight           : Integer;
     FFullScreen       : Boolean;
@@ -81,6 +83,8 @@ type
     function  GetTextureFilter() : String;
 
     //window settings
+    property Display : Integer read FDisplay write FDisplay;
+    property DisplayMode : Integer read FDisplayMode write FDisplayMode;
     property Width : Integer read FWidth write FWidth;
     property Height : Integer read FHeight write FHeight;
     property FullScreen : Boolean read FFullScreen write FFullScreen;
@@ -131,6 +135,8 @@ uses
 constructor TGDSettings.Create();
 begin
   //window settings
+  FDisplay					:= 0;
+  FDisplayMode      := 0;
   FWidth            := 800;
   FHeight           := 600;
   FFullScreen       := false;
@@ -185,8 +191,10 @@ begin
   iIniFile := TIniFile.Create( PATH_INITS + ENGINE_INI );
 
   //window settings
-  FWidth :=        iIniFile.ReadInteger('Window', 'Width', 800);
-  FHeight :=       iIniFile.ReadInteger('Window', 'Height', 600);
+  FDisplay :=      iIniFile.ReadInteger('Window', 'Display', 0);
+  FDisplayMode :=  iIniFile.ReadInteger('Window', 'DisplayMode', 0);
+  FWidth :=        iIniFile.ReadInteger('Window', 'Width', 640);
+  FHeight :=       iIniFile.ReadInteger('Window', 'Height', 480);
   FFullScreen :=   iIniFile.ReadBool('Window', 'Fullscreen', False);
   FVerticalSync := iIniFile.ReadBool('Window', 'VerticalSync', False);
   FGamma :=        iIniFile.ReadFloat('Window', 'Gamma', 0.60);
@@ -225,6 +233,8 @@ begin
   iIniFile := TIniFile.Create(PATH_INITS + ENGINE_INI);
 
   //window
+  iIniFile.WriteInteger('Window', 'Display', FDisplay);
+  iIniFile.WriteInteger('Window', 'DisplayMode', FDisplayMode);
   iIniFile.WriteInteger('Window', 'Width', FWidth);
   iIniFile.WriteInteger('Window', 'Height', FHeight);
   iIniFile.WriteBool('Window', 'Fullscreen', FFullScreen);
