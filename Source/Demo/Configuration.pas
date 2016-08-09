@@ -315,6 +315,12 @@ end;
 procedure TConfigurationForm.ApplicationPropertiesIdleEnd(Sender: TObject);
 begin
   Engine.Clear(@ClearGame);
+
+  ConfigurationForm.Position:=poScreenCenter;
+  ConfigurationForm.MoveToDefaultPosition;
+  ConfigurationForm.SettingsToInterface();
+  ConfigurationForm.Visible := true;
+  ConfigurationForm.Repaint();
 end;
 
 {******************************************************************************}
@@ -346,7 +352,7 @@ begin
   for iI := iJ downto 0 do
   begin
     SDL_GetDisplayMode(MonitorComboBox.ItemIndex, iI, @FDisplayModes[iJ-iI]);
-    ResolutionsComboBox.Items.Add(IntToStr(FDisplayModes[iJ-iI].w) + ' x ' + IntToStr(FDisplayModes[iJ-iI].h));
+    ResolutionsComboBox.Items.Add(IntToStr(FDisplayModes[iJ-iI].w) + ' x ' + IntToStr(FDisplayModes[iJ-iI].h) + ' @ ' + IntToStr(FDisplayModes[iJ-iI].refresh_rate) + 'Hz');
   end;
   ResolutionsComboBox.ItemIndex := 0;
 end;

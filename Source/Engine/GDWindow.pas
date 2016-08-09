@@ -60,7 +60,6 @@ begin
       Engine.Console.Write('Failed to initialize SDL window: ' + SDL_GetError());
 
     //create context
-    SDL_GL_SetAttribute(SDL_GL_SHARE_WITH_CURRENT_CONTEXT, 1);
     SDL_GL_SetAttribute( SDL_GL_RED_SIZE, 8 );
     SDL_GL_SetAttribute( SDL_GL_GREEN_SIZE, 8 );
     SDL_GL_SetAttribute( SDL_GL_BLUE_SIZE, 8 );
@@ -70,6 +69,8 @@ begin
     if FGLContext = nil then
       Engine.Console.Write('Failed to initialize SDL gl context: ' + SDL_GetError());
     SDL_HideWindow(FWindow);
+
+    MakeCurrent();
 
     FInitialized := true;
   except
@@ -114,11 +115,18 @@ procedure TGDWindow.Show();
 begin
   SDL_ShowWindow(FWindow);
   SDL_SetWindowSize(FWindow, Engine.Settings.Width, Engine.Settings.Height);
-  SDL_SetWindowPosition(FWindow ,SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
   if Engine.Settings.VerticalSync then
     SDL_GL_SetSwapInterval(1)
   else
     SDL_GL_SetSwapInterval(0);
+
+  if Engine.Settings.FullScreen then
+  begin
+    SDL_SetWindowPosition(FWindow ,0, 0);
+    SDL_SetWindowFullscreen(FWindow, SDL_WINDOW_FULLSCREEN);
+  end
+  else
+    SDL_SetWindowPosition(FWindow ,SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
   MakeCurrent();
 end;
 
@@ -128,6 +136,8 @@ end;
 
 procedure TGDWindow.Hide();
 begin
+  if Engine.Settings.FullScreen then
+    SDL_SetWindowFullscreen(FWindow, 0);
   SDL_HideWindow(FWindow);
 end;
 

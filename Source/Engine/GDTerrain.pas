@@ -214,7 +214,7 @@ begin
     FDetailTexture3 := Engine.Resources.LoadTexture(aIniFile.ReadString( 'Terrain', 'DetailMap3', 'detailmap3.jpg'), Engine.Settings.TextureDetail,Engine.Settings.TextureFilter);
     FDetailTexture4 := Engine.Resources.LoadTexture(aIniFile.ReadString( 'Terrain', 'DetailMap4', 'detailmap4.jpg'), Engine.Settings.TextureDetail,Engine.Settings.TextureFilter);
     FDetailTexture  := Engine.Resources.LoadTexture(aIniFile.ReadString( 'Terrain', 'DetailMap', 'detail.dds'), Engine.Settings.TextureDetail,Engine.Settings.TextureFilter);
-    FDetailLookup   := Engine.Resources.LoadTexture(aIniFile.ReadString( 'Terrain', 'DetailDistribution', 'detaillookup.jpg') ,Engine.Settings.TextureDetail,Engine.Settings.TextureFilter);
+    FDetailLookup   := Engine.Resources.LoadTexture(aIniFile.ReadString( 'Terrain', 'DetailDistribution', 'detaillookup.jpg') ,TD_HIGH,Engine.Settings.TextureFilter);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 

@@ -67,10 +67,10 @@ type
     FConsole    : TGDConsole;
     FSettings   : TGDSettings;
 
+    FWindow			: TGDWindow;
     FInput      : TGDInput;
     FSound      : TGDSound;
     FRenderer   : TGDRenderer;
-    FWindow			: TGDWindow;
 
     FStatistics : TGDStatistics;
     FModes      : TGDModes;
@@ -88,10 +88,10 @@ type
     property Console    : TGDConsole read FConsole;
     property Settings   : TGDSettings read FSettings;
 
+    property Window			: TGDWindow read FWindow;
     property Input      : TGDInput read FInput;
     property Sound      : TGDSound read FSound;
     property Renderer   : TGDRenderer read FRenderer;
-    property Window			: TGDWindow read FWindow;
 
     property Statistics : TGDStatistics read FStatistics;
     property Modes      : TGDModes read FModes;
@@ -159,10 +159,10 @@ begin
     Engine.Console.Write('Failed to initialize SDL: ' + SDL_GetError());
 
   FTiming     := TGDTiming.Create();
+  FWindow			:= TGDWindow.Create();
   FInput      := TGDInput.Create();
   FSound      := TGDSound.Create();
   FRenderer   := TGDRenderer.Create();
-  FWindow			:= TGDWindow.Create();
   result      := FSound.Initialized and FInput.Initialized and FRenderer.Initialized and FWindow.Initialized and iSDLInit;
 
   FStatistics := TGDStatistics.Create();
@@ -182,10 +182,11 @@ begin
   FreeAndNil(FStatistics);
   FreeAndNil(FModes);
 
-  FreeAndNil(FWindow);
+
   FreeAndNil(FInput);
   FreeAndNil(FSound);
   FreeAndNil(FRenderer);
+  FreeAndNil(FWindow);
 
   SDL_Quit();
   Engine.Console.Write('Shutting down SDL...Ok');

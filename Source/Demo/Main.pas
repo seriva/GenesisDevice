@@ -72,9 +72,6 @@ procedure GameLoop();
 
 implementation
 
-uses
-  Configuration;
-
 {******************************************************************************}
 {* Exit thee engine                                                           *}
 {******************************************************************************}
@@ -321,9 +318,7 @@ begin
   Engine.Sound.Remove(UnderWaterBuffer);
   Engine.Sound.Remove(MusicBuffer);
 
-  ConfigurationForm.SettingsToInterface();
-  ConfigurationForm.Visible := true;
-  ConfigurationForm.Repaint();
+  sleep(100);
 end;
 
 end.

@@ -33,7 +33,6 @@ interface
 
 uses
   Graphics,
-  sdl2,
   SysUtils,
   dglOpenGL,
   GDConstants,
@@ -50,9 +49,6 @@ type
 
   TGDRenderer  = Class
   private
-    FResourceWND    : PSDL_Window;
-    FResourceDC     : TSDL_GLContext;
-
     FState          : TGDRenderState;
     FInitialized    : boolean;
     
@@ -154,19 +150,6 @@ begin
   Engine.Console.Write('.....Initializing renderer');
   try
     FInitialized := true;
-
-    //Create SDL resource window
-    FResourceWND := SDL_CreateWindow('resources', 0, 0, 10, 10, SDL_WINDOW_OPENGL or SDL_WINDOW_HIDDEN);
-    if FResourceWND = nil then
-       Raise Exception.Create('Error creating resource window.');
-
-    //Create OGL context
-    FResourceDC := SDL_GL_CreateContext(FResourceWND);
-    if FResourceDC = nil then
-       Raise Exception.Create('Error creating resource context.');
-
-    //Make conect current
-    SDL_GL_MakeCurrent(FResourceWND, FResourceDC);
 
     //Read OpenGL properties and implementation
     InitOpenGL;
@@ -297,10 +280,6 @@ begin
     FreeAndNil(FLinesVertices);
     FreeAndNil(FLinesVertexBuffer);
     FreeAndNil(FQuadVertexBuffer);
-
-    //Destroy sdl resource win
-    SDL_GL_DeleteContext(FResourceDC);
-    SDL_DestroyWindow(FResourceWND);
   except
     on E: Exception do
     begin
@@ -339,7 +318,6 @@ procedure TGDRenderer.ResizeViewPort(aWidth, aHeight : integer);
 begin
   Engine.Settings.Width := aWidth;
   Engine.Settings.Height := aHeight;
- // Engine.Input.CalculateMousePosStart();
   if (Engine.Settings.Height = 0) then
     Engine.Settings.Height := 1;
   glViewport(0, 0, Engine.Settings.Width, Engine.Settings.Height);
