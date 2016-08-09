@@ -590,7 +590,6 @@ end;
 
 begin
   Engine.Renderer.RenderState( RS_TEXTS );
-  //GetCursorPos(iCurPos);
   SDL_GetMouseState(@iCurPos.x, @iCurPos.y);
   CalculateScreenPosition(iCurPos.X, iCurPos.Y);
   glDisable(GL_BLEND);

@@ -160,8 +160,11 @@ begin;
   begin
     case event.type_ of
       SDL_QUITEV          : Engine.Done := True;
-      //SDL_KEYDOWN         : HandleKeyDown(event.key.keysym);
-      //SDL_KEYUP           : HandleKeyUp(event.key.keysym);
+      SDL_KEYDOWN         : begin
+        											Engine.Console.Control(event.key.keysym.scancode);
+                              Engine.Input.KeyState(event.key.keysym.scancode, True);
+     											  end;
+      SDL_KEYUP           : Engine.Input.KeyState(event.key.keysym.scancode, False);
       //SDL_MOUSEMOTION     : HandleMouse(event.motion);
       //SDL_MOUSEBUTTONDOWN : HandleMouseButtons(event.button);
       //SDL_MOUSEWHEEL      : HandleMouseWheel(event.wheel);

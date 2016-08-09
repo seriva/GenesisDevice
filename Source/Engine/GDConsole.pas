@@ -37,6 +37,7 @@ uses
   Classes,
   LCLIntf,
   LCLType,
+  SDL2,
   dglOpenGL,
   GDGUI,
   GDConstants,
@@ -243,7 +244,7 @@ end;
 
 procedure TGDConsole.Control( aKey : Integer );
 begin
-  if aKey = 192 then
+  if aKey = SDL_SCANCODE_GRAVE then
   begin
     FShow := not(FShow);
     If Not(FShow) then
@@ -256,46 +257,46 @@ begin
   end;
 
   case aKey of
-    VK_PRIOR  : begin
-                  If FLogText.Count = 0 then exit;
-                  FRow := FRow - 1;
-                  If FRow < 0 then FRow := 0;
-                end;
-    VK_NEXT   : begin
-                  If FLogText.Count = 0 then exit;
-                  FRow := FRow + 1;
-                  If FRow > FLogText.Count-1 then FRow := FLogText.Count-1;
-                end;
-    VK_UP     : begin
-                  If FCommandHistory.Count = 0 then exit;
-                  FCommandRow := FCommandRow - 1;
-                  If FCommandRow < 0 then
-                    FCommandRow := FCommandHistory.Count-1;
-                  FCommand :=  FCommandHistory.Strings[FCommandRow];
-                  FCursorPos := length(FCommand)+1;
-                end;
-    VK_DOWN   : begin
-                  If FCommandHistory.Count = 0 then exit;
-                  FCommandRow := FCommandRow + 1;
-                  If FCommandRow > FCommandHistory.Count-1 then
-                    FCommandRow := 0;
-                  FCommand :=  FCommandHistory.Strings[FCommandRow];
-                  FCursorPos := length(FCommand)+1;
-                end;
-    VK_BACK   : begin
-                  if FCursorPos = 1 then exit;
-                  Delete(FCommand, FCursorPos-1, 1);
-                  FCursorPos := FCursorPos - 1;
-                end;
-    VK_LEFT   : begin
-                  if (FCursorPos = 1) then exit;
-                  FCursorPos := FCursorPos - 1
-                end;
-    VK_RIGHT  : begin
-                  if (FCursorPos = (length(FCommand) + 1)) then exit;
-                  FCursorPos := FCursorPos + 1
-                end;
-    VK_RETURN : ExecuteCommand(FCommand);
+    SDL_SCANCODE_PAGEUP : begin
+                            If FLogText.Count = 0 then exit;
+                            FRow := FRow - 1;
+                            If FRow < 0 then FRow := 0;
+                          end;
+     SDL_SCANCODE_PAGEDOWN : begin
+                               If FLogText.Count = 0 then exit;
+                               FRow := FRow + 1;
+                               If FRow > FLogText.Count-1 then FRow := FLogText.Count-1;
+                             end;
+    SDL_SCANCODE_UP : begin
+                        If FCommandHistory.Count = 0 then exit;
+                        FCommandRow := FCommandRow - 1;
+                        If FCommandRow < 0 then
+                          FCommandRow := FCommandHistory.Count-1;
+                        FCommand :=  FCommandHistory.Strings[FCommandRow];
+                        FCursorPos := length(FCommand)+1;
+                      end;
+    SDL_SCANCODE_DOWN : begin
+                          If FCommandHistory.Count = 0 then exit;
+                          FCommandRow := FCommandRow + 1;
+                          If FCommandRow > FCommandHistory.Count-1 then
+                            FCommandRow := 0;
+                          FCommand :=  FCommandHistory.Strings[FCommandRow];
+                          FCursorPos := length(FCommand)+1;
+                        end;
+    SDL_SCANCODE_BACKSPACE : begin
+                              if FCursorPos = 1 then exit;
+                              Delete(FCommand, FCursorPos-1, 1);
+                              FCursorPos := FCursorPos - 1;
+                            end;
+    SDL_SCANCODE_LEFT : begin
+                          if (FCursorPos = 1) then exit;
+                          FCursorPos := FCursorPos - 1
+                        end;
+    SDL_SCANCODE_RIGHT : begin
+                           if (FCursorPos = (length(FCommand) + 1)) then exit;
+                           FCursorPos := FCursorPos + 1
+                         end;
+    SDL_SCANCODE_RETURN : ExecuteCommand(FCommand);
   end;
 end;
 

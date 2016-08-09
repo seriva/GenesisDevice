@@ -33,7 +33,6 @@ interface
 
 uses
   Graphics,
-  Windows,
   sdl2,
   SysUtils,
   dglOpenGL,

@@ -36,6 +36,7 @@ uses
   LCLIntf,
   LCLType,
   Forms,
+  SDL2,
   ExtCtrls,
   Controls,
   Player,
@@ -285,19 +286,19 @@ begin
   Engine.GUI.MouseCursor.Visible := true;
 
   //input functions
-  Engine.Input.AddAction(IT_SINGLE,VK_ESCAPE,@ExitCallback, false );
-  Engine.Input.AddAction(IT_DIRECT,VK_W,@PlayerForward, true );
-  Engine.Input.AddAction(IT_DIRECT,VK_S,@PlayerBackward, true );
-  Engine.Input.AddAction(IT_DIRECT,VK_A,@PlayerLeft, true );
-  Engine.Input.AddAction(IT_DIRECT,VK_D,@PlayerRight, true );
-  Engine.Input.AddAction(IT_DOWN,VK_LSHIFT,@SetRun, true );
-  Engine.Input.AddAction(IT_UP,VK_LSHIFT,@SetWalk, true );
-  Engine.Input.AddAction(IT_SINGLE,VK_F1,@ToggleStats, false  );
-  Engine.Input.AddAction(IT_SINGLE,VK_F2,@ToggleWireFrame, false  );
-  Engine.Input.AddAction(IT_SINGLE,VK_F3,@ToggleOctreeNodes, false  );
-  Engine.Input.AddAction(IT_SINGLE,VK_F4,@ToggleOBJBoxes, false  );
-  Engine.Input.AddAction(IT_SINGLE,VK_F5,@ToggleClipping, false  );
-  Engine.Input.AddAction(IT_SINGLE,VK_P,@ToggleIntroText, true  );
+  Engine.Input.AddAction(IT_SINGLE,SDL_SCANCODE_ESCAPE,@ExitCallback, false );
+  Engine.Input.AddAction(IT_DIRECT,SDL_SCANCODE_W,@PlayerForward, true );
+  Engine.Input.AddAction(IT_DIRECT,SDL_SCANCODE_S,@PlayerBackward, true );
+  Engine.Input.AddAction(IT_DIRECT,SDL_SCANCODE_A,@PlayerLeft, true );
+  Engine.Input.AddAction(IT_DIRECT,SDL_SCANCODE_D,@PlayerRight, true );
+  Engine.Input.AddAction(IT_DOWN, SDL_SCANCODE_LSHIFT,@SetRun, true );
+  Engine.Input.AddAction(IT_UP,SDL_SCANCODE_LSHIFT,@SetWalk, true );
+  Engine.Input.AddAction(IT_SINGLE,SDL_SCANCODE_F1,@ToggleStats, false  );
+  Engine.Input.AddAction(IT_SINGLE,SDL_SCANCODE_F2,@ToggleWireFrame, false  );
+  Engine.Input.AddAction(IT_SINGLE,SDL_SCANCODE_F3,@ToggleOctreeNodes, false  );
+  Engine.Input.AddAction(IT_SINGLE,SDL_SCANCODE_F4,@ToggleOBJBoxes, false  );
+  Engine.Input.AddAction(IT_SINGLE,SDL_SCANCODE_F5,@ToggleClipping, false  );
+  Engine.Input.AddAction(IT_SINGLE,SDL_SCANCODE_P,@ToggleIntroText, true  );
 
   MusicSource := Engine.Sound.Play( MusicBuffer, true );
 

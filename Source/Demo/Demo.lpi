@@ -184,6 +184,7 @@
       <Unit35>
         <Filename Value="..\Libraries\OpenAL\openal.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="OpenAL"/>
       </Unit35>
       <Unit36>
         <Filename Value="..\Engine\GDResources.pas"/>

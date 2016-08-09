@@ -79,9 +79,6 @@ type
     FEnableInput     : Boolean;
     FMouseLook       : boolean;
     FKeyBuffer       : array[0..255] of Boolean;
-    //FMousePosStart   : TPoint;
-    FMousePosCurrent : TPoint;
-
     FSingle          : TGDInputActionList;
     FDirect          : TGDInputActionList;
     FUp              : TGDInputActionList;
@@ -94,7 +91,7 @@ type
     Constructor Create();
     Destructor  Destroy();override;
 
-    procedure KeyboardState();
+    procedure KeyState(aKey : Byte; aDown : Boolean);
     function  KeyDown(aKey: byte): boolean;
 
     procedure Update();
@@ -200,15 +197,12 @@ end;
 
 
 {******************************************************************************}
-{* Get the keyboard state                                                     *}
+{* Set key state                                                              *}
 {******************************************************************************}
 
-procedure TGDInput.KeyboardState();
-var
-  iI : integer;
+procedure TGDInput.KeyState(aKey : Byte; aDown : Boolean);
 begin
-  For iI := 0 to 255 do
-    FKeyBuffer[iI] := GetKeyState(iI) and $8000 <> 0;
+  if aKey < 255 then FKeyBuffer[aKey] := aDown;
 end;
 
 {******************************************************************************}
@@ -228,11 +222,11 @@ procedure TGDInput.Update();
 var
   iTempAction : TGDInputAction;
   iI : Integer;
+  iMousePosCurrent : TPoint;
 begin
   if EnableInput = false then exit;
 
   //Keyboard
-  KeyboardState();
   For iI := 0 to FSingle.Count-1 do
   begin
     iTempAction := FSingle.Items[iI];
@@ -278,11 +272,11 @@ begin
   if FMouseLook then
   begin
     if Engine.Console.Show then exit;
-    SDL_GetMouseState(@FMousePosCurrent.x, @FMousePosCurrent.y);
+    SDL_GetMouseState(@iMousePosCurrent.x, @iMousePosCurrent.y);
     Engine.Window.SetMouse();
-    Engine.Camera.MouseLook(Engine.Settings.Width div 2, Engine.Settings.Height div 2, FMousePosCurrent.X,
-                     FMousePosCurrent.Y,Engine.Settings.MouseSensitivity,
-                     Engine.Settings.InvertMouse);
+    Engine.Camera.MouseLook(Engine.Settings.Width div 2, Engine.Settings.Height div 2,
+                            iMousePosCurrent.X, iMousePosCurrent.Y,Engine.Settings.MouseSensitivity,
+                            Engine.Settings.InvertMouse);
   end;
 end;
 
