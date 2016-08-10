@@ -97,12 +97,12 @@ const
   MRS_OPENAL_MINOR_VERSION  = 1;
 
   //filepaths constants
-  PATH_MAPS         = 'Maps\';
-  PATH_SHADERS      = 'Shaders\';
-  PATH_SOUNDS       = 'Sounds\';
-  PATH_MODELS       = 'Models\';
-  PATH_TEXTURES     = 'Textures\';
-  PATH_INITS        = 'Ini\';
+  PATH_MAPS         = 'Maps/';
+  PATH_SHADERS      = 'Shaders/';
+  PATH_SOUNDS       = 'Sounds/';
+  PATH_MODELS       = 'Models/';
+  PATH_TEXTURES     = 'Textures/';
+  PATH_INITS        = 'Ini/';
 
   //file constants
   ENGINE_INI = 'Engine.ini';

@@ -2,8 +2,8 @@
 
 uniform int I_REFRACTION_UV;
 uniform int I_WAVES_UV;
-#INCLUDE Inc\lighting_uniforms.inc
-#INCLUDE Inc\fog_uniforms.inc
+#INCLUDE Inc/lighting_uniforms.inc
+#INCLUDE Inc/fog_uniforms.inc
 
 varying vec4  RefrCoords; 
 varying vec2  WavesCoords;
@@ -16,7 +16,7 @@ void main()
     WavesCoords = gl_MultiTexCoord0.xy * I_WAVES_UV;
 	gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
 	VWorld      = gl_Position;
-	#INCLUDE Inc\fog.inc
+	#INCLUDE Inc/fog.inc
 }
 
 
@@ -27,8 +27,8 @@ uniform sampler2D T_DUDVMAP;
 uniform sampler2D T_CAUSTICMAP;
 uniform int I_UNDER_WATER;
 uniform vec4 V_WATER_COLOR;
-#INCLUDE Inc\lighting_uniforms.inc
-#INCLUDE Inc\fog_uniforms.inc
+#INCLUDE Inc/lighting_uniforms.inc
+#INCLUDE Inc/fog_uniforms.inc
 
 varying vec4  RefrCoords; 
 varying vec2  WavesCoords; 

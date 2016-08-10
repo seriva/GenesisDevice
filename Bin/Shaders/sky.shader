@@ -17,7 +17,7 @@ void main(void)
 	vec4 Eye 	  = gl_Vertex;
 	gl_Position   = gl_ModelViewProjectionMatrix * Eye;
 	gl_ClipVertex = gl_ModelViewMatrix * Eye;
-    #INCLUDE Inc\fog.inc
+    #INCLUDE Inc/fog.inc
 }
 
 

@@ -2,13 +2,13 @@
 
 uniform int I_DETAIL_UV;
 uniform int I_CAUSTIC_UV;
-#INCLUDE Inc\lighting_uniforms.inc
-#INCLUDE Inc\fog_uniforms.inc
+#INCLUDE Inc/lighting_uniforms.inc
+#INCLUDE Inc/fog_uniforms.inc
 
 varying vec2  ColorUV;
 varying vec2  DetailUV;
 varying vec2  CausticUV;
-#INCLUDE Inc\varying.inc
+#INCLUDE Inc/varying.inc
 
 void main(void)
 {
@@ -19,17 +19,17 @@ void main(void)
 
     //Lighting
 	vec3 N = normalize(gl_Normal);
-    #INCLUDE Inc\lighting.inc
+    #INCLUDE Inc/lighting.inc
     
     //Vertex
     vec4 Eye = gl_Vertex;
-    #INCLUDE Inc\vertex.inc
+    #INCLUDE Inc/vertex.inc
 
     //Shadows
-    #INCLUDE Inc\shadows_coords.inc
+    #INCLUDE Inc/shadows_coords.inc
 
     //Fog
-    #INCLUDE Inc\fog.inc
+    #INCLUDE Inc/fog.inc
 }
 
 
@@ -46,15 +46,15 @@ uniform sampler2D T_CAUSTICMAP;
 uniform sampler2D T_DETAILMAP;
 uniform sampler2D T_SHADOWMAP;
 
-#INCLUDE Inc\lighting_uniforms.inc
-#INCLUDE Inc\fog_uniforms.inc
-#INCLUDE Inc\detail_uniforms.inc
-#INCLUDE Inc\water_uniforms.inc
+#INCLUDE Inc/lighting_uniforms.inc
+#INCLUDE Inc/fog_uniforms.inc
+#INCLUDE Inc/detail_uniforms.inc
+#INCLUDE Inc/water_uniforms.inc
 
 varying vec2  ColorUV;
 varying vec2  DetailUV;
 varying vec2  CausticUV;
-#INCLUDE Inc\varying.inc
+#INCLUDE Inc/varying.inc
 
 void main(void)
 { 
@@ -68,12 +68,12 @@ void main(void)
 	Color        += (Detail1*Weights.r + Detail2*Weights.g + Detail3*Weights.b + Detail4 * Weights.a) - 0.5; 
     
 	vec2 DUV = DetailUV * I_DETAIL_UV_MULT;
-    #INCLUDE Inc\detail.inc
+    #INCLUDE Inc/detail.inc
     Color = Color * Light;
     
     gl_FragData[1] = vec4(1.0);
-	#INCLUDE Inc\shadows.inc
+	#INCLUDE Inc/shadows.inc
      
-    #INCLUDE Inc\water_logic.inc
+    #INCLUDE Inc/water_logic.inc
 }
 

@@ -304,7 +304,7 @@ begin
                                    iHeight,
                                    0,
                                    iSize,
-                                   pointer( integer(iDDSData.data) + iOffset));
+                                   @iDDSData.data[iOffset]);
       end;
       iOffset := iOffset  + iSize;
       iWidth  := (iWidth  div 2);

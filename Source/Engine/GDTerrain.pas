@@ -300,15 +300,6 @@ var
   iPos, iUp, iForward, iRight : TGDVector;
   iFound : boolean;
   iSecTris : boolean;
-
-Function atan2(y : extended; x : extended): Extended;
-Assembler;
-asm
-  fld [y]
-  fld [x]
-  fpatan
-end;
-
 begin
   result := false;
   aRotation.Reset(0,0,0);
@@ -373,21 +364,21 @@ begin
 
     if iUP.X > 0.998 then
     begin
-      aRotation.X := RadToDeg( aTan2( iForward.Z, iRight.Z ) );
+      aRotation.X := RadToDeg( arctan2( iForward.Z, iRight.Z ) );
       aRotation.Y := PI/2;
       aRotation.Z := 0;
     end
     else
       if iUP.X < -0.998 then
       begin
-        aRotation.X := RadToDeg( aTan2( iForward.Z, iRight.Z ) );
+        aRotation.X := RadToDeg( arctan2( iForward.Z, iRight.Z ) );
         aRotation.Y := -PI/2;
         aRotation.Z := 0;
       end
       else
       begin
-        aRotation.X := RadToDeg( aTan2( -iUp.Z, iUp.Y ) );
-        aRotation.Y := RadToDeg( aTan2( -iRight.X, iForward.X ) );
+        aRotation.X := RadToDeg( arctan2( -iUp.Z, iUp.Y ) );
+        aRotation.Y := RadToDeg( arctan2( -iRight.X, iForward.X ) );
         aRotation.Z := RadToDeg( ArcSin( iUp.X ) );
       end;
     result := true;
