@@ -1,9 +1,29 @@
 unit mpg123;
+
+{$IFDEF FPC}
+{$MODE Delphi}
+{$IFDEF CPUI386}
+{$DEFINE CPU386}
+{$ASMMODE INTEL}
+{$ENDIF}
+{$IFNDEF WIN32}
+{$LINKLIB c}
+{$ENDIF}
+{$ENDIF}
+
 interface
 
 uses
-  Windows,
+  {$IFDEF Win32}Windows, {$ENDIF}
   SysUtils;
+
+const
+{$IFDEF Win32}
+  cmpg123libname = 'libmpg123.dll';
+{$ENDIF}
+{$IFDEF Linux}
+  cmpg123libname = 'libmpg123.so';
+{$ENDIF}
 
 type
   PDWord = ^DWORD;
@@ -384,93 +404,137 @@ var
   mpg123_outblock: function(mh: Pmpg123_handle): size_t; cdecl;
 
 
-  function  InitMPG123(lib: PChar = 'libmpg123.dll'): boolean;
+  function  InitMPG123(lib: string = cmpg123libname): boolean;
   procedure FreeMPG123();
 
 implementation
 
 var
-  hlib: THandle;
+  LibHandle: THandle = 0;
+
+{$IFDEF FPC}
+{$IFNDEF Win32}
+const
+  RTLD_LAZY = $001;
+  RTLD_NOW = $002;
+  RTLD_BINDING_MASK = $003;
+  LibraryLib = {$IFDEF Linux} 'dl'{$ELSE} 'c'{$ENDIF};
+
+function LoadLibraryEx(Name: PChar; Flags: LongInt): Pointer; cdecl; external
+  LibraryLib name 'dlopen';
+
+function GetProcAddressEx(Lib: Pointer; Name: PChar): Pointer; cdecl; external
+  LibraryLib name 'dlsym';
+
+function FreeLibraryEx(Lib: Pointer): LongInt; cdecl; external LibraryLib name
+  'dlclose';
+
+function LoadLibrary(Name: PChar): THandle;
+begin
+  Result := THandle(LoadLibraryEx(Name, RTLD_LAZY));
+end;
+
+function GetProcAddress(LibHandle: THandle; ProcName: PChar): Pointer;
+begin
+  Result := GetProcAddressEx(Pointer(LibHandle), ProcName);
+end;
+
+function FreeLibrary(LibHandle: THandle): Boolean;
+begin
+  if LibHandle = 0 then
+    Result := False
+  else
+    Result := FreeLibraryEx(Pointer(LibHandle)) = 0;
+end;
+{$ENDIF}
+{$ENDIF}
+
+function mpg123Proc(ProcName: PAnsiChar): Pointer;
+begin
+  Result := GetProcAddress(LibHandle, ProcName);
+end;
 
 procedure FreeMPG123();
 begin
-  FreeLibrary(hlib);
+  FreeLibrary(LibHandle);
 end;
 
-function InitMPG123(lib: PChar = 'libmpg123.dll'): boolean;
+function InitMPG123(lib: string): boolean;
 begin
   Result := False;
-  if hlib <> 0 then
-    FreeMPG123();
-  hlib := LoadLibrary(lib);
 
-  if (hlib <> 0) then
+  if LibHandle <> 0 then
+    FreeMPG123();
+  LibHandle := LoadLibrary(PChar(lib));
+
+  if (LibHandle <> 0) then
   begin
-    mpg123_init := GetProcAddress(hlib, 'mpg123_init');
-    mpg123_exit := GetProcAddress(hlib, 'mpg123_exit');
-    mpg123_new := GetProcAddress(hlib, 'mpg123_new');
-    mpg123_delete := GetProcAddress(hlib, 'mpg123_delete');
-    mpg123_param := GetProcAddress(hlib, 'mpg123_param');
-    mpg123_getparam := GetProcAddress(hlib, 'mpg123_getparam');
-    mpg123_plain_strerror := GetProcAddress(hlib, 'mpg123_plain_strerror');
-    mpg123_strerror := GetProcAddress(hlib, 'mpg123_strerror');
-    mpg123_errcode := GetProcAddress(hlib, 'mpg123_errcode');
-    mpg123_decoders := GetProcAddress(hlib, 'mpg123_decoders');
-    mpg123_supported_decoders := GetProcAddress(hlib, 'mpg123_supported_decoders');
-    mpg123_decoder := GetProcAddress(hlib, 'mpg123_decoder');
-    mpg123_rates := GetProcAddress(hlib, 'mpg123_rates');
-    mpg123_encodings := GetProcAddress(hlib, 'mpg123_encodings');
-    mpg123_format_none := GetProcAddress(hlib, 'mpg123_format_none');
-    mpg123_format_all := GetProcAddress(hlib, 'mpg123_format_all');
-    mpg123_format := GetProcAddress(hlib, 'mpg123_format');
-    mpg123_format_support := GetProcAddress(hlib, 'mpg123_format_support');
-    mpg123_getformat := GetProcAddress(hlib, 'mpg123_getformat');
-    mpg123_open := GetProcAddress(hlib, 'mpg123_open');
-    mpg123_open_fd := GetProcAddress(hlib, 'mpg123_open_fd');
-    mpg123_open_feed := GetProcAddress(hlib, 'mpg123_open_feed');
-    mpg123_close := GetProcAddress(hlib, 'mpg123_close');
-    mpg123_read := GetProcAddress(hlib, 'mpg123_read');
-    mpg123_decode := GetProcAddress(hlib, 'mpg123_decode');
-    mpg123_decode_frame := GetProcAddress(hlib, 'mpg123_decode_frame');
-    mpg123_tell := GetProcAddress(hlib, 'mpg123_tell');
-    mpg123_tellframe := GetProcAddress(hlib, 'mpg123_tellframe');
-    mpg123_seek := GetProcAddress(hlib, 'mpg123_seek');
-    mpg123_feedseek := GetProcAddress(hlib, 'mpg123_feedseek');
-    mpg123_seek_frame := GetProcAddress(hlib, 'mpg123_seek_frame');
-    mpg123_timeframe := GetProcAddress(hlib, 'mpg123_timeframe');
-    mpg123_index := GetProcAddress(hlib, 'mpg123_index');
-    mpg123_position := GetProcAddress(hlib, 'mpg123_position');
-    mpg123_eq := GetProcAddress(hlib, 'mpg123_eq');
-    mpg123_reset_eq := GetProcAddress(hlib, 'mpg123_reset_eq');
-    mpg123_volume := GetProcAddress(hlib, 'mpg123_volume');
-    mpg123_volume_change := GetProcAddress(hlib, 'mpg123_volume_change');
-    mpg123_getvolume := GetProcAddress(hlib, 'mpg123_getvolume');
-    mpg123_info := GetProcAddress(hlib, 'mpg123_info');
-    mpg123_safe_buffer := GetProcAddress(hlib, 'mpg123_safe_buffer');
-    mpg123_scan := GetProcAddress(hlib, 'mpg123_scan');
-    mpg123_length := GetProcAddress(hlib, 'mpg123_length');
-    mpg123_tpf := GetProcAddress(hlib, 'mpg123_tpf');
-    mpg123_clip := GetProcAddress(hlib, 'mpg123_clip');
-    mpg123_init_string := GetProcAddress(hlib, 'mpg123_init_string');
-    mpg123_free_string := GetProcAddress(hlib, 'mpg123_free_string');
-    mpg123_resize_string := GetProcAddress(hlib, 'mpg123_resize_string');
-    mpg123_copy_string := GetProcAddress(hlib, 'mpg123_copy_string');
-    mpg123_add_string := GetProcAddress(hlib, 'mpg123_add_string');
-    mpg123_set_string := GetProcAddress(hlib, 'mpg123_set_string');
-    mpg123_meta_check := GetProcAddress(hlib, 'mpg123_meta_check');
-    mpg123_id3_ := GetProcAddress(hlib, 'mpg123_id3');
-    mpg123_icy_ := GetProcAddress(hlib, 'mpg123_icy');
-    mpg123_parnew := GetProcAddress(hlib, 'mpg123_parnew');
-    mpg123_new_pars := GetProcAddress(hlib, 'mpg123_new_pars');
-    mpg123_delete_pars := GetProcAddress(hlib, 'mpg123_delete_pars');
-    mpg123_fmt_none := GetProcAddress(hlib, 'mpg123_fmt_none');
-    mpg123_fmt_all := GetProcAddress(hlib, 'mpg123_fmt_all');
-    mpg123_fmt := GetProcAddress(hlib, 'mpg123_fmt');
-    mpg123_fmt_support := GetProcAddress(hlib, 'mpg123_fmt_support');
-    mpg123_par := GetProcAddress(hlib, 'mpg123_par');
-    mpg123_getpar := GetProcAddress(hlib, 'mpg123_getpar');
-    mpg123_replace_buffer := GetProcAddress(hlib, 'mpg123_replace_buffer');
-    mpg123_outblock := GetProcAddress(hlib, 'mpg123_outblock');
+    mpg123_init := mpg123Proc('mpg123_init');
+    mpg123_exit := mpg123Proc('mpg123_exit');
+    mpg123_new := mpg123Proc('mpg123_new');
+    mpg123_delete := mpg123Proc('mpg123_delete');
+    mpg123_param := mpg123Proc('mpg123_param');
+    mpg123_getparam := mpg123Proc('mpg123_getparam');
+    mpg123_plain_strerror := mpg123Proc('mpg123_plain_strerror');
+    mpg123_strerror := mpg123Proc('mpg123_strerror');
+    mpg123_errcode := mpg123Proc('mpg123_errcode');
+    mpg123_decoders := mpg123Proc('mpg123_decoders');
+    mpg123_supported_decoders := mpg123Proc('mpg123_supported_decoders');
+    mpg123_decoder := mpg123Proc('mpg123_decoder');
+    mpg123_rates := mpg123Proc('mpg123_rates');
+    mpg123_encodings := mpg123Proc('mpg123_encodings');
+    mpg123_format_none := mpg123Proc('mpg123_format_none');
+    mpg123_format_all := mpg123Proc('mpg123_format_all');
+    mpg123_format := mpg123Proc('mpg123_format');
+    mpg123_format_support := mpg123Proc('mpg123_format_support');
+    mpg123_getformat := mpg123Proc('mpg123_getformat');
+    mpg123_open := mpg123Proc('mpg123_open');
+    mpg123_open_fd := mpg123Proc('mpg123_open_fd');
+    mpg123_open_feed := mpg123Proc('mpg123_open_feed');
+    mpg123_close := mpg123Proc('mpg123_close');
+    mpg123_read := mpg123Proc('mpg123_read');
+    mpg123_decode := mpg123Proc('mpg123_decode');
+    mpg123_decode_frame := mpg123Proc('mpg123_decode_frame');
+    mpg123_tell := mpg123Proc('mpg123_tell');
+    mpg123_tellframe := mpg123Proc('mpg123_tellframe');
+    mpg123_seek := mpg123Proc('mpg123_seek');
+    mpg123_feedseek := mpg123Proc('mpg123_feedseek');
+    mpg123_seek_frame := mpg123Proc('mpg123_seek_frame');
+    mpg123_timeframe := mpg123Proc('mpg123_timeframe');
+    mpg123_index := mpg123Proc('mpg123_index');
+    mpg123_position := mpg123Proc('mpg123_position');
+    mpg123_eq := mpg123Proc('mpg123_eq');
+    mpg123_reset_eq := mpg123Proc('mpg123_reset_eq');
+    mpg123_volume := mpg123Proc('mpg123_volume');
+    mpg123_volume_change := mpg123Proc('mpg123_volume_change');
+    mpg123_getvolume := mpg123Proc('mpg123_getvolume');
+    mpg123_info := mpg123Proc('mpg123_info');
+    mpg123_safe_buffer := mpg123Proc('mpg123_safe_buffer');
+    mpg123_scan := mpg123Proc('mpg123_scan');
+    mpg123_length := mpg123Proc('mpg123_length');
+    mpg123_tpf := mpg123Proc('mpg123_tpf');
+    mpg123_clip := mpg123Proc('mpg123_clip');
+    mpg123_init_string := mpg123Proc('mpg123_init_string');
+    mpg123_free_string := mpg123Proc('mpg123_free_string');
+    mpg123_resize_string := mpg123Proc('mpg123_resize_string');
+    mpg123_copy_string := mpg123Proc('mpg123_copy_string');
+    mpg123_add_string := mpg123Proc('mpg123_add_string');
+    mpg123_set_string := mpg123Proc('mpg123_set_string');
+    mpg123_meta_check := mpg123Proc('mpg123_meta_check');
+    mpg123_id3_ := mpg123Proc('mpg123_id3');
+    mpg123_icy_ := mpg123Proc('mpg123_icy');
+    mpg123_parnew := mpg123Proc('mpg123_parnew');
+    mpg123_new_pars := mpg123Proc('mpg123_new_pars');
+    mpg123_delete_pars := mpg123Proc('mpg123_delete_pars');
+    mpg123_fmt_none := mpg123Proc('mpg123_fmt_none');
+    mpg123_fmt_all := mpg123Proc('mpg123_fmt_all');
+    mpg123_fmt := mpg123Proc('mpg123_fmt');
+    mpg123_fmt_support := mpg123Proc('mpg123_fmt_support');
+    mpg123_par := mpg123Proc('mpg123_par');
+    mpg123_getpar := mpg123Proc('mpg123_getpar');
+    mpg123_replace_buffer := mpg123Proc('mpg123_replace_buffer');
+    mpg123_outblock := mpg123Proc('mpg123_outblock');
+
     Result := True;
   end;
 end;

@@ -33,6 +33,7 @@ type
     procedure Swap();
     procedure Update();
     procedure SetMouse();
+    procedure SetTitle(aTitle : String);
   end;
 
 implementation
@@ -112,21 +113,25 @@ end;
 {******************************************************************************}
 
 procedure TGDWindow.Show();
+var
+  iRec : TSDL_Rect;
 begin
-  SDL_ShowWindow(FWindow);
   SDL_SetWindowSize(FWindow, Engine.Settings.Width, Engine.Settings.Height);
   if Engine.Settings.VerticalSync then
     SDL_GL_SetSwapInterval(1)
   else
     SDL_GL_SetSwapInterval(0);
 
+  SDL_GetDisplayBounds(Engine.Settings.Display, @iRec);
+
   if Engine.Settings.FullScreen then
   begin
-    SDL_SetWindowPosition(FWindow ,0, 0);
+    SDL_SetWindowPosition(FWindow ,iRec.x, iRec.y);
     SDL_SetWindowFullscreen(FWindow, SDL_WINDOW_FULLSCREEN);
   end
   else
-    SDL_SetWindowPosition(FWindow ,SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
+
+  SDL_ShowWindow(FWindow);
   MakeCurrent();
 end;
 
@@ -194,6 +199,15 @@ end;
 procedure TGDWindow.SetMouse();
 begin
   SDL_WarpMouseInWindow(FWindow, Engine.Settings.Width div 2, Engine.Settings.Height div 2);
+end;
+
+{******************************************************************************}
+{* Set the title of the window 							                                  *}
+{******************************************************************************}
+
+procedure TGDWindow.SetTitle(aTitle : String);
+begin
+  SDL_SetWindowTitle(FWindow, PChar(aTitle));
 end;
 
 end.

@@ -168,8 +168,8 @@ end;
 
 procedure TConfigurationForm.FormShow(Sender: TObject);
 begin
-  //self.Left:=25;
-  //self.Top:=25;
+  self.Left:=5;
+  self.Top:=5;
 end;
 
 {******************************************************************************}
@@ -315,12 +315,6 @@ end;
 procedure TConfigurationForm.ApplicationPropertiesIdleEnd(Sender: TObject);
 begin
   Engine.Clear(@ClearGame);
-
-  ConfigurationForm.Position:=poScreenCenter;
-  ConfigurationForm.MoveToDefaultPosition;
-  ConfigurationForm.SettingsToInterface();
-  ConfigurationForm.Visible := true;
-  ConfigurationForm.Repaint();
 end;
 
 {******************************************************************************}

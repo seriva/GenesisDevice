@@ -31,6 +31,7 @@ unit Main;
 interface
 
 uses
+  Configuration,
   GDConstants,
   SysUtils,
   LCLIntf,
@@ -250,6 +251,7 @@ begin
 
   //initialize the gamerecources
   Engine.Timing.Start();
+  Engine.Window.SetTitle('Demo');
   Engine.GUI.LoadingScreen.Start('Loading game...', 3);
   Engine.Console.Write('.....Initializing game resources');
 
@@ -318,7 +320,9 @@ begin
   Engine.Sound.Remove(UnderWaterBuffer);
   Engine.Sound.Remove(MusicBuffer);
 
-  sleep(100);
+  ConfigurationForm.SettingsToInterface();
+  ConfigurationForm.Visible := true;
+  ConfigurationForm.Repaint();
 end;
 
 end.
