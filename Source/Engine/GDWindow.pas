@@ -130,6 +130,7 @@ begin
     SDL_SetWindowFullscreen(FWindow, SDL_WINDOW_FULLSCREEN);
   end
   else
+    SDL_SetWindowPosition(FWindow ,iRec.x+5, iRec.y+40);
 
   SDL_ShowWindow(FWindow);
   MakeCurrent();

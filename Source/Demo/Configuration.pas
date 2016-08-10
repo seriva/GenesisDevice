@@ -327,7 +327,7 @@ var
 begin
   for iI := 0 to SDL_GetNumVideoDisplays()-1 do
   begin
-    MonitorComboBox.Items.Add(SDL_GetDisplayName(iI));
+    MonitorComboBox.Items.Add(IntToStr(iI) + ' - ' +SDL_GetDisplayName(iI));
   end;
   MonitorComboBox.ItemIndex := 0;
 end;
