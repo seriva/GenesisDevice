@@ -5,8 +5,8 @@
 # num_materials: 1
 
 newmtl barrel01_Barrel01_D_tga_Smoothing
-colormap Models\Buildings\Barrel01_D.dds
-detailmap Textures\Detail\detail.dds    
+colormap Models/Buildings/Barrel01_D.dds
+detailmap Textures/Detail/detail.dds    
 has_alpha false
 alpha_func 0.7
 detail_uv_mult 4

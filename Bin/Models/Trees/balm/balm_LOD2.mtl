@@ -6,6 +6,6 @@
 # 
 
 newmtl balm_lod2_surface
-colormap Models\Trees\balm\bLod2Co.dds
+colormap Models/Trees/balm/bLod2Co.dds
 has_alpha true
 alpha_func 0.7

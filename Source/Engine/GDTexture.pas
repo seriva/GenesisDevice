@@ -33,110 +33,86 @@ interface
 Uses
  fgl,
  Classes,
- LCLIntf,
- LCLType,
  GDResource,
  SysUtils,
  dglOpenGL,
  GDConstants;
 
-type
-
 {******************************************************************************}
 {* Records for loading DDS files                                              *}
 {******************************************************************************}
 
-  TDDColorKey = packed record
-    dwColorSpaceLowValue: DWORD;
-    dwColorSpaceHighValue: DWORD;
-  end;
+const
+     DDSD_CAPS        = $00000001;
+     DDSD_HEIGHT      = $00000002;
+     DDSD_WIDTH       = $00000004;
+     DDSD_PITCH       = $00000008;
+     DDSD_PIXELFORMAT = $00001000;
+     DDSD_MIPMAPCOUNT = $00020000;
+     DDSD_LINEARSIZE  = $00080000;
+     DDSD_DEPTH       = $00800000;
 
-  TDDPixelFormat = packed record
-    dwSize: DWORD;
-    dwFlags: DWORD;
-    dwFourCC: DWORD;
-    case Integer of
-      1: (
-          dwRGBBitCount : DWORD;
-          dwRBitMask : DWORD;
-          dwGBitMask : DWORD;
-          dwBBitMask : DWORD;
-          dwRGBAlphaBitMask : DWORD;
-          );
-      2: (
-          dwYUVBitCount : DWORD;
-          dwYBitMask : DWORD;
-          dwUBitMask : DWORD;
-          dwVBitMask : DWORD;
-          dwYUVAlphaBitMask : DWORD;
-          );
-      3: (
-          dwZBufferBitDepth : DWORD;
-          dwStencilBitDepth : DWORD;
-          dwZBitMask : DWORD;
-          dwStencilBitMask : DWORD;
-          dwLuminanceAlphaBitMask : DWORD;
-          );
-      4: (
-          dwAlphaBitDepth : DWORD;
-          dwLuminanceBitMask : DWORD;
-          dwBumpDvBitMask : DWORD;
-          dwBumpLuminanceBitMask : DWORD;
-          dwRGBZBitMask : DWORD;
-          );
-      5: (
-           dwLuminanceBitCount : DWORD;
-           dwBumpDuBitMask : DWORD;
-           Fill1, Fill2    : DWORD;
-           dwYUVZBitMask   : DWORD;
-         );
-      6: ( dwBumpBitCount  : DWORD;
-         );
-  end;
+     DDPF_ALPHAPIXELS = $00000001;
+     DDPF_FOURCC      = $00000004;
+     DDPF_RGB         = $00000040;
 
-  TDDSCaps2 = packed record
-    dwCaps: DWORD;
-    dwCaps2 : DWORD;
-    dwCaps3 : DWORD;
-    dwCaps4 : DWORD;
-  end;
+     DDSCAPS_COMPLEX  = $00000008;
+     DDSCAPS_TEXTURE  = $00001000;
+     DDSCAPS_MIPMAP   = $00400000;
 
-  TDDSurfaceDesc2 = packed record
-    dwSize: DWORD;
-    dwFlags: DWORD;
-    dwHeight: DWORD;
-    dwWidth: DWORD;
-    case Integer of
-    0: (
-      lPitch : Longint;
-     );
-    1: (
-      dwLinearSize : DWORD;
-      dwBackBufferCount: DWORD;
-      case Integer of
-      0: (
-        dwMipMapCount: DWORD;
-        dwAlphaBitDepth: DWORD;
-        dwReserved: DWORD;
-        lpSurface: Pointer;
-        ddckCKDestOverlay: TDDColorKey;
-        ddckCKDestBlt: TDDColorKey;
-        ddckCKSrcOverlay: TDDColorKey;
-        ddckCKSrcBlt: TDDColorKey;
-        ddpfPixelFormat: TDDPixelFormat;
-        ddsCaps: TDDSCaps2;
-        dwTextureStage: DWORD;
-       );
-      1: (
-        dwRefreshRate: DWORD;
-       );
-     );
-  end;
+     DDSCAPS2_CUBEMAP           = $00000200;
+     DDSCAPS2_CUBEMAP_POSITIVEX = $00000400;
+     DDSCAPS2_CUBEMAP_NEGATIVEX = $00000800;
+     DDSCAPS2_CUBEMAP_POSITIVEY = $00001000;
+     DDSCAPS2_CUBEMAP_NEGATIVEY = $00002000;
+     DDSCAPS2_CUBEMAP_POSITIVEZ = $00004000;
+     DDSCAPS2_CUBEMAP_NEGATIVEZ = $00008000;
+     DDSCAPS2_VOLUME            = $00200000;
+
+
+  type
+     TDDPIXELFORMAT = record
+        dwSize,
+        dwFlags,
+        dwFourCC,
+        dwRGBBitCount,
+        dwRBitMask,
+        dwGBitMask,
+        dwBBitMask,
+        dwRGBAlphaBitMask : Cardinal;
+     end;
+
+     TDDCAPS2 = record
+        dwCaps1,
+        dwCaps2 : Cardinal;
+        Reserved : array[0..1] of Cardinal;
+     end;
+
+     TDDSURFACEDESC2 = record
+        dwSize,
+        dwFlags,
+        dwHeight,
+        dwWidth,
+        dwPitchOrLinearSize,
+        dwDepth,
+        dwMipMapCount : Cardinal;
+        dwReserved1 : array[0..10] of Cardinal;
+        ddpfPixelFormat : TDDPIXELFORMAT;
+        ddsCaps : TDDCAPS2;
+        dwReserved2 : Cardinal;
+     end;
+
+     TDDSHeader = record
+        Magic : Cardinal;
+        SurfaceFormat : TDDSURFACEDESC2;
+     end;
+
+     TFOURCC = array[0..3] of char;
 
 const
-  FOURCC_DXT1 = DWORD(Byte('D') or (Byte('X') shl 8) or (Byte('T') shl 16) or (Byte('1') shl 24));
-  FOURCC_DXT3 = DWORD(Byte('D') or (Byte('X') shl 8) or (Byte('T') shl 16) or (Byte('3') shl 24));
-  FOURCC_DXT5 = DWORD(Byte('D') or (Byte('X') shl 8) or (Byte('T') shl 16) or (Byte('5') shl 24));
+   FOURCC_DXT1 = $31545844; // 'DXT1'
+   FOURCC_DXT3 = $33545844; // 'DXT3'
+   FOURCC_DXT5 = $35545844; // 'DXT5'
 
 {******************************************************************************}
 {* Texture class                                                              *}
@@ -238,14 +214,14 @@ begin
     end;
 
     //how big will the buffer need to be to load all of the pixel data including mip-maps?
-    if( iDDSD.dwLinearSize = 0 ) then
+    if( iDDSD.dwPitchOrLinearSize = 0 ) then
       Raise Exception.Create('File ' + aName + ' dwLinearSize is 0.');
 
     //set the buffer size
     if( iDDSD.dwMipMapCount > 1 ) then
-      iBufferSize := iDDSD.dwLinearSize * iDDSData.Factor
+      iBufferSize := iDDSD.dwPitchOrLinearSize * iDDSData.Factor
     else
-      iBufferSize := iDDSD.dwLinearSize;
+      iBufferSize := iDDSD.dwPitchOrLinearSize;
 
     //read the buffer data
     iReadBufferSize := iBufferSize * sizeof(Byte);

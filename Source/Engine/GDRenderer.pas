@@ -32,7 +32,6 @@ unit GDRenderer;
 interface
 
 uses
-  Graphics,
   SysUtils,
   dglOpenGL,
   GDConstants,

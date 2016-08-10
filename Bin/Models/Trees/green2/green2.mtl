@@ -6,16 +6,16 @@
 # 
 
 newmtl Material__Material
-colormap Models\Trees\green2\barkgC.dds
-detailmap Textures\Detail\detail.dds    
+colormap Models/Trees/green2/barkgC.dds
+detailmap Textures/Detail/detail.dds    
 has_alpha false
 alpha_func 0.7
 detail_uv_mult 4
 detail_mult 0.4
 
 newmtl Material__Material1
-colormap Models\Trees\green2\leafGrC.dds
-detailmap Textures\Detail\detail.dds    
+colormap Models/Trees/green2/leafGrC.dds
+detailmap Textures/Detail/detail.dds    
 has_alpha true
 alpha_func 0.7
 do_treeanim true

@@ -5,24 +5,24 @@
 # num_materials: 3
 
 newmtl Barkend01_BarkEnd01_D_tga_Smoothing
-colormap Models\Buildings\BarkEnd01_D.dds
-detailmap Textures\Detail\detail.dds    
+colormap Models/Buildings/BarkEnd01_D.dds
+detailmap Textures/Detail/detail.dds    
 has_alpha false
 alpha_func 0.7
 detail_uv_mult 4
 detail_mult 0.4
 
 newmtl barkstripped_01_BarkStripped01_D_tga_Smoothing
-colormap Models\Buildings\BarkStripped01_D.dds
-detailmap Textures\Detail\detail.dds    
+colormap Models/Buildings/BarkStripped01_D.dds
+detailmap Textures/Detail/detail.dds    
 has_alpha false
 alpha_func 0.7
 detail_uv_mult 4
 detail_mult 0.4
 
 newmtl Planks_old2_PlanksOld02_D_tga_Smoothing
-colormap Models\Buildings\PlanksOld02_D.dds
-detailmap Textures\Detail\detail.dds    
+colormap Models/Buildings/PlanksOld02_D.dds
+detailmap Textures/Detail/detail.dds    
 has_alpha false
 alpha_func 0.7
 detail_uv_mult 4

@@ -6,7 +6,7 @@
 # 
 
 newmtl cherry_lod2_surface
-colormap Models\Trees\cherry\chLod2Co.dds
+colormap Models/Trees/cherry/chLod2Co.dds
 has_alpha true
 alpha_func 0.7
 

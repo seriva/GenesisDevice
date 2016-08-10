@@ -136,6 +136,7 @@ var
   iError : string;
   iResult : boolean;
 begin
+  {
   Engine.Console.Write('Loading sound stream' + aFileName + '...');
   try
     iResult := true;
@@ -155,6 +156,7 @@ begin
     end;
   end;
   Engine.Console.WriteOkFail(iResult, iError);
+  }
 end;
 
 {******************************************************************************}
@@ -164,8 +166,10 @@ end;
 destructor TGDSoundStream.Destroy();
 begin
   inherited;
+  {
   alDeleteBuffers(2, @FBuffers);
   mpg123_close(Fhandle);
+  }
 end;
 
 {******************************************************************************}
@@ -180,6 +184,7 @@ var
   lD : Cardinal;
 begin
   result := true;
+  {
   getmem(lData, BUFFER_SIZE);
   if mpg123_read(Fhandle, lData, BUFFER_SIZE, @lD) = MPG123_OK then
      alBufferData(aBuffer, FFormat, lData, BUFFER_SIZE, FRate)
@@ -194,6 +199,7 @@ begin
       result := false;
   end;
   freemem(lData);
+  }
 end;
 
 {******************************************************************************}
@@ -202,7 +208,7 @@ end;
 
 procedure TGDSoundStream.ResetStream();
 begin
-  mpg123_seek(Fhandle, 0, 0);
+  //mpg123_seek(Fhandle, 0, 0);
 end;
 
 {******************************************************************************}
@@ -211,8 +217,8 @@ end;
 
 procedure TGDSoundStream.PreBuffer();
 begin
-  Stream(FBuffers[0]);
-  Stream(FBuffers[1]);
+  //Stream(FBuffers[0]);
+  //Stream(FBuffers[1]);
 end;
 
 {******************************************************************************}
@@ -229,6 +235,7 @@ var
   iData: TALVoid;
   iResult : boolean;
 begin
+  {
   Engine.Console.Write('Loading sound ' + aFileName + '...');
   try
     iResult := true;
@@ -245,6 +252,7 @@ begin
     end;
   end;
   Engine.Console.WriteOkFail(iResult, iError);
+  }
 end;
 
 {******************************************************************************}
@@ -254,7 +262,7 @@ end;
 destructor  TGDSoundBuffer.Destroy();
 begin
   inherited;
-  AlDeleteBuffers(1, @FBuffer);
+ // AlDeleteBuffers(1, @FBuffer);
 end;
 
 {******************************************************************************}
@@ -266,12 +274,14 @@ var
   iSourcePos: array [0..2] of TALfloat= ( 0.0, 0.0, 0.0 );
   iSourceVel: array [0..2] of TALfloat= ( 0.0, 0.0, 0.0 );
 begin
+  {
   FResource := nil;
   AlGenSources(1, @FSource);
   AlSourcef( FSource, AL_PITCH, 1.0 );
   AlSourcef( FSource, AL_GAIN, Engine.Settings.SoundVolume);
   AlSourcefv( FSource, AL_POSITION, @iSourcePos);
   AlSourcefv( FSource, AL_VELOCITY, @iSourceVel);
+  }
 end;
 
 {******************************************************************************}
@@ -280,7 +290,7 @@ end;
 
 destructor TGDSoundSource.Destroy();
 begin
-  AlDeleteSources(1, @FSource);
+  //AlDeleteSources(1, @FSource);
 end;
 
 {******************************************************************************}
@@ -291,6 +301,7 @@ function TGDSoundSource.IsFree(): boolean;
 var
   iState : TALCint;
 begin
+  {
   if FResource = nil then
   begin
     result := true;
@@ -302,6 +313,7 @@ begin
     result := false
   else
     result := true;
+    }
 end;
 
 {******************************************************************************}
@@ -310,10 +322,11 @@ end;
 
 constructor TGDSound.Create();
 var
-  iError, iV : string;
+  iError, iV, iDevName : string;
   iALInt1, iALInt2 : TALCint;
   iI : Integer;
 begin
+  {
   Engine.Timing.Start();
   Engine.Console.Write('.....Initializing sound');
   try
@@ -322,15 +335,16 @@ begin
       Raise Exception.Create('OpenAL library is missing!');
     if not(InitMPG123()) then
       Raise Exception.Create('mpg123 library is missing!');
-    FDevice := alcOpenDevice(nil); //for now only default device.
-    if not(alGetError() = AL_NO_ERROR) then
-      Raise Exception.Create('Error initializing sound device!');
+    iDevName := alcGetString(nil, ALC_DEFAULT_DEVICE_SPECIFIER);
+    FDevice := alcOpenDevice(PChar(iDevName)); //for now only default device.
+    //if not(alGetError() = AL_NO_ERROR) then
+    //  Raise Exception.Create('Error initializing sound device!');
     FContext := alcCreateContext(FDevice,nil);
-    if not(alGetError() = AL_NO_ERROR) then
-      Raise Exception.Create('Error initializing sound context!');
+    //if not(alGetError() = AL_NO_ERROR) then
+    //  Raise Exception.Create('Error initializing sound context!');
     alcMakeContextCurrent(FContext);
-    if not(alGetError() = AL_NO_ERROR) then
-      Raise Exception.Create('Error making the sound context current!');
+    //if not(alGetError() = AL_NO_ERROR) then
+    //  Raise Exception.Create('Error making the sound context current!');
 
     //Print specs
     Engine.Console.Write('  Vendor: ' + String(AnsiString(alGetString(AL_VENDOR))));
@@ -368,6 +382,8 @@ begin
     Engine.Timing.Stop();
     Engine.Console.Write('.....Done initializing sound (' + Engine.Timing.TimeInSeconds + ' Sec)');
   end;
+  }
+  FInitialized := true;
 end;
 
 {******************************************************************************}
@@ -380,6 +396,7 @@ var
   iResult : boolean;
   iI : Integer;
 begin
+  {
   inherited;
   Engine.Console.Write('Shutting down sound...');
   try
@@ -404,6 +421,7 @@ begin
     end;
   end;
   Engine.Console.WriteOkFail(iResult, iError);
+  }
 end;
 
 {******************************************************************************}
@@ -420,6 +438,7 @@ var
   iListenerVel  : array [0..2] of TALfloat= ( 0.0, 0.0, 0.0);
   iListenerOri  : array [0..5] of TALfloat= ( 0.0, 0.0, -1.0, 0.0, 1.0, 0.0);
 begin
+  {
   //TODO: add positional sounds
   AlListenerfv( AL_POSITION, @iListenerPos);
   AlListenerfv( AL_VELOCITY, @iListenerVel);
@@ -445,6 +464,7 @@ begin
         dec(iProcessed);
       until iProcessed <= 0;
   end;
+  }
 end;
 
 {******************************************************************************}
@@ -453,10 +473,12 @@ end;
 
 function  TGDSound.Load(aFileName : String) : TGDSoundResource;
 begin
+  {
   if UpperCase(ExtractFileExt(aFileName)) = '.WAV' then
      result := Engine.Resources.LoadSoundBuffer(aFileName)
   else if UpperCase(ExtractFileExt(aFileName)) = '.MP3' then
      result := Engine.Resources.LoadSoundStream(aFileName)
+  }
 end;
 
 {******************************************************************************}
@@ -465,7 +487,7 @@ end;
 
 procedure TGDSound.Remove(aSoundResource : TGDSoundResource);
 begin
-  Engine.Resources.RemoveResource(TGDResource(aSoundResource));
+  //Engine.Resources.RemoveResource(TGDResource(aSoundResource));
 end;
 
 {******************************************************************************}
@@ -478,6 +500,7 @@ var
   iSource : TGDSoundSource;
 begin
   result := -1;
+  {
 
   If Not(Engine.Settings.MuteSound) then
   begin
@@ -519,6 +542,7 @@ begin
     else
       Engine.Console.WriteOkFail(false, 'Failed to find free source to play sound: ' + aResource.Name, false);
   end;
+  }
 end;
 
 {******************************************************************************}
@@ -530,11 +554,13 @@ var
   iSource : TGDSoundSource;
   iState : TALCint;
 begin
+  {
   if (aIndex < 0) or (aIndex > S_MAX_SOURCES-1) then exit;
   iSource := FSources[aIndex];
   alGetSourcei(iSource.FSource, AL_SOURCE_STATE, @iState);
   if (iState = AL_PLAYING) then
     AlSourcePause(iSource.FSource);
+  }
 end;
 
 {******************************************************************************}
@@ -546,11 +572,13 @@ var
   iSource : TGDSoundSource;
   iState : TALCint;
 begin
+  {
   if (aIndex < 0) or (aIndex > S_MAX_SOURCES-1) then exit;
   iSource := FSources[aIndex];
   alGetSourcei(iSource.FSource, AL_SOURCE_STATE, @iState);
   if (iState = AL_PAUSED) then
     AlSourcePlay(iSource.FSource);
+  }
 end;
 
 {******************************************************************************}
@@ -562,6 +590,7 @@ var
   iSource : TGDSoundSource;
   iState : TALCint;
 begin
+  {
   if (aIndex < 0) or (aIndex > S_MAX_SOURCES-1) then exit;
   iSource := FSources[aIndex];
   alGetSourcei(iSource.FSource, AL_SOURCE_STATE, @iState);
@@ -570,6 +599,7 @@ begin
   if iSource.FResource.ResourceType = SR_STREAM then
     (iSource.FResource as TGDSoundStream).ResetStream();
   iSource.FResource := nil;
+  }
 end;
 
 end.

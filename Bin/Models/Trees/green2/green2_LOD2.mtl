@@ -6,6 +6,6 @@
 # 
 
 newmtl green2_lod2_surface
-colormap Models\Trees\green2\grLod2Co.dds
+colormap Models/Trees/green2/grLod2Co.dds
 has_alpha true
 alpha_func 0.7
