@@ -276,7 +276,7 @@ begin
   Engine.Console.Write( '.....Done initializing game resources (' +  Engine.Timing.TimeInSeconds() + ' Sec)' );
 
   //map
-  Engine.Map.Load( 'Maps\Demo\map.ini' );
+  Engine.Map.Load( 'Maps/Demo/map.ini' );
 
   //final settings.
   IntroScreen.Visible := true;
