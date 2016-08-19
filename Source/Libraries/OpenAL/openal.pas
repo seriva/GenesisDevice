@@ -37,40 +37,34 @@
  * the provisions above, a recipient may use your version of this file under
  * the terms of any one of the MPL, the GPL or the LGPL.
  *)
-
-//The original file name is openal.pas
 unit OpenAL;
 
+// defines to configure freepascal
 {$IFDEF FPC}
-// Added by bero
-{$MODE Delphi}
-{$IFDEF CPUI386}
-{$DEFINE CPU386}
-{$ASMMODE INTEL}
+  {$MODE Delphi}
+
+  {$IFNDEF WINDOWS}
+    {$LINKLIB c}
+  {$ENDIF}
 {$ENDIF}
-{$IFNDEF WIN32}
-{$LINKLIB c}
-{$ENDIF}
-{$ENDIF}
+
+// general options
+{$H+,O+,X+}
 
 interface
 
 uses
-  Classes
-  , SysUtils
+  Classes,
+  SysUtils
 {$IFDEF Win32}, Windows{$ENDIF}
   ;
-
-{ $ DEFINE ALUT}//define ALUT to use alut.dll
 
 const
 {$IFDEF Win32}
   callibname = 'openal32.dll';
-  calutlibname = 'Alut.dll';
 {$ENDIF}
 {$IFDEF Linux}
-  callibname = 'libopenal.so';
-  calutlibname = 'libalut.so';
+  callibname = 'libopenal.so.1';
 {$ENDIF}
 
 type
@@ -1917,19 +1911,7 @@ var
   ALGETAUXILIARYEFFECTSLOTFV: procedure(asid: TALuint; param: TALenum; values:
     PALfloat); cdecl;
 
-{$IFDEF ALUT}
-  //External Alut functions (from dll or so)
-  alutInit: procedure(argc: PALint; argv: array of PALbyte); cdecl;
-  alutExit: procedure; cdecl;
-
-  alutLoadWAVFile: procedure(fname: string; var format: TALenum; var data:
-    TALvoid; var size: TALsizei; var freq: TALsizei; var loop: TALint); cdecl;
-  alutLoadWAVMemory: procedure(memory: PALbyte; var format: TALenum; var data:
-    TALvoid; var size: TALsizei; var freq: TALsizei; var loop: TALint); cdecl;
-  alutUnloadWAV: procedure(format: TALenum; data: TALvoid; size: TALsizei; freq:
-    TALsizei); cdecl;
-{$ELSE}
-  //Internal Alut functions
+//Internal Alut functions
 procedure alutInit(argc: PALint; argv: array of PALbyte);
 procedure alutExit;
 
@@ -1941,23 +1923,14 @@ procedure alutUnloadWAV(format: TALenum; data: TALvoid; size: TALsizei; freq:
   TALsizei);
 function LoadWavStream(Stream: Tstream; var format: TALenum; var data: TALvoid;
   var size: TALsizei; var freq: TALsizei; var loop: TALint): Boolean; //Unofficial
-{$ENDIF}
 
 var
   LibHandle: THandle = 0;
-{$IFDEF ALUT}
-  AlutLibHandle: THandle = 0;
-{$ENDIF}
   EFXUtilLibHandle: THandle = 0;
 type
   HMODULE = THandle;
 
-{$IFDEF ALUT}
-function InitOpenAL(LibName: string = callibname; AlutLibName: string =
-  calutlibname): Boolean;
-{$ELSE}
-function InitOpenAL(LibName: string = callibname): Boolean;
-{$ENDIF}
+function  InitOpenAL(LibName: string = callibname): Boolean;
 procedure FreeOpenAL();
 procedure ReadOpenALExtensions;
 
@@ -1988,30 +1961,24 @@ const
 
 {$IFDEF FPC}
 {$IFNDEF Win32}
-  // Added by bero
 const
   RTLD_LAZY = $001;
   RTLD_NOW = $002;
   RTLD_BINDING_MASK = $003;
-  LibraryLib = {$IFDEF Linux} 'dl'{$ELSE} 'c'{$ENDIF};
+  LibraryLib = {$IFDEF Linux} 'libdl.so.2'{$ELSE} 'c'{$ENDIF};
 
-function LoadLibraryEx(Name: PChar; Flags: LongInt): Pointer; cdecl; external
-  LibraryLib name 'dlopen';
-
-function GetProcAddressEx(Lib: Pointer; Name: PChar): Pointer; cdecl; external
-  LibraryLib name 'dlsym';
-
-function FreeLibraryEx(Lib: Pointer): LongInt; cdecl; external LibraryLib name
-  'dlclose';
+function dlopen(Name: PAnsiChar; Flags: LongInt): Pointer; cdecl; external LibraryLib name 'dlopen';
+function dlclose(Lib: Pointer): LongInt; cdecl; external LibraryLib name 'dlclose';
+function dlsym(Lib: Pointer; Name: PAnsiChar): Pointer; cdecl; external LibraryLib name 'dlsym';
 
 function LoadLibrary(Name: PChar): THandle;
 begin
-  Result := THandle(LoadLibraryEx(Name, RTLD_LAZY));
+  Result := THandle(dlopen(Name, RTLD_LAZY));
 end;
 
 function GetProcAddress(LibHandle: THandle; ProcName: PChar): Pointer;
 begin
-  Result := GetProcAddressEx(Pointer(LibHandle), ProcName);
+  Result := dlsym(Pointer(LibHandle), ProcName);
 end;
 
 function FreeLibrary(LibHandle: THandle): Boolean;
@@ -2019,7 +1986,7 @@ begin
   if LibHandle = 0 then
     Result := False
   else
-    Result := FreeLibraryEx(Pointer(LibHandle)) = 0;
+    Result := dlclose(Pointer(LibHandle)) = 0;
 end;
 {$ENDIF}
 {$ENDIF}
@@ -2041,32 +2008,12 @@ begin
   FreeLibrary(LibHandle);
 end;
 
-{$IFDEF ALUT}
-
-function InitOpenAL(LibName, AlutLibName: string): Boolean;
-{$ELSE}
-
 function InitOpenAL(LibName: string): Boolean;
-{$ENDIF}
 begin
   Result := False;
   if LibHandle <> 0 then
     FreeLibrary(LibHandle);
   LibHandle := LoadLibrary(PChar(LibName));
-{$IFDEF ALUT}
-  if AlutLibHandle <> 0 then
-    FreeLibrary(AlutLibHandle);
-  AlutLibHandle := LoadLibrary(PChar(AlutLibName));
-
-  if (AlutLibHandle <> 0) then
-  begin
-    alutInit := GetProcAddress(AlutLibHandle, alutInit);
-    alutExit := GetProcAddress(AlutLibHandle, 'alutExit');
-    alutLoadWAVFile := GetProcAddress(AlutLibHandle, 'alutLoadWAVFile');
-    alutLoadWAVMemory := GetProcAddress(AlutLibHandle, 'alutLoadWAVMemory');
-    alutUnloadWAV := GetProcAddress(AlutLibHandle, 'alutUnloadWAV');
-  end;
-{$ENDIF}
 
   alGetProcAddress := GetProcAddress(LibHandle, 'alGetProcAddress');
 
@@ -2251,7 +2198,6 @@ begin
 end;
 
 //Internal Alut replacement procedures
-
 procedure alutInit(argc: PALint; argv: array of PALbyte);
 var
   Context: PALCcontext;

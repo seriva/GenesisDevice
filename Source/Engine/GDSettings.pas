@@ -220,6 +220,7 @@ begin
   FSoundVolume := iIniFile.ReadFloat( 'Sound', 'SoundVolume', 0.5);
   
   FreeAndNil(iIniFile)
+  Save();
 end;
 
 {******************************************************************************}

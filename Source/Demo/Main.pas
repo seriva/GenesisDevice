@@ -256,9 +256,9 @@ begin
   Engine.Console.Write('.....Initializing game resources');
 
   //sounds
-  AmbientBuffer    := Engine.Sound.Load( 'Sounds\ambient.wav');
-  UnderWaterBuffer := Engine.Sound.Load( 'Sounds\underwater.wav');
-  MusicBuffer      := Engine.Sound.Load( 'Sounds\music.mp3');
+  AmbientBuffer    := Engine.Sound.Load( 'Sounds/ambient.wav');
+  UnderWaterBuffer := Engine.Sound.Load( 'Sounds/underwater.wav');
+  MusicBuffer      := Engine.Sound.Load( 'Sounds/music.mp3');
   AmbientSource := Engine.Sound.Play(AmbientBuffer, true);
   Engine.Sound.Pause(AmbientSource);
   UnderWaterSource := Engine.Sound.Play(UnderWaterBuffer, true);
@@ -266,7 +266,7 @@ begin
   Engine.GUI.LoadingScreen.Update();
 
   //intro
-  IntroScreen := Engine.GUI.InitScreen('Ini\Intro.ini');
+  IntroScreen := Engine.GUI.InitScreen('Ini/Intro.ini');
   Engine.GUI.LoadingScreen.Update();
 
   //player

@@ -26,15 +26,33 @@ program Demo;
 
 uses
   //heaptrc, //For debugging
+
   LCLIntf, LCLType, LMessages,
   Forms, Interfaces,
+  {$IFDEF Win32}
   Configuration in 'Configuration.pas' {ConfigurationForm},
+  {$ENDIF}
+  {$IFDEF Linux}
+  GDEngine,
+  {$ENDIF}
   Main in 'Main.pas',
   Player in 'Player.pas';
 
 begin
+  //On linux where not running the settings interface because of threading issues
+  //we still need to investigate.
+  {$IFDEF Linux}
+  Engine.Init(@InitGame);
+  While not(Engine.Done) do
+  	Engine.Loop(@GameLoop);
+  Engine.Clear(@ClearGame);
+  {$ENDIF}
+
+  //On windows we have the settings interface.
+  {$IFDEF Win32}
   Application.Initialize;
   Application.Title := 'Demo';
   Application.CreateForm(TConfigurationForm, ConfigurationForm);
   Application.Run;
+  {$ENDIF}
 end.

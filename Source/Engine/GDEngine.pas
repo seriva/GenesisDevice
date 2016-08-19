@@ -160,7 +160,7 @@ begin
   FInput      := TGDInput.Create();
   FSound      := TGDSound.Create();
   FRenderer   := TGDRenderer.Create();
-  result      := FSound.Initialized and FInput.Initialized and FRenderer.Initialized and FWindow.Initialized and iSDLInit;
+  result      := FInput.Initialized and FRenderer.Initialized and FWindow.Initialized and iSDLInit;
 
   FStatistics := TGDStatistics.Create();
   FModes      := TGDModes.Create();
@@ -178,8 +178,6 @@ procedure TGDEngine.ClearSystems();
 begin
   FreeAndNil(FStatistics);
   FreeAndNil(FModes);
-
-
   FreeAndNil(FInput);
   FreeAndNil(FSound);
   FreeAndNil(FRenderer);

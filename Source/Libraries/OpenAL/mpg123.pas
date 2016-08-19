@@ -22,7 +22,7 @@ const
   cmpg123libname = 'libmpg123.dll';
 {$ENDIF}
 {$IFDEF Linux}
-  cmpg123libname = 'libmpg123.so';
+  cmpg123libname = 'libmpg123.so.0';
 {$ENDIF}
 
 type
@@ -418,25 +418,20 @@ const
   RTLD_LAZY = $001;
   RTLD_NOW = $002;
   RTLD_BINDING_MASK = $003;
-  LibraryLib = {$IFDEF Linux} 'dl'{$ELSE} 'c'{$ENDIF};
+  LibraryLib = {$IFDEF Linux} 'libdl.so.2'{$ELSE} 'c'{$ENDIF};
 
-function LoadLibraryEx(Name: PChar; Flags: LongInt): Pointer; cdecl; external
-  LibraryLib name 'dlopen';
-
-function GetProcAddressEx(Lib: Pointer; Name: PChar): Pointer; cdecl; external
-  LibraryLib name 'dlsym';
-
-function FreeLibraryEx(Lib: Pointer): LongInt; cdecl; external LibraryLib name
-  'dlclose';
+function dlopen(Name: PAnsiChar; Flags: LongInt): Pointer; cdecl; external LibraryLib name 'dlopen';
+function dlclose(Lib: Pointer): LongInt; cdecl; external LibraryLib name 'dlclose';
+function dlsym(Lib: Pointer; Name: PAnsiChar): Pointer; cdecl; external LibraryLib name 'dlsym';
 
 function LoadLibrary(Name: PChar): THandle;
 begin
-  Result := THandle(LoadLibraryEx(Name, RTLD_LAZY));
+  Result := THandle(dlopen(Name, RTLD_LAZY));
 end;
 
 function GetProcAddress(LibHandle: THandle; ProcName: PChar): Pointer;
 begin
-  Result := GetProcAddressEx(Pointer(LibHandle), ProcName);
+  Result := dlsym(Pointer(LibHandle), ProcName);
 end;
 
 function FreeLibrary(LibHandle: THandle): Boolean;
@@ -444,7 +439,7 @@ begin
   if LibHandle = 0 then
     Result := False
   else
-    Result := FreeLibraryEx(Pointer(LibHandle)) = 0;
+    Result := dlclose(Pointer(LibHandle)) = 0;
 end;
 {$ENDIF}
 {$ENDIF}
