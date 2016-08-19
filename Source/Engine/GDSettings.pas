@@ -219,7 +219,7 @@ begin
   FMuteSound   := iIniFile.ReadBool( 'Sound', 'Mute', False);
   FSoundVolume := iIniFile.ReadFloat( 'Sound', 'SoundVolume', 0.5);
   
-  FreeAndNil(iIniFile)
+  FreeAndNil(iIniFile);
   Save();
 end;
 

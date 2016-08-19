@@ -302,6 +302,7 @@ begin
   Engine.Settings.Save();
   Visible := false;
   Engine.Init(@InitGame);
+  Application.EnableIdleHandler;
 end;
 
 procedure TConfigurationForm.ApplicationPropertiesIdle(Sender: TObject;
@@ -314,7 +315,11 @@ end;
 
 procedure TConfigurationForm.ApplicationPropertiesIdleEnd(Sender: TObject);
 begin
+  Application.DisableIdleHandler;
   Engine.Clear(@ClearGame);
+  ConfigurationForm.SettingsToInterface();
+  ConfigurationForm.Visible := true;
+  ConfigurationForm.Repaint();
 end;
 
 {******************************************************************************}

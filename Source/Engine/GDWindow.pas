@@ -178,10 +178,10 @@ begin;
     case event.type_ of
       SDL_QUITEV          : Engine.Done := True;
       SDL_KEYDOWN         : begin
-        											Engine.Console.Control(event.key.keysym.scancode);
-                              Engine.Input.KeyState(event.key.keysym.scancode, True);
+        											Engine.Console.Control(event.key.keysym.sym);
+                              Engine.Input.KeyState(event.key.keysym.sym, True);
      											  end;
-      SDL_KEYUP           : Engine.Input.KeyState(event.key.keysym.scancode, False);
+      SDL_KEYUP           : Engine.Input.KeyState(event.key.keysym.sym, False);
       SDL_WINDOWEVENT     : begin
                               case event.window.event of
                                 SDL_WINDOWEVENT_RESIZED:

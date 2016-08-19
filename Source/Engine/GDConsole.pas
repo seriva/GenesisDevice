@@ -244,30 +244,34 @@ end;
 
 procedure TGDConsole.Control( aKey : Integer );
 begin
-  if aKey = SDL_SCANCODE_GRAVE then
+  if aKey = SDLK_BACKQUOTE then
   begin
     FShow := not(FShow);
     If Not(FShow) then
     begin
       Engine.Window.SetMouse();
+      SDL_StopTextInput();
       Exit;
     end
     else
+    begin
       FCursorPos := length(FCommand)+1;
+      SDL_StartTextInput()
+    end;
   end;
 
   case aKey of
-    SDL_SCANCODE_PAGEUP : begin
+    SDLK_PAGEUP : begin
                             If FLogText.Count = 0 then exit;
                             FRow := FRow - 1;
                             If FRow < 0 then FRow := 0;
                           end;
-     SDL_SCANCODE_PAGEDOWN : begin
+    SDLK_PAGEDOWN : begin
                                If FLogText.Count = 0 then exit;
                                FRow := FRow + 1;
                                If FRow > FLogText.Count-1 then FRow := FLogText.Count-1;
                              end;
-    SDL_SCANCODE_UP : begin
+    SDLK_UP : begin
                         If FCommandHistory.Count = 0 then exit;
                         FCommandRow := FCommandRow - 1;
                         If FCommandRow < 0 then
@@ -275,7 +279,7 @@ begin
                         FCommand :=  FCommandHistory.Strings[FCommandRow];
                         FCursorPos := length(FCommand)+1;
                       end;
-    SDL_SCANCODE_DOWN : begin
+    SDLK_DOWN : begin
                           If FCommandHistory.Count = 0 then exit;
                           FCommandRow := FCommandRow + 1;
                           If FCommandRow > FCommandHistory.Count-1 then
@@ -283,20 +287,20 @@ begin
                           FCommand :=  FCommandHistory.Strings[FCommandRow];
                           FCursorPos := length(FCommand)+1;
                         end;
-    SDL_SCANCODE_BACKSPACE : begin
+    SDLK_BACKSPACE : begin
                               if FCursorPos = 1 then exit;
                               Delete(FCommand, FCursorPos-1, 1);
                               FCursorPos := FCursorPos - 1;
                             end;
-    SDL_SCANCODE_LEFT : begin
+    SDLK_LEFT : begin
                           if (FCursorPos = 1) then exit;
                           FCursorPos := FCursorPos - 1
                         end;
-    SDL_SCANCODE_RIGHT : begin
+    SDLK_RIGHT : begin
                            if (FCursorPos = (length(FCommand) + 1)) then exit;
                            FCursorPos := FCursorPos + 1
                          end;
-    SDL_SCANCODE_RETURN : ExecuteCommand(FCommand);
+    SDLK_RETURN : ExecuteCommand(FCommand);
   end;
 end;
 

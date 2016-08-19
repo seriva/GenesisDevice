@@ -233,13 +233,11 @@ begin
   Engine.Console.Write('Loading sound ' + aFileName + '...');
   try
     iResult := true;
-    {
     AlGenBuffers(1, @FBuffer);
     AlutLoadWavFile(aFileName, iFormat, iData, iSize, iFreq, iLoop);
     AlBufferData(FBuffer, iFormat, iData, iSize, iFreq);
     AlutUnloadWav(iFormat, iData, iSize, iFreq);
     ResourceType := SR_BUFFER;
-    }
   except
     on E: Exception do
     begin
@@ -403,7 +401,7 @@ begin
       Raise Exception.Create('Error destroying device!');
 
     FreeMPG123();
-    //FreeOpenAL();
+    FreeOpenAL();
   except
     on E: Exception do
     begin

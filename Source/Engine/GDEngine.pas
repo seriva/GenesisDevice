@@ -266,7 +266,6 @@ initialization
   Engine   := TGDEngine.Create();
   If not(Engine.InitSystems()) then
   begin
-    //MessageBox(0, 'Error starting engine! See log for details.', 'Error', MB_OK);
     halt;
   end;
 finalization

@@ -48,23 +48,23 @@ object ConfigurationForm: TConfigurationForm
     TabOrder = 1
     object WindowTabSheet: TTabSheet
       Caption = 'Window'
-      ClientHeight = 271
-      ClientWidth = 392
+      ClientHeight = 269
+      ClientWidth = 396
       object WindowPanel: TPanel
         Left = 0
-        Height = 271
+        Height = 269
         Top = 0
-        Width = 392
+        Width = 396
         Align = alClient
         BevelOuter = bvNone
-        ClientHeight = 271
-        ClientWidth = 392
+        ClientHeight = 269
+        ClientWidth = 396
         TabOrder = 0
         object ResolutionLabel: TLabel
           Left = 6
-          Height = 16
+          Height = 15
           Top = 47
-          Width = 64
+          Width = 68
           Caption = 'Resolution'
           Font.Color = clWindowText
           Font.Height = -13
@@ -74,9 +74,9 @@ object ConfigurationForm: TConfigurationForm
         end
         object GammaLabel: TLabel
           Left = 8
-          Height = 16
+          Height = 15
           Top = 145
-          Width = 51
+          Width = 56
           Caption = 'Gamma:'
           Font.Color = clWindowText
           Font.Height = -13
@@ -86,10 +86,10 @@ object ConfigurationForm: TConfigurationForm
         end
         object ResolutionsComboBox: TComboBox
           Left = 134
-          Height = 21
+          Height = 26
           Top = 43
           Width = 245
-          ItemHeight = 13
+          ItemHeight = 0
           ParentShowHint = False
           ShowHint = True
           Style = csDropDownList
@@ -97,9 +97,9 @@ object ConfigurationForm: TConfigurationForm
         end
         object FullScreenCheckBox: TCheckBox
           Left = 6
-          Height = 23
+          Height = 24
           Top = 80
-          Width = 146
+          Width = 136
           Caption = 'Fullscreen                    '
           Font.Color = clWindowText
           Font.Height = -13
@@ -111,9 +111,9 @@ object ConfigurationForm: TConfigurationForm
         end
         object VerticalSyncCheckBox: TCheckBox
           Left = 6
-          Height = 23
+          Height = 24
           Top = 112
-          Width = 102
+          Width = 89
           Caption = 'Vertical Sync'
           Font.Color = clWindowText
           Font.Height = -13
@@ -137,9 +137,9 @@ object ConfigurationForm: TConfigurationForm
         end
         object MonitorLabel: TLabel
           Left = 8
-          Height = 16
+          Height = 15
           Top = 12
-          Width = 44
+          Width = 49
           Caption = 'Monitor'
           Font.Color = clWindowText
           Font.Height = -13
@@ -149,10 +149,10 @@ object ConfigurationForm: TConfigurationForm
         end
         object MonitorComboBox: TComboBox
           Left = 134
-          Height = 21
+          Height = 26
           Top = 8
           Width = 245
-          ItemHeight = 13
+          ItemHeight = 0
           OnChange = MonitorComboBoxChange
           ParentShowHint = False
           ShowHint = True
@@ -163,8 +163,8 @@ object ConfigurationForm: TConfigurationForm
     end
     object RenderingTabSheet: TTabSheet
       Caption = 'Rendering'
-      ClientHeight = 271
-      ClientWidth = 392
+      ClientHeight = 269
+      ClientWidth = 396
       ImageIndex = 1
       object RenderingPanel: TPanel
         Left = 0
@@ -290,7 +290,7 @@ object ConfigurationForm: TConfigurationForm
           Font.Height = -12
           Font.Name = 'MS Sans Serif'
           Font.Style = [fsBold]
-          ItemHeight = 13
+          ItemHeight = 0
           ParentFont = False
           ParentShowHint = False
           ShowHint = True
@@ -306,7 +306,7 @@ object ConfigurationForm: TConfigurationForm
           Font.Height = -12
           Font.Name = 'MS Sans Serif'
           Font.Style = [fsBold]
-          ItemHeight = 13
+          ItemHeight = 0
           Items.Strings = (
             ''
           )
@@ -325,7 +325,7 @@ object ConfigurationForm: TConfigurationForm
           Font.Height = -12
           Font.Name = 'MS Sans Serif'
           Font.Style = [fsBold]
-          ItemHeight = 13
+          ItemHeight = 0
           Items.Strings = (
             ''
           )
@@ -393,8 +393,8 @@ object ConfigurationForm: TConfigurationForm
     end
     object InputTabSheet: TTabSheet
       Caption = 'Input'
-      ClientHeight = 271
-      ClientWidth = 392
+      ClientHeight = 269
+      ClientWidth = 396
       ImageIndex = 2
       object InputPanel: TPanel
         Left = 0
@@ -446,8 +446,8 @@ object ConfigurationForm: TConfigurationForm
     end
     object SoundTabSheet: TTabSheet
       Caption = 'Sound'
-      ClientHeight = 271
-      ClientWidth = 392
+      ClientHeight = 269
+      ClientWidth = 396
       ImageIndex = 3
       object SoundPanel: TPanel
         Left = 0

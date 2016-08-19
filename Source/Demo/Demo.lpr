@@ -42,6 +42,7 @@ begin
   //On linux where not running the settings interface because of threading issues
   //we still need to investigate.
   {$IFDEF Linux}
+  Engine.Settings.Load();
   Engine.Init(@InitGame);
   While not(Engine.Done) do
   	Engine.Loop(@GameLoop);
