@@ -253,7 +253,6 @@ begin
   if assigned(aLoop) then aLoop();
 
   //Render the scene
-  Window.MakeCurrent();
   Renderer.Render();
   Window.Swap();
 

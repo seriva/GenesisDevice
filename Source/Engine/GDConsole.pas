@@ -261,17 +261,17 @@ begin
   end;
 
   case aKey of
-    SDLK_PAGEUP : begin
+    SDL_SCANCODE_PAGEUP : begin
                             If FLogText.Count = 0 then exit;
                             FRow := FRow - 1;
                             If FRow < 0 then FRow := 0;
                           end;
-    SDLK_PAGEDOWN : begin
+    SDL_SCANCODE_PAGEDOWN : begin
                                If FLogText.Count = 0 then exit;
                                FRow := FRow + 1;
                                If FRow > FLogText.Count-1 then FRow := FLogText.Count-1;
                              end;
-    SDLK_UP : begin
+    SDL_SCANCODE_UP : begin
                         If FCommandHistory.Count = 0 then exit;
                         FCommandRow := FCommandRow - 1;
                         If FCommandRow < 0 then
@@ -279,7 +279,7 @@ begin
                         FCommand :=  FCommandHistory.Strings[FCommandRow];
                         FCursorPos := length(FCommand)+1;
                       end;
-    SDLK_DOWN : begin
+    SDL_SCANCODE_DOWN : begin
                           If FCommandHistory.Count = 0 then exit;
                           FCommandRow := FCommandRow + 1;
                           If FCommandRow > FCommandHistory.Count-1 then
@@ -287,20 +287,20 @@ begin
                           FCommand :=  FCommandHistory.Strings[FCommandRow];
                           FCursorPos := length(FCommand)+1;
                         end;
-    SDLK_BACKSPACE : begin
-                              if FCursorPos = 1 then exit;
-                              Delete(FCommand, FCursorPos-1, 1);
-                              FCursorPos := FCursorPos - 1;
-                            end;
-    SDLK_LEFT : begin
+    SDL_SCANCODE_BACKSPACE : begin
+                               if FCursorPos = 1 then exit;
+                               Delete(FCommand, FCursorPos-1, 1);
+                               FCursorPos := FCursorPos - 1;
+                             end;
+    SDL_SCANCODE_LEFT : begin
                           if (FCursorPos = 1) then exit;
                           FCursorPos := FCursorPos - 1
                         end;
-    SDLK_RIGHT : begin
+    SDL_SCANCODE_RIGHT : begin
                            if (FCursorPos = (length(FCommand) + 1)) then exit;
                            FCursorPos := FCursorPos + 1
                          end;
-    SDLK_RETURN : ExecuteCommand(FCommand);
+    SDL_SCANCODE_RETURN : ExecuteCommand(FCommand);
   end;
 end;
 

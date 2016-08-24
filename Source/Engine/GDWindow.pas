@@ -177,18 +177,14 @@ begin;
   begin
     case event.type_ of
       SDL_QUITEV          : Engine.Done := True;
-      SDL_KEYDOWN         : begin
-        											Engine.Console.Control(event.key.keysym.sym);
-                              Engine.Input.KeyState(event.key.keysym.sym, True);
-     											  end;
-      SDL_KEYUP           : Engine.Input.KeyState(event.key.keysym.sym, False);
+      SDL_KEYDOWN         : Engine.Console.Control(event.key.keysym.sym);
+      SDL_TEXTINPUT       : Engine.Console.AddChar(event.text.text[0]);
       SDL_WINDOWEVENT     : begin
                               case event.window.event of
                                 SDL_WINDOWEVENT_RESIZED:
                                   Engine.Renderer.ResizeViewPort(event.window.data1, event.window.data2);
                               end;
       											end;
-      SDL_TEXTINPUT       : Engine.Console.AddChar(event.text.text[0]);
     end;
   end;
 end;

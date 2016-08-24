@@ -47,6 +47,8 @@ uses
   GDConstants;
 
 type
+  PKeyStateArr = ^TKeyStateArr;
+  TKeyStateArr = array[0..65000] of UInt8;
 
 {******************************************************************************}
 {* Inputaction class                                                          *}
@@ -78,11 +80,13 @@ type
     FInitialized     : boolean;
     FEnableInput     : Boolean;
     FMouseLook       : boolean;
-    FKeyBuffer       : array[0..255] of Boolean;
+    FKeyBuffer       : PKeyStateArr;
     FSingle          : TGDInputActionList;
     FDirect          : TGDInputActionList;
     FUp              : TGDInputActionList;
     FDown            : TGDInputActionList;
+
+    function KeyState(aKey : Byte): boolean;
   public
     property Initialized     : boolean read FInitialized;
     property EnableInput     : boolean read FEnableInput write FEnableInput;
@@ -90,9 +94,6 @@ type
 
     Constructor Create();
     Destructor  Destroy();override;
-
-    procedure KeyState(aKey : Byte; aDown : Boolean);
-    function  KeyDown(aKey: byte): boolean;
 
     procedure Update();
 
@@ -200,18 +201,11 @@ end;
 {* Set key state                                                              *}
 {******************************************************************************}
 
-procedure TGDInput.KeyState(aKey : Byte; aDown : Boolean);
+function TGDInput.KeyState(aKey : Byte): boolean;
 begin
-  if aKey < 255 then FKeyBuffer[aKey] := aDown;
-end;
-
-{******************************************************************************}
-{* Detect if a key is down                                                    *}
-{******************************************************************************}
-
-function TGDInput.KeyDown( aKey: byte ): boolean;
-begin
-  Result := FKeyBuffer[aKey];
+  result := false;
+  if aKey < 255 then
+    result := FKeyBuffer^[aKey] <> 0;
 end;
 
 {******************************************************************************}
@@ -226,12 +220,16 @@ var
 begin
   if EnableInput = false then exit;
 
+  //get the keyboard state
+  SDL_Pumpevents();
+  FKeyBuffer:= PKeyStateArr(SDL_Getkeyboardstate(nil));
+
   //Keyboard
   For iI := 0 to FSingle.Count-1 do
   begin
     iTempAction := FSingle.Items[iI];
     if (iTempAction.FConsoleDisabled and Not(Engine.Console.Show)) or not(iTempAction.FConsoleDisabled) then
-      If Not(KeyDown( iTempAction.Key )) Then
+      If Not(KeyState( iTempAction.Key )) Then
       begin
         iTempAction.CanExecute := true;
       end;
@@ -240,7 +238,7 @@ begin
   begin
     iTempAction := FSingle.Items[iI];
     if (iTempAction.FConsoleDisabled and Not(Engine.Console.Show)) or not(iTempAction.FConsoleDisabled) then
-      If KeyDown( iTempAction.Key ) Then
+      If KeyState( iTempAction.Key ) Then
       begin
         iTempAction.Execute();
         iTempAction.CanExecute := false;
@@ -251,21 +249,21 @@ begin
   begin
     iTempAction := FDirect.Items[iI];
     if (iTempAction.FConsoleDisabled and Not(Engine.Console.Show)) or not(iTempAction.FConsoleDisabled) then
-      If KeyDown( iTempAction.Key ) Then iTempAction.Execute();
+      If KeyState( iTempAction.Key ) Then iTempAction.Execute();
   end;
 
   For iI := 0 to FDown.Count-1 do
   begin
     iTempAction := FDown.Items[iI];
     if (iTempAction.FConsoleDisabled and Not(Engine.Console.Show)) or not(iTempAction.FConsoleDisabled) then
-      If KeyDown( iTempAction.Key ) Then iTempAction.Execute();
+      If KeyState( iTempAction.Key ) Then iTempAction.Execute();
   end;
 
   For iI := 0 to FUp.Count-1 do
   begin
     iTempAction := FUp.Items[iI];
     if (iTempAction.FConsoleDisabled and Not(Engine.Console.Show)) or not(iTempAction.FConsoleDisabled) then
-      If Not(KeyDown( iTempAction.Key )) Then iTempAction.Execute();
+      If Not(KeyState( iTempAction.Key )) Then iTempAction.Execute();
   end;
 
   //Mouse
