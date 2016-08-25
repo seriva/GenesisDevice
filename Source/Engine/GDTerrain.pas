@@ -30,9 +30,9 @@ uses
   SysUtils,
   Classes,
   Math,
-  Graphics,
   IniFiles,
   dglOpenGL,
+  GDBmp,
   GDTexture,
   GDTypes,
   GDGLWrappers,
@@ -130,8 +130,8 @@ end;
 function  TGDTerrain.InitTerrain( aIniFile : TIniFile ) : boolean;
 var
   iMapHeight  : Byte;
-  iBmp        : TBitmap;
-  iX, iY, iStartWidth, iStartHeight : integer;
+  iBmp        : TGDBmp;
+  iX, iY, iH, iStartWidth, iStartHeight : integer;
   iError    : String;
   iM : TGDMatrix;
   iR : TGDVector;
@@ -144,10 +144,7 @@ begin
   try
     result := true;
     FTerrainLoaded := true;
-
-    iBmp := TBitmap.Create();
-    iBmp.pixelformat := pf32bit;
-    iBmp.LoadFromFile(aIniFile.ReadString( 'Terrain', 'HeightMap', 'heightmap.bmp' ));
+    iBmp := TGDBmp.Create(aIniFile.ReadString( 'Terrain', 'HeightMap', 'heightmap.bmp' ));
     FTriangleSize  := aIniFile.ReadInteger('Terrain', 'TriangleSize', 512 );
     FHeightScale   := aIniFile.ReadInteger('Terrain', 'HeightScale',  64 );
     FTerrainWidth  := iBmp.Width;
@@ -168,7 +165,8 @@ begin
     begin
       for iY := 0 to (FTerrainHeight-1) do
       begin
-        iMapHeight := iBmp.Canvas.Pixels[iX,iY] mod $100;
+        iH := iBmp.GetInt(iX, iY);
+        iMapHeight := iH mod $100;
         If iMapHeight > FTerrainTop then
           FTerrainTop := iMapHeight;
         If iMapHeight < FTerrainBottom then
@@ -181,7 +179,6 @@ begin
     end;
     FTerrainTop    := (FTerrainTop) * FHeightScale;
     FTerrainBottom := (FTerrainBottom) * FHeightScale;
-    FreeAndNil(iBmp);
 
     for iX := 0 to (FTerrainWidth-1) do
     begin
@@ -222,6 +219,8 @@ begin
     FVertexBuffer.Bind(VL_NONE);
     FVertexBuffer.Update(FVertices, GL_STATIC_DRAW);
     FVertexBuffer.Unbind();
+
+    FreeAndNil(iBmp);
   except
     on E: Exception do
     begin
