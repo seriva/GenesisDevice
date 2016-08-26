@@ -53,6 +53,9 @@ type
 
 implementation
 
+uses
+  GDEngine;
+
 type
   TFile = file of Byte;
 
@@ -121,8 +124,8 @@ begin
   i:= 0;
   len:= FWidth * FHeight;
   SetLength(FData,len);
-  if height < 0 then
-  begin
+
+
     while i < len do
     begin
       px:= 0;
@@ -138,24 +141,7 @@ begin
         FData[i] := InttoRGBA(px);
       inc(i);
     end;
-  end else
-  begin
-    while i < len do
-    begin
-      px:= 0;
-      for c:= 1 to bits do
-      begin
-        px:= px + read8(f);
-      end;
-      if bits = 4 then
-        px:= px div 3
-      else
-        px:= px div bits;
-      if px <> 0 then
-        FData[i mod FWidth + (FHeight - (i div FWidth) - 1) * FWidth] := InttoRGBA(px);
-      inc(i);
-    end;
-  end;
+
   Close(f);
 end;
 
