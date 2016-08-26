@@ -28,10 +28,10 @@ interface
 
 uses
   FGL,
+  GDBmp,
   SysUtils,
   dglOpenGL,
   IniFiles,
-  Graphics,
   GDStringParsing,
   GDTexture,
   GDTypes,
@@ -228,7 +228,7 @@ end;
 
 Function TGDFoliage.InitFoliage( aIniFile : TIniFile ) : boolean;
 var
-  iTreeMap, iGrassMap, iRockMap : TBitmap;
+  iTreeMap, iGrassMap, iRockMap : TGDBmp;
   iX, iY : integer;
   iError : String;
 begin
@@ -248,15 +248,9 @@ begin
 
     FRockCount              := aIniFile.ReadInteger( 'Foliage', 'RockCount', 0 );
 
-    iTreeMap := TBitmap.Create();
-    iTreeMap.pixelformat := pf24bit;
-    iTreeMap.LoadFromFile( aIniFile.ReadString( 'Foliage', 'TreeMap', 'treemap.bmp' ));
-    iGrassMap := TBitmap.Create();
-    iGrassMap.pixelformat := pf24bit;
-    iGrassMap.LoadFromFile( aIniFile.ReadString( 'Foliage', 'GrassMap', 'grassmap.bmp' ));
-    iRockMap := TBitmap.Create();
-    iRockMap.pixelformat := pf24bit;
-    iRockMap.LoadFromFile( aIniFile.ReadString( 'Foliage', 'RockMap', 'rockmap.bmp' ));
+    iTreeMap  := TGDBmp.Create(aIniFile.ReadString( 'Foliage', 'TreeMap', 'treemap.bmp'));
+    iGrassMap := TGDBmp.Create(aIniFile.ReadString( 'Foliage', 'GrassMap', 'grassmap.bmp'));
+    iRockMap  := TGDBmp.Create( aIniFile.ReadString( 'Foliage', 'RockMap', 'rockmap.bmp' ));
 
     if ((iTreeMap.Width mod 2) <> 0) or ((iTreeMap.Height mod 2) <> 0) then
       Raise Exception.Create('Dimensions are incorrect!');
@@ -277,9 +271,9 @@ begin
       SetLength(RockMap[iX], iTreeMap.Height);
       for iY := 0 to (iTreeMap.Height-1) do
       begin
-          TreeMap[iX,iY]  := iTreeMap.Canvas.Pixels[iX,iY] = clWhite;
-          GrassMap[iX,iY] := iGrassMap.Canvas.Pixels[iX,iY] = clWhite;
-          RockMap[iX,iY] := iRockMap.Canvas.Pixels[iX,iY] = clWhite;
+          TreeMap[iX,iY]  := iTreeMap.GetInt(iX,iY) > 0;
+          GrassMap[iX,iY] := iGrassMap.GetInt(iX,iY) > 0;
+          RockMap[iX,iY]  := iRockMap.GetInt(iX,iY) > 0;
       end;
     end;
     FreeAndNil(iTreeMap);

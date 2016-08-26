@@ -40,8 +40,6 @@ interface
 uses
   FGL,
   SDL2,
-  LCLIntf,
-  LCLType,
   SysUtils,
   Classes,
   GDConstants;

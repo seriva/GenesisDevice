@@ -36,8 +36,6 @@ interface
 uses
   fgl,
   sdl2,
-  LCLIntf,
-  LCLType,
   Classes,
   IniFiles,
   SysUtils,

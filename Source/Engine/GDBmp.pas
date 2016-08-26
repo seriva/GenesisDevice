@@ -27,7 +27,7 @@ unit GDBmp;
 interface
 
 uses
-  Windows,
+  Math,
   Classes,
   Interfaces,
   SysUtils;
@@ -54,17 +54,36 @@ type
 
 implementation
 
-uses
-  GDEngine;
-
 constructor TGDBmp.Create( aName : String); overload;
+type
+	TBitmapFileHeader = packed record
+  	bfType: Word;
+  	bfSize: DWORD;
+  	bfReserved1: Word;
+  	bfReserved2: Word;
+  	bfOffBits: DWORD;
+	end;
+  TBitmapInfoHeader = record
+    biSize: DWORD;
+    biWidth: LongInt;
+    biHeight: LongInt;
+    biPlanes: Word;
+    biBitCount: Word;
+    biCompression: DWORD;
+    biSizeImage: DWORD;
+    biXPelsPerMeter: LongInt;
+    biYPelsPerMeter: LongInt;
+    biClrUsed: DWORD;
+    biClrImportant: DWORD;
+  end;
 var
-  iLen, iBits, iPX, iI, iC : Integer;
-  iFileHeader : TBITMAPFILEHEADER;
-  iInfoHeader : TBITMAPINFOHEADER;
-  iPalette		: array of RGBQUAD;
+  iLen, iBits, iPX, iI, iJ, iC : Integer;
+  iFileHeader : TBitmapFileHeader;
+  iInfoHeader : TBitmapInfoHeader;
   iData       : TMemoryStream;
   iB          : byte;
+  iCT         : TRGBA;
+  iLB, iL     : Integer;
 
   function IntToRGBA(aPixel : integer):TRGBA;
   begin
@@ -79,8 +98,7 @@ begin
 
   iData.Read(iFileHeader, SizeOf(iFileHeader));
   iData.Read(iInfoHeader, SizeOf(iInfoHeader));
-  SetLength(iPalette, iInfoHeader.biClrUsed);
-  iData.Read(iPalette, SizeOf(RGBQUAD) * iInfoHeader.biClrUsed);
+  iData.Position := iFileHeader.bfOffBits;
 
   FWidth:= iInfoHeader.biWidth;
   FHeight:= iInfoHeader.biHeight;
@@ -88,25 +106,33 @@ begin
   iBits:= iInfoHeader.biBitCount div 8;
   SetLength(FData,iLen);
 
-  iI := 0;
-  while iI < iLen do
+  iL := 0;
+  iLB := Width * iBits;
+  if iLB mod 4 > 0 then
+   iL := (ceil(iLB / 4) * 4) - iLB;
+
+  for iI := 0 to FHeight-1 do
   begin
-    iPX:= 0;
-    for iC:= 1 to iBits do
+    for iJ := 0 to FWidth-1 do
     begin
-      iData.Read(iB, SizeOf(Byte));
-      iPX:= iPX + iB;
+      iPX:= 0;
+      for iC:= 1 to iBits do
+      begin
+        iData.Read(iB, SizeOf(Byte));
+        iPX:= iPX + iB;
+      end;
+      if iBits = 4 then
+        iPX:= iPX div 3
+      else
+        iPX:= iPX div iBits;
+      if iPX <> 0 then
+        FData[(iI*FHeight) + iJ] := InttoRGBA(iPX);
     end;
-    if iBits = 4 then
-      iPX:= iPX div 3
-    else
-      iPX:= iPX div iBits;
-    if iPX <> 0 then
-      FData[iI] := InttoRGBA(iPX);
-    inc(iI);
+
+    for iC:= 0 to iL-1 do
+    	iData.Read(iB, SizeOf(Byte));
   end;
 
-  SetLength(iPalette,0);
   FreeAndNil(iData);
 end;
 
@@ -117,7 +143,7 @@ end;
 
 function TGDBmp.GetRGBA(aX, aY : Integer): TRGBA;
 begin
-  result := FData[(aY * FWidth) + aX]
+  result := FData[((FWidth-aY) * FWidth) + aX];
 end;
 
 function TGDBmp.GetInt(aX, aY : Integer): Integer;
