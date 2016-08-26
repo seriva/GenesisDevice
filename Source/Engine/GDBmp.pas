@@ -27,6 +27,7 @@ unit GDBmp;
 interface
 
 uses
+  Windows,
   Classes,
   Interfaces,
   SysUtils;
@@ -44,7 +45,7 @@ type
     property Width : Integer read FWidth;
     property Height : Integer read FHeight;
 
-    constructor Create( aFileName : String); overload;
+    constructor Create( aName : String); overload;
     destructor  Destroy(); override;
 
     function GetRGBA(aX, aY : Integer): TRGBA;
@@ -56,50 +57,15 @@ implementation
 uses
   GDEngine;
 
-type
-  TFile = file of Byte;
+constructor TGDBmp.Create( aName : String); overload;
+var
+  iLen, iBits, iPX, iI, iC : Integer;
+  iFileHeader : TBITMAPFILEHEADER;
+  iInfoHeader : TBITMAPINFOHEADER;
+  iPalette		: array of RGBQUAD;
+  iData       : TMemoryStream;
+  iB          : byte;
 
-constructor TGDBmp.Create( aFileName : String); overload;
-  function Read8(var f: TFile): integer;
-  var
-    b: byte;
-  begin
-    read(f,b);
-    result:= b;
-  end;
-  function Read16(var f: TFile): integer;
-  var
-	  b: byte;
-  begin
-    read(f,b);
-    result:= b;
-    read(f,b);
-    result:= result or (b shl 8);
-  end;
-  function Read24(var f: TFile): integer;
-  var
-    b: byte;
-  begin
-    read(f,b);
-    result:= b;
-    read(f,b);
-    result:= result or (b shl 8);
-    read(f,b);
-    result:= result or (b shl 16);
-  end;
-  function Read32(var f: TFile): integer;
-  var
-    b: byte;
-  begin
-    read(f,b);
-    result:= b;
-    read(f,b);
-    result:= result or (b shl 8);
-    read(f,b);
-    result:= result or (b shl 16);
-    read(f,b);
-    result:= result or (b shl 24);
-  end;
   function IntToRGBA(aPixel : integer):TRGBA;
   begin
     result.B := Byte(aPixel);
@@ -107,42 +73,41 @@ constructor TGDBmp.Create( aFileName : String); overload;
     result.R := Byte(aPixel shr 16);
     result.A := Byte(aPixel shr 24);
   end;
-var
-  offset,bits,i,c,px,len: integer;
-  f: TFile;
 begin
-  Assign(f,aFileName);
-  Reset(f);
-  seek(f,10);
-  offset:= read32(f);
-  read32(f);
-  FWidth:= read32(f);
-  FHeight:= read32(f);
-  read16(f);
-  bits:= read16(f) div 8;
-  seek(f,	offset);
-  i:= 0;
-  len:= FWidth * FHeight;
-  SetLength(FData,len);
+  iData := TMemoryStream.Create();
+  iData.LoadFromFile(aName);
 
+  iData.Read(iFileHeader, SizeOf(iFileHeader));
+  iData.Read(iInfoHeader, SizeOf(iInfoHeader));
+  SetLength(iPalette, iInfoHeader.biClrUsed);
+  iData.Read(iPalette, SizeOf(RGBQUAD) * iInfoHeader.biClrUsed);
 
-    while i < len do
+  FWidth:= iInfoHeader.biWidth;
+  FHeight:= iInfoHeader.biHeight;
+  iLen:= FWidth * FHeight;
+  iBits:= iInfoHeader.biBitCount div 8;
+  SetLength(FData,iLen);
+
+  iI := 0;
+  while iI < iLen do
+  begin
+    iPX:= 0;
+    for iC:= 1 to iBits do
     begin
-      px:= 0;
-      for c:= 1 to bits do
-      begin
-        px:= px + read8(f);
-      end;
-      if bits = 4 then
-        px:= px div 3
-      else
-        px:= px div bits;
-      if px <> 0 then
-        FData[i] := InttoRGBA(px);
-      inc(i);
+      iData.Read(iB, SizeOf(Byte));
+      iPX:= iPX + iB;
     end;
+    if iBits = 4 then
+      iPX:= iPX div 3
+    else
+      iPX:= iPX div iBits;
+    if iPX <> 0 then
+      FData[iI] := InttoRGBA(iPX);
+    inc(iI);
+  end;
 
-  Close(f);
+  SetLength(iPalette,0);
+  FreeAndNil(iData);
 end;
 
 destructor TGDBmp.Destroy();
