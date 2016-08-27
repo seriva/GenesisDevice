@@ -143,7 +143,7 @@ end;
 
 function TGDBmp.GetRGBA(aX, aY : Integer): TRGBA;
 begin
-  result := FData[((FWidth-aY) * FWidth) + aX];
+  result := FData[((FWidth-aY-1) * FWidth) + aX];
 end;
 
 function TGDBmp.GetInt(aX, aY : Integer): Integer;

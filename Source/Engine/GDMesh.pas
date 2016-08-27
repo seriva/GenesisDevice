@@ -152,7 +152,10 @@ begin
   ExtractStrings(['/'], [], PChar(AnsiString(aStr)), iSL);
   result.Vertex := StrToInt(iSL.Strings[0])-1;
   result.UV     := StrToInt(iSL.Strings[1])-1;
-  result.Normal := StrToInt(iSL.Strings[2])-1;
+  if iSL.Count > 2 then
+  	result.Normal := StrToInt(iSL.Strings[2])-1
+  else
+    result.Normal := -1;
 end;
 
 function AddVertex(iIdxVertex : TGDIdxVertex): integer;
@@ -161,7 +164,12 @@ var
 begin
   iV.Vertex := iVertices.Items[iIdxVertex.Vertex].Copy();
   iV.UV     := iUVS.Items[iIdxVertex.UV].Copy();
-  iV.Normal := iNormals.Items[iIdxVertex.Normal].Copy();
+
+  if -1 <> iIdxVertex.Normal then
+  	iV.Normal := iNormals.Items[iIdxVertex.Normal].Copy()
+  else
+    iV.Normal.Reset(0,0,0);
+
   if iSur.Material.DoTreeAnim then
     iV.Color  := Color(0.75 + (Random(25)/100), 0.75 + (Random(25)/100), 0.75 + (Random(25)/100), 1)
   else

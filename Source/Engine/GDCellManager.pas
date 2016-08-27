@@ -318,7 +318,7 @@ Begin
         iMeshInput.FadeDistance  := 0;
         iMeshInput.FadeScale     := 0;
         iMeshInput.CastShadow    := True;
-        iMeshInput.ReceiveShadow := False;
+        iMeshInput.ReceiveShadow := false;
 
         FCells.Add( TGDMeshCell.Create(iMeshInput) );
       end

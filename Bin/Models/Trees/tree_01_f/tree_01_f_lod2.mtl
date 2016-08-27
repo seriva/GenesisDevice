@@ -1,0 +1,4 @@
+newmtl Material::leaves_07_c_LOD2
+colormap Models/Trees/tree_01_f/lod_tree_01_f.dds
+has_alpha true
+alpha_func 0.55

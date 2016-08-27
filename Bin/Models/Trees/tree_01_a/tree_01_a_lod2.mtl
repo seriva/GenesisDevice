@@ -1,0 +1,4 @@
+newmtl Material::lod_tree_01_a_LOD2
+colormap Models/Trees/tree_01_a/lod_tree_01_a.dds
+has_alpha true
+alpha_func 0.55
