@@ -1,27 +1,27 @@
-newmtl Material::leaves_07_c
-colormap Models/Trees/shared/leaves_07_c.dds
+newmtl Material::leaves_05_c
+colormap Models/Trees/shared/leaves_05_c.dds
 has_alpha true
 alpha_func 0.55
 do_treeanim true
 
-newmtl Material::bark_03_c
-colormap Models/Trees/shared/bark_03_c.dds
+newmtl Material::bark_02_c
+colormap Models/Trees/shared/bark_02_c.dds
 detailmap Textures/Detail/detail.dds
 has_alpha false
 alpha_func 0.55
 detail_uv_mult 4
 detail_mult 0.4
 
-newmtl  Material::bark_04_c
-colormap Models/Trees/shared/bark_04_c.dds
+newmtl  Material::bark_01_c
+colormap Models/Trees/shared/bark_01_c.dds
 detailmap Textures/Detail/detail.dds
 has_alpha false
 alpha_func 0.55
 detail_uv_mult 4
 detail_mult 0.4
 
-newmtl Material::branch_01_c
-colormap Models/Trees/shared/branch_01_c.dds
+newmtl Material::branch_02_c
+colormap Models/Trees/shared/branch_02_c.dds
 has_alpha true
 alpha_func 0.55
 do_treeanim true

@@ -1,5 +1,5 @@
 newmtl Material::leaves_07_c_LOD1
-colormap Models/Trees/tree_01_f/leaves_07_c.dds
+colormap Models/Trees/shared/leaves_07_c.dds
 has_alpha true
 alpha_func 0.50
 do_treeanim true
