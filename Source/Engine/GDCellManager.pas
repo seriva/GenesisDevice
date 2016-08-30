@@ -304,8 +304,6 @@ Begin
            goto RedoRandomTrees;
 
         iMeshInput.Model         := iMeshType.Mesh.Name;
-        iMeshInput.ModelLOD1     := iMeshType.MeshLOD1.name;
-        iMeshInput.ModelLOD2     := iMeshType.MeshLOD2.name;
         iMeshInput.Position.X    := iPos.X;
         iMeshInput.Position.Y    := iHeight;
         iMeshInput.Position.Z    := iPos.Z;
@@ -317,6 +315,21 @@ Begin
         iMeshInput.Scale.Z       := iMeshType.Scale + Random(Round(iMeshType.RandomScale));
         iMeshInput.FadeDistance  := 0;
         iMeshInput.FadeScale     := 0;
+        if (iMeshType.MeshLOD1 <> nil) and (iMeshType.MeshLOD2 <> nil) then
+        begin
+          iMeshInput.ModelLOD1     := iMeshType.MeshLOD1.name;
+          iMeshInput.ModelLOD2     := iMeshType.MeshLOD2.name;
+          iMeshInput.FadeDistance  := 0;
+          iMeshInput.FadeScale     := 0;
+        end
+        else
+        begin
+          iMeshInput.ModelLOD1     := '';
+          iMeshInput.ModelLOD2     := '';
+          iMeshInput.FadeDistance  := Engine.Settings.FoliageDistance * R_FOLIAGE_DISTANCE_STEP + (R_FOLIAGE_DISTANCE_STEP * 10);
+          iMeshInput.FadeScale     := R_FOLIAGE_LOD_DISTANCE;
+        end;
+
         iMeshInput.CastShadow    := True;
         iMeshInput.ReceiveShadow := false;
 
