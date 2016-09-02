@@ -40,54 +40,76 @@ uses
   GDResource;
 
 type
+ {******************************************************************************}
+ {* Layertype class                                                            *}
+ {******************************************************************************}
 
-{******************************************************************************}
-{* Grasstype class                                                            *}
-{******************************************************************************}
-
-  TGDGrassType = class
+  TGDLayerItem = class
   private
-    FTexture : TGDTexture;
-    FScale   : TGDVector;
-    FRandomScale : TGDVector;
-    FCoverOfTotal : Single;
   public
-    property Texture : TGDTexture read FTexture;
-    property Scale : TGDVector read FScale;
-    property RandomScale : TGDVector read FRandomScale;
-    property CoverOfTotal : Single read FCoverOfTotal;
+    TerrainRotation : boolean;
+    Scale           : TGDVector;
+    RandomScale     : TGDVector;
+    CoverOfTotal    : Single;
 
     constructor Create(aIniFile : TIniFile; aSection : String);
     destructor  Destroy(); override;
   end;
-  TGDGrassTypeList = specialize TFPGObjectList<TGDGrassType>;
+  TGDLayerItemList = specialize TFPGObjectList<TGDLayerItem>;
 
 {******************************************************************************}
-{* Treetype class                                                             *}
+{* GrassItem class                                                            *}
 {******************************************************************************}
 
-  TGDMeshType = class
+  TGDGrassItem = class (TGDLayerItem)
   private
-    FMesh          : TGDMesh;
-    FMeshLOD1      : TGDMesh;
-    FMeshLOD2      : TGDMesh;
-    FStartRotation : TGDVector;
-    FScale         : Single;
-    FRandomScale   : Single;
-    FCoverOfTotal  : Single;
   public
-    property Mesh : TGDMesh read FMesh;
-    property MeshLOD1 : TGDMesh read FMeshLOD1;
-    property MeshLOD2 : TGDMesh read FMeshLOD2;
-    property StartRotation : TGDVector read FStartRotation;
-    property Scale : Single read FScale;
-    property RandomScale : Single read FRandomScale;
-    property CoverOfTotal : Single read FCoverOfTotal;
+    Texture      : TGDTexture;
 
     constructor Create(aIniFile : TIniFile; aSection : String);
     destructor  Destroy(); override;
   end;
-  TGDMeshTypeList = specialize TFPGObjectList<TGDMeshType>;
+
+{******************************************************************************}
+{* MeshItem class                                                             *}
+{******************************************************************************}
+
+  TGDMeshItem = class (TGDLayerItem)
+  private
+  public
+    Mesh           : TGDMesh;
+    MeshLOD1       : TGDMesh;
+    MeshLOD2       : TGDMesh;
+    OffsetPosition : TGDVector;
+    Rotation       : TGDVector;
+    RandomRotation : TGDVector;
+ 		CastShadow     : Boolean;
+		ReceiveShadow  : Boolean;
+
+    constructor Create(aIniFile : TIniFile; aSection : String);
+    destructor  Destroy(); override;
+  end;
+
+{******************************************************************************}
+{* Layer class                                                                *}
+{******************************************************************************}
+
+  TGDLayer = class
+  private
+  public
+    Map : array of array of boolean;
+    LayerType  : TGDLayerType;
+    LayerItems : TGDLayerItemList;
+    Count      : Integer;
+    LowerLimit : Integer;
+    UpperLimit : Integer;
+
+    constructor Create(aIniFile : TIniFile; aSection : String);
+    destructor  Destroy(); override;
+
+    Function CheckMap( aX, aY : Integer ) : Boolean;
+  end;
+  TGDLayerList = specialize TFPGObjectList<TGDLayer>;
 
 {******************************************************************************}
 {* Foliage class                                                              *}
@@ -100,34 +122,15 @@ type
     FTreeAnimationSpeed     : Single;
     FTreeAnimationStrength  : Single;
 
-    FGrassTypes           : TGDGrassTypeList;
-
-    FTreeTypes            : TGDMeshTypeList;
-    FTreeCount            : Integer;
-    FTreeLowerLimit       : Integer;
-    FTreeUpperLimit       : Integer;
-
-    FRockTypes            : TGDMeshTypeList;
-    FRockCount            : Integer;
+    FLayers                 : TGDLayerList;
   public
-    GrassMap : array of array of boolean;
-    TreeMap : array of array of boolean;
-    RockMap : array of array of boolean;
 
     property GrassAnimationSpeed    : Single read FGrassAnimationSpeed;
     property GrassAnimationStrength : Single read FGrassAnimationStrength;
     property TreeAnimationSpeed     : Single read FTreeAnimationSpeed;
     property TreeAnimationStrength  : Single read FTreeAnimationStrength;
 
-    property GrassTypes : TGDGrassTypeList read FGrassTypes;
-
-    property TreeTypes : TGDMeshTypeList read FTreeTypes;
-    property TreeCount : Integer read FTreeCount;
-    property TreeLowerLimit : Integer read FTreeLowerLimit;
-    property TreeUpperLimit : Integer read FTreeUpperLimit;
-
-    property RockTypes : TGDMeshTypeList read FRockTypes;
-    property RockCount : Integer read FRockCount;
+    property Layers : TGDLayerList read FLayers;
 
     constructor Create();
     destructor  Destroy(); override;
@@ -137,10 +140,6 @@ type
 
     procedure StartRenderingGrass( aRenderAttribute : TGDRenderAttribute );
     procedure EndRenderingGrass();
-
-    Function CheckTreeMap( aX, aY : Integer ) : Boolean;
-    Function CheckGrassMap( aX, aY : Integer ) : Boolean;
-    Function CheckRockMap( aX, aY : Integer ) : Boolean;
   end;
 
 implementation
@@ -149,25 +148,43 @@ uses
   GDEngine;
 
 {******************************************************************************}
+{* Create the layertype class                                                 *}
+{******************************************************************************}
+
+constructor TGDLayerItem.Create(aIniFile : TIniFile; aSection : String);
+begin
+  TerrainRotation := aIniFile.ReadBool( aSection, 'TerrainRotation', false );
+  Scale           := ReadVector(aIniFile, aSection, 'Scale');
+  RandomScale     := ReadVector(aIniFile, aSection, 'RandomScale');
+  CoverOfTotal    := aIniFile.ReadFloat( aSection, 'CoverOfTotal', 100 );
+end;
+
+{******************************************************************************}
+{* Create the layertype class                                                 *}
+{******************************************************************************}
+
+destructor  TGDLayerItem.Destroy();
+begin
+end;
+
+{******************************************************************************}
 {* Create the grasstype class                                                 *}
 {******************************************************************************}
 
-constructor TGDGrassType.Create(aIniFile : TIniFile; aSection : String);
+constructor TGDGrassItem.Create(aIniFile : TIniFile; aSection : String);
 begin
-  FTexture      := Engine.Resources.LoadTexture(aIniFile.ReadString( aSection, 'Texture', ''),
+  inherited Create(aIniFile, aSection);
+  Texture := Engine.Resources.LoadTexture(aIniFile.ReadString( aSection, 'Texture', ''),
                                          TD_HIGH, Engine.Settings.TextureFilter);
-  FScale        := ReadVector(aIniFile, aSection, 'Scale');
-  FRandomScale  := ReadVector(aIniFile, aSection, 'RandomScale');
-  FCoverOfTotal := aIniFile.ReadFloat( aSection, 'CoverOfTotal', 100 );
 end;
 
 {******************************************************************************}
 {* Destroy the grasstype                                                      *}
 {******************************************************************************}
 
-destructor  TGDGrassType.Destroy();
+destructor  TGDGrassItem.Destroy();
 begin
-  Engine.Resources.RemoveResource(TGDResource(FTexture));
+  Engine.Resources.RemoveResource(TGDResource(Texture));
   inherited
 end;
 
@@ -175,27 +192,101 @@ end;
 {* Create the treetype class                                                  *}
 {******************************************************************************}
 
-constructor TGDMeshType.Create(aIniFile : TIniFile; aSection : String);
+constructor TGDMeshItem.Create(aIniFile : TIniFile; aSection : String);
 begin
-  FMesh          := Engine.Resources.Loadmesh(aIniFile.ReadString( aSection, 'Model', ''));
-  FMeshLOD1      := Engine.Resources.Loadmesh(aIniFile.ReadString( aSection, 'ModelLOD1', ''));
-  FMeshLOD2      := Engine.Resources.Loadmesh(aIniFile.ReadString( aSection, 'ModelLOD2', ''));
-  FStartRotation := ReadVector(aIniFile, aSection, 'StartRotation');
-  FScale         := aIniFile.ReadFloat( aSection, 'Scale', 0 );
-  FRandomScale   := aIniFile.ReadFloat( aSection, 'RandomScale', 0 );
-  FCoverOfTotal  := aIniFile.ReadFloat( aSection, 'CoverOfTotal', 100 );
+  inherited Create(aIniFile, aSection);
+  Mesh           := Engine.Resources.Loadmesh(aIniFile.ReadString( aSection, 'Model', ''));
+  MeshLOD1       := Engine.Resources.Loadmesh(aIniFile.ReadString( aSection, 'ModelLOD1', ''));
+  MeshLOD2       := Engine.Resources.Loadmesh(aIniFile.ReadString( aSection, 'ModelLOD2', ''));
+  OffsetPosition := ReadVector(aIniFile, aSection, 'OffsetPosition');
+  Rotation       := ReadVector(aIniFile, aSection, 'Rotation');
+  RandomRotation := ReadVector(aIniFile, aSection, 'RandomRotation');
+ 	CastShadow     := aIniFile.ReadBool( aSection, 'CastShadow', false);
+	ReceiveShadow  := aIniFile.ReadBool( aSection, 'ReceiveShadow', false);
 end;
 
 {******************************************************************************}
 {* Destroy the treetype                                                       *}
 {******************************************************************************}
 
-destructor  TGDMeshType.Destroy();
+destructor  TGDMeshItem.Destroy();
 begin
-  Engine.Resources.RemoveResource(TGDResource(FMesh));
-  Engine.Resources.RemoveResource(TGDResource(FMeshLOD1));
-  Engine.Resources.RemoveResource(TGDResource(FMeshLOD2));
+  Engine.Resources.RemoveResource(TGDResource(Mesh));
+  Engine.Resources.RemoveResource(TGDResource(MeshLOD1));
+  Engine.Resources.RemoveResource(TGDResource(MeshLOD2));
   inherited
+end;
+
+{******************************************************************************}
+{* Create layer                                                               *}
+{******************************************************************************}
+
+constructor TGDLayer.Create(aIniFile : TIniFile; aSection : String);
+var
+  iMap : TGDBmp;
+  iX, iY : integer;
+begin
+  LayerItems := TGDLayerItemList.Create();
+
+  if aIniFile.ReadString( aSection, 'Type', 'MESH' ) = 'MESH' then
+    LayerType := LT_MESH
+  else
+    LayerType := LT_GRASS;
+
+  iMap        := TGDBmp.Create(aIniFile.ReadString( aSection, 'Map', 'map.bmp'));
+  Count      := aIniFile.ReadInteger( aSection, 'Count', 0 );
+  LowerLimit := aIniFile.ReadInteger( aSection, 'LowerLimit', -2147483648 );
+  UpperLimit := aIniFile.ReadInteger( aSection, 'UpperLimit',  2147483647 );
+
+  if ((iMap.Width mod 2) <> 0) or ((iMap.Height mod 2) <> 0) then
+    Raise Exception.Create('Map dimensions are incorrect!');
+
+  SetLength(Map, iMap.Width);
+  for iX := 0 to (iMap.Width-1) do
+  begin
+    SetLength(Map[iX], iMap.Height);
+    for iY := 0 to (iMap.Height-1) do
+      Map[iX,iY]  := iMap.GetInt(iX,iY) > 0;
+  end;
+  FreeAndNil(iMap);
+
+  //tree types
+  iX := 1;
+  while(aIniFile.SectionExists(aSection + '_Item' + IntToStr(iX))) do
+  begin
+    if LayerType = LT_MESH then
+      LayerItems.Add(TGDMeshItem.Create(aIniFile, aSection + '_Item' + IntToStr(iX)))
+    else
+      LayerItems.Add(TGDGrassItem.Create(aIniFile, aSection + '_Item' + IntToStr(iX)));
+
+    iX := iX + 1;
+  end;
+end;
+
+{******************************************************************************}
+{* Destroy layer                                                              *}
+{******************************************************************************}
+
+destructor TGDLayer.Destroy();
+var
+  iX : Integer;
+begin
+  if (Map <> nil) then
+  begin
+    for iX := 0 to Length(Map)-1 do
+      SetLength(Map[iX], 0);
+    SetLength(Map, 0);
+  end;
+  FreeAndNil(LayerItems);
+end;
+
+{******************************************************************************}
+{* Check location on layermap                                                 *}
+{******************************************************************************}
+
+Function TGDLayer.CheckMap( aX, aY : Integer ) : Boolean;
+begin
+  result := Map[aX, aY];
 end;
 
 {******************************************************************************}
@@ -204,9 +295,7 @@ end;
 
 constructor TGDFoliage.Create();
 begin
-  FGrassTypes := TGDGrassTypeList.Create();
-  FTreeTypes  := TGDMeshTypeList.Create();
-  FRockTypes  := TGDMeshTypeList.Create();
+  FLayers := TGDLayerList.Create();
 end;
 
 {******************************************************************************}
@@ -216,10 +305,7 @@ end;
 destructor  TGDFoliage.Destroy();
 begin
   inherited;
-  Clear();
-  FreeAndNil(FTreeTypes);
-  FreeAndNil(FGrassTypes);
-  FreeAndNil(FRockTypes);
+  FreeAndNil(FLayers);
 end;
 
 {******************************************************************************}
@@ -228,8 +314,7 @@ end;
 
 Function TGDFoliage.InitFoliage( aIniFile : TIniFile ) : boolean;
 var
-  iTreeMap, iGrassMap, iRockMap : TGDBmp;
-  iX, iY : integer;
+  iX : integer;
   iError : String;
 begin
   Clear();
@@ -239,46 +324,15 @@ begin
 
     FGrassAnimationSpeed    := aIniFile.ReadFloat( 'Foliage', 'GrassAnimationSpeed', 1000 );
     FGrassAnimationStrength := aIniFile.ReadFloat( 'Foliage', 'GrassAnimationStrength', 5);
-
-    FTreeCount              := aIniFile.ReadInteger( 'Foliage', 'TreeCount', 0 );
-    FTreeLowerLimit         := aIniFile.ReadInteger( 'Foliage', 'TreeLowerLimit', 0 );
-    FTreeUpperLimit         := aIniFile.ReadInteger( 'Foliage', 'TreeUpperLimit', 0 );
     FTreeAnimationSpeed     := aIniFile.ReadFloat( 'Foliage', 'TreeAnimationSpeed', 1000 );
     FTreeAnimationStrength  := aIniFile.ReadFloat( 'Foliage', 'TreeAnimationStrength', 5 );
 
-    FRockCount              := aIniFile.ReadInteger( 'Foliage', 'RockCount', 0 );
-
-    iTreeMap  := TGDBmp.Create(aIniFile.ReadString( 'Foliage', 'TreeMap', 'treemap.bmp'));
-    iGrassMap := TGDBmp.Create(aIniFile.ReadString( 'Foliage', 'GrassMap', 'grassmap.bmp'));
-    iRockMap  := TGDBmp.Create( aIniFile.ReadString( 'Foliage', 'RockMap', 'rockmap.bmp' ));
-
-    if ((iTreeMap.Width mod 2) <> 0) or ((iTreeMap.Height mod 2) <> 0) then
-      Raise Exception.Create('Dimensions are incorrect!');
-
-    if (iTreeMap.Width  <> iGrassMap.Width) or
-       (iTreeMap.Height <> iGrassMap.Height) or
-       (iTreeMap.Width  <> iRockMap.Width) or
-       (iTreeMap.Height <> iRockMap.Height) then
-      Raise Exception.Create('Dimensions are incorrect!');
-
-    SetLength(TreeMap, iTreeMap.Width);
-    SetLength(GrassMap, iTreeMap.Width);
-    SetLength(RockMap, iTreeMap.Width);
-    for iX := 0 to (iTreeMap.Width-1) do
+    iX := 1;
+    while(aIniFile.SectionExists('Layer' + IntToStr(iX))) do
     begin
-      SetLength(TreeMap[iX], iTreeMap.Height);
-      SetLength(GrassMap[iX], iTreeMap.Height);
-      SetLength(RockMap[iX], iTreeMap.Height);
-      for iY := 0 to (iTreeMap.Height-1) do
-      begin
-          TreeMap[iX,iY]  := iTreeMap.GetInt(iX,iY) > 0;
-          GrassMap[iX,iY] := iGrassMap.GetInt(iX,iY) > 0;
-          RockMap[iX,iY]  := iRockMap.GetInt(iX,iY) > 0;
-      end;
+      FLayers.Add(TGDLayer.Create(aIniFile, 'Layer' + IntToStr(iX)));
+      iX := iX + 1;
     end;
-    FreeAndNil(iTreeMap);
-    FreeAndNil(iGrassMap);
-    FreeAndNil(iRockMap);
   except
     on E: Exception do
     begin
@@ -295,25 +349,8 @@ end;
 {******************************************************************************}
 
 procedure TGDFoliage.Clear();
-var
-  iX : Integer;
 begin
-  if (GrassMap <> nil) then
-  begin
-    for iX := 0 to Length(GrassMap)-1 do
-    begin
-      SetLength(GrassMap[iX], 0);
-      SetLength(TreeMap[iX], 0);
-      SetLength(RockMap[iX], 0);
-    end;
-    SetLength(GrassMap, 0);
-    SetLength(TreeMap, 0);
-    SetLength(RockMap, 0);
-  end;
-
-  FGrassTypes.Clear();
-  FTreeTypes.Clear();
-  FRockTypes.Clear();
+  FLayers.Clear();
 end;
 
 {******************************************************************************}
@@ -356,33 +393,6 @@ begin
   glDisable(GL_ALPHA_TEST);
   glDisable(GL_BLEND);
   glEnable(GL_CULL_FACE);
-end;
-
-{******************************************************************************}
-{* Check on the grass map if grass may grow there                           *}
-{******************************************************************************}
-
-Function TGDFoliage.CheckGrassMap( aX, aY : Integer ) : Boolean;
-begin
-  result := GrassMap[aX, aY];
-end;
-
-{******************************************************************************}
-{* Check on the tree map if tree may grow there                               *}
-{******************************************************************************}
-
-Function TGDFoliage.CheckTreeMap( aX, aY : Integer ) : Boolean;
-begin
-  result := TreeMap[aX, aY];
-end;
-
-{******************************************************************************}
-{* Check on the rock map if rock may be there                                 *}
-{******************************************************************************}
-
-Function TGDFoliage.CheckRockMap( aX, aY : Integer ) : Boolean;
-begin
-  result := RockMap[aX, aY];
 end;
 
 end.

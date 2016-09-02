@@ -57,6 +57,9 @@ type
   //Vertex layouts
   TGDVertexLayout = (VL_NONE, VL_V, VL_V_UV, VL_V_UV_N, VL_V_UV_N_C);
 
+  //Layer Type
+  TGDLayerType = (LT_GRASS, LT_MESH);
+
   //base procedure callback
   TGDCallback = procedure();
 

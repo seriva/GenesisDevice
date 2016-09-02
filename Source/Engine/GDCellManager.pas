@@ -230,158 +230,132 @@ End;
 
 procedure TGDCellManager.GenerateFoliageCells(aFoliage : TGDFoliage; aTerrain : TGDTerrain; aWater : TGDWater);
 var
- iI, iJ, iTreeCount, iRockCount : Integer;
- iK, iL : Integer;
- iX, iY : Integer;
- iCellHasGrass : boolean;
- iStepX, iStepY : Integer;
- iMeshType : TGDMeshType;
- iMeshInput : TGDMeshCellInput;
- iHeight : Double;
- iPos, iRot : TGDVector;
+  iI, iJ, iMeshCount : Integer;
+  iK, iL : Integer;
+  iX, iY : Integer;
+  iB : Integer;
+  iCellHasGrass : boolean;
+  iStepX, iStepY : Integer;
+  iMeshItem : TGDMeshItem;
+  iMeshInput : TGDMeshCellInput;
+  iHeight : Double;
+  iPos, iRot : TGDVector;
+  iLayer : TGDLayer;
 label
-  RedoRandomTrees;
-label
-  RedoRandomRocks;
+  RedoRandomMeshes;
 Begin
   Engine.Timing.Start();
   iStepX := aTerrain.TerrainWidth div (aTerrain.TerrainWidth div GRASS_CELLSIZE);
   iStepY := aTerrain.TerrainHeight div (aTerrain.TerrainHeight div GRASS_CELLSIZE);
 
-  Engine.GUI.LoadingScreen.Start('Generating foliage...', Round(aTerrain.TerrainWidth/iStepX) + aFoliage.TreeTypes.Count + aFoliage.RockTypes.Count );
-
-  //create grasscells
-  iI := 1;
-  while (iI <= (aTerrain.TerrainWidth-iStepX)) do
+  Engine.GUI.LoadingScreen.Start('Generating foliage...', aFoliage.Layers.Count );
+  for iB := 0 to aFoliage.Layers.Count-1 do
   begin
-    iJ := 1;
-    while (iJ <= (aTerrain.TerrainHeight-iStepY)) do
-    begin
+    iLayer := aFoliage.Layers[iB];
 
-      iCellHasGrass := false;
-      iK := iI-1;
-      while ((iK <= (iI-2+iStepX)) and Not(iCellHasGrass)  )  do
+    if iLayer.LayerType = LT_GRASS then
+    begin
+      //create grasscells
+      iI := 1;
+      while (iI <= (aTerrain.TerrainWidth-iStepX)) do
       begin
-        iL := iJ-1;
-        while ((iL <= (iJ-2+iStepY)) and Not(iCellHasGrass)  )  do
+        iJ := 1;
+        while (iJ <= (aTerrain.TerrainHeight-iStepY)) do
         begin
-          iCellHasGrass := aFoliage.GrassMap[iK,iL];
-          iL := iL+1;
+
+          iCellHasGrass := false;
+          iK := iI-1;
+          while ((iK <= (iI-2+iStepX)) and Not(iCellHasGrass)  )  do
+          begin
+            iL := iJ-1;
+            while ((iL <= (iJ-2+iStepY)) and Not(iCellHasGrass)  )  do
+            begin
+              iCellHasGrass := iLayer.CheckMap(iK,iL);
+              iL := iL+1;
+            end;
+            iK := iK+1;
+          end;
+
+          If iCellHasGrass then
+          begin
+            FCells.Add(TGDGrassCell.Create(aTerrain, iLayer, aWater, iI, iJ, iI+iStepX, iJ+iStepY) );
+          end;
+
+          iJ := iJ + iStepY;
         end;
-        iK := iK+1;
+        iI := iI + iStepX;
       end;
-
-      If iCellHasGrass then
-      begin
-        FCells.Add(TGDGrassCell.Create(aTerrain, aFoliage, aWater, iI, iJ, iI+iStepX, iJ+iStepY) );
-      end;
-
-      iJ := iJ + iStepY;
-    end;
-    iI := iI + iStepX;
-    Engine.GUI.LoadingScreen.Update();
-  end;
-
-  //create treecells
-  for iI := 0 to aFoliage.TreeTypes.Count-1 do
-  begin
-    iMeshType := aFoliage.TreeTypes.Items[iI];
-    iTreeCount := Round(aFoliage.TreeCount * iMeshType.CoverOfTotal) div 100;
-    for iJ := 1 to iTreeCount do
+    end
+    else
     begin
-      RedoRandomTrees:
-
-      iX := Random(aTerrain.TerrainWidth-1);
-      iY := Random(aTerrain.TerrainHeight-1);
-      iPos.Reset( aTerrain.GetPoint( iX, iY ).Vertex.X + (aTerrain.TriangleSize div 2) ,
-                  0,
-                  aTerrain.GetPoint( iX, iY ).Vertex.Z + (aTerrain.TriangleSize div 2) );
-
-      if aFoliage.CheckTreeMap(iX, iY) and aTerrain.GetHeight(iPos.X, iPos.Z, iHeight) then
+      for iI := 0 to iLayer.LayerItems.Count-1 do
       begin
-        iHeight := iHeight - 200;
-        if not((iHeight > aFoliage.TreeLowerLimit) and (iHeight < aFoliage.TreeUpperLimit)) then
-           goto RedoRandomTrees;
+        iMeshItem  := TGDMeshItem(iLayer.LayerItems.Items[iI]);
+        iMeshCount := Round(iLayer.Count * iMeshItem.CoverOfTotal) div 100;
+        for iJ := 1 to iMeshCount do
+        begin
+          RedoRandomMeshes:
 
-        iMeshInput.Model         := iMeshType.Mesh.Name;
-        iMeshInput.Position.X    := iPos.X;
-        iMeshInput.Position.Y    := iHeight;
-        iMeshInput.Position.Z    := iPos.Z;
-        iMeshInput.Rotation.X    := iMeshType.StartRotation.X;
-        iMeshInput.Rotation.Y    := iMeshType.StartRotation.Y + Random(Round(360));
-        iMeshInput.Rotation.Z    := iMeshType.StartRotation.Z;
-        iMeshInput.Scale.X       := iMeshType.Scale + Random(Round(iMeshType.RandomScale));
-        iMeshInput.Scale.Y       := iMeshType.Scale + Random(Round(iMeshType.RandomScale));
-        iMeshInput.Scale.Z       := iMeshType.Scale + Random(Round(iMeshType.RandomScale));
-        iMeshInput.FadeDistance  := 0;
-        iMeshInput.FadeScale     := 0;
-        if (iMeshType.MeshLOD1 <> nil) and (iMeshType.MeshLOD2 <> nil) then
-        begin
-          iMeshInput.ModelLOD1     := iMeshType.MeshLOD1.name;
-          iMeshInput.ModelLOD2     := iMeshType.MeshLOD2.name;
-          iMeshInput.FadeDistance  := 0;
-          iMeshInput.FadeScale     := 0;
-        end
-        else
-        begin
-          iMeshInput.ModelLOD1     := '';
-          iMeshInput.ModelLOD2     := '';
-          iMeshInput.FadeDistance  := Engine.Settings.FoliageDistance * R_FOLIAGE_DISTANCE_STEP + (R_FOLIAGE_DISTANCE_STEP * 10);
-          iMeshInput.FadeScale     := R_FOLIAGE_LOD_DISTANCE;
+          iX := Random(aTerrain.TerrainWidth-1);
+          iY := Random(aTerrain.TerrainHeight-1);
+          iPos.Reset( aTerrain.GetPoint( iX, iY ).Vertex.X + (aTerrain.TriangleSize div 2) ,
+                      0,
+                      aTerrain.GetPoint( iX, iY ).Vertex.Z + (aTerrain.TriangleSize div 2) );
+
+          if iLayer.CheckMap(iX, iY) and aTerrain.GetHeight(iPos.X, iPos.Z, iHeight) then
+          begin
+            if not((iHeight > iLayer.LowerLimit) and (iHeight < iLayer.UpperLimit)) then
+               goto RedoRandomMeshes;
+
+            iMeshInput.Model      := iMeshItem.Mesh.Name;
+            iMeshInput.Position.X := iPos.X + iMeshItem.OffsetPosition.x;
+            iMeshInput.Position.Y := iHeight + iMeshItem.OffsetPosition.y;
+            iMeshInput.Position.Z := iPos.Z + iMeshItem.OffsetPosition.z;
+
+            if iMeshItem.TerrainRotation then
+            begin
+              aTerrain.GetRotation(iPos.X, iPos.Z, iRot );
+              iMeshInput.Rotation.X := iRot.x;
+              iMeshInput.Rotation.Y := iRot.y;
+              iMeshInput.Rotation.Z := iRot.z;
+            end
+            else
+            begin
+              iMeshInput.Rotation.X := iMeshItem.Rotation.X + Random(Round(iMeshItem.RandomRotation.x));
+              iMeshInput.Rotation.Y := iMeshItem.Rotation.Y + Random(Round(iMeshItem.RandomRotation.y));
+              iMeshInput.Rotation.Z := iMeshItem.Rotation.Z + Random(Round(iMeshItem.RandomRotation.z));
+            end;
+            iMeshInput.Scale.X       := iMeshItem.Scale.x + Random(Round(iMeshItem.RandomScale.x));
+            iMeshInput.Scale.Y       := iMeshItem.Scale.y + Random(Round(iMeshItem.RandomScale.y));
+            iMeshInput.Scale.Z       := iMeshItem.Scale.z + Random(Round(iMeshItem.RandomScale.z));
+            iMeshInput.FadeDistance  := 0;
+            iMeshInput.FadeScale     := 0;
+            if (iMeshItem.MeshLOD1 <> nil) and (iMeshItem.MeshLOD2 <> nil) then
+            begin
+              iMeshInput.ModelLOD1     := iMeshItem.MeshLOD1.name;
+              iMeshInput.ModelLOD2     := iMeshItem.MeshLOD2.name;
+              iMeshInput.FadeDistance  := 0;
+              iMeshInput.FadeScale     := 0;
+            end
+            else
+            begin
+              iMeshInput.ModelLOD1     := '';
+              iMeshInput.ModelLOD2     := '';
+              iMeshInput.FadeDistance  := Engine.Settings.FoliageDistance * R_FOLIAGE_DISTANCE_STEP + (R_FOLIAGE_DISTANCE_STEP * 10);
+              iMeshInput.FadeScale     := R_FOLIAGE_LOD_DISTANCE;
+            end;
+
+            iMeshInput.CastShadow    := iMeshItem.CastShadow;
+            iMeshInput.ReceiveShadow := iMeshItem.ReceiveShadow;
+
+            FCells.Add( TGDMeshCell.Create(iMeshInput) );
+          end
+          else
+            goto RedoRandomMeshes;
         end;
-
-        iMeshInput.CastShadow    := True;
-        iMeshInput.ReceiveShadow := false;
-
-        FCells.Add( TGDMeshCell.Create(iMeshInput) );
-      end
-      else
-        goto RedoRandomTrees;
+      end;
     end;
-    Engine.GUI.LoadingScreen.Update();
-  end;
 
-  //create rocks
-  for iI := 0 to aFoliage.RockTypes.Count-1 do
-  begin
-    iMeshType  := aFoliage.RockTypes.Items[iI];
-    iRockCount := Round(aFoliage.RockCount * iMeshType.CoverOfTotal) div 100;
-    for iJ := 1 to iRockCount do
-    begin
-      RedoRandomRocks:
-
-      iX := Random(aTerrain.TerrainWidth-1);
-      iY := Random(aTerrain.TerrainHeight-1);
-      iPos.Reset( aTerrain.GetPoint( iX, iY ).Vertex.X + (aTerrain.TriangleSize div 2) ,
-                  0,
-                  aTerrain.GetPoint( iX, iY ).Vertex.Z + (aTerrain.TriangleSize div 2) );
-
-      if aFoliage.CheckRockMap(iX, iY) and aTerrain.GetHeight(iPos.X, iPos.Z, iHeight) then
-      begin
-        aTerrain.GetRotation(iPos.X, iPos.Z, iRot );
-        iMeshInput.Model         := iMeshType.Mesh.Name;
-        iMeshInput.ModelLOD1     := '';
-        iMeshInput.ModelLOD2     := '';
-        iMeshInput.Position.X    := iPos.X;
-        iMeshInput.Position.Y    := iHeight;
-        iMeshInput.Position.Z    := iPos.Z;
-        iMeshInput.Rotation.X    := iRot.x;
-        iMeshInput.Rotation.Y    := iRot.y;
-        iMeshInput.Rotation.Z    := iRot.z;
-        iMeshInput.Scale.X       := iMeshType.Scale + Random(Round(iMeshType.RandomScale));
-        iMeshInput.Scale.Y       := iMeshType.Scale + Random(Round(iMeshType.RandomScale));
-        iMeshInput.Scale.Z       := iMeshType.Scale + Random(Round(iMeshType.RandomScale));
-        iMeshInput.FadeDistance  := Engine.Settings.FoliageDistance * R_FOLIAGE_DISTANCE_STEP + (R_FOLIAGE_DISTANCE_STEP * 10);
-        iMeshInput.FadeScale     := R_FOLIAGE_LOD_DISTANCE;
-        iMeshInput.CastShadow    := False;
-        iMeshInput.ReceiveShadow := True;
-        FCells.Add( TGDMeshCell.Create(iMeshInput) );
-      end
-      else
-        goto RedoRandomRocks;
-
-
-    end;
     Engine.GUI.LoadingScreen.Update();
   end;
   Engine.Timing.Stop();

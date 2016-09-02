@@ -75,7 +75,7 @@ type
   public
     property TrisCount : Integer Read FTrisCount;
 
-    constructor Create(aTerrain : TGDTerrain; aFoliage : TGDFoliage;  aWater : TGDWater; aStartX, aStartY, aEndX, aEndY : Integer);
+    constructor Create(aTerrain : TGDTerrain; aLayer : TGDLayer;  aWater : TGDWater; aStartX, aStartY, aEndX, aEndY : Integer);
     destructor  Destroy(); override;
 
     procedure Render( aRenderAttribute : TGDRenderAttribute; aRenderFor : TGDRenderFor ); override;
@@ -143,7 +143,7 @@ end;
 {* Create the grasscell class                                                 *}
 {******************************************************************************}
 
-constructor TGDGrassCell.Create(aTerrain : TGDTerrain; aFoliage : TGDFoliage; aWater : TGDWater; aStartX, aStartY, aEndX, aEndY : Integer );
+constructor TGDGrassCell.Create(aTerrain : TGDTerrain; aLayer : TGDLayer; aWater : TGDWater; aStartX, aStartY, aEndX, aEndY : Integer );
 var
   iI, iJ : Integer;
   iX, iY : Integer;
@@ -151,7 +151,7 @@ var
   iParticalLists : array of array of TGDGrassPartical;
   iParticalCount : array of Integer;
   iHeight, iRandomHeightScale : Double;
-  iTempGrassType : TGDGrassType;
+  iTempGrassType : TGDGrassItem;
 begin
   OjectType    := SO_GRASSCELL;
   FTrisCount   := 0;
@@ -166,22 +166,23 @@ begin
   FEndPoint.Y   := aEndY;
   CalculateBoundingBox(aTerrain);
 
-  //create temp arrays
-  SetLength( iParticalCount, aFoliage.GrassTypes.Count);
-  For iI := 0 to Length(iParticalCount)-1 do
-    iParticalCount[iI] :=  Round( (Engine.Settings.FoliageDensity * TGDGrassType( aFoliage.GrassTypes.Items[iI] ).CoverOfTotal) / 100 );
 
-  SetLength( iParticalLists, aFoliage.GrassTypes.Count);
+  //create temp arrays
+  SetLength( iParticalCount, aLayer.LayerItems.Count);
+  For iI := 0 to Length(iParticalCount)-1 do
+    iParticalCount[iI] :=  Round( (Engine.Settings.FoliageDensity * TGDGrassItem( aLayer.LayerItems.Items[iI] ).CoverOfTotal) / 100 );
+
+  SetLength( iParticalLists, aLayer.LayerItems.Count);
   for iY := (FStartPoint.Y-1) to FEndPoint.Y-2 do
   begin
     iX := (FStartPoint.X-1);
     for iX := (FStartPoint.X-1) to FEndPoint.X-2 do
     begin
-      If aFoliage.GrassMap[iX,iY] then
+      If aLayer.CheckMap(iX,iY) then
       begin
-        for iI := 0 to aFoliage.GrassTypes.Count-1 do
+        for iI := 0 to aLayer.LayerItems.Count-1 do
         begin
-          iTempGrassType := TGDGrassType(aFoliage.GrassTypes.Items[iI]);
+          iTempGrassType := TGDGrassItem(aLayer.LayerItems.Items[iI]);
           for iJ := 0 to iParticalCount[iI]-1 do
           begin
             //position
@@ -218,7 +219,7 @@ begin
   FDisplayList.StartList();
   For iI := 0 to Length(iParticalLists)-1 do
   begin
-    TGDGrassType(aFoliage.GrassTypes.Items[iI]).Texture.BindTexture( GL_TEXTURE0 );
+    TGDGrassItem(aLayer.LayerItems.Items[iI]).Texture.BindTexture( GL_TEXTURE0 );
     glBegin(GL_QUADS);
     for iJ := 0 to Length( iParticalLists[iI] )-1 do
       iParticalLists[iI,iJ].Render();

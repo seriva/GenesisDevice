@@ -146,7 +146,7 @@ begin
   iIniFile := TIniFile.Create(aFileName);
   Clear();
   Engine.Console.Write('......Loading map (' + aFileName + ')');
-  Engine.GUI.LoadingScreen.Start('Loading ' + StringReplace( ExtractFileName(aFileName), ExtractFileExt(aFileName), '',  [rfReplaceAll] ) + '...', 9 );
+  Engine.GUI.LoadingScreen.Start('Loading ' + StringReplace( ExtractFileName(aFileName), ExtractFileExt(aFileName), '',  [rfReplaceAll] ) + '...', 6 );
 
   //spawnpoint
   FPlayerStart := ReadVector(iIniFile, 'SpawnPoint', 'Position');
@@ -178,33 +178,6 @@ begin
 
   //init water
   Water.InitWater(FTerrain, iIniFile );
-  Engine.GUI.LoadingScreen.Update();
-
-  //grass types
-  iI := 1;
-  while(iIniFile.SectionExists('GrassType' + IntToStr(iI))) do
-  begin
-    Foliage.GrassTypes.Add( TGDGrassType.Create(iIniFile, 'GrassType' + IntToStr(iI)));
-    iI := iI + 1;
-  end;
-  Engine.GUI.LoadingScreen.Update();
-
-  //tree types
-  iI := 1;
-  while(iIniFile.SectionExists('TreeType' + IntToStr(iI))) do
-  begin
-    Foliage.TreeTypes.Add(TGDMeshType.Create(iIniFile, 'TreeType' + IntToStr(iI)));
-    iI := iI + 1;
-  end;
-  Engine.GUI.LoadingScreen.Update();
-
-  //rock types
-  iI := 1;
-  while(iIniFile.SectionExists('RockType' + IntToStr(iI))) do
-  begin
-    Foliage.RockTypes.Add(TGDMeshType.Create(iIniFile, 'RockType' + IntToStr(iI)));
-    iI := iI + 1;
-  end;
   Engine.GUI.LoadingScreen.Update();
 
   //mesh entities

@@ -138,7 +138,7 @@ var
 begin
   lSplit := TStringList.create;
   try
-    lStr := aIniFile.ReadString(aSection, aSubName, '1,1,1' );
+    lStr := aIniFile.ReadString(aSection, aSubName, '0,0,0' );
     ExtractStrings([','], [], PChar(lStr), lSplit);
     result.Reset(StrToFloat(lSplit.Strings[0]), StrToFloat(lSplit.Strings[1]), StrToFloat(lSplit.Strings[2]));
   finally
