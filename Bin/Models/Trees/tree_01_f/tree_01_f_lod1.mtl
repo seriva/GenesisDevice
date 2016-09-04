@@ -1,21 +1,21 @@
 newmtl Material::leaves_07_c_LOD1
 colormap Models/Trees/shared/leaves_07_c.dds
 has_alpha true
-alpha_func 0.50
+alpha_func 0.6
 do_treeanim true
 
 newmtl Material::bark_02_c_LOD1
 colormap Models/Trees/shared/bark_02_c.dds
 has_alpha false
-alpha_func 0.50
+alpha_func 0.6
 
 newmtl  Material::bark_01_c_LOD1
 colormap Models/Trees/shared/bark_01_c.dds
 has_alpha false
-alpha_func 0.50
+alpha_func 0.6
 
 newmtl Material::branch_01_c_LOD1
 colormap Models/Trees/shared/branch_01_c.dds
 has_alpha true
-alpha_func 0.50
+alpha_func 0.6
 do_treeanim true

@@ -370,8 +370,6 @@ begin
   begin
     glEnable(GL_ALPHA_TEST);
     glAlphaFunc(GL_GREATER, 0.7);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glEnable(GL_BLEND);
     glDisable(GL_CULL_FACE);
     with Engine.Renderer do
     begin
@@ -391,7 +389,6 @@ end;
 procedure TGDFoliage.EndRenderingGrass();
 begin
   glDisable(GL_ALPHA_TEST);
-  glDisable(GL_BLEND);
   glEnable(GL_CULL_FACE);
 end;
 

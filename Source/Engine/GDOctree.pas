@@ -265,7 +265,6 @@ begin
 
       If (iCell.OjectType = SO_GRASSCELL) and Engine.Modes.RenderGrass then
         If (iCell.Distance < (Engine.Settings.FoliageDistance * R_FOLIAGE_DISTANCE_STEP + (R_FOLIAGE_DISTANCE_STEP * 10))) then
-           if not(Engine.Map.Water.UnderWater()) then
              aQueryData.VisibleGrassCells.Add(iCell);
 
       If (iCell.OjectType = SO_TERRAINCELL) and Engine.Modes.RenderTerrain then

@@ -151,7 +151,7 @@ var
   iParticalLists : array of array of TGDGrassPartical;
   iParticalCount : array of Integer;
   iHeight, iRandomHeightScale : Double;
-  iTempGrassType : TGDGrassItem;
+  iGrassItem : TGDGrassItem;
 begin
   OjectType    := SO_GRASSCELL;
   FTrisCount   := 0;
@@ -164,8 +164,8 @@ begin
   FStartPoint.Y := aStartY;
   FEndPoint.X   := aEndX;
   FEndPoint.Y   := aEndY;
+  iRot.Reset(0,0,0);
   CalculateBoundingBox(aTerrain);
-
 
   //create temp arrays
   SetLength( iParticalCount, aLayer.LayerItems.Count);
@@ -182,7 +182,7 @@ begin
       begin
         for iI := 0 to aLayer.LayerItems.Count-1 do
         begin
-          iTempGrassType := TGDGrassItem(aLayer.LayerItems.Items[iI]);
+          iGrassItem := TGDGrassItem(aLayer.LayerItems.Items[iI]);
           for iJ := 0 to iParticalCount[iI]-1 do
           begin
             //position
@@ -190,19 +190,20 @@ begin
                         aTerrain.GetPoint( iX, iY ).Vertex.Z + random(aTerrain.TriangleSize) );
             aTerrain.GetHeight(iPos.X, iPos.Z, iHeight  );
 
-            iRandomHeightScale := iTempGrassType.Scale.Y + Random( Round( iTempGrassType.RandomScale.Y ) );
+            iRandomHeightScale := iGrassItem.Scale.Y + Random( Round( iGrassItem.RandomScale.Y ) );
             iPos.Y := iHeight + ((50 * iRandomHeightScale) / 100 );
 
             //scale
-            iScale.Reset( iTempGrassType.Scale.X + random( Round( iTempGrassType.RandomScale.X )),
+            iScale.Reset( iGrassItem.Scale.X + random( Round( iGrassItem.RandomScale.X )),
                           iRandomHeightScale,
-                          iTempGrassType.Scale.Z + random( Round( iTempGrassType.RandomScale.Z )) );
+                          iGrassItem.Scale.Z + random( Round( iGrassItem.RandomScale.Z )) );
 
             //rotation
-            aTerrain.GetRotation( iPos.X, iPos.Z, iRot );
+            if iGrassItem.TerrainRotation then
+            	aTerrain.GetRotation( iPos.X, iPos.Z, iRot );
 
             //create partical
-            If iHeight > aWater.WaterHeight then
+            if ((iHeight > aLayer.LowerLimit) and (iHeight < aLayer.UpperLimit)) then
             begin
               SetLength(iParticalLists[iI], Length(iParticalLists[iI]) + 1 );
               iParticalLists[iI,Length(iParticalLists[iI])-1].InitGrassPartical( iPos, iScale, iRot );

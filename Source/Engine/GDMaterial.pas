@@ -128,8 +128,6 @@ begin
     begin
       glEnable(GL_ALPHA_TEST);
       glAlphaFunc(GL_GREATER, FAlphaFunc);
-      glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-      glEnable(GL_BLEND);
     end;
   end;
 end;
@@ -141,10 +139,7 @@ end;
 procedure TGDMaterial.DisableMaterial();
 begin
   if FHasAlpha then
-  begin
     glDisable(GL_ALPHA_TEST);
-    glDisable(GL_BLEND);
-  end;
 end;
 
 end.

@@ -211,7 +211,7 @@ begin
         Engine.GUI.Font.Color := Engine.GUI.FontColor.Copy();
       Engine.GUI.Font.Render(0, (R_HUDHEIGHT/2)+28+(iJ*25), 0.40, FLogText.Strings[iI] );
       iJ := iJ + 1;
-    end
+    end;
   end;
 
   Engine.GUI.Font.Color := Engine.GUI.FontColor.Copy();
