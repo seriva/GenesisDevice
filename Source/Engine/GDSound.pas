@@ -345,13 +345,10 @@ begin
     Engine.Console.Write('  Version: ' + String(AnsiString(alGetString(AL_VERSION))));
 
     //Check requirements
-    //Version
     alcGetIntegerv(FDevice, ALC_MAJOR_VERSION, 1, @iALInt1);
     alcGetIntegerv(FDevice, ALC_MINOR_VERSION, 1, @iALInt2);
     iV := IntToStr(MRS_OPENAL_MAJOR_VERSION) + '.' + IntToStr(MRS_OPENAL_MINOR_VERSION);
-    if iALInt1 < MRS_OPENAL_MAJOR_VERSION then
-      Raise Exception.Create('To low OpenAL version! Minimal version ' + iV + ' needed.');
-    if iALInt2 < MRS_OPENAL_MINOR_VERSION then
+    if (iALInt1 < MRS_OPENAL_MAJOR_VERSION) or (iALInt2 < MRS_OPENAL_MINOR_VERSION) then
       Raise Exception.Create('To low OpenAL version! Minimal version ' + iV + ' needed.');
 
     //Create the sources.

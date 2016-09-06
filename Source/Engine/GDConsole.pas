@@ -72,7 +72,6 @@ type
 
   TGDConsole = class
   private
-    FCursorTime     : Integer;
     FLastTime       : Integer;
     FCursorUpdate   : Boolean;
     FShow           : Boolean;
@@ -166,6 +165,7 @@ begin
   FRow := FLogText.Count-1;
   FShow := false;
   FCommand := '';
+  FLastTime := Engine.Timing.GetTime()+500;
 end;
 
 {******************************************************************************}
@@ -175,7 +175,6 @@ end;
 procedure TGDConsole.Render();
 var
   iI,iJ,iX : Integer;
-  iDT, iTime : Integer;
   iHalf : Integer;
 begin
   If Not(FShow) then
@@ -185,14 +184,10 @@ begin
   end;
 
   //calculate cursor timing
-  iTime      := Engine.Timing.GetTime();
-  iDT        := iTime - FLastTime;
-  FLastTime  := iTime;
-  FCursorTime   := FCursorTime + iDT;
-  if (FCursorTime >= 500) then
+  if SDL_TICKS_PASSED(Engine.Timing.GetTime(), FLastTime) then
   begin
-    FCursorUpdate := Not( FCursorUpdate);
-    FCursorTime := 0;
+    FLastTime := Engine.Timing.GetTime()+500;
+    FCursorUpdate := Not(FCursorUpdate);
   end;
 
   iHalf := round(R_HUDHEIGHT/2);

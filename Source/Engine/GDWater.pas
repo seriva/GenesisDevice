@@ -27,6 +27,7 @@ unit GDWater;
 interface
 
 uses
+  SDL2,
   Classes,
   LCLIntf,
   LCLType,
@@ -50,7 +51,6 @@ type
 
   TGDWater = Class
   private
-    FWaterTime       : Integer;
     FLastTime        : Integer;
     FBoundingBox     : TGDBoundingBox;
     FRefractionUV    : Integer;
@@ -209,6 +209,9 @@ begin
 
     //create VBO
     FVertexBuffer := TGDGLVertexBuffer.Create();
+
+    //timing
+    FLastTime     := Engine.Timing.GetTime()+50;
   except
     on E: Exception do
     begin
@@ -304,17 +307,12 @@ end;
 {******************************************************************************}
 
 procedure TGDWater.Update();
-var
-  iDT, iTime : Integer;
 begin
   If not(FWaterLoaded) then exit;
-  iTime      := Engine.Timing.GetTime();
-  iDT        := iTime - FLastTime;
-  FLastTime  := iTime;
-  FWaterTime := FWaterTime + iDT;
-  if (FWaterTime >= 50) then
+
+  if SDL_TICKS_PASSED(Engine.Timing.GetTime(), FLastTime) then
   begin
-    FWaterTime := 0;
+    FLastTime := Engine.Timing.GetTime()+50;
 
     inc(FCausticCounter);
     If FCausticCounter = FCausticTextures.Count-1 then

@@ -82,7 +82,6 @@ var
   iInfoHeader : TBitmapInfoHeader;
   iData       : TMemoryStream;
   iB          : byte;
-  iCT         : TRGBA;
   iLB, iL     : Integer;
 
   function IntToRGBA(aPixel : integer):TRGBA;

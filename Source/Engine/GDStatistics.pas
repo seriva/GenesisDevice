@@ -34,6 +34,7 @@ uses
   LCLIntf,
   LCLType,
   SysUtils,
+  SDL2,
   dglOpenGL,
   GDConstants,
   GDGUI;
@@ -56,6 +57,8 @@ type
     property FpsCount         : integer read FFpsCount write FFpsCount;
     property FrameTimeSlice   : string read FFrameTimeSlice write FFrameTimeSlice;
 
+    constructor Create();
+
     procedure FrameStart();
     procedure FrameStop();
 
@@ -67,6 +70,15 @@ implementation
 
 uses
   GDEngine;
+
+{******************************************************************************}
+{* Create                                                                     *}
+{******************************************************************************}
+
+constructor TGDStatistics.Create();
+begin
+  FLastTime := Engine.Timing.GetTime()+1000;
+end;
 
 {******************************************************************************}
 {* Start and stop procedures for gathering time information                   *}
@@ -89,17 +101,12 @@ end;
 {******************************************************************************}
 
 procedure TGDStatistics.Update();
-var
-  iDT, iTime : Integer;
 begin
   //calculate fps
   FrameCount   := FrameCount + 1;
-  iTime        := Engine.Timing.GetTime();
-  iDT          := iTime - FLastTime;
-  FLastTime    := iTime;
-  FFPSTime  := FFPSTime + iDT;
-  if (FFPSTime >= 1000) then
+  if SDL_TICKS_PASSED(Engine.Timing.GetTime(), FLastTime) then
   begin
+    FLastTime := Engine.Timing.GetTime()+1000;
     FpsCount   := FrameCount;
     FrameCount := 0;
     FFPSTime   := 0;
