@@ -26,7 +26,6 @@ program Demo;
 
 uses
   //heaptrc, //For debugging
-
   LCLIntf, LCLType, LMessages,
   Forms, Interfaces,
   {$IFDEF Win32}

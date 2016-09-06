@@ -252,9 +252,7 @@ begin
   //sounds
   AmbientBuffer    := Engine.Sound.Load( 'Sounds/ambient.wav');
   UnderWaterBuffer := Engine.Sound.Load( 'Sounds/underwater.wav');
-  {$IFDEF Win32}
   MusicBuffer      := Engine.Sound.Load( 'Sounds/music.mp3');
-  {$ENDIF}
   AmbientSource := Engine.Sound.Play(AmbientBuffer, true);
   Engine.Sound.Pause(AmbientSource);
   UnderWaterSource := Engine.Sound.Play(UnderWaterBuffer, true);
@@ -295,9 +293,7 @@ begin
   Engine.Input.AddAction(IT_SINGLE,SDL_SCANCODE_F5,@ToggleClipping, false  );
   Engine.Input.AddAction(IT_SINGLE,SDL_SCANCODE_P,@ToggleIntroText, true  );
 
-  {$IFDEF Win32}
   MusicSource := Engine.Sound.Play( MusicBuffer, true );
-  {$ENDIF}
 end;
 
 {******************************************************************************}
@@ -311,10 +307,8 @@ begin
   Engine.Sound.Remove(AmbientBuffer);
   Engine.Sound.Stop(UnderWaterSource);
   Engine.Sound.Remove(UnderWaterBuffer);
-  {$IFDEF Win32}
   Engine.Sound.Stop(MusicSource);
   Engine.Sound.Remove(MusicBuffer);
-  {$ENDIF}
 end;
 
 end.

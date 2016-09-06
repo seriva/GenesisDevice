@@ -26,9 +26,9 @@ unit GDSound;
 {$MODE Delphi}
 
 {******************************************************************************}
-{* Simple sound system based on OpenAL. Plays back WAV files and later MP3    *}
-{* streaming will be added. For now playback can only be on 16 sources and    *}
-{* there is no support for 3D sound positioning.                              *}
+{* Simple sound system based on OpenAL. Plays back WAV files and MP3.         *}
+{* For now playback can only be on 16 sources and there is no support for     *}
+{* 3D sound positioning.                                                      *}
 {******************************************************************************}
 
 interface
@@ -139,7 +139,7 @@ begin
   Engine.Console.Write('Loading sound stream' + aFileName + '...');
   try
     iResult := true;
-    FHandle := mpg123_new('MMX', nil);
+    FHandle := mpg123_new(nil, nil);
     mpg123_open(FHandle, PChar(aFileName));
     mpg123_getformat(FHandle, @FRate, @FChannels, @FEncoding);
     mpg123_format_none(Fhandle);
@@ -174,22 +174,25 @@ end;
 
 function TGDSoundStream.Stream(aBuffer : TALUInt; aLoop : boolean = false): boolean;
 const
-  BUFFER_SIZE = 4096*32;
+  BUFFER_SIZE = 131072;
 var
-  lData: PByte;
   lD : Cardinal;
+  lData : TALvoid;
 begin
   result := true;
 
   getmem(lData, BUFFER_SIZE);
   if mpg123_read(Fhandle, lData, BUFFER_SIZE, @lD) = MPG123_OK then
-     alBufferData(aBuffer, FFormat, lData, BUFFER_SIZE, FRate)
+  begin
+    alBufferData(aBuffer, FFormat, lData, BUFFER_SIZE, FRate);
+    result := true;
+  end
   else
   begin
     if aLoop then
     begin
       mpg123_seek(Fhandle, 0, 0);
-      result := Stream(aBuffer)
+      result := Stream(aBuffer);
     end
     else
       result := false;
@@ -327,14 +330,14 @@ begin
     iDefaultDevice := '';
     iDefaultDevice := alcGetString(nil, ALC_DEFAULT_DEVICE_SPECIFIER);
     FDevice := alcOpenDevice(PChar(iDefaultDevice)); //for now only default device.
-    //if not(alGetError() = AL_NO_ERROR) then
-    //  Raise Exception.Create('Error initializing sound device!');
+    if FDevice = nil then
+      Raise Exception.Create('Error initializing sound device!');
     FContext := alcCreateContext(FDevice,nil);
-    //if not(alGetError() = AL_NO_ERROR) then
-    //  Raise Exception.Create('Error initializing sound context!');
+    if FContext = nil then
+      Raise Exception.Create('Error initializing sound context!');
     alcMakeContextCurrent(FContext);
-    //if not(alGetError() = AL_NO_ERROR) then
-    //  Raise Exception.Create('Error making the sound context current!');
+    if not(alGetError() = AL_NO_ERROR) then
+      Raise Exception.Create('Error making the sound context current!');
 
     //Print specs
     Engine.Console.Write('  Vendor: ' + String(AnsiString(alGetString(AL_VENDOR))));
@@ -356,7 +359,7 @@ begin
       FSources[iI] := TGDSoundSource.Create();
 
     //Init mpg123 for mp3 streaming.
-    if mpg123_init <> 0 then
+    if mpg123_init() <> MPG123_OK then
       Raise Exception.Create('Error initializing mpg123 library!');
 
     FInitialized := true;
@@ -420,6 +423,7 @@ procedure TGDSound.Update();
 var
   iI,iProcessed : integer;
   iSource       : TGDSoundSource;
+  iStream       : TGDSoundStream;
   iBuffer       : TALUInt;
   iState        : TALCint;
   iListenerPos  : array [0..2] of TALfloat= ( 0.0, 0.0, 0.0);
@@ -443,15 +447,17 @@ begin
     alGetSourcei(iSource.FSource, AL_SOURCE_STATE, @iState);
     if (iState = AL_PAUSED) then  continue;
     alGetSourcei(iSource.FSource, AL_BUFFERS_PROCESSED, @iProcessed);
-    if iProcessed > 0 then
-      repeat
-        alSourceUnqueueBuffers(iSource.FSource, 1, @iBuffer);
-        if (iSource.FResource as TGDSoundStream).Stream(iBuffer, iSource.FLoop) then
-           alSourceQueueBuffers(iSource.FSource, 1, @iBuffer)
-        else
-          Stop(iI);
-        dec(iProcessed);
-      until iProcessed <= 0;
+
+    iStream := iSource.FResource as TGDSoundStream;
+    while (iProcessed > 0) do
+    begin
+      alSourceUnqueueBuffers(iSource.FSource, 1, @iBuffer);
+      if iStream.Stream(iBuffer, iSource.FLoop) then
+        alSourceQueueBuffers(iSource.FSource, 1, @iBuffer)
+      else
+        Stop(iI);
+      dec(iProcessed);
+    end;
   end;
 end;
 
