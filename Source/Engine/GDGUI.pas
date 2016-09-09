@@ -295,6 +295,7 @@ type
     destructor  Destroy(); override;
 
     function  InitScreen(aFileName : String): TGDScreen;
+    procedure ClearScreens();
     function  ScreenGetVisible(aScreen : TGDScreen): Boolean;
     procedure ScreenSetVisible(aScreen : TGDScreen; aVisible : Boolean);
     procedure RenderScreens();
@@ -384,7 +385,8 @@ end;
 destructor  TGDPanel.Destroy();
 begin
    inherited;
-   Engine.Resources.RemoveResource(TGDResource(FTexture));
+   if FTexture <> nil then
+     Engine.Resources.RemoveResource(TGDResource(FTexture));
 end;
 
 procedure   TGDPanel.Render();
@@ -747,6 +749,15 @@ function TGDGUI.InitScreen(aFileName : String): TGDScreen;
 begin
   result := TGDScreen.Create(aFileName);
   FScreens.Add(result);
+end;
+
+{******************************************************************************}
+{* Clear screens                                                              *}
+{******************************************************************************}
+
+procedure TGDGUI.ClearScreens();
+begin
+  FScreens.Clear();
 end;
 
 {******************************************************************************}

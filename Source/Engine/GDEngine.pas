@@ -181,6 +181,8 @@ begin
   FreeAndNil(FInput);
   FreeAndNil(FSound);
   FreeAndNil(FRenderer);
+  FreeAndNil(FGUI);
+  FreeAndNil(FMap);
   FreeAndNil(FWindow);
 
   SDL_Quit();
@@ -190,8 +192,7 @@ begin
   FreeAndNil(FConsole);
   FreeAndNil(FSettings);
   FreeAndNil(FCamera);
-  FreeAndNil(FGUI);
-  FreeAndNil(FMap);
+
   FreeAndNil(FResources);
 end;
 
@@ -205,6 +206,7 @@ begin
   Modes.Reset();
   Input.Clear();
   Map.Clear();
+  FGUI.ClearScreens();
   Resources.Clear();
 end;
 

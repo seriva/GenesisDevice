@@ -2293,6 +2293,7 @@ begin
       stream.Read(readint, 4);
       stream.Position := stream.Position + readint;
     end;
+    freemem(readname);
   until stream.Position >= stream.size;
 end;
 
