@@ -613,10 +613,10 @@ var
 {* Render static geometry                                                     *}
 {******************************************************************************}
 
-Procedure RenderStaticGeometry();
+Procedure RenderStaticGeometry(aRenderFor : TGDRenderFor = RF_NORMAL);
 begin
   If Engine.Modes.RenderSky then Engine.Map.SkyDome.Render();
-  Engine.Map.RenderVisibleCells( RA_NORMAL, RF_NORMAL );
+  Engine.Map.RenderVisibleCells( RA_NORMAL, aRenderFor );
 end;
 
 {******************************************************************************}
@@ -706,7 +706,7 @@ begin
     Engine.Map.Water.StartReflection();
     Engine.Camera.CalculateFrustum();
     Engine.Map.DetectVisibleCells();
-    RenderStaticGeometry();
+    RenderStaticGeometry(RF_WATER);
     Engine.Map.Water.EndReflection();
   end;
 end;

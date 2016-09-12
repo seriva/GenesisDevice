@@ -118,12 +118,15 @@ begin
     MeshShader.SetFloat('F_ANIMATION_SPEED', Engine.Timing.ElapsedTime / Engine.Map.Foliage.TreeAnimationSpeed);
     MeshShader.SetFloat('F_ANIMATION_STRENGTH', Engine.Map.Foliage.TreeAnimationStrength);
     if assigned(FTexture) then FTexture.BindTexture( GL_TEXTURE0 );
-    if assigned(FDetail) then
+    if assigned(FDetail) and Engine.Settings.UseDetail then
     begin
       FDetail.BindTexture(GL_TEXTURE7);
       MeshShader.SetInt('I_DETAIL_UV_MULT', FDetailUVMult);
       MeshShader.SetFloat('F_DETAIL_MULT', FDetailMult);
-    end;
+      MeshShader.SetInt('I_DO_DETAIL', 1);
+    end
+    else
+      MeshShader.SetInt('I_DO_DETAIL', 0);
     if FHasAlpha then
     begin
       glEnable(GL_ALPHA_TEST);
