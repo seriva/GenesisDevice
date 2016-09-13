@@ -490,7 +490,7 @@ Begin
   end;
 
   //Render the sunflare
-  if (aRenderFor = RF_NORMAL) and not(Engine.Modes.RenderWireframe) and (aRenderAttribute = RA_NORMAL) then
+  if ((aRenderFor = RF_NORMAL) or (aRenderFor = RF_WATER)) and not(Engine.Modes.RenderWireframe) and (aRenderAttribute = RA_NORMAL) then
     Engine.Map.SkyDome.RenderSunFlare();
 End;
 

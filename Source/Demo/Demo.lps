@@ -57,9 +57,10 @@
       <Unit7>
         <Filename Value="..\Engine\GDCellManager.pas"/>
         <IsPartOfProject Value="True"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="8"/>
-        <TopLine Value="409"/>
-        <CursorPos X="48" Y="204"/>
+        <TopLine Value="457"/>
+        <CursorPos X="7" Y="493"/>
         <UsageCount Value="80"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -124,7 +125,7 @@
         <Filename Value="..\Engine\GDEngine.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="3"/>
-        <TopLine Value="170"/>
+        <TopLine Value="209"/>
         <CursorPos X="23" Y="185"/>
         <UsageCount Value="80"/>
         <Loaded Value="True"/>
@@ -151,8 +152,8 @@
         <Filename Value="..\Engine\GDMeshCell.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="7"/>
-        <TopLine Value="270"/>
-        <CursorPos X="4" Y="259"/>
+        <TopLine Value="249"/>
+        <CursorPos X="74" Y="269"/>
         <UsageCount Value="80"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -323,7 +324,6 @@
       <Unit38>
         <Filename Value="..\Engine\GDMaterial.pas"/>
         <IsPartOfProject Value="True"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="9"/>
         <TopLine Value="90"/>
         <CursorPos X="8" Y="127"/>
