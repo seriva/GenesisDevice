@@ -38,6 +38,7 @@ Uses
   GDConstants,
   FileUtil,
   GDResource,
+  GDGLWrappers,
   GDStringParsing;
 
 Type
@@ -48,13 +49,15 @@ Type
 
   TGDMaterial = class (TGDResource)
   private
-    FTexture : TGDTexture;
-    FDetail  : TGDTexture;
-    FHasAlpha : Boolean;
-    FAlphaFunc : double;
-    FDoTreeAnim : boolean;
+    FTexture      : TGDTexture;
+    FDetail       : TGDTexture;
+    FHasAlpha     : Boolean;
+    FAlphaFunc    : double;
+    FDoTreeAnim   : boolean;
     FDetailUVMult : Integer;
     FDetailMult   : double;
+    FHasDPL			  : Boolean;
+    FDPL          : TGDGLDisplayList;
   public
     property Texture : TGDTexture read FTexture write FTexture;
     property Detail : TGDTexture read FDetail write FDetail;
@@ -89,6 +92,8 @@ begin
   DetailUVMult := 1;
   DetailMult   := 0.5;
   FDoTreeAnim  := false;
+  FHasDPL	:= false;
+  FDPL    := TGDGLDisplayList.Create();
 end;
 
 {******************************************************************************}
@@ -99,6 +104,7 @@ destructor TGDMaterial.Destroy();
 begin
   Engine.Resources.RemoveResource(TGDResource(FTexture));
   Engine.Resources.RemoveResource(TGDResource(FDetail));
+  FreeAndNil(FDPL);
   inherited;
 end;
 
@@ -110,28 +116,36 @@ procedure   TGDMaterial.ApplyMaterial();
 begin
   with Engine.Renderer do
   begin
-    MeshShader.SetInt('T_COLORMAP', 0);
-    if DoTreeAnim then
-      MeshShader.SetInt('I_DO_TREE_ANIM', 1)
-    else
-      MeshShader.SetInt('I_DO_TREE_ANIM', 0);
-    MeshShader.SetFloat('F_ANIMATION_SPEED', Engine.Timing.ElapsedTime / Engine.Map.Foliage.TreeAnimationSpeed);
-    MeshShader.SetFloat('F_ANIMATION_STRENGTH', Engine.Map.Foliage.TreeAnimationStrength);
-    if assigned(FTexture) then FTexture.BindTexture( GL_TEXTURE0 );
-    if assigned(FDetail) and Engine.Settings.UseDetail then
+    if FHasDPL = false then
     begin
-      FDetail.BindTexture(GL_TEXTURE7);
-      MeshShader.SetInt('I_DETAIL_UV_MULT', FDetailUVMult);
-      MeshShader.SetFloat('F_DETAIL_MULT', FDetailMult);
-      MeshShader.SetInt('I_DO_DETAIL', 1);
+      FDPL.StartList();
+      MeshShader.SetInt('T_COLORMAP', 0);
+      if DoTreeAnim then
+        MeshShader.SetInt('I_DO_TREE_ANIM', 1)
+      else
+        MeshShader.SetInt('I_DO_TREE_ANIM', 0);
+
+      if assigned(FTexture) then FTexture.BindTexture( GL_TEXTURE0 );
+      if assigned(FDetail) and Engine.Settings.UseDetail then
+      begin
+        FDetail.BindTexture(GL_TEXTURE7);
+        MeshShader.SetInt('I_DETAIL_UV_MULT', FDetailUVMult);
+        MeshShader.SetFloat('F_DETAIL_MULT', FDetailMult);
+        MeshShader.SetInt('I_DO_DETAIL', 1);
+      end
+      else
+        MeshShader.SetInt('I_DO_DETAIL', 0);
+      if FHasAlpha then
+      begin
+        glEnable(GL_ALPHA_TEST);
+        glAlphaFunc(GL_GREATER, FAlphaFunc);
+      end;
+      FDPL.EndList();
+      FDPL.CallList();
+      FHasDPL := true;
     end
     else
-      MeshShader.SetInt('I_DO_DETAIL', 0);
-    if FHasAlpha then
-    begin
-      glEnable(GL_ALPHA_TEST);
-      glAlphaFunc(GL_GREATER, FAlphaFunc);
-    end;
+      FDPL.CallList();
   end;
 end;
 

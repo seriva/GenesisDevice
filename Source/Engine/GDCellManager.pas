@@ -458,6 +458,18 @@ Begin
   //render the visible mesh cells
   if Engine.Modes.RenderModels then
   begin
+    if Engine.Modes.RenderWireframe then
+    begin
+      Engine.Renderer.SetColor(1.0,1.0,1.0,1.0);
+      Engine.Renderer.ColorShader.SetInt('I_CUSTOM_TRANSLATE', 1);
+    end
+    else
+    begin
+      Engine.Renderer.MeshShader.Bind();
+      Engine.Renderer.MeshShader.SetFloat('F_ANIMATION_SPEED', Engine.Timing.ElapsedTime / Engine.Map.Foliage.TreeAnimationSpeed);
+      Engine.Renderer.MeshShader.SetFloat('F_ANIMATION_STRENGTH', Engine.Map.Foliage.TreeAnimationStrength);
+    end;
+
     for iI := 0 to FVisibleMeshCells.Count - 1 do
     begin
       iMeshCell := TGDMeshCell(FVisibleMeshCells.Items[ iI ]);

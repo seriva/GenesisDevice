@@ -237,25 +237,24 @@ begin
 
   Case aRenderAttribute Of
     RA_NORMAL         : begin
-                          iMesh.VertexBuffer.Bind(VL_V_UV_N_C);
-                          for iI := 0 to iMesh.Surfaces.Count - 1 do
+      										iMesh.VertexBuffer.Bind(VL_V_UV_N_C);
+
+                  			  if Engine.Modes.RenderWireframe then
                           begin
-                            iSur := iMesh.Surfaces.Items[iI];
+                            SetMeshPositioning(Engine.Renderer.ColorShader);
+                            for iI := 0 to iMesh.Surfaces.Count - 1 do
+                              iMesh.Surfaces.Items[iI].Render();
+                          end
+                          else
+                          begin
+                            Engine.Renderer.SetJoinedParams(Engine.Renderer.MeshShader,aRenderFor = RF_SHADOW);
+                            SetMeshPositioning(Engine.Renderer.MeshShader);
 
-                            if Engine.Modes.RenderWireframe then
+                            for iI := 0 to iMesh.Surfaces.Count - 1 do
                             begin
-                              Engine.Renderer.SetColor(1.0,1.0,1.0,1.0);
-                              SetMeshPositioning(Engine.Renderer.ColorShader);
-                              Engine.Renderer.ColorShader.SetInt('I_CUSTOM_TRANSLATE', 1);
+                              iSur := iMesh.Surfaces.Items[iI];
 
-                              iSur.Render();
-                            end
-                            else
-                            begin
-                              Engine.Renderer.MeshShader.Bind();
-                              Engine.Renderer.SetJoinedParams(Engine.Renderer.MeshShader,aRenderFor = RF_SHADOW);
                               iSur.Material.ApplyMaterial();
-                              SetMeshPositioning(Engine.Renderer.MeshShader);
 
                               if self.ReceiveShadow and (aRenderFor <> RF_SHADOW) then
                                 Engine.Renderer.MeshShader.SetInt('I_RECEIVE_SHADOW', 1)
@@ -283,7 +282,8 @@ begin
 
                               iSur.Material.DisableMaterial();
                             end;
-                          end;
+													end;
+
                           iMesh.VertexBuffer.Unbind();
                         end;
     RA_FRUSTUM_BOXES  : BoundingBox.RenderWireFrame();
