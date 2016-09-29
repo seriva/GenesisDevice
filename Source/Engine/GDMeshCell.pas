@@ -247,21 +247,18 @@ begin
                           end
                           else
                           begin
-                            Engine.Renderer.SetJoinedParams(Engine.Renderer.MeshShader,aRenderFor = RF_SHADOW);
                             SetMeshPositioning(Engine.Renderer.MeshShader);
+                            if self.ReceiveShadow and (aRenderFor <> RF_SHADOW) then
+                              Engine.Renderer.MeshShader.SetInt('I_RECEIVE_SHADOW', 1)
+                            else
+                              Engine.Renderer.MeshShader.SetInt('I_RECEIVE_SHADOW', 0);
+                            Engine.Renderer.MeshShader.SetInt('I_FLIP_NORMAL', 0);
 
                             for iI := 0 to iMesh.Surfaces.Count - 1 do
                             begin
                               iSur := iMesh.Surfaces.Items[iI];
 
                               iSur.Material.ApplyMaterial();
-
-                              if self.ReceiveShadow and (aRenderFor <> RF_SHADOW) then
-                                Engine.Renderer.MeshShader.SetInt('I_RECEIVE_SHADOW', 1)
-                              else
-                                Engine.Renderer.MeshShader.SetInt('I_RECEIVE_SHADOW', 0);
-
-                              Engine.Renderer.MeshShader.SetInt('I_FLIP_NORMAL', 0);
 
                               iSur.Render();
 
@@ -278,6 +275,7 @@ begin
                                   glCullFace(GL_FRONT)
                                 else
                                   glCullFace(GL_BACK);
+                                Engine.Renderer.MeshShader.SetInt('I_FLIP_NORMAL', 0);
                               end;
 
                               iSur.Material.DisableMaterial();

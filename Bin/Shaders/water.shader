@@ -5,7 +5,7 @@ uniform int I_WAVES_UV;
 #INCLUDE Inc/lighting_uniforms.inc
 #INCLUDE Inc/fog_uniforms.inc
 
-varying vec4  RefrCoords; 
+varying vec4  RefrCoords;
 varying vec2  WavesCoords;
 varying vec4  VWorld;
 varying float Fog;
@@ -13,7 +13,7 @@ varying float Fog;
 void main()
 {
 	RefrCoords  = gl_MultiTexCoord0 * I_REFRACTION_UV;
-    WavesCoords = gl_MultiTexCoord0.xy * I_WAVES_UV;
+	WavesCoords = gl_MultiTexCoord0.xy * I_WAVES_UV;
 	gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
 	VWorld      = gl_Position;
 	#INCLUDE Inc/fog.inc
@@ -30,8 +30,8 @@ uniform vec4 V_WATER_COLOR;
 #INCLUDE Inc/lighting_uniforms.inc
 #INCLUDE Inc/fog_uniforms.inc
 
-varying vec4  RefrCoords; 
-varying vec2  WavesCoords; 
+varying vec4  RefrCoords;
+varying vec2  WavesCoords;
 varying vec4  VWorld;
 varying float Fog;
 
@@ -46,17 +46,17 @@ void main()
 	ProjCoord             = (ProjCoord + 1.0) * 0.5;
 	ProjCoord             += DUDVColor;
 	ProjCoord             = clamp(ProjCoord , 0.001, 0.999);
-    vec4 CausticColor     = texture2D(T_CAUSTICMAP, WavesCoords);
+	vec4 CausticColor     = texture2D(T_CAUSTICMAP, WavesCoords);
 	vec4 ReflectionColor  = mix(texture2D(T_REFLECTION, ProjCoord.xy), CausticColor, 0.075);
-	
+
 	if(I_UNDER_WATER == 0)
 	{
 		gl_FragData[0] = mix(ReflectionColor, V_FOG_COLOR, Fog);
 	}
 	else
 	{
-		gl_FragData[0] = ReflectionColor;
+		Sgl_FragData[0] = ReflectionColor;
 	}
 	gl_FragData[0].a = V_WATER_COLOR.a;
-    gl_FragData[1]   = vec4(1.0);
+	gl_FragData[1]   = vec4(1.0);
 }

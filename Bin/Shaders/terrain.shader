@@ -13,12 +13,12 @@ varying vec2  CausticUV;
 void main(void)
 {
     //UV
-	ColorUV    = gl_MultiTexCoord0.xy;
-	DetailUV   = ColorUV * I_DETAIL_UV;
-	CausticUV  = ColorUV * I_CAUSTIC_UV;
+    ColorUV    = gl_MultiTexCoord0.xy;
+    DetailUV   = ColorUV * I_DETAIL_UV;
+    CausticUV  = ColorUV * I_CAUSTIC_UV;
 
     //Lighting
-	vec3 N = normalize(gl_Normal);
+    vec3 N = normalize(gl_Normal);
     #INCLUDE Inc/lighting.inc
     
     //Vertex
@@ -58,21 +58,21 @@ varying vec2  CausticUV;
 
 void main(void)
 { 
-	vec4 Color   = texture2D(T_COLORTEX,      ColorUV);
-	vec4 Detail1 = texture2D(T_DETAILTEX1,    DetailUV);
-	vec4 Detail2 = texture2D(T_DETAILTEX2,    DetailUV);
-	vec4 Detail3 = texture2D(T_DETAILTEX3,    DetailUV);
-    vec4 Detail4 = texture2D(T_DETAILTEX4,    DetailUV);
-	vec4 Weights = texture2D(T_WEIGHT_LOOKUP, ColorUV);
-	vec4 Caustic = texture2D(T_CAUSTICMAP,    CausticUV);
-	Color        += (Detail1*Weights.r + Detail2*Weights.g + Detail3*Weights.b + Detail4 * Weights.a) - 0.5; 
+     vec4 Color   = texture2D(T_COLORTEX,      ColorUV);
+     vec4 Detail1 = texture2D(T_DETAILTEX1,    DetailUV);
+     vec4 Detail2 = texture2D(T_DETAILTEX2,    DetailUV);
+     vec4 Detail3 = texture2D(T_DETAILTEX3,    DetailUV);
+     vec4 Detail4 = texture2D(T_DETAILTEX4,    DetailUV);
+     vec4 Weights = texture2D(T_WEIGHT_LOOKUP, ColorUV);
+     vec4 Caustic = texture2D(T_CAUSTICMAP,    CausticUV);
+     Color        += (Detail1*Weights.r + Detail2*Weights.g + Detail3*Weights.b + Detail4 * Weights.a) - 0.5;
     
-	vec2 DUV = DetailUV * I_DETAIL_UV_MULT;
+    vec2 DUV = DetailUV * I_DETAIL_UV_MULT;
     #INCLUDE Inc/detail.inc
     Color = Color * Light;
     
     gl_FragData[1] = vec4(1.0);
-	#INCLUDE Inc/shadows.inc
+    #INCLUDE Inc/shadows.inc
      
     #INCLUDE Inc/water_logic.inc
 }

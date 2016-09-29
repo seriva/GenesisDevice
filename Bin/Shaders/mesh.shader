@@ -14,30 +14,30 @@ varying vec2  ColorUV;
 
 void main(void)
 {
-    //UV
-    ColorUV = gl_MultiTexCoord0.xy;
+  //UV
+  ColorUV = gl_MultiTexCoord0.xy;
 
-    //Lighting
-    vec3 N = normalize(transformVector(gl_Normal, M_ROTATION));
-	if(I_FLIP_NORMAL == 1)	
-	{
-        N = -N;
-	}
-    #INCLUDE Inc/lighting.inc
-    
-    //Vertex
-    vec4 Eye = gl_Vertex;
-    #INCLUDE Inc/transform_apply.inc
-    if(I_DO_TREE_ANIM == 1){
-        #INCLUDE Inc/foliage_animation.inc
-    }
-    #INCLUDE Inc/vertex.inc
-    
-    //Shadows
-    #INCLUDE Inc/shadows_coords.inc
+  //Lighting
+  vec3 N = normalize(transformVector(gl_Normal, M_ROTATION));
+  if(I_FLIP_NORMAL == 1)
+  {
+    N = -N;
+  }
+  #INCLUDE Inc/lighting.inc
 
-    //Fog 
-    #INCLUDE Inc/fog.inc
+  //Vertex
+  vec4 Eye = gl_Vertex;
+  #INCLUDE Inc/transform_apply.inc
+  if(I_DO_TREE_ANIM == 1){
+    #INCLUDE Inc/foliage_animation.inc
+  }
+  #INCLUDE Inc/vertex.inc
+
+  //Shadows
+  #INCLUDE Inc/shadows_coords.inc
+
+  //Fog
+  #INCLUDE Inc/fog.inc
 }
 
 
@@ -61,22 +61,20 @@ varying vec2  ColorUV;
 
 void main(void)
 {
-	vec4 Color   = texture2D(T_COLORMAP, ColorUV);
-    vec4 Caustic = texture2D(T_CAUSTICMAP, ColorUV*10);
-    
-	vec2 DUV = ColorUV * I_DETAIL_UV_MULT;
-	#INCLUDE Inc/detail.inc
-    Color  = Color * Light; 
-    
-    gl_FragData[1] = vec4(1.0);
-    if (I_RECEIVE_SHADOW == 1) 
-    {
-        #INCLUDE Inc/shadows.inc
-    }
-    
-	#INCLUDE Inc/water_logic.inc
+  vec4 Color   = texture2D(T_COLORMAP, ColorUV);
+  vec4 Caustic = texture2D(T_CAUSTICMAP, ColorUV*10);
 
-	gl_FragData[0].a = Color.a;
+  vec2 DUV = ColorUV * I_DETAIL_UV_MULT;
+  #INCLUDE Inc/detail.inc
+  Color  = Color * Light;
+
+  gl_FragData[1] = vec4(1.0);
+  if (I_RECEIVE_SHADOW == 1)
+  {
+    #INCLUDE Inc/shadows.inc
+  }
+
+  #INCLUDE Inc/water_logic.inc
+
+  gl_FragData[0].a = Color.a;
 }
-
-
