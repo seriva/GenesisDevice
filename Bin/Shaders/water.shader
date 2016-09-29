@@ -55,7 +55,7 @@ void main()
 	}
 	else
 	{
-		Sgl_FragData[0] = ReflectionColor;
+		gl_FragData[0] = ReflectionColor;
 	}
 	gl_FragData[0].a = V_WATER_COLOR.a;
 	gl_FragData[1]   = vec4(1.0);
