@@ -458,17 +458,20 @@ Begin
   //render the visible mesh cells
   if Engine.Modes.RenderModels then
   begin
-    if Engine.Modes.RenderWireframe then
+    if aRenderAttribute = RA_NORMAL then
     begin
-      Engine.Renderer.SetColor(1.0,1.0,1.0,1.0);
-      Engine.Renderer.ColorShader.SetInt('I_CUSTOM_TRANSLATE', 1);
-    end
-    else
-    begin
-      Engine.Renderer.MeshShader.Bind();
-      Engine.Renderer.SetJoinedParams(Engine.Renderer.MeshShader,aRenderFor = RF_SHADOW);
-      Engine.Renderer.MeshShader.SetFloat('F_ANIMATION_SPEED', Engine.Timing.ElapsedTime / Engine.Map.Foliage.TreeAnimationSpeed);
-      Engine.Renderer.MeshShader.SetFloat('F_ANIMATION_STRENGTH', Engine.Map.Foliage.TreeAnimationStrength);
+      if Engine.Modes.RenderWireframe then
+      begin
+        Engine.Renderer.SetColor(1.0,1.0,1.0,1.0);
+        Engine.Renderer.ColorShader.SetInt('I_CUSTOM_TRANSLATE', 1);
+      end
+      else
+      begin
+        Engine.Renderer.MeshShader.Bind();
+        Engine.Renderer.SetJoinedParams(Engine.Renderer.MeshShader,aRenderFor = RF_SHADOW);
+        Engine.Renderer.MeshShader.SetFloat('F_ANIMATION_SPEED', Engine.Timing.ElapsedTime / Engine.Map.Foliage.TreeAnimationSpeed);
+        Engine.Renderer.MeshShader.SetFloat('F_ANIMATION_STRENGTH', Engine.Map.Foliage.TreeAnimationStrength);
+      end;
     end;
 
     for iI := 0 to FVisibleMeshCells.Count - 1 do
