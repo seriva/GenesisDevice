@@ -270,7 +270,7 @@ begin
       If (iCell.OjectType = SO_TERRAINCELL) and Engine.Modes.RenderTerrain then
         aQueryData.VisibleTerrainCells.Add(iCell);
 
-      If (iCell.OjectType = SO_MESHCELL) and Engine.Modes.RenderModels then
+      If (iCell.OjectType = SO_MESHCELL) and Engine.Modes.RenderMeshes then
       begin
         iMeshCell := TGDMeshCell(iCell);
         if iMeshCell.LODType = LT_FADE_IN then

@@ -43,7 +43,8 @@ uses
   GDTerrainCell,
   GDOctree,
   GDTypes,
-  GDMeshCell;
+  GDMeshCell,
+  GDMeshManager;
 
 type
 
@@ -77,7 +78,8 @@ type
 
     procedure DetectVisibleCells();
     procedure RenderVisibleCells( aRenderAttribute : TGDRenderAttribute; aRenderFor : TGDRenderFor;
-                                  aTerrain : TGDTerrain; aWater : TGDWater; aFoliage : TGDFoliage);
+                                  aTerrain : TGDTerrain; aWater : TGDWater; aFoliage : TGDFoliage;
+                                  aMeshManager : TGDMeshManager);
   end;
 
 implementation
@@ -412,7 +414,7 @@ End;
 
 procedure TGDCellManager.RenderVisibleCells( aRenderAttribute : TGDRenderAttribute;
                                              aRenderFor : TGDRenderFor;
-                                             aTerrain : TGDTerrain; aWater : TGDWater; aFoliage : TGDFoliage);
+                                             aTerrain : TGDTerrain; aWater : TGDWater; aFoliage : TGDFoliage; aMeshManager : TGDMeshManager);
 var
   iI : Integer;
   iTerrainCell : TGDTerrainCell;
@@ -456,23 +458,9 @@ Begin
   end;
 
   //render the visible mesh cells
-  if Engine.Modes.RenderModels then
+  if Engine.Modes.RenderMeshes then
   begin
-    if aRenderAttribute = RA_NORMAL then
-    begin
-      if Engine.Modes.RenderWireframe then
-      begin
-        Engine.Renderer.SetColor(1.0,1.0,1.0,1.0);
-        Engine.Renderer.ColorShader.SetInt('I_CUSTOM_TRANSLATE', 1);
-      end
-      else
-      begin
-        Engine.Renderer.MeshShader.Bind();
-        Engine.Renderer.SetJoinedParams(Engine.Renderer.MeshShader,aRenderFor = RF_SHADOW);
-        Engine.Renderer.MeshShader.SetFloat('F_ANIMATION_SPEED', Engine.Timing.ElapsedTime / Engine.Map.Foliage.TreeAnimationSpeed);
-        Engine.Renderer.MeshShader.SetFloat('F_ANIMATION_STRENGTH', Engine.Map.Foliage.TreeAnimationStrength);
-      end;
-    end;
+		aMeshManager.StartRendering(aRenderAttribute, aRenderFor);
 
     for iI := 0 to FVisibleMeshCells.Count - 1 do
     begin
@@ -486,6 +474,8 @@ Begin
         iMeshCell.Render( aRenderAttribute, aRenderFor );
       TriangleCount := TriangleCount + iMeshCell.TriangleCount();
     end;
+
+    aMeshManager.EndRendering();
   end;
 
   //Render the sun

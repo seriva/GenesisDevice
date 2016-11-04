@@ -37,6 +37,7 @@ uses
   GDSkyDome,
   GDWater,
   GDCellManager,
+  GDMeshManager,
   GDStringparsing,
   GDMeshCell;
 
@@ -66,6 +67,7 @@ type
     FSkyDome         : TGDSkyDome;
 
     FCellManager     : TGDCellManager;
+    FMeshManager		 : TGDMeshManager;
   public
     property PlayerStart : TGDVector read FPlayerStart;
     property PlayerViewAngle : TGDVector read FPlayerViewAngle;
@@ -115,6 +117,7 @@ begin
   FFoliage := TGDFoliage.Create();
   FSkyDome := TGDSkyDome.Create();
   FCellManager := TGDCellManager.Create();
+  FMeshManager := TGDMeshManager.Create();
 end;
 
 {******************************************************************************}
@@ -129,6 +132,7 @@ begin
   FreeAndNil(FFoliage);
   FreeAndNil(FSkyDome);
   FreeAndNil(FCellManager);
+  FreeAndNil(FMeshManager);
 end;
 
 {******************************************************************************}
@@ -282,7 +286,7 @@ end;
 
 procedure TGDMap.RenderVisibleCells(aRenderAttribute : TGDRenderAttribute; aRenderFor : TGDRenderFor);
 begin
-  FCellManager.RenderVisibleCells(aRenderAttribute, aRenderFor, FTerrain, FWater, FFoliage);
+  FCellManager.RenderVisibleCells(aRenderAttribute, aRenderFor, FTerrain, FWater, FFoliage, FMeshManager);
 end;
 
 end.
