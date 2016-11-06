@@ -72,15 +72,15 @@ Type
   TGDMesh = class (TGDResource)
   private
     FSurfaces : TGDSurfaceList;
-    FVertices : TGDVertex_V_UV_N_C_List;
-    FVertexBuffer : TGDGLVertexBuffer;
+    FVertexStart : Integer;
+    FVertexCount : Integer;
     FTriangleCount : Integer;
 
     procedure CreateBuffers();
   public
     property Surfaces : TGDSurfaceList read FSurfaces;
-    property Vertices : TGDVertex_V_UV_N_C_List read FVertices;
-    property VertexBuffer  : TGDGLVertexBuffer read FVertexBuffer;
+    property VertexStart : Integer read FVertexStart;
+    property VertexCount : Integer read FVertexCount;
     property TriangleCount : Integer read FTriangleCount;
 
     constructor Create(aFileName : String);
@@ -174,7 +174,9 @@ begin
     iV.Color  := Color(0.75 + (Random(25)/100), 0.75 + (Random(25)/100), 0.75 + (Random(25)/100), 1)
   else
     iV.Color  := Color(1,1,1,1);
-  result    := FVertices.Add(iV);
+
+  inc(FVertexCount);
+  result := Engine.Map.MeshManager.Vertices.Add(iV);
 end;
 
 begin
@@ -183,7 +185,8 @@ begin
     iResult := true;
 
     FSurfaces := TGDSurfaceList.Create();
-    FVertices := TGDVertex_V_UV_N_C_List.Create();
+    FVertexCount := 0;
+    FVertexStart := Engine.Map.MeshManager.Vertices.Count;
 
     iSL       := TStringList.Create();
     iVertices := TGDVertex_V_List.Create();
@@ -283,9 +286,7 @@ end;
 
 destructor  TGDMesh.Destroy();
 begin
-  FreeAndNil(FVertices);
   FreeAndnil(FSurfaces);
-  FreeAndNil(FVertexBuffer);
 end;
 
 {******************************************************************************}
@@ -305,10 +306,6 @@ begin
     iSur.IndexBuffer.Unbind();
     FTriangleCount := FTriangleCount + iSur.TriangleCount;
   end;
-  FVertexBuffer := TGDGLVertexBuffer.Create();
-  FVertexBuffer.Bind(VL_NONE);
-  FVertexBuffer.Update(FVertices, GL_STATIC_DRAW);
-  FVertexBuffer.Unbind();
 end;
 
 end.

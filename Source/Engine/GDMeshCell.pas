@@ -139,9 +139,10 @@ begin
   iVertices   := TGDVertex_V_List.Create();
   with iVertices do
   begin
-    For iI := 0 to FMesh.Vertices.Count - 1 do
+
+    For iI := FMesh.VertexStart to FMesh.VertexCount - 1 do
     begin
-      iVector := FMesh.Vertices.Items[iI].Vertex.Copy();
+      iVector := Engine.Map.MeshManager.Vertices.Items[iI].Vertex.Copy();
       iVector.Multiply(FScale);
       iVector.Devide(100);
       FRotation.ApplyToVector(iVector);
@@ -237,8 +238,6 @@ begin
 
   Case aRenderAttribute Of
     RA_NORMAL         : begin
-      										iMesh.VertexBuffer.Bind(VL_V_UV_N_C);
-
                   			  if Engine.Modes.RenderWireframe then
                           begin
                             SetMeshPositioning(Engine.Renderer.ColorShader);
@@ -281,8 +280,6 @@ begin
                               iSur.Material.DisableMaterial();
                             end;
 													end;
-
-                          iMesh.VertexBuffer.Unbind();
                         end;
     RA_FRUSTUM_BOXES  : BoundingBox.RenderWireFrame();
     RA_NORMALS        : begin
@@ -291,12 +288,12 @@ begin
                             iSur := iMesh.Surfaces.Items[iI];
                             for iJ := 0 to iSur.Indexes.Count-1 do
                             begin
-                              iV1 := iMesh.Vertices.Items[iSur.Indexes.Items[iJ]].Vertex.Copy();
+                              iV1 := Engine.Map.MeshManager.Vertices.Items[iSur.Indexes.Items[iJ]].Vertex.Copy();
                               iV1.Multiply(FScale);
                               iV1.Devide(100);
                               FRotation.ApplyToVector(iV1);
                               iV1.Add( FPosition );
-                              iV2 := iMesh.Vertices.Items[iSur.Indexes.Items[iJ]].Normal.Copy();
+                              iV2 := Engine.Map.MeshManager.Vertices.Items[iSur.Indexes.Items[iJ]].Normal.Copy();
                               FRotation.ApplyToVector(iV2);
                               iV2.Multiply(R_NORMAL_LENGTH);
                               iV2.Add(iV1);

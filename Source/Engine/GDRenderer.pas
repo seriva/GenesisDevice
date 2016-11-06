@@ -672,8 +672,9 @@ Procedure RenderDebug();
 procedure RenderLines(aR, aG, aB, aA : single; aRA : TGDRenderAttribute);
 begin
   FLinesVertices.Clear();
-  SetColor(aR, aG, aB, aA);
   Engine.Map.RenderVisibleCells(aRA, RF_NORMAL);
+  RenderState( RS_COLOR );
+  SetColor(aR, aG, aB, aA);
   FLinesVertexBuffer.Bind(VL_V);
   FLinesVertexBuffer.Update(FLinesVertices, GL_DYNAMIC_DRAW);
   FLinesVertexBuffer.Render(GL_LINES);
@@ -683,7 +684,6 @@ end;
 begin
   glLoadIdentity();
   Engine.Camera.Translate();
-  RenderState( RS_COLOR );
   If Engine.Modes.RenderNormals then RenderLines(1,0.5,0.25,1,RA_NORMALS);
   If Engine.Modes.RenderObjectBoxes then RenderLines(1,0,0,1, RA_FRUSTUM_BOXES);
   If Engine.Modes.RenderNodeBoxes then RenderLines(1,1,0,1, RA_NODE_BOXES);

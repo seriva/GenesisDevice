@@ -27,6 +27,11 @@ unit GDMeshManager;
 interface
 
 uses
+  dglOpenGL,
+  SysUtils,
+  GDGLWrappers,
+  GDTypes,
+  GDTypesGenerics,
   GDConstants;
 
 type
@@ -37,12 +42,20 @@ type
 
   TGDMeshManager = class
   private
+    FVertices     : TGDVertex_V_UV_N_C_List;
+    FVertexBuffer : TGDGLVertexBuffer;
   public
+    property Vertices : TGDVertex_V_UV_N_C_List read FVertices;
+    property VertexBuffer  : TGDGLVertexBuffer read FVertexBuffer;
+
     constructor Create();
     destructor  Destroy(); override;
 
     procedure StartRendering( aRenderAttribute : TGDRenderAttribute; aRenderFor : TGDRenderFor );
     procedure EndRendering();
+
+    procedure CreateBuffers();
+    procedure ClearBuffers();
   end;
 
 implementation
@@ -56,7 +69,7 @@ uses
 
 constructor TGDMeshManager.Create();
 begin
-
+  FVertices := TGDVertex_V_UV_N_C_List.Create();
 end;
 
 {******************************************************************************}
@@ -65,7 +78,7 @@ end;
 
 destructor  TGDMeshManager.Destroy();
 begin
-
+  FreeAndNil(FVertices);
 end;
 
 {******************************************************************************}
@@ -74,6 +87,7 @@ end;
 
 procedure TGDMeshManager.StartRendering( aRenderAttribute : TGDRenderAttribute; aRenderFor : TGDRenderFor );
 begin
+  FVertexBuffer.Bind(VL_V_UV_N_C);
   if aRenderAttribute = RA_NORMAL then
   begin
     with Engine do
@@ -101,6 +115,29 @@ end;
 procedure TGDMeshManager.EndRendering();
 begin
 	Engine.Renderer.MeshShader.UnBind();
+  FVertexBuffer.Unbind();
+end;
+
+{******************************************************************************}
+{* Create buffers                                                             *}
+{******************************************************************************}
+
+procedure TGDMeshManager.CreateBuffers();
+begin
+  FVertexBuffer := TGDGLVertexBuffer.Create();
+  FVertexBuffer.Bind(VL_NONE);
+  FVertexBuffer.Update(FVertices, GL_STATIC_DRAW);
+  FVertexBuffer.Unbind();
+end;
+
+{******************************************************************************}
+{* End buffers                                                                *}
+{******************************************************************************}
+
+procedure TGDMeshManager.ClearBuffers();
+begin
+  FreeAndNil(FVertexBuffer);
+  FVertices.Clear();
 end;
 
 end.

@@ -85,6 +85,7 @@ type
     property Water       : TGDWater read FWater;
     property Foliage     : TGDFoliage read FFoliage;
     property SkyDome     : TGDSkyDome read FSkyDome;
+    property MeshManager : TGDMeshManager read FMeshManager;
 
     constructor Create();
     destructor  Destroy(); override;
@@ -212,6 +213,7 @@ begin
   Engine.Console.Write('......Done loading map (' + Engine.Timing.TimeInSeconds + ' Sec)');
 
   FCellManager.GenerateCells(FTerrain, FWater, FFoliage);
+  FMeshManager.CreateBuffers();
 
   Engine.Camera.Position := FPlayerStart.Copy();
   Engine.Camera.Rotation := FPlayerViewAngle.Copy();
@@ -242,6 +244,7 @@ begin
   FSkyDome.Clear();
 
   FCellManager.Clear();
+  FMeshManager.ClearBuffers();
 end;
 
 {******************************************************************************}
