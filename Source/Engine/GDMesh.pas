@@ -61,7 +61,7 @@ Type
     constructor Create();
     destructor  Destroy();override;
 
-    procedure   Render();
+    procedure   Render(aRenderAttribute : TGDRenderAttribute; aRenderFor : TGDRenderFor);
   end;
   TGDSurfaceList = specialize TFPGObjectList<TGDSurface>;
 
@@ -72,15 +72,11 @@ Type
   TGDMesh = class (TGDResource)
   private
     FSurfaces : TGDSurfaceList;
-    FVertexStart : Integer;
-    FVertexCount : Integer;
     FTriangleCount : Integer;
 
     procedure CreateBuffers();
   public
     property Surfaces : TGDSurfaceList read FSurfaces;
-    property VertexStart : Integer read FVertexStart;
-    property VertexCount : Integer read FVertexCount;
     property TriangleCount : Integer read FTriangleCount;
 
     constructor Create(aFileName : String);
@@ -120,10 +116,36 @@ end;
 {* Render surface                                                             *}
 {******************************************************************************}
 
-procedure TGDSurface.Render();
+procedure TGDSurface.Render(aRenderAttribute : TGDRenderAttribute; aRenderFor : TGDRenderFor);
 begin
   FIndexBuffer.Bind();
-  FIndexBuffer.Render(GL_TRIANGLES);
+
+  if Engine.Modes.RenderWireframe then
+ 		FIndexBuffer.Render(GL_TRIANGLES)
+  else
+  begin
+    FMaterial.ApplyMaterial();
+
+    FIndexBuffer.Render(GL_TRIANGLES);
+
+    //fix for lighting with alha based surfaces
+    if FMaterial.HasAlpha then
+    begin
+      if (aRenderFor = RF_WATER) and Not(Engine.Map.Water.UnderWater) then
+        glCullFace(GL_BACK)
+      else
+        glCullFace(GL_FRONT);
+      Engine.Renderer.MeshShader.SetInt('I_FLIP_NORMAL', 1);
+      FIndexBuffer.Render(GL_TRIANGLES);
+      if (aRenderFor = RF_WATER) and Not(Engine.Map.Water.UnderWater) then
+        glCullFace(GL_FRONT)
+      else
+        glCullFace(GL_BACK);
+      Engine.Renderer.MeshShader.SetInt('I_FLIP_NORMAL', 0);
+    end;
+
+    Material.DisableMaterial();
+  end;
   FIndexBuffer.Unbind();
 end;
 
@@ -175,7 +197,6 @@ begin
   else
     iV.Color  := Color(1,1,1,1);
 
-  inc(FVertexCount);
   result := Engine.Map.MeshManager.Vertices.Add(iV);
 end;
 
@@ -185,9 +206,6 @@ begin
     iResult := true;
 
     FSurfaces := TGDSurfaceList.Create();
-    FVertexCount := 0;
-    FVertexStart := Engine.Map.MeshManager.Vertices.Count;
-
     iSL       := TStringList.Create();
     iVertices := TGDVertex_V_List.Create();
     iNormals  := TGDVertex_V_List.Create();

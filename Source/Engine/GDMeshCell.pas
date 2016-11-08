@@ -107,7 +107,7 @@ uses
 
 constructor TGDMeshCell.Create(aInput : TGDMeshCellInput);
 var
-  iI : integer;
+  iI, iJ : integer;
   iVertices : TGDVertex_V_List;
   iVector : TGDVector;
   iCenter : TGDVector;
@@ -137,46 +137,46 @@ begin
 
   //calculate boundingbox
   iVertices   := TGDVertex_V_List.Create();
-  with iVertices do
+  For iI := 0 to FMesh.Surfaces.Count - 1 do
   begin
-
-    For iI := FMesh.VertexStart to FMesh.VertexCount - 1 do
+		For iJ := 0 to FMesh.Surfaces[iI].Indexes.Count - 1 do
     begin
-      iVector := Engine.Map.MeshManager.Vertices.Items[iI].Vertex.Copy();
+      iVector := Engine.Map.MeshManager.Vertices.Items[FMesh.Surfaces[iI].Indexes[iJ]].Vertex.Copy();
       iVector.Multiply(FScale);
       iVector.Devide(100);
       FRotation.ApplyToVector(iVector);
       iVector.Add( FPosition );
       iVertices.Add(iVector)
     end;
-
-    iCenter.reset(0,0,0);
-    for iI := 0 to Count-1 do iCenter.Add( Items[iI] );
-    iCenter.Devide( Count );
-    BoundingBox.Min.reset(iCenter.x, iCenter.y , iCenter.z);
-    BoundingBox.Max.reset(iCenter.x, iCenter.y , iCenter.z);
-
-    for iI := 0 to Count-1 do
-    begin
-      iVector := Items[iI].Copy();
-
-      If (iVector.X <=  BoundingBox.Min.x) then
-         BoundingBox.Min.setX(iVector.X)
-      else If (iVector.X >=  BoundingBox.Max.x) then
-              BoundingBox.Max.setX(iVector.X);
-
-      If (iVector.Y <=  BoundingBox.Min.Y) then
-         BoundingBox.Min.setY(iVector.Y)
-      else If (iVector.Y >=  BoundingBox.Max.Y) then
-              BoundingBox.Max.setY(iVector.Y);
-
-      If (iVector.Z <=  BoundingBox.Min.Z) then
-         BoundingBox.Min.setZ(iVector.Z)
-      else If (iVector.Z >=  BoundingBox.Max.Z) then
-              BoundingBox.Max.setZ(iVector.Z);
-    end;
-    BoundingBox.CalculateCenter();
   end;
+
+  iCenter.reset(0,0,0);
+  for iI := 0 to iVertices.Count-1 do iCenter.Add( iVertices.Items[iI] );
+  iCenter.Devide( iVertices.Count );
+  BoundingBox.Min.reset(iCenter.x, iCenter.y , iCenter.z);
+  BoundingBox.Max.reset(iCenter.x, iCenter.y , iCenter.z);
+
+  for iI := 0 to iVertices.Count-1 do
+  begin
+    iVector := iVertices.Items[iI].Copy();
+
+    If (iVector.X <=  BoundingBox.Min.x) then
+       BoundingBox.Min.setX(iVector.X)
+    else If (iVector.X >=  BoundingBox.Max.x) then
+            BoundingBox.Max.setX(iVector.X);
+
+    If (iVector.Y <=  BoundingBox.Min.Y) then
+       BoundingBox.Min.setY(iVector.Y)
+    else If (iVector.Y >=  BoundingBox.Max.Y) then
+            BoundingBox.Max.setY(iVector.Y);
+
+    If (iVector.Z <=  BoundingBox.Min.Z) then
+       BoundingBox.Min.setZ(iVector.Z)
+    else If (iVector.Z >=  BoundingBox.Max.Z) then
+            BoundingBox.Max.setZ(iVector.Z);
+  end;
+  BoundingBox.CalculateCenter();
+
   FreeAndNil(iVertices);
 
   //Cast and receive shadows.
@@ -238,48 +238,19 @@ begin
 
   Case aRenderAttribute Of
     RA_NORMAL         : begin
-                  			  if Engine.Modes.RenderWireframe then
-                          begin
-                            SetMeshPositioning(Engine.Renderer.ColorShader);
-                            for iI := 0 to iMesh.Surfaces.Count - 1 do
-                              iMesh.Surfaces.Items[iI].Render();
-                          end
+      									  if Engine.Modes.RenderWireframe then
+                            SetMeshPositioning(Engine.Renderer.ColorShader)
                           else
-                          begin
                             SetMeshPositioning(Engine.Renderer.MeshShader);
-                            if self.ReceiveShadow and (aRenderFor <> RF_SHADOW) then
-                              Engine.Renderer.MeshShader.SetInt('I_RECEIVE_SHADOW', 1)
-                            else
-                              Engine.Renderer.MeshShader.SetInt('I_RECEIVE_SHADOW', 0);
-                            Engine.Renderer.MeshShader.SetInt('I_FLIP_NORMAL', 0);
 
-                            for iI := 0 to iMesh.Surfaces.Count - 1 do
-                            begin
-                              iSur := iMesh.Surfaces.Items[iI];
+                          if self.ReceiveShadow and (aRenderFor <> RF_SHADOW) then
+                            Engine.Renderer.MeshShader.SetInt('I_RECEIVE_SHADOW', 1)
+                          else
+                            Engine.Renderer.MeshShader.SetInt('I_RECEIVE_SHADOW', 0);
+                          Engine.Renderer.MeshShader.SetInt('I_FLIP_NORMAL', 0);
 
-                              iSur.Material.ApplyMaterial();
-
-                              iSur.Render();
-
-                              //fix for lighting with alha based surfaces
-                              if iSur.Material.HasAlpha then
-                              begin
-                                if (aRenderFor = RF_WATER) and Not(Engine.Map.Water.UnderWater) then
-                                  glCullFace(GL_BACK)
-                                else
-                                  glCullFace(GL_FRONT);
-                                Engine.Renderer.MeshShader.SetInt('I_FLIP_NORMAL', 1);
-                                iSur.Render();
-                                if (aRenderFor = RF_WATER) and Not(Engine.Map.Water.UnderWater) then
-                                  glCullFace(GL_FRONT)
-                                else
-                                  glCullFace(GL_BACK);
-                                Engine.Renderer.MeshShader.SetInt('I_FLIP_NORMAL', 0);
-                              end;
-
-                              iSur.Material.DisableMaterial();
-                            end;
-													end;
+                          for iI := 0 to iMesh.Surfaces.Count - 1 do
+                            iMesh.Surfaces.Items[iI].Render(aRenderAttribute, aRenderFor);
                         end;
     RA_FRUSTUM_BOXES  : BoundingBox.RenderWireFrame();
     RA_NORMALS        : begin

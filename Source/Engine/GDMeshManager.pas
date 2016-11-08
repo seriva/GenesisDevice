@@ -95,6 +95,7 @@ begin
       if Modes.RenderWireframe then
       begin
         Renderer.SetColor(1.0,1.0,1.0,1.0);
+        Renderer.ColorShader.Bind();
         Renderer.ColorShader.SetInt('I_CUSTOM_TRANSLATE', 1);
       end
       else
