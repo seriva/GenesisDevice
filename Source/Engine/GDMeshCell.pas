@@ -96,10 +96,27 @@ type
     function TriangleCount() : Integer;
   end;
 
+  {******************************************************************************}
+  {*  MeshCell Surface                                                          *}
+  {******************************************************************************}
+
+   TGDMeshCellSurface = record
+    Surface  : TGDSurface;
+    MeshCell : TGDMeshCell;
+
+    class operator Equal(smc1, smc2: TGDMeshCellSurface) B: Boolean;
+  end;
+
 implementation
 
 uses
+  GDMeshManager,
   GDEngine;
+
+class operator TGDMeshCellSurface.Equal(smc1, smc2: TGDMeshCellSurface) B: Boolean;
+begin
+  B := false;
+end;
 
 {******************************************************************************}
 {* Create the meshcell class                                                  *}
@@ -206,6 +223,7 @@ var
   iV1, iV2 : TGDVector;
   iFadeDistanceScale : Single;
   iMesh : TGDMesh;
+  iMCS : TGDMeshCellSurface;
 
 procedure SetMeshPositioning(aShader : TGDGLShader);
 begin
@@ -250,7 +268,13 @@ begin
                           Engine.Renderer.MeshShader.SetInt('I_FLIP_NORMAL', 0);
 
                           for iI := 0 to iMesh.Surfaces.Count - 1 do
+                          begin
+                            iMCS.Surface  := iMesh.Surfaces.Items[iI];
+                            iMCS.MeshCell := self;
+                            Engine.Map.MeshManager.AddSurfaceToCache(iMCS);
+
                             iMesh.Surfaces.Items[iI].Render(aRenderAttribute, aRenderFor);
+                          end;
                         end;
     RA_FRUSTUM_BOXES  : BoundingBox.RenderWireFrame();
     RA_NORMALS        : begin

@@ -22,19 +22,28 @@
 *******************************************************************************}
 unit GDMeshManager;
 
-{$mode delphi}
+{$mode objfpc}
 
 interface
 
 uses
   dglOpenGL,
+  FGL,
   SysUtils,
   GDGLWrappers,
-  GDTypes,
   GDTypesGenerics,
-  GDConstants;
+  GDConstants,
+  GDMeshCell,
+  GDMesh;
 
 type
+
+{******************************************************************************}
+{* Surface cache                                                              *}
+{******************************************************************************}
+
+  TGDMeshCellSurfaceList  = specialize TFPGList<TGDMeshCellSurface>;
+  TGDSurfaceCache = specialize TFPGMap<String,TGDMeshCellSurfaceList>;
 
 {******************************************************************************}
 {* Cellmanager class                                                          *}
@@ -44,15 +53,19 @@ type
   private
     FVertices     : TGDVertex_V_UV_N_C_List;
     FVertexBuffer : TGDGLVertexBuffer;
+    FSurfaceCache : TGDSurfaceCache;
   public
-    property Vertices : TGDVertex_V_UV_N_C_List read FVertices;
-    property VertexBuffer  : TGDGLVertexBuffer read FVertexBuffer;
+    property Vertices     : TGDVertex_V_UV_N_C_List read FVertices;
+    property VertexBuffer : TGDGLVertexBuffer read FVertexBuffer;
+    property SurfaceCache : TGDSurfaceCache read FSurfaceCache;
 
     constructor Create();
     destructor  Destroy(); override;
 
     procedure StartRendering( aRenderAttribute : TGDRenderAttribute; aRenderFor : TGDRenderFor );
     procedure EndRendering();
+
+    procedure AddSurfaceToCache(aSurface : TGDMeshCellSurface);
 
     procedure CreateBuffers();
     procedure ClearBuffers();
@@ -70,6 +83,7 @@ uses
 constructor TGDMeshManager.Create();
 begin
   FVertices := TGDVertex_V_UV_N_C_List.Create();
+  FSurfaceCache := TGDSurfaceCache.Create();
 end;
 
 {******************************************************************************}
@@ -78,6 +92,7 @@ end;
 
 destructor  TGDMeshManager.Destroy();
 begin
+  FreeAndNil(FSurfaceCache);
   FreeAndNil(FVertices);
 end;
 
@@ -86,8 +101,22 @@ end;
 {******************************************************************************}
 
 procedure TGDMeshManager.StartRendering( aRenderAttribute : TGDRenderAttribute; aRenderFor : TGDRenderFor );
+var
+  iList : TGDMeshCellSurfaceList;
+  iK : integer;
 begin
+
+  for iK := FSurfaceCache.Count - 1 downto 0 do
+  begin
+    iList := FSurfaceCache.Data[iK] as TGDMeshCellSurfaceList;
+    iList.Clear();
+    FreeAndNil(iList);
+    FSurfaceCache.Delete(iK);
+  end;
+  FSurfaceCache.Clear();
+
   FVertexBuffer.Bind(VL_V_UV_N_C);
+
   if aRenderAttribute = RA_NORMAL then
   begin
     with Engine do
@@ -110,13 +139,32 @@ begin
 end;
 
 {******************************************************************************}
-{* ENd mesh rendering                                                         *}
+{* End mesh rendering                                                         *}
 {******************************************************************************}
 
 procedure TGDMeshManager.EndRendering();
 begin
 	Engine.Renderer.MeshShader.UnBind();
   FVertexBuffer.Unbind();
+end;
+
+{******************************************************************************}
+{* Add surface to cache                                                       *}
+{******************************************************************************}
+
+procedure TGDMeshManager.AddSurfaceToCache(aSurface : TGDMeshCellSurface);
+var
+  iIdx : Integer;
+  iList : TGDMeshCellSurfaceList;
+begin
+  if FSurfaceCache.Find(aSurface.Surface.Material.Name, iIdx) then
+    iList := FSurfaceCache.Data[iIdx]
+  else
+  begin
+    iList := TGDMeshCellSurfaceList.Create();
+    FSurfaceCache.Add( aSurface.Surface.Material.Name,  iList);
+  end;
+  iList.Add( aSurface );
 end;
 
 {******************************************************************************}

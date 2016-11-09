@@ -267,7 +267,7 @@ begin
   if aResource = nil then exit;
   if Find(aResource.Name, iIdx) then
   begin
-    aResource.RefCount := aResource.RefCount-1;
+    aResource.RefCount := aResource.RefCount+1;
     if aResource.RefCount <= 0 then
     begin
       self.Delete(iIdx);
