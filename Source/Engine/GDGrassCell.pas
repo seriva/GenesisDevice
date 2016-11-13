@@ -40,7 +40,6 @@ uses
   GDGLWrappers,
   GDFoliage,
   GDTypes,
-  GDWater,
   GDTerrain,
   GDBaseCell;
 
@@ -75,7 +74,7 @@ type
   public
     property TrisCount : Integer Read FTrisCount;
 
-    constructor Create(aTerrain : TGDTerrain; aLayer : TGDLayer;  aWater : TGDWater; aStartX, aStartY, aEndX, aEndY : Integer);
+    constructor Create(aTerrain : TGDTerrain; aLayer : TGDLayer; aStartX, aStartY, aEndX, aEndY : Integer);
     destructor  Destroy(); override;
 
     procedure Render( aRenderAttribute : TGDRenderAttribute; aRenderFor : TGDRenderFor ); override;
@@ -143,7 +142,7 @@ end;
 {* Create the grasscell class                                                 *}
 {******************************************************************************}
 
-constructor TGDGrassCell.Create(aTerrain : TGDTerrain; aLayer : TGDLayer; aWater : TGDWater; aStartX, aStartY, aEndX, aEndY : Integer );
+constructor TGDGrassCell.Create(aTerrain : TGDTerrain; aLayer : TGDLayer; aStartX, aStartY, aEndX, aEndY : Integer );
 var
   iI, iJ : Integer;
   iX, iY : Integer;

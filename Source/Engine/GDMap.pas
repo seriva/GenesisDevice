@@ -244,6 +244,7 @@ begin
   FSkyDome.Clear();
 
   FCellManager.Clear();
+  FMeshManager.ClearCache();
   FMeshManager.ClearBuffers();
 end;
 

@@ -382,6 +382,7 @@ begin
   FVertexBuffer.Bind(VL_V_UV);
   if Engine.Modes.RenderWireframe then
   begin
+    Engine.Renderer.ColorShader.Bind();
     Engine.Renderer.SetColor(0.3,0.3,1,1);
   end
   else

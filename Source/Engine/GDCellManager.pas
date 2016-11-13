@@ -64,7 +64,7 @@ type
 
     procedure GenerateTerrainCells(aTerrain : TGDTerrain);
     procedure GenerateWaterCells(aWater : TGDWater; aTerrain : TGDTerrain);
-    procedure GenerateFoliageCells(aFoliage : TGDFoliage; aTerrain : TGDTerrain; aWater : TGDWater);
+    procedure GenerateFoliageCells(aFoliage : TGDFoliage; aTerrain : TGDTerrain);
   public
     property TriangleCount : Integer read FTriangleCount write FTriangleCount;
     function ObjectCount(): Integer;
@@ -230,7 +230,7 @@ End;
 {* Generate the static grasscell objects from the foliage class               *}
 {******************************************************************************}
 
-procedure TGDCellManager.GenerateFoliageCells(aFoliage : TGDFoliage; aTerrain : TGDTerrain; aWater : TGDWater);
+procedure TGDCellManager.GenerateFoliageCells(aFoliage : TGDFoliage; aTerrain : TGDTerrain);
 var
   iI, iJ, iMeshCount : Integer;
   iK, iL : Integer;
@@ -280,7 +280,7 @@ Begin
 
           If iCellHasGrass then
           begin
-            FCells.Add(TGDGrassCell.Create(aTerrain, iLayer, aWater, iI, iJ, iI+iStepX, iJ+iStepY) );
+            FCells.Add(TGDGrassCell.Create(aTerrain, iLayer, iI, iJ, iI+iStepX, iJ+iStepY) );
           end;
 
           iJ := iJ + iStepY;
@@ -372,7 +372,7 @@ procedure TGDCellManager.GenerateCells(aTerrain : TGDTerrain; aWater : TGDWater;
 Begin
   GenerateTerrainCells(aTerrain);
   GenerateWaterCells(aWater, aTerrain);
-  GenerateFoliageCells(aFoliage, aTerrain, aWater);
+  GenerateFoliageCells(aFoliage, aTerrain);
   FOctree.InitOcTree(FCells);
 End;
 
@@ -448,12 +448,14 @@ Begin
   if (Engine.Modes.RenderGrass) and (aRenderFor = RF_NORMAL) then
   begin
     aFoliage.StartRenderingGrass( aRenderAttribute );
+
     for iI := 0 to FVisibleGrassCells.Count - 1 do
     begin
       iGrassCell := TGDGrassCell(FVisibleGrassCells.Items[ iI ]);
       iGrassCell.Render( aRenderAttribute, aRenderFor );
       TriangleCount := TriangleCount + iGrassCell.TrisCount;
     end;
+
     aFoliage.EndRenderingGrass();
   end;
 
@@ -465,15 +467,11 @@ Begin
     for iI := 0 to FVisibleMeshCells.Count - 1 do
     begin
       iMeshCell := TGDMeshCell(FVisibleMeshCells.Items[ iI ]);
-      if (aRenderFor = RF_SHADOW) then
-      begin
-        if iMeshCell.CastShadow then
-           iMeshCell.Render( aRenderAttribute, aRenderFor );
-      end
-      else
-        iMeshCell.Render( aRenderAttribute, aRenderFor );
+      iMeshCell.Render( aRenderAttribute, aRenderFor );
       TriangleCount := TriangleCount + iMeshCell.TriangleCount();
     end;
+    if aRenderAttribute = RA_NORMAL then
+      Engine.Map.MeshManager.RenderSurfaces(aRenderAttribute, aRenderFor);
 
     aMeshManager.EndRendering();
   end;

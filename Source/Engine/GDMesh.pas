@@ -124,8 +124,6 @@ begin
  		FIndexBuffer.Render(GL_TRIANGLES)
   else
   begin
-    FMaterial.ApplyMaterial();
-
     FIndexBuffer.Render(GL_TRIANGLES);
 
     //fix for lighting with alha based surfaces
@@ -143,8 +141,6 @@ begin
         glCullFace(GL_BACK);
       Engine.Renderer.MeshShader.SetInt('I_FLIP_NORMAL', 0);
     end;
-
-    Material.DisableMaterial();
   end;
   FIndexBuffer.Unbind();
 end;

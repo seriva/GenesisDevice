@@ -25,7 +25,7 @@ program Demo;
 {$MODE Delphi}
 
 uses
-  heaptrc, //For debugging
+  //heaptrc, //For debugging
   LCLIntf, LCLType, LMessages,
   Forms, Interfaces,
   {$IFDEF Win32}

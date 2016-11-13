@@ -66,6 +66,8 @@ type
     procedure EndRendering();
 
     procedure AddSurfaceToCache(aSurface : TGDMeshCellSurface);
+    procedure ClearCache();
+    procedure RenderSurfaces( aRenderAttribute : TGDRenderAttribute; aRenderFor : TGDRenderFor );
 
     procedure CreateBuffers();
     procedure ClearBuffers();
@@ -74,6 +76,7 @@ type
 implementation
 
 uses
+  GDMaterial,
   GDEngine;
 
 {******************************************************************************}
@@ -92,6 +95,7 @@ end;
 
 destructor  TGDMeshManager.Destroy();
 begin
+  ClearCache();
   FreeAndNil(FSurfaceCache);
   FreeAndNil(FVertices);
 end;
@@ -101,20 +105,8 @@ end;
 {******************************************************************************}
 
 procedure TGDMeshManager.StartRendering( aRenderAttribute : TGDRenderAttribute; aRenderFor : TGDRenderFor );
-var
-  iList : TGDMeshCellSurfaceList;
-  iK : integer;
 begin
-
-  for iK := FSurfaceCache.Count - 1 downto 0 do
-  begin
-    iList := FSurfaceCache.Data[iK] as TGDMeshCellSurfaceList;
-    iList.Clear();
-    FreeAndNil(iList);
-    FSurfaceCache.Delete(iK);
-  end;
-  FSurfaceCache.Clear();
-
+  ClearCache();
   FVertexBuffer.Bind(VL_V_UV_N_C);
 
   if aRenderAttribute = RA_NORMAL then
@@ -157,14 +149,82 @@ var
   iIdx : Integer;
   iList : TGDMeshCellSurfaceList;
 begin
-  if FSurfaceCache.Find(aSurface.Surface.Material.Name, iIdx) then
-    iList := FSurfaceCache.Data[iIdx]
+  iIdx := FSurfaceCache.IndexOf(aSurface.Surface.Material.Name);
+  if  iIdx >= 0 then
+    TGDMeshCellSurfaceList(FSurfaceCache.Data[iIdx]).Add(aSurface)
   else
   begin
     iList := TGDMeshCellSurfaceList.Create();
+    iList.Add( aSurface );
     FSurfaceCache.Add( aSurface.Surface.Material.Name,  iList);
   end;
-  iList.Add( aSurface );
+end;
+
+{******************************************************************************}
+{* Clear surface cache                                                        *}
+{******************************************************************************}
+
+procedure TGDMeshManager.ClearCache();
+var
+  iList : TGDMeshCellSurfaceList;
+  iK : integer;
+begin
+  for iK := FSurfaceCache.Count - 1 downto 0 do
+  begin
+    iList := FSurfaceCache.Data[iK] as TGDMeshCellSurfaceList;
+    iList.Clear();
+    FreeAndNil(iList);
+    FSurfaceCache.Delete(iK);
+  end;
+  FSurfaceCache.Clear();
+end;
+
+{******************************************************************************}
+{* Render surfaces                                                            *}
+{******************************************************************************}
+
+procedure TGDMeshManager.RenderSurfaces( aRenderAttribute : TGDRenderAttribute; aRenderFor : TGDRenderFor );
+var
+  iI, iJ, iK, iL : Integer;
+  iKey : String;
+  iSurf : TGDMeshCellSurface;
+  iSurfList : TGDMeshCellSurfaceList;
+  iMat : TGDMaterial;
+  iMC : TGDMeshCell;
+begin
+  iMC := nil;
+  for iI := 0 to FSurfaceCache.Count - 1 do
+  begin
+  	iKey := FSurfaceCache.Keys[iI];
+    iJ := FSurfaceCache.IndexOf(iKey);
+    if iJ >= 0 then
+    begin
+    	iSurfList := TGDMeshCellSurfaceList(FSurfaceCache.Data[iJ]);
+      iK := Engine.Resources.IndexOf(iKey);
+      if iK >= 0 then
+      begin
+        iMat := TGDMaterial(Engine.Resources.Data[iK]);
+
+        iMat.ApplyMaterial();
+
+        for iL := 0 to iSurfList.Count - 1 do
+        begin
+          iSurf := iSurfList.Items[iL];
+
+          if iMC <> iSurf.MeshCell then
+          begin
+            iSurf.MeshCell.ApplyMeshCell(aRenderAttribute, aRenderFor);
+            iMC := iSurf.MeshCell
+          end;
+
+          iSurf.MeshCell.ApplyMeshCell(aRenderAttribute, aRenderFor);
+          iSurf.Surface.Render( aRenderAttribute, aRenderFor );
+        end;
+
+        iMat.DisableMaterial();
+      end;
+    end;
+  end;
 end;
 
 {******************************************************************************}

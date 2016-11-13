@@ -74,7 +74,8 @@ function TGDResources.LoadTexture(aFileName : String; aDetail : TGDTextureDetail
 var
   iIdx : Integer;
 begin
-  if Find(aFileName, iIdx) then
+  iIdx := IndexOf(aFileName);
+  if iIdx >= 0 then
     result := GetResource(iIdx) as TGDTexture
   else
   begin
@@ -96,7 +97,9 @@ begin
     result := nil;
     exit
   end;
-  if Find(aFileName, iIdx) then
+
+  iIdx := IndexOf(aFileName);
+  if iIdx >= 0 then
     result := GetResource(iIdx) as TGDMesh
   else
   begin
@@ -113,7 +116,8 @@ function TGDResources.LoadSoundBuffer(aFileName : String): TGDSoundBuffer;
 var
   iIdx : Integer;
 begin
-  if Find(aFileName, iIdx) then
+  iIdx := IndexOf(aFileName);
+  if iIdx >= 0 then
     result := GetResource(iIdx) as TGDSoundBuffer
   else
   begin
@@ -130,7 +134,8 @@ function TGDResources.LoadSoundStream(aFileName : String): TGDSoundStream;
 var
   iIdx : Integer;
 begin
-  if Find(aFileName, iIdx) then
+  iIdx := IndexOf(aFileName);
+  if iIdx >= 0 then
     result := GetResource(iIdx) as TGDSoundStream
   else
   begin
@@ -164,7 +169,8 @@ begin
       if iStr = 'newmtl' then //read the material name
       begin
         iStr := GetNextToken(iFile);
-        if Find(iStr, iIdx) then
+        iIdx := IndexOf(iStr);
+        if iIdx >= 0 then
         begin
           iMat:= nil;
           continue;
@@ -265,9 +271,10 @@ var
   iIdx : Integer;
 begin
   if aResource = nil then exit;
-  if Find(aResource.Name, iIdx) then
+  iIdx := IndexOf(aResource.Name);
+  if iIdx >= 0 then
   begin
-    aResource.RefCount := aResource.RefCount+1;
+    aResource.RefCount := aResource.RefCount-1;
     if aResource.RefCount <= 0 then
     begin
       self.Delete(iIdx);

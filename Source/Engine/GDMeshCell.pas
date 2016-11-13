@@ -74,6 +74,7 @@ type
     FMeshLOD2      : TGDMesh;
     FFadeScale     : single;
     FFadeDistance  : single;
+    FFadeDistanceScale : single;
 
     FPosition      : TGDVector;
     FScale         : TGDVector;
@@ -91,7 +92,8 @@ type
     constructor Create(aInput : TGDMeshCellInput);
     destructor  Destroy(); override;
 
-    procedure Render( aRenderAttribute : TGDRenderAttribute; aRenderFor : TGDRenderFor ); override;
+    procedure Render( aRenderAttribute : TGDRenderAttribute; aRenderFor : TGDRenderFor); override;
+    procedure ApplyMeshCell(aRenderAttribute : TGDRenderAttribute; aRenderFor : TGDRenderFor);
 
     function TriangleCount() : Integer;
   end;
@@ -115,7 +117,7 @@ uses
 
 class operator TGDMeshCellSurface.Equal(smc1, smc2: TGDMeshCellSurface) B: Boolean;
 begin
-  B := false;
+  B := true;
 end;
 
 {******************************************************************************}
@@ -221,28 +223,24 @@ var
   iI, iJ : Integer;
   iSur : TGDSurface;
   iV1, iV2 : TGDVector;
-  iFadeDistanceScale : Single;
   iMesh : TGDMesh;
-  iMCS : TGDMeshCellSurface;
-
-procedure SetMeshPositioning(aShader : TGDGLShader);
-begin
-  aShader.SetMatrix('M_ROTATION', FRotation);
-  aShader.SetFloat3('V_POSITION', FPosition.x, FPosition.y, FPosition.z);
-  aShader.SetFloat3('V_SCALE', (FScale.x * iFadeDistanceScale) / 100, (FScale.y * iFadeDistanceScale) / 100, (FScale.z * iFadeDistanceScale) / 100);
-end;
+  iMCS  : TGDMeshCellSurface;
 
 begin
+  if (aRenderFor = RF_SHADOW) then
+    if not(CastShadow) then
+    	exit;
+
   //Determine LOD settings for meshcell.
   iMesh := FMesh;
-  iFadeDistanceScale := 1;
+  FFadeDistanceScale := 1;
   Case FLODType of
     LT_NONE    : ;
     LT_FADE_IN : begin
                   if Distance < (FFadeDistance - FFadeScale) then
-                    iFadeDistanceScale := 1
+                    FFadeDistanceScale := 1
                   else
-                    iFadeDistanceScale := 1 - ((Distance - (FFadeDistance - FFadeScale)) / FFadeScale);
+                    FFadeDistanceScale := 1 - ((Distance - (FFadeDistance - FFadeScale)) / FFadeScale);
                  end;
     LT_STAGES  :begin
                   if ((Distance >= 0) and (Distance < Engine.Settings.LOD0)) then
@@ -256,24 +254,11 @@ begin
 
   Case aRenderAttribute Of
     RA_NORMAL         : begin
-      									  if Engine.Modes.RenderWireframe then
-                            SetMeshPositioning(Engine.Renderer.ColorShader)
-                          else
-                            SetMeshPositioning(Engine.Renderer.MeshShader);
-
-                          if self.ReceiveShadow and (aRenderFor <> RF_SHADOW) then
-                            Engine.Renderer.MeshShader.SetInt('I_RECEIVE_SHADOW', 1)
-                          else
-                            Engine.Renderer.MeshShader.SetInt('I_RECEIVE_SHADOW', 0);
-                          Engine.Renderer.MeshShader.SetInt('I_FLIP_NORMAL', 0);
-
                           for iI := 0 to iMesh.Surfaces.Count - 1 do
                           begin
                             iMCS.Surface  := iMesh.Surfaces.Items[iI];
                             iMCS.MeshCell := self;
                             Engine.Map.MeshManager.AddSurfaceToCache(iMCS);
-
-                            iMesh.Surfaces.Items[iI].Render(aRenderAttribute, aRenderFor);
                           end;
                         end;
     RA_FRUSTUM_BOXES  : BoundingBox.RenderWireFrame();
@@ -297,6 +282,32 @@ begin
                           end;
                         end;
     end;
+end;
+
+{******************************************************************************}
+{* Apply meshcell settings                                                    *}
+{******************************************************************************}
+
+procedure TGDMeshCell.ApplyMeshCell(aRenderAttribute : TGDRenderAttribute; aRenderFor : TGDRenderFor);
+
+procedure SetMeshPositioning(aShader : TGDGLShader);
+begin
+  aShader.SetMatrix('M_ROTATION', FRotation);
+  aShader.SetFloat3('V_POSITION', FPosition.x, FPosition.y, FPosition.z);
+  aShader.SetFloat3('V_SCALE', (FScale.x * FFadeDistanceScale) / 100, (FScale.y * FFadeDistanceScale) / 100, (FScale.z * FFadeDistanceScale) / 100);
+end;
+
+begin
+  if Engine.Modes.RenderWireframe then
+    SetMeshPositioning(Engine.Renderer.ColorShader)
+  else
+    SetMeshPositioning(Engine.Renderer.MeshShader);
+
+  if self.ReceiveShadow and (aRenderFor <> RF_SHADOW) then
+    Engine.Renderer.MeshShader.SetInt('I_RECEIVE_SHADOW', 1)
+  else
+    Engine.Renderer.MeshShader.SetInt('I_RECEIVE_SHADOW', 0);
+  Engine.Renderer.MeshShader.SetInt('I_FLIP_NORMAL', 0);
 end;
 
 {******************************************************************************}
