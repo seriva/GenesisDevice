@@ -36,6 +36,7 @@ uses
   SysUtils,
   sdl2,
   dglOpenGL,
+  newton,
   GDRenderer,
   GDConsole,
   GDTiming,
@@ -136,13 +137,12 @@ end;
 
 function TGDEngine.InitSystems(): boolean;
 var
-  iSDLInit : boolean;
+  iSDLInit, iNewtonInit : boolean;
   iVersion : TSDL_Version;
 begin
   FConsole    := TGDConsole.Create();
   FSettings   := TGDSettings.Create();
 
-  Engine.Console.Write('.....Initializing SDL');
   iSDLInit := not(SDL_Init(SDL_INIT_VIDEO or SDL_INIT_TIMER) < 0);
   if iSDLInit then
   begin
@@ -159,8 +159,22 @@ begin
   FWindow			:= TGDWindow.Create();
   FInput      := TGDInput.Create();
   FSound      := TGDSound.Create();
+
+  Engine.Console.Write('.....Initializing Newton');
+  try
+    Engine.Console.Write('  Version: ' + IntToStr(NewtonWorldGetVersion));
+    iNewtonInit := true;
+	  Engine.Console.Write('.....Done initializing Newton');
+  except
+    on E: Exception do
+    begin
+      iNewtonInit := false;
+      Engine.Console.Write('Failed to initialize Newton: ' +  E.Message);
+    end;
+  end;
+
   FRenderer   := TGDRenderer.Create();
-  result      := FInput.Initialized and FRenderer.Initialized and FWindow.Initialized and iSDLInit;
+  result      := FInput.Initialized and FRenderer.Initialized and FWindow.Initialized and iSDLInit and iNewtonInit;
 
   FStatistics := TGDStatistics.Create();
   FModes      := TGDModes.Create();

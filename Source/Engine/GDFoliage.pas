@@ -319,6 +319,7 @@ var
 begin
   Clear();
   Engine.Console.Write('Loading foliage...');
+  Engine.Console.Use := false;
   try
     result := true;
 
@@ -342,6 +343,7 @@ begin
   end;
 
   Engine.Console.WriteOkFail(result, iError);
+  Engine.Console.Use := true;
 end;
 
 {******************************************************************************}

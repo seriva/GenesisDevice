@@ -37,7 +37,7 @@
         <PackageName Value="LCL"/>
       </Item1>
     </RequiredPackages>
-    <Units Count="81">
+    <Units Count="83">
       <Unit0>
         <Filename Value="Demo.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -213,6 +213,7 @@
       <Unit42>
         <Filename Value="..\Libraries\SDL\sdl2.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="SDL2"/>
       </Unit42>
       <Unit43>
         <Filename Value="..\Libraries\SDL\sdlaudio.inc"/>
@@ -366,6 +367,14 @@
         <Filename Value="..\Engine\GDMeshManager.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit80>
+      <Unit81>
+        <Filename Value="..\Libraries\Newton\newton.inc"/>
+        <IsPartOfProject Value="True"/>
+      </Unit81>
+      <Unit82>
+        <Filename Value="..\Libraries\Newton\newton.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit82>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -375,8 +384,8 @@
       <Filename Value="..\..\Bin\Demo"/>
     </Target>
     <SearchPaths>
-      <IncludeFiles Value="..\Headers;..\Libraries\OpenGL;..\Libraries\Utils;$(ProjOutDir);..\Libraries\SDL"/>
-      <OtherUnitFiles Value="..\Libraries\OpenGL;..\Engine;..\Libraries\OpenAL;..\Libraries\SDL"/>
+      <IncludeFiles Value="..\Headers;..\Libraries\OpenGL;..\Libraries\Utils;$(ProjOutDir);..\Libraries\SDL;..\Libraries\Newton"/>
+      <OtherUnitFiles Value="..\Libraries\OpenGL;..\Engine;..\Libraries\OpenAL;..\Libraries\SDL;..\Libraries\Newton"/>
       <UnitOutputDirectory Value="..\..\Build"/>
     </SearchPaths>
     <Parsing>
