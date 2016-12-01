@@ -314,7 +314,7 @@ end;
 
 constructor TGDSound.Create();
 var
-  iError, iV : string;
+  iError, iV1, iV2 : string;
   iDefaultDevice: PALCubyte;
   iALInt1, iALInt2 : TALCint;
   iI : Integer;
@@ -347,9 +347,10 @@ begin
     //Check requirements
     alcGetIntegerv(FDevice, ALC_MAJOR_VERSION, 1, @iALInt1);
     alcGetIntegerv(FDevice, ALC_MINOR_VERSION, 1, @iALInt2);
-    iV := IntToStr(MRS_OPENAL_MAJOR_VERSION) + '.' + IntToStr(MRS_OPENAL_MINOR_VERSION);
-    if (iALInt1 < MRS_OPENAL_MAJOR_VERSION) or (iALInt2 < MRS_OPENAL_MINOR_VERSION) then
-      Raise Exception.Create('To low OpenAL version! Minimal version ' + iV + ' needed.');
+    iV1 := IntToStr(iALInt1) + '.' + IntToStr(iALInt2);
+    iV2 := IntToStr(MRS_OPENAL_MAJOR_VERSION) + '.' + IntToStr(MRS_OPENAL_MINOR_VERSION);
+    if (iV1 <> iV2) then
+      Raise Exception.Create('OpenAL version ' + iV2 + ' required.');
 
     //Create the sources.
     for iI := 0 to S_MAX_SOURCES-1 do

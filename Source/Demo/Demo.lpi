@@ -37,7 +37,7 @@
         <PackageName Value="LCL"/>
       </Item1>
     </RequiredPackages>
-    <Units Count="83">
+    <Units Count="82">
       <Unit0>
         <Filename Value="Demo.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -368,13 +368,9 @@
         <IsPartOfProject Value="True"/>
       </Unit80>
       <Unit81>
-        <Filename Value="..\Libraries\Newton\newton.inc"/>
-        <IsPartOfProject Value="True"/>
-      </Unit81>
-      <Unit82>
         <Filename Value="..\Libraries\Newton\newton.pas"/>
         <IsPartOfProject Value="True"/>
-      </Unit82>
+      </Unit81>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -384,7 +380,7 @@
       <Filename Value="..\..\Bin\Demo"/>
     </Target>
     <SearchPaths>
-      <IncludeFiles Value="..\Headers;..\Libraries\OpenGL;..\Libraries\Utils;$(ProjOutDir);..\Libraries\SDL;..\Libraries\Newton"/>
+      <IncludeFiles Value="..\Headers;..\Libraries\OpenGL;..\Libraries\Utils;$(ProjOutDir);..\Libraries\SDL"/>
       <OtherUnitFiles Value="..\Libraries\OpenGL;..\Engine;..\Libraries\OpenAL;..\Libraries\SDL;..\Libraries\Newton"/>
       <UnitOutputDirectory Value="..\..\Build"/>
     </SearchPaths>

@@ -98,6 +98,10 @@ const
   MRS_TEXTURE_SIZE          = 4096;
   MRS_OPENAL_MAJOR_VERSION  = 1;
   MRS_OPENAL_MINOR_VERSION  = 1;
+  MRS_SDL_MAJOR_VERSION 		= 2;
+  MRS_SDL_MINOR_VERSION     = 0;
+  MRS_SDL_PATCH_VERSION     = 4;
+  MRS_NEWTON_VERSION 				= 314;
 
   //filepaths constants
   PATH_MAPS         = 'Maps/';

@@ -77,6 +77,9 @@ type
     FMap        : TGDMap;
     FGUI        : TGDGUI;
 
+
+    function  InitSDL(): Boolean;
+    function  InitNewton(): Boolean;
     function  InitSystems(): boolean;
     procedure ClearSystems();
   public
@@ -132,50 +135,84 @@ begin
 end;
 
 {******************************************************************************}
+{* Init SDL                                                                   *}
+{******************************************************************************}
+
+function  TGDEngine.InitSDL(): Boolean;
+var
+  iVersion : TSDL_Version;
+  iV1, iV2 : String;
+begin
+  Inherited;
+  Console.Write('.....Initializing SDL');
+  try
+    result := not(SDL_Init(SDL_INIT_VIDEO or SDL_INIT_TIMER) < 0);
+    if result then
+    begin
+      SDL_GetVersion(@iVersion);
+      iV1 :=  IntToStr(iVersion.major) + '.' + IntToStr(iVersion.minor) + '.' + IntToStr(iVersion.patch);
+      iV2 :=  IntToStr(MRS_SDL_MAJOR_VERSION) + '.' + IntToStr(MRS_SDL_MINOR_VERSION) + '.' + IntToStr(MRS_SDL_PATCH_VERSION);
+      Console.Write('  Version: ' + iV1);
+      if (iV1 <> iV2) then
+        Raise Exception.Create('SDL version ' + iV2 + ' required.');
+    end
+    else
+    	Raise Exception.Create(SDL_GetError());
+    Console.Write('.....Done initializing SDL');
+  except
+    on E: Exception do
+    begin
+      result := false;
+      Console.Write('Failed to initialize SDL: ' + E.Message);
+    end;
+  end;
+end;
+
+{******************************************************************************}
+{* Init Newton                                                                *}
+{******************************************************************************}
+
+function  TGDEngine.InitNewton(): Boolean;
+var
+  iI : Integer;
+begin
+  Inherited;
+  Console.Write('.....Initializing Newton');
+  try
+    Timing.Start();
+    iI := NewtonWorldGetVersion();
+    Engine.Console.Write('  Version: ' + IntToStr(iI));
+    if (iI <> MRS_NEWTON_VERSION) then
+      Raise Exception.Create('Newton version ' + IntToStr(MRS_NEWTON_VERSION) + ' required.');
+    Timing.Stop();
+    Console.Write('.....Done initializing Newton (' + Timing.TimeInSeconds + ' Sec)');
+  except
+    on E: Exception do
+    begin
+      result := false;
+      Console.Write('Failed to initialize Newton: ' + E.Message);
+    end;
+  end;
+end;
+
+{******************************************************************************}
 {* Init engine Systems                                                        *}
 {******************************************************************************}
 
 function TGDEngine.InitSystems(): boolean;
 var
   iSDLInit, iNewtonInit : boolean;
-  iVersion : TSDL_Version;
 begin
   FConsole    := TGDConsole.Create();
   FSettings   := TGDSettings.Create();
-
-  iSDLInit := not(SDL_Init(SDL_INIT_VIDEO or SDL_INIT_TIMER) < 0);
-  if iSDLInit then
-  begin
-    SDL_GetVersion(@iVersion);
-    Engine.Console.Write('  Version: ' + IntToStr(iVersion.major) + '.' +
-                         IntToStr(iVersion.minor) + '.' +
-                         IntToStr(iVersion.patch));
-    Engine.Console.Write('.....Done initializing SDL');
-  end
-  else
-    Engine.Console.Write('Failed to initialize SDL: ' + SDL_GetError());
-
+  iSDLInit    := InitSDL();
   FTiming     := TGDTiming.Create();
   FWindow			:= TGDWindow.Create();
   FInput      := TGDInput.Create();
-  FSound      := TGDSound.Create();
-
-  Engine.Console.Write('.....Initializing Newton');
-  try
-    Engine.Console.Write('  Version: ' + IntToStr(NewtonWorldGetVersion));
-    iNewtonInit := true;
-	  Engine.Console.Write('.....Done initializing Newton');
-  except
-    on E: Exception do
-    begin
-      iNewtonInit := false;
-      Engine.Console.Write('Failed to initialize Newton: ' +  E.Message);
-    end;
-  end;
-
   FRenderer   := TGDRenderer.Create();
-  result      := FInput.Initialized and FRenderer.Initialized and FWindow.Initialized and iSDLInit and iNewtonInit;
-
+  FSound      := TGDSound.Create();
+  iNewtonInit := InitNewton();
+  result      := FInput.Initialized and FRenderer.Initialized and FWindow.Initialized and iSDLInit  and iNewtonInit;
   FStatistics := TGDStatistics.Create();
   FModes      := TGDModes.Create();
   FResources  := TGDResources.Create();
@@ -278,7 +315,7 @@ begin
 end;
 
 initialization
-  Engine   := TGDEngine.Create();
+  Engine := TGDEngine.Create();
   If not(Engine.InitSystems()) then
   begin
     halt;
