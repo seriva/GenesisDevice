@@ -48,6 +48,7 @@ uses
   GDResources,
   GDSound,
   GDModes,
+ 	GDPhysics,
   GDCamera,
   GDSettings,
   GDStatistics;
@@ -68,6 +69,7 @@ type
     FWindow			: TGDWindow;
     FInput      : TGDInput;
     FSound      : TGDSound;
+    FPhysics    : TGDPhysics;
     FRenderer   : TGDRenderer;
 
     FStatistics : TGDStatistics;
@@ -79,7 +81,6 @@ type
 
 
     function  InitSDL(): Boolean;
-    function  InitNewton(): Boolean;
     function  InitSystems(): boolean;
     procedure ClearSystems();
   public
@@ -92,6 +93,7 @@ type
     property Window			: TGDWindow read FWindow;
     property Input      : TGDInput read FInput;
     property Sound      : TGDSound read FSound;
+    property Physics    : TGDPhysics read FPhysics;
     property Renderer   : TGDRenderer read FRenderer;
 
     property Statistics : TGDStatistics read FStatistics;
@@ -169,39 +171,12 @@ begin
 end;
 
 {******************************************************************************}
-{* Init Newton                                                                *}
-{******************************************************************************}
-
-function  TGDEngine.InitNewton(): Boolean;
-var
-  iI : Integer;
-begin
-  Inherited;
-  Console.Write('.....Initializing Newton');
-  try
-    Timing.Start();
-    iI := NewtonWorldGetVersion();
-    Engine.Console.Write('  Version: ' + IntToStr(iI));
-    if (iI <> MRS_NEWTON_VERSION) then
-      Raise Exception.Create('Newton version ' + IntToStr(MRS_NEWTON_VERSION) + ' required.');
-    Timing.Stop();
-    Console.Write('.....Done initializing Newton (' + Timing.TimeInSeconds + ' Sec)');
-  except
-    on E: Exception do
-    begin
-      result := false;
-      Console.Write('Failed to initialize Newton: ' + E.Message);
-    end;
-  end;
-end;
-
-{******************************************************************************}
 {* Init engine Systems                                                        *}
 {******************************************************************************}
 
 function TGDEngine.InitSystems(): boolean;
 var
-  iSDLInit, iNewtonInit : boolean;
+  iSDLInit : boolean;
 begin
   FConsole    := TGDConsole.Create();
   FSettings   := TGDSettings.Create();
@@ -211,8 +186,8 @@ begin
   FInput      := TGDInput.Create();
   FRenderer   := TGDRenderer.Create();
   FSound      := TGDSound.Create();
-  iNewtonInit := InitNewton();
-  result      := FInput.Initialized and FRenderer.Initialized and FWindow.Initialized and iSDLInit  and iNewtonInit;
+  FPhysics    := TGDPhysics.Create();
+  result      := FInput.Initialized and FRenderer.Initialized and FWindow.Initialized and FPhysics.Initialized and iSDLInit ;
   FStatistics := TGDStatistics.Create();
   FModes      := TGDModes.Create();
   FResources  := TGDResources.Create();
@@ -231,6 +206,7 @@ begin
   FreeAndNil(FModes);
   FreeAndNil(FInput);
   FreeAndNil(FSound);
+  FreeAndNil(FPhysics);
   FreeAndNil(FRenderer);
   FreeAndNil(FGUI);
   FreeAndNil(FMap);

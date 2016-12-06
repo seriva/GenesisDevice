@@ -136,7 +136,7 @@ const
   SKY_COMPLEXITY = 16;
 
   //grass constants
-  GRASS_CELLSIZE = 4;
+  GRASS_CELLSIZE = 8;
 
   //shader constants
   SHADER_TERRAIN  = PATH_SHADERS + 'terrain.shader';

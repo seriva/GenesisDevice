@@ -361,6 +361,8 @@ begin
       Raise Exception.Create('Error initializing mpg123 library!');
 
     FInitialized := true;
+    Engine.Timing.Stop();
+    Engine.Console.Write('.....Done initializing sound (' + Engine.Timing.TimeInSeconds + ' Sec)');
   except
     on E: Exception do
     begin
@@ -368,12 +370,6 @@ begin
       Engine.Console.Write('Failed to initialize sound: ' + iError);
       Engine.Console.Write('Sound will be disabled.');
     end;
-  end;
-
-  If FInitialized then
-  begin
-    Engine.Timing.Stop();
-    Engine.Console.Write('.....Done initializing sound (' + Engine.Timing.TimeInSeconds + ' Sec)');
   end;
 end;
 

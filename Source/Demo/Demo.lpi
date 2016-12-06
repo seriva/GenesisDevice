@@ -37,7 +37,7 @@
         <PackageName Value="LCL"/>
       </Item1>
     </RequiredPackages>
-    <Units Count="82">
+    <Units Count="83">
       <Unit0>
         <Filename Value="Demo.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -371,6 +371,10 @@
         <Filename Value="..\Libraries\Newton\newton.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit81>
+      <Unit82>
+        <Filename Value="..\Engine\GDPhysics.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit82>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
