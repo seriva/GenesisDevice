@@ -138,6 +138,8 @@ begin
   FLogText      := TStringList.Create();
   FCommandHistory := TStringList.Create();
   CommandMap    := TGDCommandMap.Create();
+  CommandMap.sorted := True;
+  FCommandHistory.sorted := True;
   FCursorUpdate := False;
   AddCommand('Help', 'Show help', CT_FUNCTION, @Help);
   Write('Log started at ' + DateToStr(Date()) + ', ' + TimeToStr(Time()));

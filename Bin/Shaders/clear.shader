@@ -1,4 +1,5 @@
 #VERTEX
+#version 120
 
 void main(void)
 {
@@ -6,6 +7,7 @@ void main(void)
 }
 
 #FRAGMENT
+#version 120
 
 uniform vec4 V_COLOR;
 

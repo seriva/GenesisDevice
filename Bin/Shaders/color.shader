@@ -1,5 +1,6 @@
 #VERTEX
 
+#version 120
 uniform vec4 V_COLOR;
 uniform int I_CUSTOM_TRANSLATE;
 #INCLUDE Inc/transform_uniform.inc
@@ -19,6 +20,7 @@ void main()
 
 #FRAGMENT
 
+#version 120
 uniform vec4 V_COLOR;
 
 void main()

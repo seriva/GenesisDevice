@@ -36,7 +36,6 @@ uses
   SysUtils,
   sdl2,
   dglOpenGL,
-  newton,
   GDRenderer,
   GDConsole,
   GDTiming,
@@ -48,7 +47,7 @@ uses
   GDResources,
   GDSound,
   GDModes,
- 	GDPhysics,
+  GDPhysics,
   GDCamera,
   GDSettings,
   GDStatistics;
@@ -191,6 +190,7 @@ begin
   FStatistics := TGDStatistics.Create();
   FModes      := TGDModes.Create();
   FResources  := TGDResources.Create();
+  FResources.Sorted := True;
   FCamera     := TGDCamera.Create();
   FMap        := TGDMap.Create();
   FGUI        := TGDGUI.Create();

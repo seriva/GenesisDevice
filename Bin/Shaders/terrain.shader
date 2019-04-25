@@ -1,4 +1,5 @@
 #VERTEX
+#version 120
 
 uniform int I_DETAIL_UV;
 uniform int I_CAUSTIC_UV;
@@ -35,6 +36,7 @@ void main(void)
 
 
 #FRAGMENT
+#version 120
 
 uniform sampler2D T_COLORTEX;
 uniform sampler2D T_DETAILTEX1;

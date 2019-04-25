@@ -1,5 +1,6 @@
 #VERTEX
 
+#version 120
 uniform int I_FLIP_NORMAL;
 uniform int I_DO_TREE_ANIM;
 #INCLUDE Inc/transform_uniform.inc
@@ -45,6 +46,7 @@ void main(void)
 
 #FRAGMENT
 
+#version 120
 uniform sampler2D T_COLORMAP;
 uniform sampler2D T_CAUSTICMAP;
 uniform sampler2D T_DETAILMAP;

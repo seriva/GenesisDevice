@@ -1,5 +1,6 @@
 #VERTEX
 
+#version 120
 uniform float F_MIN_VIEW_DISTANCE;
 uniform float F_MAX_VIEW_DISTANCE;
 uniform float F_ANIMATION_SPEED1;
@@ -25,6 +26,7 @@ void main(void)
 
 #FRAGMENT
 
+#version 120
 uniform sampler2D T_SKYTEX;
 uniform vec4 V_FOG_COLOR;
 uniform int I_UNDER_WATER;

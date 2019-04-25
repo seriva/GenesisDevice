@@ -1,5 +1,6 @@
 #VERTEX
 
+#version 120
 uniform vec2 V_SCREEN_SIZE;
 uniform int I_DO_FXAA;
 

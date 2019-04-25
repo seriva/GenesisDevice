@@ -1,4 +1,5 @@
 #VERTEX
+#version 120
 
 void main(void)
 {
@@ -9,6 +10,8 @@ void main(void)
 
 
 #FRAGMENT
+#version 120
+#extension GL_ARB_shading_language_420pack : enable
 
 uniform sampler2D T_BLUR_IMAGE;
 uniform vec4      V_BLUR_OFFSET;
