@@ -25,7 +25,6 @@ void main(void)
 
 #FRAGMENT
 #version 120
-#extension GL_EXT_gpu_shader4 : enable
 
 uniform sampler2D T_SOURCE_IMAGE;
 uniform sampler2D T_SHADOW_IMAGE;
@@ -55,8 +54,8 @@ varying vec4 posPos;
 #define FXAA_SPAN_MAX     8.0
 #define FxaaInt2 ivec2
 #define FxaaFloat2 vec2
-#define FxaaTexLod0(t, p) texture2DLod(t, p, 0.0)
-#define FxaaTexOff(t, p, o, r) texture2DLodOffset(t, p, 0.0, o)
+#define FxaaTexLod0(t, p) texture2D(t, p, 0.0)
+#define FxaaTexOff(t, p, o, r) texture2D(t, p + o * r)
 #define PI 3.14159265
 
 vec2 rand(vec2 coord)

@@ -74,7 +74,9 @@ function SDL_MUSTLOCK(Const S:PSDL_Surface):Boolean;
    *}
 
 function SDL_CreateRGBSurface(flags: UInt32; width: SInt32; height: SInt32; depth: SInt32; Rmask: UInt32; Gmask: UInt32; Bmask: UInt32; Amask: UInt32): PSDL_Surface cdecl; external SDL_LibName {$IFDEF DELPHI} {$IFDEF MACOS} name '_SDL_CreateRGBSurface' {$ENDIF} {$ENDIF};
+function SDL_CreateRGBSurfaceWithFormat(flags: Uint32; width, height, depth: sInt32; format: Uint32):PSDL_Surface; cdecl; external SDL_LibName {$IFDEF DELPHI} {$IFDEF MACOS} name '_SDL_CreateRGBSurfaceWithFormat' {$ENDIF} {$ENDIF};
 function SDL_CreateRGBSurfaceFrom(pixels: Pointer; width: SInt32; height: SInt32; depth: SInt32; pitch: SInt32; Rmask: UInt32; Gmask: UInt32; Bmask: UInt32; Amask: UInt32): PSDL_Surface cdecl; external SDL_LibName {$IFDEF DELPHI} {$IFDEF MACOS} name '_SDL_CreateRGBSurfaceFrom' {$ENDIF} {$ENDIF};
+function SDL_CreateRGBSurfaceWithFormatFrom(pixels: Pointer; width, height, depth, pitch: sInt32; format: Uint32):PSDL_Surface; cdecl; external SDL_LibName {$IFDEF DELPHI} {$IFDEF MACOS} name '_SDL_CreateRGBSurfaceWithFormatFrom' {$ENDIF} {$ENDIF};
 procedure SDL_FreeSurface(surface: PSDL_Surface) cdecl; external SDL_LibName {$IFDEF DELPHI} {$IFDEF MACOS} name '_SDL_FreeSurface' {$ENDIF} {$ENDIF};
 
   {**
@@ -393,7 +395,7 @@ function SDL_FillRects(dst: PSDL_Surface; const rects: PSDL_Rect; count: SInt32;
 (* SDL_surface.h uses #define to change all SDL_BlitSurface() calls into SDL_UpperBlit() calls.                         *
  * Since Pascal macro support is very limited, we workaround by outright pointing SDL_BlitSurface() to SDL_UpperBlit(). *)
 function SDL_BlitSurface(src: PSDL_Surface; const srcrect: PSDL_Rect; dst: PSDL_Surface; dstrect: PSDL_Rect): SInt32 cdecl; 
-   external SDL_LibName name {$IF DEFINED(DELPHI) AND DEFINED(MACOS)} '_SDL_UpperBlit' {$ELSE} 'SDL_UpperBlit' {$ENDIF};
+   external SDL_LibName name {$IF DEFINED(DELPHI) AND DEFINED(MACOS)} '_SDL_UpperBlit' {$ELSE} 'SDL_UpperBlit' {$IFEND};
 
 
   {**
@@ -422,7 +424,7 @@ function SDL_SoftStretch(src: PSDL_Surface; const srcrect: PSDL_Rect; dst: PSDL_
 (* SDL_surface.h uses #define to change all SDL_BlitSurfaceScaled() calls into SDL_UpperBlitScaled() calls.                         *
  * Since Pascal macro support is very limited, we workaround by outright pointing SDL_BlitSurfaceScaled() to SDL_UpperBlitScaled(). *)
 function SDL_BlitSurfaceScaled(src: PSDL_Surface; const srcrect: PSDL_Rect; dst: PSDL_Surface; dstrect: PSDL_Rect): SInt32 cdecl; 
-   external SDL_LibName name {$IF DEFINED(DELPHI) AND DEFINED(MACOS)} '_SDL_UpperBlitScaled' {$ELSE} 'SDL_UpperBlitScaled' {$ENDIF};
+   external SDL_LibName name {$IF DEFINED(DELPHI) AND DEFINED(MACOS)} '_SDL_UpperBlitScaled' {$ELSE} 'SDL_UpperBlitScaled' {$IFEND};
 
   {**
    *  This is the public scaled blit function, SDL_BlitScaled(), and it performs
