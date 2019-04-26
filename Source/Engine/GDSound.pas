@@ -136,7 +136,7 @@ var
   iError : string;
   iResult : boolean;
 begin
-  Engine.Console.Write('Loading sound stream' + aFileName + '...');
+  Engine.Console.Write('Loading sound stream ' + aFileName + '...');
   try
     iResult := true;
     FHandle := mpg123_new(nil, nil);

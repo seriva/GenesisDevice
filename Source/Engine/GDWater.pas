@@ -195,14 +195,14 @@ begin
 
     //Water textures
     iCount := aIniFile.ReadInteger('Water', 'WaterTexturesCount', 10 );
-    iPath  := aIniFile.ReadString( 'Water', 'WaterMapPath', 'textures\water\') + aIniFile.ReadString( 'Water', 'WaterMapPrefix', 'water');
+    iPath  := aIniFile.ReadString( 'Water', 'WaterMapPath', 'textures/water/') + aIniFile.ReadString( 'Water', 'WaterMapPrefix', 'water');
     iExt   := aIniFile.ReadString( 'Water', 'WaterMapExtension', 'dds');
     for iI := 0 to iCount-1 do
       FWaterTextures.Add( Engine.Resources.LoadTexture(iPath + IntToStr(iI) + '.' + iExt ,Engine.Settings.TextureDetail,Engine.Settings.TextureFilter) );
 
     //Caustic textures
     iCount := aIniFile.ReadInteger('Water', 'CausticTexturesCount', 10 );
-    iPath  := aIniFile.ReadString( 'Water', 'CausticsMapPath', 'textures\water\') + aIniFile.ReadString( 'Water', 'CausticsMapPrefix', 'caust');
+    iPath  := aIniFile.ReadString( 'Water', 'CausticsMapPath', 'textures/water/') + aIniFile.ReadString( 'Water', 'CausticsMapPrefix', 'caust');
     iExt   := aIniFile.ReadString( 'Water', 'CausticsMapExtension', 'dds');
     for iI := 0 to iCount-1 do
       FCausticTextures.Add( Engine.Resources.LoadTexture(iPath + IntToStr(iI) + '.' + iExt ,Engine.Settings.TextureDetail,Engine.Settings.TextureFilter) );
