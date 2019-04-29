@@ -382,6 +382,7 @@ var
   iError  : string;
   iResult : boolean;
   iI : Integer;
+  lol : TALenum;
 begin
   inherited;
   Engine.Console.Write('Shutting down sound...');
@@ -390,11 +391,12 @@ begin
     mpg123_exit;
     for iI := 0 to S_MAX_SOURCES-1 do
       FreeAndNil(FSources[iI]);
+    alcMakeContextCurrent(nil);
     alcDestroyContext(FContext);
-    if not(alGetError() = AL_NO_ERROR) then
+    if not(alcGetError(FDevice) = AL_NO_ERROR) then
       Raise Exception.Create('Error destroying context!');
     alcCloseDevice(FDevice);
-    if not(alGetError() = AL_NO_ERROR) then
+    if not(alcGetError(FDevice) = AL_NO_ERROR) then
       Raise Exception.Create('Error destroying device!');
 
     FreeMPG123();
