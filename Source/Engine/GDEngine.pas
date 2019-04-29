@@ -181,7 +181,7 @@ begin
   FSettings   := TGDSettings.Create();
   iSDLInit    := InitSDL();
   FTiming     := TGDTiming.Create();
-  FWindow			:= TGDWindow.Create();
+  FWindow     := TGDWindow.Create();
   FInput      := TGDInput.Create();
   FRenderer   := TGDRenderer.Create();
   FSound      := TGDSound.Create();

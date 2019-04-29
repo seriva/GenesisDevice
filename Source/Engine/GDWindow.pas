@@ -96,6 +96,7 @@ begin
   inherited;
   Engine.Console.Write('Shutting down window...');
   try
+    iResult := true;
     SDL_GL_DeleteContext(FGLContext);
     SDL_DestroyWindow(FWindow);
   except
