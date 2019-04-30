@@ -4,7 +4,7 @@
 *                        http://www.luukvanvenrooij.nl                         *
 ********************************************************************************
 *                                                                              *
-*  This file is part of the Genesis Device Engine.                             *
+*  This file is part of the Genesis Device Engine                              *
 *                                                                              *
 *  The Genesis Device Engine is free software: you can redistribute            *
 *  it and/or modify it under the terms of the GNU Lesser General Public        *
@@ -20,39 +20,28 @@
 *  along with Genesis Device.  If not, see <http://www.gnu.org/licenses/>.     *
 *                                                                              *
 *******************************************************************************}
-program Demo;
+unit uGDResource;
 
-{$MODE Delphi}
+{$mode objfpc}
 
-uses
-  //heaptrc, //For debugging
-  LCLIntf, LCLType, LMessages,
-  Forms, Interfaces,
-  {$IFDEF Win32}
-  uConfiguration in 'uConfiguration.pas' {ConfigurationForm},
-  {$ENDIF}
-  {$IFDEF Linux}
-  GDEngine,
-  {$ENDIF}
-  uMain in 'Main.pas',
-  uPlayer in 'Player.pas';
+interface
 
-begin
-  //On linux where not running the settings interface because of threading issues
-  //we still need to investigate.
-  {$IFDEF Linux}
-  GDEngine.Settings.Load();
-  GDEngine.Init(@InitGame);
-  While not(Engine.Done) do
-  	GDEngine.Loop(@GameLoop);
-  GDEngine.Clear(@ClearGame);
-  {$ENDIF}
+type
 
-  //On windows we have the settings interface.
-  {$IFDEF Win32}
-  Application.Initialize;
-  Application.Title := 'Demo';
-  Application.CreateForm(TConfigurationForm, ConfigurationForm);
-  Application.Run;
-  {$ENDIF}
+ {******************************************************************************}
+ {* Recourse  class                                                            *}
+ {******************************************************************************}
+
+   TGDResource = class
+   private
+     FName : String;
+     FRefCount : Integer;
+   public
+     property Name : String read FName write FName;
+     property RefCount : Integer read FRefCount write FRefCount;
+   end;
+
+implementation
+
 end.
+

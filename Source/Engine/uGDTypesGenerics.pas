@@ -4,7 +4,7 @@
 *                        http://www.luukvanvenrooij.nl                         *
 ********************************************************************************
 *                                                                              *
-*  This file is part of the Genesis Device Engine.                             *
+*  This file is part of the Genesis Device Engine                              *
 *                                                                              *
 *  The Genesis Device Engine is free software: you can redistribute            *
 *  it and/or modify it under the terms of the GNU Lesser General Public        *
@@ -20,39 +20,31 @@
 *  along with Genesis Device.  If not, see <http://www.gnu.org/licenses/>.     *
 *                                                                              *
 *******************************************************************************}
-program Demo;
+unit uGDTypesGenerics;
 
-{$MODE Delphi}
+{$mode objfpc}
+
+{******************************************************************************}
+{* Holds the generic types of the GD We put them in a seperate file      *}
+{* since we need to use objfpc compiler mode to make them work properly and   *}
+{*   the types in GDTypes need delphi compiler mode                           *}
+{******************************************************************************}
+
+interface
 
 uses
-  //heaptrc, //For debugging
-  LCLIntf, LCLType, LMessages,
-  Forms, Interfaces,
-  {$IFDEF Win32}
-  uConfiguration in 'uConfiguration.pas' {ConfigurationForm},
-  {$ENDIF}
-  {$IFDEF Linux}
-  GDEngine,
-  {$ENDIF}
-  uMain in 'Main.pas',
-  uPlayer in 'Player.pas';
+  uGDTypes,
+  FGL;
 
-begin
-  //On linux where not running the settings interface because of threading issues
-  //we still need to investigate.
-  {$IFDEF Linux}
-  GDEngine.Settings.Load();
-  GDEngine.Init(@InitGame);
-  While not(Engine.Done) do
-  	GDEngine.Loop(@GameLoop);
-  GDEngine.Clear(@ClearGame);
-  {$ENDIF}
+type
+  TGDIndexList = specialize TFPGList<Integer>;
+  TGDVertex_V_List  = specialize TFPGList<TGDVector>;
+  TGDVertex_UV_List  = specialize TFPGList<TGDUVCoord>;
+  TGDVertex_V_UV_List = specialize TFPGList<TGDVertex_V_UV>;
+  TGDVertex_V_UV_N_List = specialize TFPGList<TGDVertex_V_UV_N>;
+  TGDVertex_V_UV_N_C_List = specialize TFPGList<TGDVertex_V_UV_N_C>;
 
-  //On windows we have the settings interface.
-  {$IFDEF Win32}
-  Application.Initialize;
-  Application.Title := 'Demo';
-  Application.CreateForm(TConfigurationForm, ConfigurationForm);
-  Application.Run;
-  {$ENDIF}
+implementation
+
 end.
+

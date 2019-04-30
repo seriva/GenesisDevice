@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CONFIG>
   <ProjectOptions>
-    <Version Value="9"/>
+    <Version Value="11"/>
     <PathDelim Value="\"/>
     <General>
       <Flags>
@@ -18,9 +18,6 @@
     <i18n>
       <EnableI18N LFM="False"/>
     </i18n>
-    <VersionInfo>
-      <StringTable ProductVersion=""/>
-    </VersionInfo>
     <BuildModes Count="1">
       <Item1 Name="Default" Default="True"/>
     </BuildModes>
@@ -28,9 +25,10 @@
       <Version Value="2"/>
     </PublishOptions>
     <RunParams>
-      <local>
-        <FormatVersion Value="1"/>
-      </local>
+      <FormatVersion Value="2"/>
+      <Modes Count="1">
+        <Mode0 Name="default"/>
+      </Modes>
     </RunParams>
     <RequiredPackages Count="1">
       <Item1>
@@ -43,337 +41,337 @@
         <IsPartOfProject Value="True"/>
       </Unit0>
       <Unit1>
-        <Filename Value="Configuration.pas"/>
+        <Filename Value="..\Libraries\OpenGL\dglOpenGL.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit1>
+      <Unit2>
+        <Filename Value="..\Libraries\OpenAL\mpg123.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit2>
+      <Unit3>
+        <Filename Value="..\Libraries\OpenAL\openal.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="OpenAL"/>
+      </Unit3>
+      <Unit4>
+        <Filename Value="..\Libraries\SDL\jedi.inc"/>
+        <IsPartOfProject Value="True"/>
+      </Unit4>
+      <Unit5>
+        <Filename Value="..\Libraries\SDL\sdl.inc"/>
+        <IsPartOfProject Value="True"/>
+      </Unit5>
+      <Unit6>
+        <Filename Value="..\Libraries\SDL\sdl2.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit6>
+      <Unit7>
+        <Filename Value="..\Libraries\SDL\sdlaudio.inc"/>
+        <IsPartOfProject Value="True"/>
+      </Unit7>
+      <Unit8>
+        <Filename Value="..\Libraries\SDL\sdlblendmode.inc"/>
+        <IsPartOfProject Value="True"/>
+      </Unit8>
+      <Unit9>
+        <Filename Value="..\Libraries\SDL\sdlclipboard.inc"/>
+        <IsPartOfProject Value="True"/>
+      </Unit9>
+      <Unit10>
+        <Filename Value="..\Libraries\SDL\sdlcpuinfo.inc"/>
+        <IsPartOfProject Value="True"/>
+      </Unit10>
+      <Unit11>
+        <Filename Value="..\Libraries\SDL\sdlerror.inc"/>
+        <IsPartOfProject Value="True"/>
+      </Unit11>
+      <Unit12>
+        <Filename Value="..\Libraries\SDL\sdlevents.inc"/>
+        <IsPartOfProject Value="True"/>
+      </Unit12>
+      <Unit13>
+        <Filename Value="..\Libraries\SDL\sdlfilesystem.inc"/>
+        <IsPartOfProject Value="True"/>
+      </Unit13>
+      <Unit14>
+        <Filename Value="..\Libraries\SDL\sdlgamecontroller.inc"/>
+        <IsPartOfProject Value="True"/>
+      </Unit14>
+      <Unit15>
+        <Filename Value="..\Libraries\SDL\sdlgesture.inc"/>
+        <IsPartOfProject Value="True"/>
+      </Unit15>
+      <Unit16>
+        <Filename Value="..\Libraries\SDL\sdlhaptic.inc"/>
+        <IsPartOfProject Value="True"/>
+      </Unit16>
+      <Unit17>
+        <Filename Value="..\Libraries\SDL\sdlhints.inc"/>
+        <IsPartOfProject Value="True"/>
+      </Unit17>
+      <Unit18>
+        <Filename Value="..\Libraries\SDL\sdljoystick.inc"/>
+        <IsPartOfProject Value="True"/>
+      </Unit18>
+      <Unit19>
+        <Filename Value="..\Libraries\SDL\sdlkeyboard.inc"/>
+        <IsPartOfProject Value="True"/>
+      </Unit19>
+      <Unit20>
+        <Filename Value="..\Libraries\SDL\sdlloadso.inc"/>
+        <IsPartOfProject Value="True"/>
+      </Unit20>
+      <Unit21>
+        <Filename Value="..\Libraries\SDL\sdllog.inc"/>
+        <IsPartOfProject Value="True"/>
+      </Unit21>
+      <Unit22>
+        <Filename Value="..\Libraries\SDL\sdlmessagebox.inc"/>
+        <IsPartOfProject Value="True"/>
+      </Unit22>
+      <Unit23>
+        <Filename Value="..\Libraries\SDL\sdlmouse.inc"/>
+        <IsPartOfProject Value="True"/>
+      </Unit23>
+      <Unit24>
+        <Filename Value="..\Libraries\SDL\sdlmutex.inc"/>
+        <IsPartOfProject Value="True"/>
+      </Unit24>
+      <Unit25>
+        <Filename Value="..\Libraries\SDL\sdlpixels.inc"/>
+        <IsPartOfProject Value="True"/>
+      </Unit25>
+      <Unit26>
+        <Filename Value="..\Libraries\SDL\sdlplatform.inc"/>
+        <IsPartOfProject Value="True"/>
+      </Unit26>
+      <Unit27>
+        <Filename Value="..\Libraries\SDL\sdlpower.inc"/>
+        <IsPartOfProject Value="True"/>
+      </Unit27>
+      <Unit28>
+        <Filename Value="..\Libraries\SDL\sdlrect.inc"/>
+        <IsPartOfProject Value="True"/>
+      </Unit28>
+      <Unit29>
+        <Filename Value="..\Libraries\SDL\sdlrenderer.inc"/>
+        <IsPartOfProject Value="True"/>
+      </Unit29>
+      <Unit30>
+        <Filename Value="..\Libraries\SDL\sdlrwops.inc"/>
+        <IsPartOfProject Value="True"/>
+      </Unit30>
+      <Unit31>
+        <Filename Value="..\Libraries\SDL\sdlscancode.inc"/>
+        <IsPartOfProject Value="True"/>
+      </Unit31>
+      <Unit32>
+        <Filename Value="..\Libraries\SDL\sdlshape.inc"/>
+        <IsPartOfProject Value="True"/>
+      </Unit32>
+      <Unit33>
+        <Filename Value="..\Libraries\SDL\sdlsurface.inc"/>
+        <IsPartOfProject Value="True"/>
+      </Unit33>
+      <Unit34>
+        <Filename Value="..\Libraries\SDL\sdlsystem.inc"/>
+        <IsPartOfProject Value="True"/>
+      </Unit34>
+      <Unit35>
+        <Filename Value="..\Libraries\SDL\sdlsyswm.inc"/>
+        <IsPartOfProject Value="True"/>
+      </Unit35>
+      <Unit36>
+        <Filename Value="..\Libraries\SDL\sdlthread.inc"/>
+        <IsPartOfProject Value="True"/>
+      </Unit36>
+      <Unit37>
+        <Filename Value="..\Libraries\SDL\sdltimer.inc"/>
+        <IsPartOfProject Value="True"/>
+      </Unit37>
+      <Unit38>
+        <Filename Value="..\Libraries\SDL\sdltouch.inc"/>
+        <IsPartOfProject Value="True"/>
+      </Unit38>
+      <Unit39>
+        <Filename Value="..\Libraries\SDL\sdltype.inc"/>
+        <IsPartOfProject Value="True"/>
+      </Unit39>
+      <Unit40>
+        <Filename Value="..\Libraries\SDL\sdlversion.inc"/>
+        <IsPartOfProject Value="True"/>
+      </Unit40>
+      <Unit41>
+        <Filename Value="..\Libraries\SDL\sdlvideo.inc"/>
+        <IsPartOfProject Value="True"/>
+      </Unit41>
+      <Unit42>
+        <Filename Value="..\Libraries\Newton\newton.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit42>
+      <Unit43>
+        <Filename Value="..\Engine\uGDBaseCell.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit43>
+      <Unit44>
+        <Filename Value="..\Engine\uGDBmp.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit44>
+      <Unit45>
+        <Filename Value="..\Engine\uGDCamera.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit45>
+      <Unit46>
+        <Filename Value="..\Engine\uGDCellManager.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit46>
+      <Unit47>
+        <Filename Value="..\Engine\uGDConsole.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit47>
+      <Unit48>
+        <Filename Value="..\Engine\uGDConstants.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit48>
+      <Unit49>
+        <Filename Value="..\Engine\uGDEngine.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit49>
+      <Unit50>
+        <Filename Value="..\Engine\uGDFoliage.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit50>
+      <Unit51>
+        <Filename Value="..\Engine\uGDGLWrappers.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit51>
+      <Unit52>
+        <Filename Value="..\Engine\uGDGrassCell.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit52>
+      <Unit53>
+        <Filename Value="..\Engine\uGDGUI.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit53>
+      <Unit54>
+        <Filename Value="..\Engine\uGDInput.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit54>
+      <Unit55>
+        <Filename Value="..\Engine\uGDMap.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit55>
+      <Unit56>
+        <Filename Value="..\Engine\uGDMaterial.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit56>
+      <Unit57>
+        <Filename Value="..\Engine\uGDMesh.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit57>
+      <Unit58>
+        <Filename Value="..\Engine\uGDMeshCell.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit58>
+      <Unit59>
+        <Filename Value="..\Engine\uGDMeshManager.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit59>
+      <Unit60>
+        <Filename Value="..\Engine\uGDModes.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit60>
+      <Unit61>
+        <Filename Value="..\Engine\uGDOctree.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit61>
+      <Unit62>
+        <Filename Value="..\Engine\uGDPhysics.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit62>
+      <Unit63>
+        <Filename Value="..\Engine\uGDRenderer.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit63>
+      <Unit64>
+        <Filename Value="..\Engine\uGDResource.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit64>
+      <Unit65>
+        <Filename Value="..\Engine\uGDResources.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit65>
+      <Unit66>
+        <Filename Value="..\Engine\uGDSettings.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit66>
+      <Unit67>
+        <Filename Value="..\Engine\uGDSkyDome.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit67>
+      <Unit68>
+        <Filename Value="..\Engine\uGDSound.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit68>
+      <Unit69>
+        <Filename Value="..\Engine\uGDStatistics.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit69>
+      <Unit70>
+        <Filename Value="..\Engine\uGDStringParsing.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit70>
+      <Unit71>
+        <Filename Value="..\Engine\uGDTerrain.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit71>
+      <Unit72>
+        <Filename Value="..\Engine\uGDTerrainCell.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit72>
+      <Unit73>
+        <Filename Value="..\Engine\uGDTexture.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit73>
+      <Unit74>
+        <Filename Value="..\Engine\uGDTiming.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit74>
+      <Unit75>
+        <Filename Value="..\Engine\uGDTypes.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit75>
+      <Unit76>
+        <Filename Value="..\Engine\uGDTypesGenerics.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit76>
+      <Unit77>
+        <Filename Value="..\Engine\uGDWater.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit77>
+      <Unit78>
+        <Filename Value="..\Engine\uGDWaterCell.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit78>
+      <Unit79>
+        <Filename Value="..\Engine\uGDWindow.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit79>
+      <Unit80>
+        <Filename Value="uPlayer.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="Player"/>
+      </Unit80>
+      <Unit81>
+        <Filename Value="uMain.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit81>
+      <Unit82>
+        <Filename Value="uConfiguration.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="ConfigurationForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-      </Unit1>
-      <Unit2>
-        <Filename Value="Main.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit2>
-      <Unit3>
-        <Filename Value="Player.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit3>
-      <Unit4>
-        <Filename Value="..\Libraries\OpenGL\dglOpenGL.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit4>
-      <Unit5>
-        <Filename Value="..\Engine\GDBaseCell.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit5>
-      <Unit6>
-        <Filename Value="..\Engine\GDCamera.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit6>
-      <Unit7>
-        <Filename Value="..\Engine\GDCellManager.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit7>
-      <Unit8>
-        <Filename Value="..\Engine\GDConsole.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit8>
-      <Unit9>
-        <Filename Value="..\Engine\GDConstants.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit9>
-      <Unit10>
-        <Filename Value="..\Engine\GDGLWrappers.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit10>
-      <Unit11>
-        <Filename Value="..\Engine\GDGrassCell.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit11>
-      <Unit12>
-        <Filename Value="..\Engine\GDGUI.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit12>
-      <Unit13>
-        <Filename Value="..\Engine\GDInput.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit13>
-      <Unit14>
-        <Filename Value="..\Engine\GDEngine.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit14>
-      <Unit15>
-        <Filename Value="..\Engine\GDMap.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit15>
-      <Unit16>
-        <Filename Value="..\Engine\GDMesh.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit16>
-      <Unit17>
-        <Filename Value="..\Engine\GDMeshCell.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit17>
-      <Unit18>
-        <Filename Value="..\Engine\GDModes.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit18>
-      <Unit19>
-        <Filename Value="..\Engine\GDOctree.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit19>
-      <Unit20>
-        <Filename Value="..\Engine\GDRenderer.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit20>
-      <Unit21>
-        <Filename Value="..\Engine\GDSettings.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit21>
-      <Unit22>
-        <Filename Value="..\Engine\GDSkyDome.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit22>
-      <Unit23>
-        <Filename Value="..\Engine\GDSound.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit23>
-      <Unit24>
-        <Filename Value="..\Engine\GDStatistics.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit24>
-      <Unit25>
-        <Filename Value="..\Engine\GDTerrain.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit25>
-      <Unit26>
-        <Filename Value="..\Engine\GDTerrainCell.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit26>
-      <Unit27>
-        <Filename Value="..\Engine\GDTexture.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit27>
-      <Unit28>
-        <Filename Value="..\Engine\GDTiming.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit28>
-      <Unit29>
-        <Filename Value="..\Engine\GDTypes.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit29>
-      <Unit30>
-        <Filename Value="..\Engine\GDWater.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit30>
-      <Unit31>
-        <Filename Value="..\Engine\GDWaterCell.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit31>
-      <Unit32>
-        <Filename Value="..\Engine\GDFoliage.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit32>
-      <Unit33>
-        <Filename Value="..\Engine\GDStringParsing.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit33>
-      <Unit34>
-        <Filename Value="..\Libraries\OpenAL\mpg123.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit34>
-      <Unit35>
-        <Filename Value="..\Libraries\OpenAL\openal.pas"/>
-        <IsPartOfProject Value="True"/>
-        <UnitName Value="OpenAL"/>
-      </Unit35>
-      <Unit36>
-        <Filename Value="..\Engine\GDResources.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit36>
-      <Unit37>
-        <Filename Value="..\Engine\GDResource.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit37>
-      <Unit38>
-        <Filename Value="..\Engine\GDMaterial.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit38>
-      <Unit39>
-        <Filename Value="..\Engine\GDTypesGenerics.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit39>
-      <Unit40>
-        <Filename Value="..\Libraries\SDL\jedi.inc"/>
-        <IsPartOfProject Value="True"/>
-      </Unit40>
-      <Unit41>
-        <Filename Value="..\Libraries\SDL\sdl.inc"/>
-        <IsPartOfProject Value="True"/>
-      </Unit41>
-      <Unit42>
-        <Filename Value="..\Libraries\SDL\sdl2.pas"/>
-        <IsPartOfProject Value="True"/>
-        <UnitName Value="SDL2"/>
-      </Unit42>
-      <Unit43>
-        <Filename Value="..\Libraries\SDL\sdlaudio.inc"/>
-        <IsPartOfProject Value="True"/>
-      </Unit43>
-      <Unit44>
-        <Filename Value="..\Libraries\SDL\sdlblendmode.inc"/>
-        <IsPartOfProject Value="True"/>
-      </Unit44>
-      <Unit45>
-        <Filename Value="..\Libraries\SDL\sdlclipboard.inc"/>
-        <IsPartOfProject Value="True"/>
-      </Unit45>
-      <Unit46>
-        <Filename Value="..\Libraries\SDL\sdlcpuinfo.inc"/>
-        <IsPartOfProject Value="True"/>
-      </Unit46>
-      <Unit47>
-        <Filename Value="..\Libraries\SDL\sdlerror.inc"/>
-        <IsPartOfProject Value="True"/>
-      </Unit47>
-      <Unit48>
-        <Filename Value="..\Libraries\SDL\sdlevents.inc"/>
-        <IsPartOfProject Value="True"/>
-      </Unit48>
-      <Unit49>
-        <Filename Value="..\Libraries\SDL\sdlfilesystem.inc"/>
-        <IsPartOfProject Value="True"/>
-      </Unit49>
-      <Unit50>
-        <Filename Value="..\Libraries\SDL\sdlgamecontroller.inc"/>
-        <IsPartOfProject Value="True"/>
-      </Unit50>
-      <Unit51>
-        <Filename Value="..\Libraries\SDL\sdlgesture.inc"/>
-        <IsPartOfProject Value="True"/>
-      </Unit51>
-      <Unit52>
-        <Filename Value="..\Libraries\SDL\sdlhaptic.inc"/>
-        <IsPartOfProject Value="True"/>
-      </Unit52>
-      <Unit53>
-        <Filename Value="..\Libraries\SDL\sdlhints.inc"/>
-        <IsPartOfProject Value="True"/>
-      </Unit53>
-      <Unit54>
-        <Filename Value="..\Libraries\SDL\sdljoystick.inc"/>
-        <IsPartOfProject Value="True"/>
-      </Unit54>
-      <Unit55>
-        <Filename Value="..\Libraries\SDL\sdlkeyboard.inc"/>
-        <IsPartOfProject Value="True"/>
-      </Unit55>
-      <Unit56>
-        <Filename Value="..\Libraries\SDL\sdlloadso.inc"/>
-        <IsPartOfProject Value="True"/>
-      </Unit56>
-      <Unit57>
-        <Filename Value="..\Libraries\SDL\sdllog.inc"/>
-        <IsPartOfProject Value="True"/>
-      </Unit57>
-      <Unit58>
-        <Filename Value="..\Libraries\SDL\sdlmessagebox.inc"/>
-        <IsPartOfProject Value="True"/>
-      </Unit58>
-      <Unit59>
-        <Filename Value="..\Libraries\SDL\sdlmouse.inc"/>
-        <IsPartOfProject Value="True"/>
-      </Unit59>
-      <Unit60>
-        <Filename Value="..\Libraries\SDL\sdlmutex.inc"/>
-        <IsPartOfProject Value="True"/>
-      </Unit60>
-      <Unit61>
-        <Filename Value="..\Libraries\SDL\sdlpixels.inc"/>
-        <IsPartOfProject Value="True"/>
-      </Unit61>
-      <Unit62>
-        <Filename Value="..\Libraries\SDL\sdlplatform.inc"/>
-        <IsPartOfProject Value="True"/>
-      </Unit62>
-      <Unit63>
-        <Filename Value="..\Libraries\SDL\sdlpower.inc"/>
-        <IsPartOfProject Value="True"/>
-      </Unit63>
-      <Unit64>
-        <Filename Value="..\Libraries\SDL\sdlrect.inc"/>
-        <IsPartOfProject Value="True"/>
-      </Unit64>
-      <Unit65>
-        <Filename Value="..\Libraries\SDL\sdlrenderer.inc"/>
-        <IsPartOfProject Value="True"/>
-      </Unit65>
-      <Unit66>
-        <Filename Value="..\Libraries\SDL\sdlrwops.inc"/>
-        <IsPartOfProject Value="True"/>
-      </Unit66>
-      <Unit67>
-        <Filename Value="..\Libraries\SDL\sdlscancode.inc"/>
-        <IsPartOfProject Value="True"/>
-      </Unit67>
-      <Unit68>
-        <Filename Value="..\Libraries\SDL\sdlshape.inc"/>
-        <IsPartOfProject Value="True"/>
-      </Unit68>
-      <Unit69>
-        <Filename Value="..\Libraries\SDL\sdlsurface.inc"/>
-        <IsPartOfProject Value="True"/>
-      </Unit69>
-      <Unit70>
-        <Filename Value="..\Libraries\SDL\sdlsystem.inc"/>
-        <IsPartOfProject Value="True"/>
-      </Unit70>
-      <Unit71>
-        <Filename Value="..\Libraries\SDL\sdlsyswm.inc"/>
-        <IsPartOfProject Value="True"/>
-      </Unit71>
-      <Unit72>
-        <Filename Value="..\Libraries\SDL\sdlthread.inc"/>
-        <IsPartOfProject Value="True"/>
-      </Unit72>
-      <Unit73>
-        <Filename Value="..\Libraries\SDL\sdltimer.inc"/>
-        <IsPartOfProject Value="True"/>
-      </Unit73>
-      <Unit74>
-        <Filename Value="..\Libraries\SDL\sdltouch.inc"/>
-        <IsPartOfProject Value="True"/>
-      </Unit74>
-      <Unit75>
-        <Filename Value="..\Libraries\SDL\sdltype.inc"/>
-        <IsPartOfProject Value="True"/>
-      </Unit75>
-      <Unit76>
-        <Filename Value="..\Libraries\SDL\sdlversion.inc"/>
-        <IsPartOfProject Value="True"/>
-      </Unit76>
-      <Unit77>
-        <Filename Value="..\Libraries\SDL\sdlvideo.inc"/>
-        <IsPartOfProject Value="True"/>
-      </Unit77>
-      <Unit78>
-        <Filename Value="..\Engine\GDWindow.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit78>
-      <Unit79>
-        <Filename Value="..\Engine\GDBmp.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit79>
-      <Unit80>
-        <Filename Value="..\Engine\GDMeshManager.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit80>
-      <Unit81>
-        <Filename Value="..\Libraries\Newton\newton.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit81>
-      <Unit82>
-        <Filename Value="..\Engine\GDPhysics.pas"/>
-        <IsPartOfProject Value="True"/>
       </Unit82>
     </Units>
   </ProjectOptions>
@@ -385,7 +383,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="..\Headers;..\Libraries\OpenGL;..\Libraries\Utils;$(ProjOutDir);..\Libraries\SDL"/>
-      <OtherUnitFiles Value="..\Libraries\OpenGL;..\Engine;..\Libraries\OpenAL;..\Libraries\SDL;..\Libraries\Newton"/>
+      <OtherUnitFiles Value="..\Libraries\OpenGL;..\Libraries\OpenAL;..\Libraries\SDL;..\Libraries\Newton;..\Engine"/>
       <UnitOutputDirectory Value="..\..\Build"/>
     </SearchPaths>
     <Parsing>
