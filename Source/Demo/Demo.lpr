@@ -32,7 +32,7 @@ uses
   uConfiguration in 'uConfiguration.pas' {ConfigurationForm},
   {$ENDIF}
   {$IFDEF Linux}
-  GDEngine,
+  uGDEngine,
   {$ENDIF}
   uMain in 'Main.pas',
   uPlayer in 'Player.pas';
@@ -41,9 +41,9 @@ begin
   //On linux where not running the settings interface because of threading issues
   //we still need to investigate.
   {$IFDEF Linux}
-  GDEngine.Settings.Load();
+  GDSettings.Load();
   GDEngine.Init(@InitGame);
-  While not(Engine.Done) do
+  While not(GDEngine.Done) do
   	GDEngine.Loop(@GameLoop);
   GDEngine.Clear(@ClearGame);
   {$ENDIF}

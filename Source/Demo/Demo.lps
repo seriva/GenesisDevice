@@ -8,7 +8,9 @@
       <Unit0>
         <Filename Value="Demo.lpr"/>
         <IsPartOfProject Value="True"/>
-        <CursorPos X="111" Y="37"/>
+        <IsVisibleTab Value="True"/>
+        <TopLine Value="16"/>
+        <CursorPos X="15" Y="46"/>
         <UsageCount Value="105"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -332,7 +334,6 @@
       <Unit48>
         <Filename Value="..\Engine\uGDConstants.pas"/>
         <IsPartOfProject Value="True"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="4"/>
         <TopLine Value="97"/>
         <CursorPos X="18" Y="113"/>
@@ -998,7 +999,7 @@
         <DefaultSyntaxHighlighter Value="LFM"/>
       </Unit126>
     </Units>
-    <JumpHistory Count="14" HistoryIndex="13">
+    <JumpHistory Count="17" HistoryIndex="16">
       <Position1>
         <Filename Value="Demo.lpr"/>
         <Caret Line="34" Column="88" TopLine="22"/>
@@ -1055,6 +1056,18 @@
         <Filename Value="uConfiguration.pas"/>
         <Caret Line="318" Column="11" TopLine="297"/>
       </Position14>
+      <Position15>
+        <Filename Value="..\Engine\uGDConstants.pas"/>
+        <Caret Line="113" Column="18" TopLine="97"/>
+      </Position15>
+      <Position16>
+        <Filename Value="Demo.lpr"/>
+        <Caret Line="32" Column="26" TopLine="13"/>
+      </Position16>
+      <Position17>
+        <Filename Value="Demo.lpr"/>
+        <Caret Line="44" Column="13" TopLine="16"/>
+      </Position17>
     </JumpHistory>
     <RunParams>
       <FormatVersion Value="2"/>
