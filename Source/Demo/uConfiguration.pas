@@ -31,7 +31,6 @@ unit uConfiguration;
 interface
 
 uses
-  SDL2,
   LCLIntf,
   LCLType,
   Forms,
@@ -55,7 +54,6 @@ type
   { TConfigurationForm }
 
   TConfigurationForm = class(TForm)
-    ApplicationProperties: TApplicationProperties;
     DetailCheckbox: TCheckBox;
     FoliageDensityLabel: TLabel;
     FoliageDensityTrackBar: TTrackBar;
@@ -76,8 +74,6 @@ type
     PageControl: TPageControl;
     RenderingPanel: TPanel;
     RenderingTabSheet: TTabSheet;
-    ResolutionLabel: TLabel;
-    ResolutionsComboBox: TComboBox;
     ShadowCheckBox: TCheckBox;
     RunButton: TButton;
     ShadowsCheckbox: TCheckBox;
@@ -99,34 +95,35 @@ type
     WaterReflectionComboBox: TComboBox;
     WindowPanel: TPanel;
     WindowTabSheet: TTabSheet;
-    procedure ApplicationPropertiesIdle(Sender: TObject; var Done: Boolean);
-    procedure ApplicationPropertiesIdleEnd(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
-    procedure MonitorComboBoxChange(Sender: TObject);
-
     procedure RunButtonClick(Sender: TObject);
   private
-    FDisplayModes : array of TSDL_DisplayMode;
-
     procedure FillComboboxes();
     procedure FillDisplays();
-    procedure FillDisplayModi();
   public
     procedure SettingsToInterface();
     procedure SettingsFromInterface();
   end;
 
-var
-  ConfigurationForm: TConfigurationForm;
+function SettingsExecute: boolean;
 
 implementation
 
-{$R *.lfm}
+function SettingsExecute: boolean;
+var
+  iSettings : TConfigurationForm;
+begin
+  try
+    iSettings := TConfigurationForm.Create(nil);
+    Result := iSettings.ShowModal = mrOk;
+  finally
+    FreeAndNil(iSettings);
+  end;
+end;
 
-uses
-  uMain;
+{$R *.lfm}
 
 {******************************************************************************}
 {* Form create                                                                *}
@@ -134,21 +131,9 @@ uses
 
 procedure TConfigurationForm.FormCreate(Sender: TObject);
 begin
-  //set some form basics
-  Application.Title := 'Demo';
-  self.Caption := 'Demo';
-
-  //fill settingscombos
   FillComboboxes();
-
-  //load the settings and update interface
   GDSettings.Load();
   SettingsToInterface();
-
-  //show the form and set the focus
-  self.Show();
-  RunButton.SetFocus();
-  Application.DisableIdleHandler;
 end;
 
 {******************************************************************************}
@@ -157,7 +142,6 @@ end;
 
 procedure TConfigurationForm.FormDestroy(Sender: TObject);
 begin
-  //save settings
   SettingsFromInterface();
   GDSettings.Save();
 end;
@@ -173,15 +157,6 @@ begin
 end;
 
 {******************************************************************************}
-{* Refill resolutions when we change the monitor                              *}
-{******************************************************************************}
-
-procedure TConfigurationForm.MonitorComboBoxChange(Sender: TObject);
-begin
-  FillDisplayModi();
-end;
-
-{******************************************************************************}
 {* Fill the settings comboboxes on the configurationform                      *}
 {******************************************************************************}
 
@@ -191,9 +166,6 @@ var
 begin
   //fill monitors combobox
   FillDisplays();
-
-  //fill resolutions combobox
-  FillDisplayModi();
 
   //fill texturedetail combobox
   TextureDetailComboBox.Clear;
@@ -221,7 +193,6 @@ var
 begin
   //window settings
   MonitorComboBox.ItemIndex := GDSettings.Display;
-  ResolutionsComboBox.ItemIndex := GDSettings.DisplayMode;
   FullScreenCheckBox.Checked := GDSettings.FullScreen;
   VerticalSyncCheckBox.Checked := GDSettings.VerticalSync;
   GammaTrackBar.Position := Round(GDSettings.Gamma * 100);
@@ -264,9 +235,6 @@ procedure TConfigurationForm.SettingsFromInterface();
 begin
   //window settings
   GDSettings.Display          := MonitorComboBox.ItemIndex;
-  GDSettings.DisplayMode      := ResolutionsComboBox.ItemIndex;
-  GDSettings.Width            := FDisplayModes[ResolutionsComboBox.ItemIndex].w;
-  GDSettings.Height           := FDisplayModes[ResolutionsComboBox.ItemIndex].h;
   GDSettings.FullScreen       := FullScreenCheckBox.Checked;
   GDSettings.VerticalSync     := VerticalSyncCheckBox.Checked;
   GDSettings.Gamma            := GammaTrackBar.Position / 100;
@@ -301,24 +269,8 @@ begin
   SettingsFromInterface();
   GDSettings.Save();
   Visible := false;
-  GDEngine.Init(@InitGame);
-  Application.EnableIdleHandler;
-end;
-
-procedure TConfigurationForm.ApplicationPropertiesIdle(Sender: TObject;
-  var Done: Boolean);
-begin
-  Done := GDEngine.Done;
-  GDEngine.Loop(@GameLoop);
-end;
-
-procedure TConfigurationForm.ApplicationPropertiesIdleEnd(Sender: TObject);
-begin
-  Application.DisableIdleHandler;
-  GDEngine.Clear(@ClearGame);
-  ConfigurationForm.SettingsToInterface();
-  ConfigurationForm.Visible := true;
-  ConfigurationForm.Repaint();
+  Repaint();
+  ModalResult := mrOK;
 end;
 
 {******************************************************************************}
@@ -329,30 +281,13 @@ procedure TConfigurationForm.FillDisplays();
 var
   iI : Integer;
 begin
+  {
   for iI := 0 to SDL_GetNumVideoDisplays()-1 do
   begin
     MonitorComboBox.Items.Add(IntToStr(iI) + ' - ' +SDL_GetDisplayName(iI));
   end;
   MonitorComboBox.ItemIndex := 0;
-end;
-
-{******************************************************************************}
-{* Fill Display Modi                                                          *}
-{******************************************************************************}
-
-procedure TConfigurationForm.FillDisplayModi();
-var
-  iI, iJ   : Integer;
-begin
-  ResolutionsComboBox.Items.Clear;
-  setLength(FDisplayModes, SDL_GetNumDisplayModes(MonitorComboBox.ItemIndex));
-  iJ := SDL_GetNumDisplayModes(MonitorComboBox.ItemIndex)-1;
-  for iI := iJ downto 0 do
-  begin
-    SDL_GetDisplayMode(MonitorComboBox.ItemIndex, iI, @FDisplayModes[iJ-iI]);
-    ResolutionsComboBox.Items.Add(IntToStr(FDisplayModes[iJ-iI].w) + ' x ' + IntToStr(FDisplayModes[iJ-iI].h) + ' @ ' + IntToStr(FDisplayModes[iJ-iI].refresh_rate) + 'Hz');
-  end;
-  ResolutionsComboBox.ItemIndex := 0;
+  }
 end;
 
 end.

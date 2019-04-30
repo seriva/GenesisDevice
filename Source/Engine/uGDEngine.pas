@@ -104,6 +104,8 @@ implementation
 constructor TGDEngine.Create();
 begin
   DefaultFormatSettings.DecimalSeparator := '.';
+  GDConsole    := TGDConsole.Create();
+  GDSettings   := TGDSettings.Create();
 end;
 
 {******************************************************************************}
@@ -113,6 +115,8 @@ end;
 destructor TGDEngine.Destroy();
 begin
   inherited;
+  FreeAndNil(GDConsole);
+  FreeAndNil(GDSettings);
 end;
 
 {******************************************************************************}
@@ -157,9 +161,7 @@ function TGDEngine.InitSystems(): boolean;
 var
   iSDLInit : boolean;
 begin
-  GDConsole    := TGDConsole.Create();
-  GDSettings   := TGDSettings.Create();
-  iSDLInit    := InitSDL();
+  iSDLInit     := InitSDL();
   GDTiming     := TGDTiming.Create();
   GDWindow     := TGDWindow.Create();
   GDInput      := TGDInput.Create();
@@ -191,15 +193,10 @@ begin
   FreeAndNil(GDGUI);
   FreeAndNil(GDMap);
   FreeAndNil(GDWindow);
-
   SDL_Quit();
   GDConsole.Write('Shutting down SDL...Ok');
-
   FreeAndNil(GDTiming);
-  FreeAndNil(GDConsole);
-  FreeAndNil(GDSettings);
   FreeAndNil(GDCamera);
-
   FreeAndNil(GDResources);
 end;
 
@@ -223,9 +220,14 @@ end;
 
 procedure TGDEngine.Init(aInit : TGDCallback);
 begin
+  GDSettings.load();
+  If not(GDEngine.InitSystems()) then
+  begin
+    halt;
+  end;
   GDWindow.Show();
   GDRenderer.InitViewPort();
-  GDRenderer.ResizeViewPort(GDSettings.Width, GDSettings.Height);
+  GDRenderer.ResizeViewPort(GDWindow.Width(), GDWindow.Height());
   SDL_ShowCursor(0);
   Done := false;
   if assigned(aInit) then aInit();
@@ -242,6 +244,7 @@ begin
   GDRenderer.ClearViewPort();
   Reset();
   SDL_ShowCursor(1);
+  GDEngine.ClearSystems();
 end;
 
 {******************************************************************************}
@@ -271,12 +274,7 @@ begin
 end;
 
 initialization
-  GDEngine := TGDEngine.Create();
-  If not(GDEngine.InitSystems()) then
-  begin
-    halt;
-  end;
+  //GDEngine := TGDEngine.Create();
 finalization
-  GDEngine.ClearSystems();
-  FreeAndNil(GDEngine);
+  //FreeAndNil(GDEngine);
 end.

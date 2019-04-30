@@ -233,17 +233,17 @@ procedure TGDWater.Resize();
 begin
    case GDSettings.WaterDetail of
      WD_LOW    : begin
-                   FWidth  := GDSettings.Width div 4;
-                   FHeight := GDSettings.Height div 4;
+                   FWidth  := GDWindow.Width() div 4;
+                   FHeight := GDWindow.Height() div 4;
                  end;
 
      WD_MEDIUM : begin
-                   FWidth  := GDSettings.Width div 2;
-                   FHeight := GDSettings.Height div 2;
+                   FWidth  := GDWindow.Width() div 2;
+                   FHeight := GDWindow.Height() div 2;
                  end;
      WD_HIGH   : begin
-                   FWidth  := GDSettings.Width;
-                   FHeight := GDSettings.Height;
+                   FWidth  := GDWindow.Width();
+                   FHeight := GDWindow.Height();
                  end;
   end;
   FreeAndNil(FRenderBuffer);
@@ -367,7 +367,7 @@ begin
     glPopMatrix();
   end;
   glDisable(GL_CLIP_PLANE0);
-  glViewPort(0,0,GDSettings.Width, GDSettings.Height);
+  glViewPort(0,0, GDWindow.Width(), GDWindow.Height());
   FFrameBuffer.UnBind();
 end;
 

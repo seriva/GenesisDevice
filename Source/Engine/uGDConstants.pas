@@ -148,5 +148,8 @@ const
   SHADER_TEXTURE  = PATH_SHADERS + 'texture.shader';
   SHADER_CLEAR    = PATH_SHADERS + 'clear.shader';
 
+  DEFAULT_WIDTH = 800;
+  DEFAULT_HEIGHT = 600;
+
 implementation
 end.

@@ -270,7 +270,7 @@ begin
     if GDConsole.Show then exit;
     SDL_GetMouseState(@iMousePosCurrent.x, @iMousePosCurrent.y);
     GDWindow.SetMouse();
-    GDCamera.MouseLook(GDSettings.Width div 2, GDSettings.Height div 2,
+    GDCamera.MouseLook(GDWindow.Width() div 2, GDWindow.Height() div 2,
                             iMousePosCurrent.X, iMousePosCurrent.Y,GDSettings.MouseSensitivity,
                             GDSettings.InvertMouse);
   end;

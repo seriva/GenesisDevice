@@ -86,11 +86,11 @@ type
 
     procedure InitShaders();
     procedure ClearShaders();
-    procedure InitFrameBuffers();
+    procedure InitFrameBuffers(aWidth, aHeight : integer);
     procedure ClearFrameBuffers();
     procedure InitShadowFrameBuffers();
     procedure ClearShadowFrameBuffers();
-    Procedure ResizeFrameBuffers();
+    Procedure ResizeFrameBuffers(aWidth, aHeight : integer);
   public
     property    Initialized : boolean read FInitialized;
 
@@ -295,7 +295,7 @@ end;
 
 procedure TGDRenderer.InitViewPort();
 begin
-  InitFrameBuffers();
+  InitFrameBuffers(GDWindow.Width(), GDWindow.Height());
   InitShadowFrameBuffers();
 end;
 
@@ -315,17 +315,15 @@ end;
 
 procedure TGDRenderer.ResizeViewPort(aWidth, aHeight : integer);
 begin
-  GDSettings.Width := aWidth;
-  GDSettings.Height := aHeight;
-  if (GDSettings.Height = 0) then
-    GDSettings.Height := 1;
-  glViewport(0, 0, GDSettings.Width, GDSettings.Height);
+  if (aHeight = 0) then
+    aHeight := 1;
+  glViewport(0, 0,aWidth, aHeight);
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
-  gluPerspective(40.0, GDSettings.Width/GDSettings.Height, 25, GDSettings.ViewDistance * R_VIEW_DISTANCE_STEP);
+  gluPerspective(40.0, aWidth/aHeight, 25, GDSettings.ViewDistance * R_VIEW_DISTANCE_STEP);
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
-  ResizeFrameBuffers();
+  ResizeFrameBuffers(aWidth, aHeight);
 end;
 
 {******************************************************************************}
@@ -500,15 +498,15 @@ end;
 {* Init the framebuffers                                                      *}
 {******************************************************************************}
 
-procedure TGDRenderer.InitFrameBuffers();
+procedure TGDRenderer.InitFrameBuffers(aWidth, aHeight : integer);
 var
   iBuffers : array[0..1] of GLEnum;
 begin
   //Frame
   FFrameFBO := TGDGLFrameBuffer.Create();
-  FFrameTex := TGDTexture.Create(GL_RGBA, GL_RGBA, GDSettings.Width, GDSettings.Height );
-  FFrameShadowTex := TGDTexture.Create(GL_RGBA, GL_RGBA, GDSettings.Width, GDSettings.Height );
-  FFrameDepthTex := TGDTexture.Create(GL_DEPTH_COMPONENT, GL_DEPTH_COMPONENT, GDSettings.Width, GDSettings.Height );
+  FFrameTex := TGDTexture.Create(GL_RGBA, GL_RGBA, aWidth, aHeight );
+  FFrameShadowTex := TGDTexture.Create(GL_RGBA, GL_RGBA, aWidth, aHeight );
+  FFrameDepthTex := TGDTexture.Create(GL_DEPTH_COMPONENT, GL_DEPTH_COMPONENT, aWidth, aHeight );
   FFrameFBO.Bind();
   FFrameFBO.AttachTexture(FFrameTex,GL_COLOR_ATTACHMENT0_EXT,GL_TEXTURE_2D);
   FFrameFBO.AttachTexture(FFrameShadowTex,GL_COLOR_ATTACHMENT1_EXT,GL_TEXTURE_2D);
@@ -522,7 +520,7 @@ begin
 
   //Bluring
   FBlurFBO := TGDGLFrameBuffer.Create();
-  FBlurTex := TGDTexture.Create(GL_RGBA, GL_RGBA, GDSettings.Width div 4, GDSettings.Height div 4);
+  FBlurTex := TGDTexture.Create(GL_RGBA, GL_RGBA, aWidth div 4, aHeight div 4);
 end;
 
 procedure TGDRenderer.InitShadowFrameBuffers();
@@ -562,10 +560,10 @@ end;
 {* Resize buffers                                                             *}
 {******************************************************************************}
 
-Procedure TGDRenderer.ResizeFrameBuffers();
+Procedure TGDRenderer.ResizeFrameBuffers(aWidth, aHeight : integer);
 begin
   ClearFrameBuffers();
-  InitFrameBuffers();
+  InitFrameBuffers(aWidth, aHeight);
 end;
 
 {******************************************************************************}
@@ -636,7 +634,7 @@ end;
 
 procedure ApplyBlurToImage( aSourceImage : TGDTexture; aBlurStrength : double );
 begin
-  glViewport(0, 0, GDSettings.Width div 4, GDSettings.Height div 4);
+  glViewport(0, 0, GDWindow.Width() div 4, GDWindow.Height() div 4);
   glDisable(GL_DEPTH_TEST);
   glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT);
   FBlurShader.Bind();
@@ -646,15 +644,15 @@ begin
   FBlurFBO.Bind();
   FBlurFBO.AttachTexture(FBlurTex,GL_COLOR_ATTACHMENT0_EXT,GL_TEXTURE_2D);
   FBlurFBO.Status();
-  FBlurShader.SetFloat4('V_BLUR_OFFSET',aBlurStrength / GDSettings.Width, 0, 0, 1);
+  FBlurShader.SetFloat4('V_BLUR_OFFSET',aBlurStrength / GDWindow.Width(), 0, 0, 1);
   aSourceImage.BindTexture( GL_TEXTURE0 );
   RenderQuad();
 
   //vertical
-  glViewport(0, 0, GDSettings.Width, GDSettings.Height);
+  glViewport(0, 0, GDWindow.Width(), GDWindow.Height());
   FBlurFBO.AttachTexture(aSourceImage,GL_COLOR_ATTACHMENT0_EXT,GL_TEXTURE_2D);
   FBlurFBO.Status();
-  FBlurShader.SetFloat4('V_BLUR_OFFSET', 0, aBlurStrength / GDSettings.Height, 0, 1);
+  FBlurShader.SetFloat4('V_BLUR_OFFSET', 0, aBlurStrength / GDWindow.Height(), 0, 1);
   FBlurTex.BindTexture( GL_TEXTURE0 );
   RenderQuad();
 
@@ -736,7 +734,7 @@ begin
     If GDSettings.UseShadows = false then
     begin
       FShadowFBO.Unbind();
-      glViewport(0, 0, GDSettings.Width, GDSettings.Height);
+      glViewport(0, 0, GDWindow.Width(), GDWindow.Height());
       exit;
     end;
 
@@ -780,7 +778,7 @@ begin
     glPopMatrix();
 
     FShadowFBO.Unbind();
-    glViewport(0, 0, GDSettings.Width, GDSettings.Height);
+    glViewport(0, 0, GDWindow.Width(), GDWindow.Height());
   end;
 end;
 
@@ -868,7 +866,7 @@ begin
   else
     FPostShader.SetInt('I_DO_SSAO',0);
 
-  FPostShader.SetFloat2('V_SCREEN_SIZE',GDSettings.Width, GDSettings.Height);
+  FPostShader.SetFloat2('V_SCREEN_SIZE',GDWindow.Width(), GDWindow.Height());
   FPostShader.SetFloat('I_GAMMA',GDSettings.Gamma);
   FFrameTex.BindTexture( GL_TEXTURE0 );
   FFrameShadowTex.BindTexture( GL_TEXTURE1 );

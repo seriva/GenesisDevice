@@ -42,10 +42,8 @@ type
   TGDSettings = class
   private
     //window settings
-    FDisplay					: Integer;
-    FDisplayMode      : Integer;
-    FWidth            : Integer;
-    FHeight           : Integer;
+    FDisplay	      : Integer;
+    FDisplayScale     : Single;
     FFullScreen       : Boolean;
     FVerticalSync     : Boolean;
     FGamma            : Single;
@@ -84,9 +82,7 @@ type
 
     //window settings
     property Display : Integer read FDisplay write FDisplay;
-    property DisplayMode : Integer read FDisplayMode write FDisplayMode;
-    property Width : Integer read FWidth write FWidth;
-    property Height : Integer read FHeight write FHeight;
+    property DisplayScale : Single read FDisplayScale write FDisplayScale;
     property FullScreen : Boolean read FFullScreen write FFullScreen;
     property VerticalSync : Boolean read FVerticalSync write FVerticalSync;
     property Gamma : Single read FGamma write FGamma;
@@ -136,9 +132,7 @@ constructor TGDSettings.Create();
 begin
   //window settings
   FDisplay	    := 0;
-  FDisplayMode      := 0;
-  FWidth            := 800;
-  FHeight           := 600;
+  FDisplayScale     := 1.0;
   FFullScreen       := false;
   FVerticalSync     := false;
   FGamma            := 0.50;
@@ -192,9 +186,7 @@ begin
 
   //window settings
   FDisplay :=      iIniFile.ReadInteger('Window', 'Display', 0);
-  FDisplayMode :=  iIniFile.ReadInteger('Window', 'DisplayMode', 0);
-  FWidth :=        iIniFile.ReadInteger('Window', 'Width', 640);
-  FHeight :=       iIniFile.ReadInteger('Window', 'Height', 480);
+  FDisplayScale := iIniFile.ReadFloat('Window', 'DisplayScale', 1.0);
   FFullScreen :=   iIniFile.ReadBool('Window', 'Fullscreen', False);
   FVerticalSync := iIniFile.ReadBool('Window', 'VerticalSync', False);
   FGamma :=        iIniFile.ReadFloat('Window', 'Gamma', 0.60);
@@ -234,10 +226,8 @@ begin
   iIniFile := TIniFile.Create(PATH_INITS + ENGINE_INI);
 
   //window
-  iIniFile.WriteInteger('Window', 'Display', FDisplay);
-  iIniFile.WriteInteger('Window', 'DisplayMode', FDisplayMode);
-  iIniFile.WriteInteger('Window', 'Width', FWidth);
-  iIniFile.WriteInteger('Window', 'Height', FHeight);
+  iIniFile.WriteInteger('Window', 'Display', 0);////FDisplay);
+  iIniFile.WriteFloat('Window', 'FDisplayScale', 1.0);//FDisplayMode);
   iIniFile.WriteBool('Window', 'Fullscreen', FFullScreen);
   iIniFile.WriteBool('Window', 'VerticalSync', FVerticalSync);
   iIniFile.WriteFloat('Window', 'Gamma', FGamma);

@@ -8,6 +8,7 @@ uses
   Classes,
   SysUtils,
   SDL2,
+  uGDConstants,
   uGDSettings;
 
 type
@@ -34,6 +35,9 @@ type
     procedure Update();
     procedure SetMouse();
     procedure SetTitle(aTitle : String);
+
+    function Width(): integer;
+    function Height(): integer;
   end;
 
 implementation
@@ -117,7 +121,6 @@ procedure TGDWindow.Show();
 var
   iRec : TSDL_Rect;
 begin
-  SDL_SetWindowSize(FWindow, GDSettings.Width, GDSettings.Height);
   if GDSettings.VerticalSync then
     SDL_GL_SetSwapInterval(1)
   else
@@ -129,9 +132,13 @@ begin
   begin
     SDL_SetWindowPosition(FWindow ,iRec.x, iRec.y);
     SDL_SetWindowFullscreen(FWindow, SDL_WINDOW_FULLSCREEN);
+    SDL_SetWindowSize(FWindow, iRec.w, iRec.h);
   end
   else
-    SDL_SetWindowPosition(FWindow ,iRec.x+5, iRec.y+40);
+  begin
+    SDL_SetWindowPosition(FWindow ,iRec.x+50, iRec.y+50);
+    SDL_SetWindowSize(FWindow, DEFAULT_WIDTH, 600);
+  end;
 
   SDL_ShowWindow(FWindow);
   MakeCurrent();
@@ -196,16 +203,40 @@ end;
 
 procedure TGDWindow.SetMouse();
 begin
-  SDL_WarpMouseInWindow(FWindow, GDSettings.Width div 2, GDSettings.Height div 2);
+  SDL_WarpMouseInWindow(FWindow, GDWindow.Width() div 2, GDWindow.Height() div 2);
 end;
 
 {******************************************************************************}
-{* Set the title of the window 							                                  *}
+{* Set the title of the window 						      *}
 {******************************************************************************}
 
 procedure TGDWindow.SetTitle(aTitle : String);
 begin
   SDL_SetWindowTitle(FWindow, PChar(aTitle));
+end;
+
+{******************************************************************************}
+{* Get the window width 						      *}
+{******************************************************************************}
+
+function TGDWindow.Width(): integer;
+var
+  iW, iH : Integer;
+begin
+  SDL_GetWindowSize(FWindow, @iW, @iH);
+  result := iW;
+end;
+
+{******************************************************************************}
+{* Get the window height 		   			              *}
+{******************************************************************************}
+
+function TGDWindow.Height(): integer;
+var
+  iW, iH : Integer;
+begin
+  SDL_GetWindowSize(FWindow, @iW, @iH);
+  result := iH;
 end;
 
 end.

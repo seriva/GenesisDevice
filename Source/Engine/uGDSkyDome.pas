@@ -267,7 +267,7 @@ begin
   GDRenderer.SunShader.SetInt('T_SUNMAP', 0);
 
   FSunTexture.BindTexture(GL_TEXTURE0);
-  glPointSize( Round(GDSettings.Width * FSunSize)  );
+  glPointSize( Round(GDWindow.Width() * FSunSize)  );
   glBegin( GL_POINTS );
     glVertex3f( iSunPos.X, iSunPos.Y, iSunPos.z);
   glEnd();
@@ -316,7 +316,7 @@ begin
   if (iResults > 5) then
   begin
     FSunFlareTexture.BindTexture(GL_TEXTURE0);
-    glPointSize( Round(GDSettings.Width * FSunSize)  );
+    glPointSize( Round(GDWindow.Width() * FSunSize)  );
     glBegin( GL_POINTS );
       glVertex3f( iSunPos.X, iSunPos.Y, iSunPos.z);
     glEnd();
