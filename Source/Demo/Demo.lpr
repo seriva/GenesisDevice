@@ -27,6 +27,7 @@ program Demo;
 uses
   //heaptrc,
   SysUtils,
+  Forms, Interfaces,
   uConfiguration in 'uConfiguration.pas' {ConfigurationForm},
   uGDEngine,
   uMain in 'Main.pas',
@@ -37,6 +38,8 @@ label start;
 begin
   //DeleteFile('leaks.txt');
   //SetHeapTraceOutput('leaks.txt');
+  Application.Initialize;
+  Application.Scaled:=true;
 
   GDEngine := TGDEngine.Create();
 
