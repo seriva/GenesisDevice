@@ -382,7 +382,6 @@ var
   iError  : string;
   iResult : boolean;
   iI : Integer;
-  lol : TALenum;
 begin
   inherited;
   Engine.Console.Write('Shutting down sound...');
@@ -396,8 +395,6 @@ begin
     if not(alcGetError(FDevice) = AL_NO_ERROR) then
       Raise Exception.Create('Error destroying context!');
     alcCloseDevice(FDevice);
-    if not(alcGetError(FDevice) = AL_NO_ERROR) then
-      Raise Exception.Create('Error destroying device!');
 
     FreeMPG123();
     FreeOpenAL();
