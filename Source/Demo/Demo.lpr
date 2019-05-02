@@ -40,19 +40,13 @@ begin
   //SetHeapTraceOutput('leaks.txt');
   Application.Initialize;
   Application.Scaled:=true;
-
-  GDEngine := TGDEngine.Create();
-
   start:
   if SettingsExecute() then
   begin
     GDEngine.Init(@InitGame);
     While not(GDEngine.Done) do
-	    GDEngine.Loop(@GameLoop);
+      GDEngine.Loop(@GameLoop);
     GDEngine.Clear(@ClearGame);
-
     goto start;
   end;
-
-  FreeAndNil(GDEngine);
 end.

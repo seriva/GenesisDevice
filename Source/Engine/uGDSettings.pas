@@ -226,8 +226,8 @@ begin
   iIniFile := TIniFile.Create(PATH_INITS + ENGINE_INI);
 
   //window
-  iIniFile.WriteInteger('Window', 'Display', 0);////FDisplay);
-  iIniFile.WriteFloat('Window', 'FDisplayScale', 1.0);//FDisplayMode);
+  iIniFile.WriteInteger('Window', 'Display', FDisplay);
+  iIniFile.WriteFloat('Window', 'DisplayScale', DisplayScale);
   iIniFile.WriteBool('Window', 'Fullscreen', FFullScreen);
   iIniFile.WriteBool('Window', 'VerticalSync', FVerticalSync);
   iIniFile.WriteFloat('Window', 'Gamma', FGamma);

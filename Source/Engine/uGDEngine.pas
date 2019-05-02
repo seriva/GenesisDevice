@@ -274,7 +274,7 @@ begin
 end;
 
 initialization
-  //GDEngine := TGDEngine.Create();
+  GDEngine := TGDEngine.Create();
 finalization
-  //FreeAndNil(GDEngine);
+  FreeAndNil(GDEngine);
 end.

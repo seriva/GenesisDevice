@@ -152,8 +152,8 @@ end;
 
 procedure TConfigurationForm.FormShow(Sender: TObject);
 begin
-  self.Left:=5;
-  self.Top:=5;
+  self.Left := 5;
+  self.Top  := 5;
 end;
 
 {******************************************************************************}
@@ -281,13 +281,14 @@ procedure TConfigurationForm.FillDisplays();
 var
   iI : Integer;
 begin
-  {
-  for iI := 0 to SDL_GetNumVideoDisplays()-1 do
+  for iI := 0 to Screen.MonitorCount-1 do
   begin
-    MonitorComboBox.Items.Add(IntToStr(iI) + ' - ' +SDL_GetDisplayName(iI));
+    if Screen.Monitors[iI].Primary then
+      MonitorComboBox.Items.Add(IntToStr(iI) + ' - Primary')
+    else
+      MonitorComboBox.Items.Add(IntToStr(iI));
   end;
   MonitorComboBox.ItemIndex := 0;
-  }
 end;
 
 end.
