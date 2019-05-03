@@ -38,6 +38,8 @@ type
 
     function Width(): integer;
     function Height(): integer;
+    function ScaledWidth(): integer;
+    function ScaledHeight(): integer;
   end;
 
 implementation
@@ -237,6 +239,30 @@ var
 begin
   SDL_GetWindowSize(FWindow, @iW, @iH);
   result := iH;
+end;
+
+{******************************************************************************}
+{* Get the window scaled width 						      *}
+{******************************************************************************}
+
+function TGDWindow.ScaledWidth(): integer;
+var
+  iW, iH : Integer;
+begin
+  SDL_GetWindowSize(FWindow, @iW, @iH);
+  result := Round(iW * GDSettings.DisplayScale);
+end;
+
+{******************************************************************************}
+{* Get the window scaled height 		   			              *}
+{******************************************************************************}
+
+function TGDWindow.ScaledHeight(): integer;
+var
+  iW, iH : Integer;
+begin
+  SDL_GetWindowSize(FWindow, @iW, @iH);
+  result := Round(iH * GDSettings.DisplayScale);
 end;
 
 end.

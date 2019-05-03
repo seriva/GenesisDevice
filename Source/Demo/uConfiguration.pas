@@ -31,6 +31,7 @@ unit uConfiguration;
 interface
 
 uses
+  SysUtils,
   LCLIntf,
   LCLType,
   Forms,
@@ -40,7 +41,6 @@ uses
   StdCtrls,
   Classes,
   Dialogs,
-  SysUtils,
   uGDConstants,
   uGDEngine,
   LazFileUtils;
@@ -61,6 +61,10 @@ type
     FullScreenCheckBox: TCheckBox;
     FXAACheckBox: TCheckBox;
     GammaLabel: TLabel;
+    ScaleLabel: TLabel;
+    ScaledLabel: TLabel;
+    ScaledValueLabel: TLabel;
+    ScalePanel: TPanel;
     GammaTrackBar: TTrackBar;
     GrassDistanceLabel: TLabel;
     InputPanel: TPanel;
@@ -74,6 +78,7 @@ type
     PageControl: TPageControl;
     RenderingPanel: TPanel;
     RenderingTabSheet: TTabSheet;
+    ScaleTrackBar: TTrackBar;
     ShadowCheckBox: TCheckBox;
     RunButton: TButton;
     ShadowsCheckbox: TCheckBox;
@@ -98,7 +103,10 @@ type
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
+    procedure FullScreenCheckBoxChange(Sender: TObject);
+    procedure MonitorComboBoxChange(Sender: TObject);
     procedure RunButtonClick(Sender: TObject);
+    procedure ScaleTrackBarChange(Sender: TObject);
   private
     procedure FillComboboxes();
     procedure FillDisplays();
@@ -134,6 +142,7 @@ begin
   FillComboboxes();
   GDSettings.Load();
   SettingsToInterface();
+  ScalePanel.Visible := FullScreenCheckBox.Checked;
 end;
 
 {******************************************************************************}
@@ -154,6 +163,38 @@ procedure TConfigurationForm.FormShow(Sender: TObject);
 begin
   self.Left := 5;
   self.Top  := 5;
+end;
+
+{******************************************************************************}
+{* Display the resolution scale tools                                         *}
+{******************************************************************************}
+
+procedure TConfigurationForm.FullScreenCheckBoxChange(Sender: TObject);
+begin
+  ScalePanel.Visible := FullScreenCheckBox.Checked;
+end;
+
+{******************************************************************************}
+{* Recaluclate the resolution                                                 *}
+{******************************************************************************}
+
+procedure TConfigurationForm.MonitorComboBoxChange(Sender: TObject);
+begin
+  ScaleTrackBarChange(nil);
+end;
+
+{******************************************************************************}
+{* Recalculate the scaled resolution                                          *}
+{******************************************************************************}
+
+procedure TConfigurationForm.ScaleTrackBarChange(Sender: TObject);
+var
+  iM : TMonitor;
+begin
+  GDSettings.DisplayScale := ScaleTrackBar.Position / 100;
+  iM :=  Screen.Monitors[GDSettings.Display];
+  ScaledValueLabel.Caption := IntToStr(Round(iM.Width * GDSettings.DisplayScale)) +
+                            ' x ' + IntToStr(Round(iM.Height * GDSettings.DisplayScale))
 end;
 
 {******************************************************************************}
@@ -193,6 +234,7 @@ var
 begin
   //window settings
   MonitorComboBox.ItemIndex := GDSettings.Display;
+  ScaleTrackBar.Position    := Round(GDSettings.DisplayScale * 100);
   FullScreenCheckBox.Checked := GDSettings.FullScreen;
   VerticalSyncCheckBox.Checked := GDSettings.VerticalSync;
   GammaTrackBar.Position := Round(GDSettings.Gamma * 100);
@@ -224,7 +266,9 @@ begin
 
   //sound settings
   MuteSoundCheckBox.Checked := GDSettings.MuteSound;
-  SoundVolumeTrackBar.Position := Round(100 * GDSettings.SoundVolume );
+  SoundVolumeTrackBar.Position := Round(100 * GDSettings.SoundVolume);
+
+  ScaleTrackBarChange(nil);
 end;
 
 {******************************************************************************}
@@ -238,6 +282,7 @@ begin
   GDSettings.FullScreen       := FullScreenCheckBox.Checked;
   GDSettings.VerticalSync     := VerticalSyncCheckBox.Checked;
   GDSettings.Gamma            := GammaTrackBar.Position / 100;
+  GDSettings.DisplayScale     := ScaleTrackBar.Position / 100;
 
   //rendering
   GDSettings.ViewDistance     := ViewDistanceTrackBar.Position;

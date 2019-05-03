@@ -8,17 +8,15 @@
       <Unit0>
         <Filename Value="Demo.lpr"/>
         <IsPartOfProject Value="True"/>
-        <IsVisibleTab Value="True"/>
-        <TopLine Value="11"/>
-        <CursorPos X="37" Y="39"/>
-        <UsageCount Value="110"/>
+        <CursorPos X="6" Y="28"/>
+        <UsageCount Value="168"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit0>
       <Unit1>
         <Filename Value="..\Libraries\OpenGL\dglOpenGL.pas"/>
         <IsPartOfProject Value="True"/>
-        <UsageCount Value="110"/>
+        <UsageCount Value="168"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit1>
       <Unit2>
@@ -27,7 +25,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="10"/>
         <CursorPos X="35" Y="25"/>
-        <UsageCount Value="110"/>
+        <UsageCount Value="168"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit2>
       <Unit3>
@@ -37,7 +35,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="25"/>
         <CursorPos X="64" Y="2281"/>
-        <UsageCount Value="110"/>
+        <UsageCount Value="168"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit3>
       <Unit4>
@@ -46,13 +44,13 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="122"/>
         <CursorPos X="71" Y="131"/>
-        <UsageCount Value="110"/>
+        <UsageCount Value="168"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit4>
       <Unit5>
         <Filename Value="..\Libraries\SDL\sdl.inc"/>
         <IsPartOfProject Value="True"/>
-        <UsageCount Value="110"/>
+        <UsageCount Value="168"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit5>
       <Unit6>
@@ -61,205 +59,205 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="133"/>
         <CursorPos X="34" Y="162"/>
-        <UsageCount Value="110"/>
+        <UsageCount Value="168"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit6>
       <Unit7>
         <Filename Value="..\Libraries\SDL\sdlaudio.inc"/>
         <IsPartOfProject Value="True"/>
-        <UsageCount Value="110"/>
+        <UsageCount Value="168"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit7>
       <Unit8>
         <Filename Value="..\Libraries\SDL\sdlblendmode.inc"/>
         <IsPartOfProject Value="True"/>
-        <UsageCount Value="110"/>
+        <UsageCount Value="168"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit8>
       <Unit9>
         <Filename Value="..\Libraries\SDL\sdlclipboard.inc"/>
         <IsPartOfProject Value="True"/>
-        <UsageCount Value="110"/>
+        <UsageCount Value="168"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit9>
       <Unit10>
         <Filename Value="..\Libraries\SDL\sdlcpuinfo.inc"/>
         <IsPartOfProject Value="True"/>
-        <UsageCount Value="110"/>
+        <UsageCount Value="168"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit10>
       <Unit11>
         <Filename Value="..\Libraries\SDL\sdlerror.inc"/>
         <IsPartOfProject Value="True"/>
-        <UsageCount Value="110"/>
+        <UsageCount Value="168"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit11>
       <Unit12>
         <Filename Value="..\Libraries\SDL\sdlevents.inc"/>
         <IsPartOfProject Value="True"/>
-        <UsageCount Value="110"/>
+        <UsageCount Value="168"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit12>
       <Unit13>
         <Filename Value="..\Libraries\SDL\sdlfilesystem.inc"/>
         <IsPartOfProject Value="True"/>
-        <UsageCount Value="110"/>
+        <UsageCount Value="168"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit13>
       <Unit14>
         <Filename Value="..\Libraries\SDL\sdlgamecontroller.inc"/>
         <IsPartOfProject Value="True"/>
-        <UsageCount Value="110"/>
+        <UsageCount Value="168"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit14>
       <Unit15>
         <Filename Value="..\Libraries\SDL\sdlgesture.inc"/>
         <IsPartOfProject Value="True"/>
-        <UsageCount Value="110"/>
+        <UsageCount Value="168"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit15>
       <Unit16>
         <Filename Value="..\Libraries\SDL\sdlhaptic.inc"/>
         <IsPartOfProject Value="True"/>
-        <UsageCount Value="110"/>
+        <UsageCount Value="168"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit16>
       <Unit17>
         <Filename Value="..\Libraries\SDL\sdlhints.inc"/>
         <IsPartOfProject Value="True"/>
-        <UsageCount Value="110"/>
+        <UsageCount Value="168"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit17>
       <Unit18>
         <Filename Value="..\Libraries\SDL\sdljoystick.inc"/>
         <IsPartOfProject Value="True"/>
-        <UsageCount Value="110"/>
+        <UsageCount Value="168"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit18>
       <Unit19>
         <Filename Value="..\Libraries\SDL\sdlkeyboard.inc"/>
         <IsPartOfProject Value="True"/>
-        <UsageCount Value="110"/>
+        <UsageCount Value="168"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit19>
       <Unit20>
         <Filename Value="..\Libraries\SDL\sdlloadso.inc"/>
         <IsPartOfProject Value="True"/>
-        <UsageCount Value="110"/>
+        <UsageCount Value="168"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit20>
       <Unit21>
         <Filename Value="..\Libraries\SDL\sdllog.inc"/>
         <IsPartOfProject Value="True"/>
-        <UsageCount Value="110"/>
+        <UsageCount Value="168"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit21>
       <Unit22>
         <Filename Value="..\Libraries\SDL\sdlmessagebox.inc"/>
         <IsPartOfProject Value="True"/>
-        <UsageCount Value="110"/>
+        <UsageCount Value="168"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit22>
       <Unit23>
         <Filename Value="..\Libraries\SDL\sdlmouse.inc"/>
         <IsPartOfProject Value="True"/>
-        <UsageCount Value="110"/>
+        <UsageCount Value="168"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit23>
       <Unit24>
         <Filename Value="..\Libraries\SDL\sdlmutex.inc"/>
         <IsPartOfProject Value="True"/>
-        <UsageCount Value="110"/>
+        <UsageCount Value="168"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit24>
       <Unit25>
         <Filename Value="..\Libraries\SDL\sdlpixels.inc"/>
         <IsPartOfProject Value="True"/>
-        <UsageCount Value="110"/>
+        <UsageCount Value="168"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit25>
       <Unit26>
         <Filename Value="..\Libraries\SDL\sdlplatform.inc"/>
         <IsPartOfProject Value="True"/>
-        <UsageCount Value="110"/>
+        <UsageCount Value="168"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit26>
       <Unit27>
         <Filename Value="..\Libraries\SDL\sdlpower.inc"/>
         <IsPartOfProject Value="True"/>
-        <UsageCount Value="110"/>
+        <UsageCount Value="168"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit27>
       <Unit28>
         <Filename Value="..\Libraries\SDL\sdlrect.inc"/>
         <IsPartOfProject Value="True"/>
-        <UsageCount Value="110"/>
+        <UsageCount Value="168"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit28>
       <Unit29>
         <Filename Value="..\Libraries\SDL\sdlrenderer.inc"/>
         <IsPartOfProject Value="True"/>
-        <UsageCount Value="110"/>
+        <UsageCount Value="168"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit29>
       <Unit30>
         <Filename Value="..\Libraries\SDL\sdlrwops.inc"/>
         <IsPartOfProject Value="True"/>
-        <UsageCount Value="110"/>
+        <UsageCount Value="168"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit30>
       <Unit31>
         <Filename Value="..\Libraries\SDL\sdlscancode.inc"/>
         <IsPartOfProject Value="True"/>
-        <UsageCount Value="110"/>
+        <UsageCount Value="168"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit31>
       <Unit32>
         <Filename Value="..\Libraries\SDL\sdlshape.inc"/>
         <IsPartOfProject Value="True"/>
-        <UsageCount Value="110"/>
+        <UsageCount Value="168"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit32>
       <Unit33>
         <Filename Value="..\Libraries\SDL\sdlsurface.inc"/>
         <IsPartOfProject Value="True"/>
-        <UsageCount Value="110"/>
+        <UsageCount Value="168"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit33>
       <Unit34>
         <Filename Value="..\Libraries\SDL\sdlsystem.inc"/>
         <IsPartOfProject Value="True"/>
-        <UsageCount Value="110"/>
+        <UsageCount Value="168"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit34>
       <Unit35>
         <Filename Value="..\Libraries\SDL\sdlsyswm.inc"/>
         <IsPartOfProject Value="True"/>
-        <UsageCount Value="110"/>
+        <UsageCount Value="168"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit35>
       <Unit36>
         <Filename Value="..\Libraries\SDL\sdlthread.inc"/>
         <IsPartOfProject Value="True"/>
-        <UsageCount Value="110"/>
+        <UsageCount Value="168"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit36>
       <Unit37>
         <Filename Value="..\Libraries\SDL\sdltimer.inc"/>
         <IsPartOfProject Value="True"/>
-        <UsageCount Value="110"/>
+        <UsageCount Value="168"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit37>
       <Unit38>
         <Filename Value="..\Libraries\SDL\sdltouch.inc"/>
         <IsPartOfProject Value="True"/>
-        <UsageCount Value="110"/>
+        <UsageCount Value="168"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit38>
       <Unit39>
         <Filename Value="..\Libraries\SDL\sdltype.inc"/>
         <IsPartOfProject Value="True"/>
-        <UsageCount Value="110"/>
+        <UsageCount Value="168"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit39>
       <Unit40>
@@ -268,13 +266,13 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="64"/>
         <CursorPos X="11" Y="95"/>
-        <UsageCount Value="110"/>
+        <UsageCount Value="168"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit40>
       <Unit41>
         <Filename Value="..\Libraries\SDL\sdlvideo.inc"/>
         <IsPartOfProject Value="True"/>
-        <UsageCount Value="110"/>
+        <UsageCount Value="168"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit41>
       <Unit42>
@@ -283,7 +281,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="342"/>
         <CursorPos Y="375"/>
-        <UsageCount Value="36"/>
+        <UsageCount Value="94"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit42>
       <Unit43>
@@ -292,7 +290,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="52"/>
         <CursorPos X="4" Y="36"/>
-        <UsageCount Value="31"/>
+        <UsageCount Value="89"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit43>
       <Unit44>
@@ -301,7 +299,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="3"/>
         <CursorPos X="7" Y="23"/>
-        <UsageCount Value="31"/>
+        <UsageCount Value="89"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit44>
       <Unit45>
@@ -310,16 +308,16 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="3"/>
         <CursorPos X="7" Y="23"/>
-        <UsageCount Value="31"/>
+        <UsageCount Value="89"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit45>
       <Unit46>
         <Filename Value="..\Engine\uGDCellManager.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="3"/>
+        <TopLine Value="255"/>
         <CursorPos X="7" Y="23"/>
-        <UsageCount Value="31"/>
+        <UsageCount Value="89"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit46>
       <Unit47>
@@ -328,26 +326,26 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="120"/>
         <CursorPos Y="156"/>
-        <UsageCount Value="31"/>
+        <UsageCount Value="89"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit47>
       <Unit48>
         <Filename Value="..\Engine\uGDConstants.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="7"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="116"/>
         <CursorPos X="16" Y="151"/>
-        <UsageCount Value="31"/>
-        <Loaded Value="True"/>
+        <UsageCount Value="89"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit48>
       <Unit49>
         <Filename Value="..\Engine\uGDEngine.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="3"/>
-        <TopLine Value="241"/>
-        <CursorPos X="24" Y="279"/>
-        <UsageCount Value="31"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="2"/>
+        <TopLine Value="112"/>
+        <CursorPos X="24" Y="140"/>
+        <UsageCount Value="89"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit49>
@@ -357,7 +355,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="11"/>
         <CursorPos X="4" Y="31"/>
-        <UsageCount Value="31"/>
+        <UsageCount Value="89"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit50>
       <Unit51>
@@ -366,7 +364,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="386"/>
         <CursorPos Y="408"/>
-        <UsageCount Value="31"/>
+        <UsageCount Value="89"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit51>
       <Unit52>
@@ -375,7 +373,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="66"/>
         <CursorPos X="4" Y="86"/>
-        <UsageCount Value="31"/>
+        <UsageCount Value="89"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit52>
       <Unit53>
@@ -384,17 +382,16 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="3"/>
         <CursorPos X="7" Y="23"/>
-        <UsageCount Value="31"/>
+        <UsageCount Value="89"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit53>
       <Unit54>
         <Filename Value="..\Engine\uGDInput.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="6"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="253"/>
         <CursorPos X="65" Y="273"/>
-        <UsageCount Value="31"/>
-        <Loaded Value="True"/>
+        <UsageCount Value="89"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit54>
       <Unit55>
@@ -403,7 +400,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="87"/>
         <CursorPos X="4" Y="107"/>
-        <UsageCount Value="31"/>
+        <UsageCount Value="89"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit55>
       <Unit56>
@@ -412,16 +409,17 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="76"/>
         <CursorPos X="7" Y="23"/>
-        <UsageCount Value="31"/>
+        <UsageCount Value="89"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit56>
       <Unit57>
         <Filename Value="..\Engine\uGDMesh.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="21"/>
+        <EditorIndex Value="4"/>
+        <TopLine Value="10"/>
         <CursorPos X="4" Y="41"/>
-        <UsageCount Value="31"/>
+        <UsageCount Value="89"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit57>
       <Unit58>
@@ -430,7 +428,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="238"/>
         <CursorPos X="7" Y="24"/>
-        <UsageCount Value="31"/>
+        <UsageCount Value="89"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit58>
       <Unit59>
@@ -439,7 +437,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="126"/>
         <CursorPos X="3" Y="136"/>
-        <UsageCount Value="31"/>
+        <UsageCount Value="89"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit59>
       <Unit60>
@@ -448,16 +446,17 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="73"/>
         <CursorPos X="7" Y="23"/>
-        <UsageCount Value="31"/>
+        <UsageCount Value="89"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit60>
       <Unit61>
         <Filename Value="..\Engine\uGDOctree.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="3"/>
+        <EditorIndex Value="3"/>
+        <TopLine Value="265"/>
         <CursorPos X="7" Y="23"/>
-        <UsageCount Value="31"/>
+        <UsageCount Value="89"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit61>
       <Unit62>
@@ -466,7 +465,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="3"/>
         <CursorPos X="7" Y="23"/>
-        <UsageCount Value="31"/>
+        <UsageCount Value="89"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit62>
       <Unit63>
@@ -475,7 +474,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="327"/>
         <CursorPos X="85" Y="509"/>
-        <UsageCount Value="31"/>
+        <UsageCount Value="89"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit63>
       <Unit64>
@@ -484,7 +483,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="3"/>
         <CursorPos X="7" Y="23"/>
-        <UsageCount Value="31"/>
+        <UsageCount Value="89"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit64>
       <Unit65>
@@ -493,27 +492,26 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="3"/>
         <CursorPos X="4" Y="30"/>
-        <UsageCount Value="31"/>
+        <UsageCount Value="89"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit65>
       <Unit66>
         <Filename Value="..\Engine\uGDSettings.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="1"/>
-        <TopLine Value="169"/>
-        <CursorPos X="38" Y="189"/>
-        <UsageCount Value="31"/>
+        <EditorIndex Value="5"/>
+        <TopLine Value="271"/>
+        <CursorPos X="63" Y="230"/>
+        <UsageCount Value="89"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit66>
       <Unit67>
         <Filename Value="..\Engine\uGDSkyDome.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="5"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="293"/>
         <CursorPos X="40" Y="319"/>
-        <UsageCount Value="31"/>
-        <Loaded Value="True"/>
+        <UsageCount Value="89"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit67>
       <Unit68>
@@ -522,7 +520,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="4"/>
         <CursorPos X="7" Y="24"/>
-        <UsageCount Value="31"/>
+        <UsageCount Value="89"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit68>
       <Unit69>
@@ -531,7 +529,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="20"/>
         <CursorPos X="10" Y="39"/>
-        <UsageCount Value="31"/>
+        <UsageCount Value="89"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit69>
       <Unit70>
@@ -540,7 +538,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="13"/>
         <CursorPos X="4" Y="33"/>
-        <UsageCount Value="31"/>
+        <UsageCount Value="89"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit70>
       <Unit71>
@@ -549,7 +547,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="3"/>
         <CursorPos X="7" Y="23"/>
-        <UsageCount Value="31"/>
+        <UsageCount Value="89"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit71>
       <Unit72>
@@ -558,7 +556,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="3"/>
         <CursorPos X="7" Y="23"/>
-        <UsageCount Value="31"/>
+        <UsageCount Value="89"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit72>
       <Unit73>
@@ -567,7 +565,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="3"/>
         <CursorPos X="7" Y="23"/>
-        <UsageCount Value="31"/>
+        <UsageCount Value="89"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit73>
       <Unit74>
@@ -576,7 +574,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="3"/>
         <CursorPos X="7" Y="23"/>
-        <UsageCount Value="31"/>
+        <UsageCount Value="89"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit74>
       <Unit75>
@@ -585,7 +583,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="197"/>
         <CursorPos X="4" Y="217"/>
-        <UsageCount Value="31"/>
+        <UsageCount Value="89"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit75>
       <Unit76>
@@ -594,17 +592,16 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="11"/>
         <CursorPos X="4" Y="36"/>
-        <UsageCount Value="31"/>
+        <UsageCount Value="89"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit76>
       <Unit77>
         <Filename Value="..\Engine\uGDWater.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="4"/>
-        <TopLine Value="350"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="366"/>
         <CursorPos X="54" Y="370"/>
-        <UsageCount Value="31"/>
-        <Loaded Value="True"/>
+        <UsageCount Value="89"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit77>
       <Unit78>
@@ -613,16 +610,16 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="27"/>
         <CursorPos X="15" Y="56"/>
-        <UsageCount Value="31"/>
+        <UsageCount Value="89"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit78>
       <Unit79>
         <Filename Value="..\Engine\uGDWindow.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="8"/>
-        <TopLine Value="204"/>
-        <CursorPos Y="228"/>
-        <UsageCount Value="31"/>
+        <EditorIndex Value="6"/>
+        <TopLine Value="13"/>
+        <CursorPos X="60" Y="22"/>
+        <UsageCount Value="89"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit79>
@@ -633,7 +630,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="61"/>
         <CursorPos X="3" Y="76"/>
-        <UsageCount Value="28"/>
+        <UsageCount Value="86"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit80>
       <Unit81>
@@ -642,7 +639,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="41"/>
         <CursorPos X="11" Y="76"/>
-        <UsageCount Value="28"/>
+        <UsageCount Value="86"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit81>
       <Unit82>
@@ -651,10 +648,10 @@
         <ComponentName Value="ConfigurationForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <EditorIndex Value="2"/>
-        <TopLine Value="82"/>
-        <CursorPos X="41" Y="100"/>
-        <UsageCount Value="28"/>
+        <EditorIndex Value="1"/>
+        <TopLine Value="255"/>
+        <CursorPos X="137" Y="267"/>
+        <UsageCount Value="86"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -664,7 +661,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="54"/>
         <CursorPos X="11" Y="74"/>
-        <UsageCount Value="102"/>
+        <UsageCount Value="96"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit83>
       <Unit84>
@@ -672,7 +669,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="15"/>
         <CursorPos X="4" Y="34"/>
-        <UsageCount Value="102"/>
+        <UsageCount Value="96"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit84>
       <Unit85>
@@ -680,12 +677,12 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="53"/>
         <CursorPos X="113" Y="48"/>
-        <UsageCount Value="99"/>
+        <UsageCount Value="93"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit85>
       <Unit86>
         <Filename Value="..\Engine\GDCamera.pas"/>
-        <UsageCount Value="99"/>
+        <UsageCount Value="93"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit86>
       <Unit87>
@@ -693,7 +690,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="326"/>
         <CursorPos X="77" Y="346"/>
-        <UsageCount Value="99"/>
+        <UsageCount Value="93"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit87>
       <Unit88>
@@ -701,7 +698,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="167"/>
         <CursorPos X="26" Y="190"/>
-        <UsageCount Value="99"/>
+        <UsageCount Value="93"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit88>
       <Unit89>
@@ -709,7 +706,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="67"/>
         <CursorPos X="33" Y="78"/>
-        <UsageCount Value="99"/>
+        <UsageCount Value="93"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit89>
       <Unit90>
@@ -717,7 +714,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="97"/>
         <CursorPos X="19" Y="116"/>
-        <UsageCount Value="99"/>
+        <UsageCount Value="93"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit90>
       <Unit91>
@@ -725,7 +722,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="180"/>
         <CursorPos Y="206"/>
-        <UsageCount Value="99"/>
+        <UsageCount Value="93"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit91>
       <Unit92>
@@ -733,7 +730,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="284"/>
         <CursorPos X="7" Y="302"/>
-        <UsageCount Value="99"/>
+        <UsageCount Value="93"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit92>
       <Unit93>
@@ -741,7 +738,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="194"/>
         <CursorPos Y="214"/>
-        <UsageCount Value="99"/>
+        <UsageCount Value="93"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit93>
       <Unit94>
@@ -749,7 +746,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="20"/>
         <CursorPos X="3" Y="53"/>
-        <UsageCount Value="99"/>
+        <UsageCount Value="93"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit94>
       <Unit95>
@@ -757,7 +754,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="55"/>
         <CursorPos X="57" Y="55"/>
-        <UsageCount Value="99"/>
+        <UsageCount Value="93"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit95>
       <Unit96>
@@ -765,7 +762,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="113"/>
         <CursorPos X="3" Y="123"/>
-        <UsageCount Value="99"/>
+        <UsageCount Value="93"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit96>
       <Unit97>
@@ -773,7 +770,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="291"/>
         <CursorPos X="76" Y="274"/>
-        <UsageCount Value="99"/>
+        <UsageCount Value="93"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit97>
       <Unit98>
@@ -781,7 +778,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="79"/>
         <CursorPos Y="82"/>
-        <UsageCount Value="99"/>
+        <UsageCount Value="93"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit98>
       <Unit99>
@@ -789,7 +786,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="253"/>
         <CursorPos X="71" Y="273"/>
-        <UsageCount Value="99"/>
+        <UsageCount Value="93"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit99>
       <Unit100>
@@ -797,14 +794,14 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="96"/>
         <CursorPos X="4" Y="130"/>
-        <UsageCount Value="99"/>
+        <UsageCount Value="93"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit100>
       <Unit101>
         <Filename Value="..\Engine\GDSettings.pas"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="25"/>
-        <UsageCount Value="99"/>
+        <UsageCount Value="93"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit101>
       <Unit102>
@@ -812,7 +809,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="292"/>
         <CursorPos X="25" Y="26"/>
-        <UsageCount Value="99"/>
+        <UsageCount Value="93"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit102>
       <Unit103>
@@ -820,7 +817,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="360"/>
         <CursorPos Y="381"/>
-        <UsageCount Value="99"/>
+        <UsageCount Value="93"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit103>
       <Unit104>
@@ -828,7 +825,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="29"/>
         <CursorPos X="8" Y="39"/>
-        <UsageCount Value="99"/>
+        <UsageCount Value="93"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit104>
       <Unit105>
@@ -836,7 +833,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="56"/>
         <CursorPos Y="89"/>
-        <UsageCount Value="99"/>
+        <UsageCount Value="93"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit105>
       <Unit106>
@@ -844,7 +841,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="64"/>
         <CursorPos X="62" Y="63"/>
-        <UsageCount Value="99"/>
+        <UsageCount Value="93"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit106>
       <Unit107>
@@ -852,7 +849,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="268"/>
         <CursorPos Y="291"/>
-        <UsageCount Value="99"/>
+        <UsageCount Value="93"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit107>
       <Unit108>
@@ -860,7 +857,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="91"/>
         <CursorPos Y="111"/>
-        <UsageCount Value="99"/>
+        <UsageCount Value="93"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit108>
       <Unit109>
@@ -868,7 +865,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="151"/>
         <CursorPos Y="25"/>
-        <UsageCount Value="99"/>
+        <UsageCount Value="93"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit109>
       <Unit110>
@@ -876,13 +873,13 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="347"/>
         <CursorPos X="58" Y="236"/>
-        <UsageCount Value="99"/>
+        <UsageCount Value="93"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit110>
       <Unit111>
         <Filename Value="..\Engine\GDWaterCell.pas"/>
         <EditorIndex Value="-1"/>
-        <UsageCount Value="99"/>
+        <UsageCount Value="93"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit111>
       <Unit112>
@@ -890,7 +887,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="307"/>
         <CursorPos X="54" Y="341"/>
-        <UsageCount Value="99"/>
+        <UsageCount Value="93"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit112>
       <Unit113>
@@ -898,7 +895,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="108"/>
         <CursorPos X="59" Y="141"/>
-        <UsageCount Value="99"/>
+        <UsageCount Value="93"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit113>
       <Unit114>
@@ -906,12 +903,12 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="84"/>
         <CursorPos Y="104"/>
-        <UsageCount Value="99"/>
+        <UsageCount Value="93"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit114>
       <Unit115>
         <Filename Value="..\Engine\GDResource.pas"/>
-        <UsageCount Value="99"/>
+        <UsageCount Value="93"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit115>
       <Unit116>
@@ -919,7 +916,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="41"/>
         <CursorPos X="8" Y="118"/>
-        <UsageCount Value="99"/>
+        <UsageCount Value="93"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit116>
       <Unit117>
@@ -927,14 +924,14 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="7"/>
         <CursorPos X="3" Y="41"/>
-        <UsageCount Value="99"/>
+        <UsageCount Value="93"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit117>
       <Unit118>
         <Filename Value="..\Engine\GDWindow.pas"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="138"/>
-        <UsageCount Value="99"/>
+        <UsageCount Value="93"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit118>
       <Unit119>
@@ -942,7 +939,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="74"/>
         <CursorPos X="22" Y="84"/>
-        <UsageCount Value="99"/>
+        <UsageCount Value="93"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit119>
       <Unit120>
@@ -950,7 +947,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="198"/>
         <CursorPos X="50" Y="228"/>
-        <UsageCount Value="36"/>
+        <UsageCount Value="30"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit120>
       <Unit121>
@@ -958,13 +955,13 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="39"/>
         <CursorPos X="12" Y="43"/>
-        <UsageCount Value="22"/>
+        <UsageCount Value="16"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit121>
       <Unit122>
         <Filename Value="..\Libraries\Newton\newton.inc"/>
         <EditorIndex Value="-1"/>
-        <UsageCount Value="20"/>
+        <UsageCount Value="14"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit122>
       <Unit123>
@@ -972,7 +969,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="893"/>
         <CursorPos Y="915"/>
-        <UsageCount Value="6"/>
+        <UsageCount Value="0"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit123>
       <Unit124>
@@ -980,14 +977,14 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="177"/>
         <CursorPos X="23" Y="197"/>
-        <UsageCount Value="16"/>
+        <UsageCount Value="10"/>
       </Unit124>
       <Unit125>
         <Filename Value="C:\Lazarus\fpc\rtl\objpas\fgl.pp"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="1161"/>
         <CursorPos Y="1395"/>
-        <UsageCount Value="11"/>
+        <UsageCount Value="5"/>
       </Unit125>
       <Unit126>
         <Filename Value="uConfiguration.lfm"/>
@@ -995,7 +992,7 @@
         <WindowIndex Value="-1"/>
         <TopLine Value="-1"/>
         <CursorPos X="-1" Y="-1"/>
-        <UsageCount Value="20"/>
+        <UsageCount Value="14"/>
         <DefaultSyntaxHighlighter Value="LFM"/>
       </Unit126>
       <Unit127>
@@ -1004,7 +1001,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="41"/>
         <CursorPos X="4" Y="56"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="4"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit127>
       <Unit128>
@@ -1012,94 +1009,130 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="3159"/>
         <CursorPos Y="3181"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="4"/>
       </Unit128>
     </Units>
-    <JumpHistory Count="21" HistoryIndex="20">
+    <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
-        <Filename Value="..\Engine\uGDWindow.pas"/>
-        <Caret Line="239" TopLine="204"/>
+        <Filename Value="uConfiguration.pas"/>
+        <Caret Line="240" TopLine="219"/>
       </Position1>
       <Position2>
-        <Filename Value="..\Engine\uGDWindow.pas"/>
-        <Caret Line="240" TopLine="204"/>
+        <Filename Value="uConfiguration.pas"/>
+        <Caret Line="239" TopLine="218"/>
       </Position2>
       <Position3>
-        <Filename Value="..\Engine\uGDEngine.pas"/>
-        <Caret Line="230" TopLine="209"/>
+        <Filename Value="uConfiguration.pas"/>
+        <Caret Line="246" TopLine="225"/>
       </Position3>
       <Position4>
-        <Filename Value="..\Engine\uGDEngine.pas"/>
-        <Caret Line="229" TopLine="209"/>
+        <Filename Value="uConfiguration.pas"/>
+        <Caret Line="170" TopLine="150"/>
       </Position4>
       <Position5>
-        <Filename Value="..\Engine\uGDWindow.pas"/>
-        <Caret Line="238" TopLine="204"/>
+        <Filename Value="uConfiguration.pas"/>
+        <Caret Line="185" Column="51" TopLine="151"/>
       </Position5>
       <Position6>
-        <Filename Value="..\Engine\uGDWindow.pas"/>
-        <Caret Line="239" TopLine="204"/>
+        <Filename Value="uConfiguration.pas"/>
+        <Caret Line="184" Column="51" TopLine="150"/>
       </Position6>
       <Position7>
-        <Filename Value="..\Engine\uGDWindow.pas"/>
-        <Caret Line="240" TopLine="204"/>
+        <Filename Value="uConfiguration.pas"/>
+        <Caret Line="183" Column="51" TopLine="149"/>
       </Position7>
       <Position8>
-        <Filename Value="..\Engine\uGDEngine.pas"/>
-        <Caret Line="230" TopLine="209"/>
+        <Filename Value="uConfiguration.pas"/>
+        <Caret Line="185" Column="51" TopLine="151"/>
       </Position8>
       <Position9>
-        <Filename Value="..\Engine\uGDEngine.pas"/>
-        <Caret Line="229" TopLine="209"/>
+        <Filename Value="uConfiguration.pas"/>
+        <Caret Line="170" Column="57" TopLine="153"/>
       </Position9>
       <Position10>
-        <Filename Value="..\Engine\uGDEngine.pas"/>
-        <Caret Line="230" TopLine="209"/>
+        <Filename Value="uConfiguration.pas"/>
+        <Caret Line="174" Column="38" TopLine="139"/>
       </Position10>
       <Position11>
-        <Filename Value="..\Engine\uGDEngine.pas"/>
-        <Caret Line="229" TopLine="209"/>
+        <Filename Value="uConfiguration.pas"/>
+        <Caret Line="175" Column="38" TopLine="140"/>
       </Position11>
       <Position12>
-        <Filename Value="..\Engine\uGDWindow.pas"/>
-        <Caret Line="238" TopLine="204"/>
+        <Filename Value="uConfiguration.pas"/>
+        <Caret Line="174" Column="38" TopLine="139"/>
       </Position12>
       <Position13>
-        <Filename Value="..\Engine\uGDWindow.pas"/>
-        <Caret Line="239" TopLine="204"/>
+        <Filename Value="uConfiguration.pas"/>
+        <Caret Line="175" Column="38" TopLine="140"/>
       </Position13>
       <Position14>
-        <Filename Value="..\Engine\uGDWindow.pas"/>
-        <Caret Line="240" TopLine="204"/>
+        <Filename Value="uConfiguration.pas"/>
+        <Caret Line="176" Column="38" TopLine="141"/>
       </Position14>
       <Position15>
-        <Filename Value="..\Engine\uGDWindow.pas"/>
-        <Caret Line="226" TopLine="204"/>
+        <Filename Value="uConfiguration.pas"/>
+        <Caret Line="175" Column="38" TopLine="140"/>
       </Position15>
       <Position16>
-        <Filename Value="..\Engine\uGDWindow.pas"/>
-        <Caret Line="227" TopLine="204"/>
+        <Filename Value="uConfiguration.pas"/>
+        <Caret Line="176" Column="38" TopLine="141"/>
       </Position16>
       <Position17>
-        <Filename Value="..\Engine\uGDWindow.pas"/>
-        <Caret Line="228" TopLine="204"/>
+        <Filename Value="uConfiguration.pas"/>
+        <Caret Line="175" Column="38" TopLine="140"/>
       </Position17>
       <Position18>
-        <Filename Value="Demo.lpr"/>
-        <Caret Line="28" Column="88"/>
+        <Filename Value="uConfiguration.pas"/>
+        <Caret Line="185" Column="59" TopLine="168"/>
       </Position18>
       <Position19>
-        <Filename Value="Demo.lpr"/>
-        <Caret Line="23" Column="14" TopLine="13"/>
+        <Filename Value="uConfiguration.pas"/>
+        <Caret Line="34" Column="12" TopLine="17"/>
       </Position19>
       <Position20>
-        <Filename Value="Demo.lpr"/>
-        <Caret Line="24" TopLine="13"/>
+        <Filename Value="uConfiguration.pas"/>
+        <Caret Line="43" Column="11" TopLine="21"/>
       </Position20>
       <Position21>
-        <Filename Value="Demo.lpr"/>
-        <Caret Line="28" Column="22" TopLine="15"/>
+        <Filename Value="uConfiguration.pas"/>
+        <Caret Line="185" Column="37" TopLine="161"/>
       </Position21>
+      <Position22>
+        <Filename Value="uConfiguration.pas"/>
+        <Caret Line="183" Column="63" TopLine="161"/>
+      </Position22>
+      <Position23>
+        <Filename Value="uConfiguration.pas"/>
+        <Caret Line="260" Column="25" TopLine="246"/>
+      </Position23>
+      <Position24>
+        <Filename Value="uConfiguration.pas"/>
+        <Caret Line="266" Column="26" TopLine="242"/>
+      </Position24>
+      <Position25>
+        <Filename Value="uConfiguration.pas"/>
+        <Caret Line="182" TopLine="169"/>
+      </Position25>
+      <Position26>
+        <Filename Value="uConfiguration.pas"/>
+        <Caret Line="192" TopLine="169"/>
+      </Position26>
+      <Position27>
+        <Filename Value="uConfiguration.pas"/>
+        <Caret Line="193" Column="6" TopLine="232"/>
+      </Position27>
+      <Position28>
+        <Filename Value="uConfiguration.pas"/>
+        <Caret Line="237" TopLine="229"/>
+      </Position28>
+      <Position29>
+        <Filename Value="uConfiguration.pas"/>
+        <Caret Line="281" TopLine="258"/>
+      </Position29>
+      <Position30>
+        <Filename Value="uConfiguration.pas"/>
+        <Caret Line="194" Column="27" TopLine="169"/>
+      </Position30>
     </JumpHistory>
     <RunParams>
       <FormatVersion Value="2"/>
