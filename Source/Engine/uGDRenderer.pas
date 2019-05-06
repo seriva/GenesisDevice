@@ -275,6 +275,9 @@ begin
     //Clear shaders.
     ClearShaders();
 
+    //Clear viewport
+    ClearViewPort();
+
     //For normal rendering.
     FreeAndNil(FLinesVertices);
     FreeAndNil(FLinesVertexBuffer);

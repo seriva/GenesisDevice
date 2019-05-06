@@ -71,8 +71,6 @@ type
     constructor Create();
     destructor  Destroy(); override;
 
-    procedure Reset();
-
     procedure Init(aInit : TGDCallback);
     procedure Clear(aClear : TGDCallback);
     procedure Loop(aLoop : TGDCallback);
@@ -161,6 +159,7 @@ function TGDEngine.InitSystems(): boolean;
 var
   iSDLInit : boolean;
 begin
+  GDSettings.load();
   iSDLInit     := InitSDL();
   GDTiming     := TGDTiming.Create();
   GDWindow     := TGDWindow.Create();
@@ -176,6 +175,9 @@ begin
   GDCamera     := TGDCamera.Create();
   GDMap        := TGDMap.Create();
   GDGUI        := TGDGUI.Create();
+  GDWindow.Show();
+  GDRenderer.InitViewPort();
+  GDRenderer.ResizeViewPort(GDWindow.Width(), GDWindow.Height());
 end;
 
 {******************************************************************************}
@@ -201,33 +203,15 @@ begin
 end;
 
 {******************************************************************************}
-{* Clear the base resources                                                   *}
-{******************************************************************************}
-
-procedure TGDEngine.Reset();
-begin
-  GDConsole.Reset();
-  GDModes.Reset();
-  GDInput.Clear();
-  GDMap.Clear();
-  GDGUI.ClearScreens();
-  GDResources.Clear();
-end;
-
-{******************************************************************************}
 {* Init                                                                       *}
 {******************************************************************************}
 
 procedure TGDEngine.Init(aInit : TGDCallback);
 begin
-  GDSettings.load();
   If not(GDEngine.InitSystems()) then
   begin
     halt;
   end;
-  GDWindow.Show();
-  GDRenderer.InitViewPort();
-  GDRenderer.ResizeViewPort(GDWindow.Width(), GDWindow.Height());
   SDL_ShowCursor(0);
   Done := false;
   if assigned(aInit) then aInit();
@@ -241,8 +225,6 @@ procedure TGDEngine.Clear(aClear : TGDCallback);
 begin
   GDWindow.Hide();
   if assigned(aClear) then aClear();
-  GDRenderer.ClearViewPort();
-  Reset();
   SDL_ShowCursor(1);
   GDEngine.ClearSystems();
 end;

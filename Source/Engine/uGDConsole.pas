@@ -93,8 +93,6 @@ type
 
     procedure Render();
 
-    procedure Reset();
-
     procedure AddChar( aChar : Char );
     procedure Control( aKey : Integer );
 
@@ -143,7 +141,10 @@ begin
   FCursorUpdate := False;
   AddCommand('Help', 'Show help', CT_FUNCTION, @Help);
   Write('Log started at ' + DateToStr(Date()) + ', ' + TimeToStr(Time()));
-  Reset();
+  FRow := FLogText.Count-1;
+  FShow := false;
+  FCommand := '';
+  FLastTime := GDTiming.GetTime()+500;
 end;
 
 {******************************************************************************}
@@ -156,18 +157,6 @@ begin
   FreeAndNil(CommandMap);
   FreeAndNil(FLogText);
   FreeAndNil(FCommandHistory);
-end;
-
-{******************************************************************************}
-{* Init the console                                                           *}
-{******************************************************************************}
-
-procedure TGDConsole.Reset();
-begin
-  FRow := FLogText.Count-1;
-  FShow := false;
-  FCommand := '';
-  FLastTime := GDTiming.GetTime()+500;
 end;
 
 {******************************************************************************}

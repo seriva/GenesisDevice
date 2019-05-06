@@ -72,8 +72,6 @@ type
 
     constructor Create();
     destructor  Destroy(); override;
-
-    procedure Reset();
   end;
 
 implementation
@@ -84,7 +82,17 @@ uses
 
 constructor TGDModes.Create();
 begin
-  Reset();
+  FRenderWireframe   := false;
+  FRenderNodeBoxes   := false;
+  FRenderObjectBoxes := false;
+  FRenderNormals     := false;
+  FRenderStats       := false;
+  FRenderTerrain     := true;
+  FRenderSky         := true;
+  FRenderWater       := true;
+  FRenderGrass       := true;
+  FRenderMeshes      := true;
+  FRenderGUI         := true;
 
   GDConsole.AddCommand('RTris', '0,1 : Enable or disable wireframe', CT_BOOLEAN, @FRenderWireframe);
   GDConsole.AddCommand('RNorm',  '0,1 : Show or hide normals', CT_BOOLEAN, @FRenderNormals);
@@ -104,21 +112,6 @@ end;
 destructor  TGDModes.Destroy();
 begin
   Inherited;
-end;
-
-procedure TGDModes.Reset();
-begin
-  FRenderWireframe   := false;
-  FRenderNodeBoxes   := false;
-  FRenderObjectBoxes := false;
-  FRenderNormals     := false;
-  FRenderStats       := false;
-  FRenderTerrain     := true;
-  FRenderSky         := true;
-  FRenderWater       := true;
-  FRenderGrass       := true;
-  FRenderMeshes      := true;
-  FRenderGUI         := true;
 end;
 
 end.

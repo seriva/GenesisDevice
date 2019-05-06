@@ -179,6 +179,7 @@ begin
   inherited;
   GDConsole.Write('Shutting down input...');
   try
+    Clear();
     iResult := true;
     FreeAndNil(FDirect);
     FreeAndNil(FSingle);
