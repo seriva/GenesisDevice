@@ -60,11 +60,7 @@ type
 
   TGDEngine = Class
   private
-    FDone 	: boolean;
-
-    function  InitSDL(): Boolean;
-    function  InitSystems(): boolean;
-    procedure ClearSystems();
+    FDone : boolean;
   public
     property Done : Boolean read FDone write FDone;
 
@@ -118,19 +114,21 @@ begin
 end;
 
 {******************************************************************************}
-{* Init SDL                                                                   *}
+{* Init                                                                       *}
 {******************************************************************************}
 
-function  TGDEngine.InitSDL(): Boolean;
+procedure TGDEngine.Init(aInit : TGDCallback);
 var
+  iSDLInit : boolean;
   iVersion : TSDL_Version;
   iV1, iV2 : String;
 begin
-  Inherited;
+  GDSettings.load();
+
   GDConsole.Write('.....Initializing SDL');
   try
-    result := not(SDL_Init(SDL_INIT_VIDEO or SDL_INIT_TIMER) < 0);
-    if result then
+    iSDLInit := not(SDL_Init(SDL_INIT_VIDEO or SDL_INIT_TIMER) < 0);
+    if iSDLInit then
     begin
       SDL_GetVersion(@iVersion);
       iV1 :=  IntToStr(iVersion.major) + '.' + IntToStr(iVersion.minor) + '.' + IntToStr(iVersion.patch);
@@ -145,29 +143,23 @@ begin
   except
     on E: Exception do
     begin
-      result := false;
+      iSDLInit := false;
       GDConsole.Write('Failed to initialize SDL: ' + E.Message);
     end;
   end;
-end;
 
-{******************************************************************************}
-{* Init engine Systems                                                        *}
-{******************************************************************************}
-
-function TGDEngine.InitSystems(): boolean;
-var
-  iSDLInit : boolean;
-begin
-  GDSettings.load();
-  iSDLInit     := InitSDL();
   GDTiming     := TGDTiming.Create();
   GDWindow     := TGDWindow.Create();
   GDInput      := TGDInput.Create();
   GDRenderer   := TGDRenderer.Create();
   GDSound      := TGDSound.Create();
   GDPhysics    := TGDPhysics.Create();
-  result       := GDInput.Initialized and GDRenderer.Initialized and GDWindow.Initialized and GDPhysics.Initialized and iSDLInit ;
+
+  If not(GDInput.Initialized and GDRenderer.Initialized and GDWindow.Initialized and GDPhysics.Initialized and iSDLInit) then
+  begin
+    halt;
+  end;
+
   GDStatistics := TGDStatistics.Create();
   GDModes      := TGDModes.Create();
   GDResources  := TGDResources.Create();
@@ -176,42 +168,6 @@ begin
   GDMap        := TGDMap.Create();
   GDGUI        := TGDGUI.Create();
   GDWindow.Show();
-  GDRenderer.InitViewPort();
-  GDRenderer.ResizeViewPort(GDWindow.Width(), GDWindow.Height());
-end;
-
-{******************************************************************************}
-{* Clear engine Systems                                                       *}
-{******************************************************************************}
-
-procedure TGDEngine.ClearSystems();
-begin
-  FreeAndNil(GDStatistics);
-  FreeAndNil(GDModes);
-  FreeAndNil(GDInput);
-  FreeAndNil(GDSound);
-  FreeAndNil(GDPhysics);
-  FreeAndNil(GDRenderer);
-  FreeAndNil(GDGUI);
-  FreeAndNil(GDMap);
-  FreeAndNil(GDWindow);
-  SDL_Quit();
-  GDConsole.Write('Shutting down SDL...Ok');
-  FreeAndNil(GDTiming);
-  FreeAndNil(GDCamera);
-  FreeAndNil(GDResources);
-end;
-
-{******************************************************************************}
-{* Init                                                                       *}
-{******************************************************************************}
-
-procedure TGDEngine.Init(aInit : TGDCallback);
-begin
-  If not(GDEngine.InitSystems()) then
-  begin
-    halt;
-  end;
   SDL_ShowCursor(0);
   Done := false;
   if assigned(aInit) then aInit();
@@ -226,7 +182,20 @@ begin
   GDWindow.Hide();
   if assigned(aClear) then aClear();
   SDL_ShowCursor(1);
-  GDEngine.ClearSystems();
+  FreeAndNil(GDStatistics);
+  FreeAndNil(GDModes);
+  FreeAndNil(GDInput);
+  FreeAndNil(GDSound);
+  FreeAndNil(GDPhysics);
+  FreeAndNil(GDRenderer);
+  FreeAndNil(GDGUI);
+  FreeAndNil(GDMap);
+  FreeAndNil(GDResources);
+  FreeAndNil(GDWindow);
+  FreeAndNil(GDTiming);
+  FreeAndNil(GDCamera);
+  SDL_Quit();
+  GDConsole.Write('Shutting down SDL...Ok');
 end;
 
 {******************************************************************************}
@@ -244,6 +213,8 @@ begin
   GDInput.Update();
   GDSound.Update();
   GDMap.Update();
+  GDPhysics.Update();
+
   if assigned(aLoop) then aLoop();
 
   //Render the scene

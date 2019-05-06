@@ -90,7 +90,6 @@ type
     procedure ClearFrameBuffers();
     procedure InitShadowFrameBuffers();
     procedure ClearShadowFrameBuffers();
-    Procedure ResizeFrameBuffers(aWidth, aHeight : integer);
   public
     property    Initialized : boolean read FInitialized;
 
@@ -105,8 +104,6 @@ type
     Constructor Create();
     Destructor  Destroy();override;
 
-    procedure   InitViewPort();
-    procedure   ClearViewPort;
     procedure   ResizeViewPort(aWidth, aHeight : integer);
 
     procedure   SetColor(aC : TGDColor); overload;
@@ -243,6 +240,9 @@ begin
     GDConsole.AddCommand('RSSAORadius', '0.0 to 10.0 : Set SSAO radius', CT_FLOAT, @FSSAORadius);
     GDConsole.AddCommand('RSSAOOnly', '0.0 to 1.0 : Only show SSAO', CT_INTEGER, @FSSAOOnly);
     GDConsole.AddCommand('RShadowFilter', '0.0 to 1.0 : For shadow filtering', CT_INTEGER, @FShadowFilter);
+
+    InitFrameBuffers(GDWindow.Width(), GDWindow.Height());
+    InitShadowFrameBuffers();
   except
     on E: Exception do
     begin
@@ -275,8 +275,9 @@ begin
     //Clear shaders.
     ClearShaders();
 
-    //Clear viewport
-    ClearViewPort();
+    //Clear framebuffers
+    ClearFrameBuffers();
+    ClearShadowFrameBuffers();
 
     //For normal rendering.
     FreeAndNil(FLinesVertices);
@@ -293,26 +294,6 @@ begin
 end;
 
 {******************************************************************************}
-{* Init the viewport                                                          *}
-{******************************************************************************}
-
-procedure TGDRenderer.InitViewPort();
-begin
-  InitFrameBuffers(GDWindow.Width(), GDWindow.Height());
-  InitShadowFrameBuffers();
-end;
-
-{******************************************************************************}
-{* Shutdown the renderer                                                      *}
-{******************************************************************************}
-
-procedure TGDRenderer.ClearViewPort();
-begin
-  ClearFrameBuffers();
-  ClearShadowFrameBuffers();
-end;
-
-{******************************************************************************}
 {* Resize the windows viewport                                                *}
 {******************************************************************************}
 
@@ -326,7 +307,8 @@ begin
   gluPerspective(40.0, aWidth/aHeight, 25, GDSettings.ViewDistance * R_VIEW_DISTANCE_STEP);
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
-  ResizeFrameBuffers(aWidth, aHeight);
+  ClearFrameBuffers();
+  InitFrameBuffers(aWidth, aHeight);
 end;
 
 {******************************************************************************}
@@ -548,7 +530,6 @@ begin
   FreeAndNil(FFrameTex);
   FreeAndNil(FFrameShadowTex);
   FreeAndNil(FFrameDepthTex);
-
   FreeAndNil(FBlurFBO);
   FreeAndNil(FBlurTex);
 end;
@@ -557,16 +538,6 @@ procedure TGDRenderer.ClearShadowFrameBuffers();
 begin
   FreeAndNil(FShadowFBO);
   FreeAndNil(FShadowTex);
-end;
-
-{******************************************************************************}
-{* Resize buffers                                                             *}
-{******************************************************************************}
-
-Procedure TGDRenderer.ResizeFrameBuffers(aWidth, aHeight : integer);
-begin
-  ClearFrameBuffers();
-  InitFrameBuffers(aWidth, aHeight);
 end;
 
 {******************************************************************************}

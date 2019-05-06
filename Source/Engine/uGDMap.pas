@@ -128,6 +128,7 @@ end;
 destructor  TGDMap.Destroy();
 begin
   inherited;
+  Clear();
   FreeAndNil(FTerrain);
   FreeAndNil(FWater);
   FreeAndNil(FFoliage);
