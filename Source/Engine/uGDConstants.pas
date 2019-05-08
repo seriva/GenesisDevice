@@ -82,7 +82,7 @@ const
   R_LOD2_DISTANCE         = 70;
   R_CAUSTIC_TIME          = 50;
   R_NORMAL_LENGTH         = 32;
-  R_SHADOW_SIZE           = 2048;
+  R_SHADOW_SIZE           = 4096;
 
   //sound constants
   S_MAX_SOURCES = 16;

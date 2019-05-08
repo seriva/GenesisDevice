@@ -202,7 +202,7 @@ begin
       begin
         iMat := TGDMaterial(GDResources.Data[iK]);
 
-        iMat.ApplyMaterial();
+        iMat.ApplyMaterial(aRenderFor);
 
         for iL := 0 to iSurfList.Count - 1 do
         begin

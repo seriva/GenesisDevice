@@ -68,7 +68,7 @@ Type
     constructor Create();
     destructor  Destroy(); override;
 
-    procedure   ApplyMaterial();
+    procedure   ApplyMaterial(aRenderFor : TGDRenderFor );
     procedure   DisableMaterial();
   end;
   
@@ -112,7 +112,7 @@ begin
   with GDRenderer do
   begin
     MeshShader.SetInt('T_COLORMAP', 0);
-    if DoTreeAnim then
+    if DoTreeAnim and not(aRenderFor = RF_SHADOW) then
       MeshShader.SetInt('I_DO_TREE_ANIM', 1)
     else
       MeshShader.SetInt('I_DO_TREE_ANIM', 0);

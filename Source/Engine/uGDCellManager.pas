@@ -462,7 +462,7 @@ Begin
   //render the visible mesh cells
   if GDModes.RenderMeshes then
   begin
-		aMeshManager.StartRendering(aRenderAttribute, aRenderFor);
+    aMeshManager.StartRendering(aRenderAttribute, aRenderFor);
 
     for iI := 0 to FVisibleMeshCells.Count - 1 do
     begin

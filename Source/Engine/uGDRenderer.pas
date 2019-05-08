@@ -788,7 +788,7 @@ begin
     ApplyBlurToImage( FFrameTex, 3 );
 
   If GDSettings.UseShadows and (FShadowFilter = 1) then
-    ApplyBlurToImage( FFrameShadowTex, 5);
+    ApplyBlurToImage( FFrameShadowTex, 15);
 end;
 
 {******************************************************************************}
