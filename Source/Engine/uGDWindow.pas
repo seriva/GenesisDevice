@@ -135,13 +135,13 @@ begin
     SDL_SetWindowPosition(FWindow ,iRec.x, iRec.y);
     SDL_SetWindowFullscreen(FWindow, SDL_WINDOW_FULLSCREEN);
     SDL_SetWindowSize(FWindow, iRec.w, iRec.h);
-    GDRenderer.ResizeViewPort(iRec.w, iRec.h);
+    GDRenderer.ResizeViewPort();
   end
   else
   begin
     SDL_SetWindowPosition(FWindow ,iRec.x+50, iRec.y+50);
     SDL_SetWindowSize(FWindow, R_DEFAULT_WINDOW_WIDTH, R_DEFAULT_WINDOW_HEIGHT);
-    GDRenderer.ResizeViewPort(R_DEFAULT_WINDOW_WIDTH, R_DEFAULT_WINDOW_HEIGHT);
+    GDRenderer.ResizeViewPort();
   end;
 
   SDL_ShowWindow(FWindow);
@@ -194,7 +194,7 @@ begin;
       SDL_WINDOWEVENT     : begin
                               case event.window.event of
                                 SDL_WINDOWEVENT_RESIZED:
-                                  GDRenderer.ResizeViewPort(event.window.data1, event.window.data2);
+                                  GDRenderer.ResizeViewPort();
                               end;
       			    end;
     end;

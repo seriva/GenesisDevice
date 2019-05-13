@@ -104,7 +104,7 @@ type
     Constructor Create();
     Destructor  Destroy();override;
 
-    procedure   ResizeViewPort(aWidth, aHeight : integer);
+    procedure   ResizeViewPort();
 
     procedure   SetColor(aC : TGDColor); overload;
     procedure   SetColor(aR, aG, aB, aA : Single); overload;
@@ -297,18 +297,15 @@ end;
 {* Resize the windows viewport                                                *}
 {******************************************************************************}
 
-procedure TGDRenderer.ResizeViewPort(aWidth, aHeight : integer);
+procedure TGDRenderer.ResizeViewPort();
 begin
-  if (aHeight = 0) then
-    aHeight := 1;
-  glViewport(0, 0,aWidth, aHeight);
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
-  gluPerspective(40.0, aWidth/aHeight, 25, GDSettings.ViewDistance * R_VIEW_DISTANCE_STEP);
+  gluPerspective(40.0, GDWindow.Width/GDWindow.Height, 25, GDSettings.ViewDistance * R_VIEW_DISTANCE_STEP);
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
   ClearFrameBuffers();
-  InitFrameBuffers(aWidth, aHeight);
+  InitFrameBuffers(GDWindow.Width, GDWindow.Height);
 end;
 
 {******************************************************************************}
@@ -556,6 +553,7 @@ end;
 
 procedure TGDRenderer.SwitchToOrtho(aWidth, aHeight : integer);
 begin
+  glViewport(0, 0, GDWindow.Width(), GDWindow.Height());
   glMatrixMode(GL_PROJECTION);
   glPushMatrix();
   glLoadIdentity();
@@ -654,6 +652,7 @@ begin
 end;
 
 begin
+  glViewport(0, 0, GDWindow.Width(), GDWindow.Height());
   glLoadIdentity();
   GDCamera.Translate();
   If GDModes.RenderNormals then RenderLines(1,0.5,0.25,1,RA_NORMALS);
@@ -708,7 +707,6 @@ begin
     If GDSettings.UseShadows = false then
     begin
       FShadowFBO.Unbind();
-      glViewport(0, 0, GDWindow.Width(), GDWindow.Height());
       exit;
     end;
 
@@ -752,7 +750,6 @@ begin
     glPopMatrix();
 
     FShadowFBO.Unbind();
-    glViewport(0, 0, GDWindow.Width(), GDWindow.Height());
   end;
 end;
 
@@ -777,6 +774,7 @@ end;
 procedure RenderSourceImage(aUnderWater : boolean);
 
 begin
+  glViewport(0, 0, GDWindow.Width(), GDWindow.Height());
   FFrameFBO.Bind();
   glClear(GL_DEPTH_BUFFER_BIT);
 
@@ -815,6 +813,7 @@ end;
 
 procedure RenderFinal();
 begin
+  glViewport(0, 0, GDWindow.Width(), GDWindow.Height());
   glDisable(GL_DEPTH_TEST);
   FPostShader.Bind();
   FPostShader.SetInt('T_SOURCE_IMAGE',0);

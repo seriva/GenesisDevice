@@ -367,7 +367,6 @@ begin
     glPopMatrix();
   end;
   glDisable(GL_CLIP_PLANE0);
-  glViewPort(0,0, GDWindow.Width(), GDWindow.Height());
   FFrameBuffer.UnBind();
 end;
 
