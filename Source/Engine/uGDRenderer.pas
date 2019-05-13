@@ -241,7 +241,7 @@ begin
     GDConsole.AddCommand('RSSAOOnly', '0.0 to 1.0 : Only show SSAO', CT_INTEGER, @FSSAOOnly);
     GDConsole.AddCommand('RShadowFilter', '0.0 to 1.0 : For shadow filtering', CT_INTEGER, @FShadowFilter);
 
-    InitFrameBuffers(GDWindow.Width(), GDWindow.Height());
+    InitFrameBuffers(GDWindow.ScaledWidth(), GDWindow.ScaledHeight());
     InitShadowFrameBuffers();
   except
     on E: Exception do
@@ -305,7 +305,7 @@ begin
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();
   ClearFrameBuffers();
-  InitFrameBuffers(GDWindow.Width, GDWindow.Height);
+  InitFrameBuffers(GDWindow.ScaledWidth, GDWindow.ScaledHeight);
 end;
 
 {******************************************************************************}
@@ -606,7 +606,7 @@ end;
 
 procedure ApplyBlurToImage( aSourceImage : TGDTexture; aBlurStrength : double );
 begin
-  glViewport(0, 0, GDWindow.Width() div 4, GDWindow.Height() div 4);
+  glViewport(0, 0, GDWindow.ScaledWidth() div 4, GDWindow.ScaledHeight() div 4);
   glDisable(GL_DEPTH_TEST);
   glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT);
   FBlurShader.Bind();
@@ -616,15 +616,15 @@ begin
   FBlurFBO.Bind();
   FBlurFBO.AttachTexture(FBlurTex,GL_COLOR_ATTACHMENT0_EXT,GL_TEXTURE_2D);
   FBlurFBO.Status();
-  FBlurShader.SetFloat4('V_BLUR_OFFSET',aBlurStrength / GDWindow.Width(), 0, 0, 1);
+  FBlurShader.SetFloat4('V_BLUR_OFFSET',aBlurStrength / GDWindow.ScaledWidth(), 0, 0, 1);
   aSourceImage.BindTexture( GL_TEXTURE0 );
   RenderQuad();
 
   //vertical
-  glViewport(0, 0, GDWindow.Width(), GDWindow.Height());
+  glViewport(0, 0, GDWindow.ScaledWidth(), GDWindow.ScaledHeight());
   FBlurFBO.AttachTexture(aSourceImage,GL_COLOR_ATTACHMENT0_EXT,GL_TEXTURE_2D);
   FBlurFBO.Status();
-  FBlurShader.SetFloat4('V_BLUR_OFFSET', 0, aBlurStrength / GDWindow.Height(), 0, 1);
+  FBlurShader.SetFloat4('V_BLUR_OFFSET', 0, aBlurStrength / GDWindow.ScaledHeight(), 0, 1);
   FBlurTex.BindTexture( GL_TEXTURE0 );
   RenderQuad();
 
@@ -774,7 +774,7 @@ end;
 procedure RenderSourceImage(aUnderWater : boolean);
 
 begin
-  glViewport(0, 0, GDWindow.Width(), GDWindow.Height());
+  glViewport(0, 0, GDWindow.ScaledWidth(), GDWindow.ScaledHeight());
   FFrameFBO.Bind();
   glClear(GL_DEPTH_BUFFER_BIT);
 
@@ -786,7 +786,7 @@ begin
     ApplyBlurToImage( FFrameTex, 3 );
 
   If GDSettings.UseShadows and (FShadowFilter = 1) then
-    ApplyBlurToImage( FFrameShadowTex, 15);
+    ApplyBlurToImage( FFrameShadowTex, 5);
 end;
 
 {******************************************************************************}

@@ -233,17 +233,17 @@ procedure TGDWater.Resize();
 begin
    case GDSettings.WaterDetail of
      WD_LOW    : begin
-                   FWidth  := GDWindow.Width() div 4;
-                   FHeight := GDWindow.Height() div 4;
+                   FWidth  := GDWindow.ScaledWidth() div 4;
+                   FHeight := GDWindow.ScaledHeight() div 4;
                  end;
 
      WD_MEDIUM : begin
-                   FWidth  := GDWindow.Width() div 2;
-                   FHeight := GDWindow.Height() div 2;
+                   FWidth  := GDWindow.ScaledWidth() div 2;
+                   FHeight := GDWindow.ScaledHeight() div 2;
                  end;
      WD_HIGH   : begin
-                   FWidth  := GDWindow.Width();
-                   FHeight := GDWindow.Height();
+                   FWidth  := GDWindow.ScaledWidth();
+                   FHeight := GDWindow.ScaledHeight();
                  end;
   end;
   FreeAndNil(FRenderBuffer);

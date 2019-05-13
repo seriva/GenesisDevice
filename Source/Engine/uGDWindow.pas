@@ -252,7 +252,10 @@ var
   iW, iH : Integer;
 begin
   SDL_GetWindowSize(FWindow, @iW, @iH);
-  result := Round(iW * GDSettings.DisplayScale);
+  if GDSettings.FullScreen then
+    result := Round(iW * GDSettings.DisplayScale)
+  else
+    result := iW;
 end;
 
 {******************************************************************************}
@@ -264,7 +267,10 @@ var
   iW, iH : Integer;
 begin
   SDL_GetWindowSize(FWindow, @iW, @iH);
-  result := Round(iH * GDSettings.DisplayScale);
+  if GDSettings.FullScreen then
+    result := Round(iH * GDSettings.DisplayScale)
+  else
+    result := iH;
 end;
 
 end.
