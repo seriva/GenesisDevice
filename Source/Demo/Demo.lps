@@ -335,10 +335,9 @@
       <Unit48>
         <Filename Value="..\Engine\uGDConstants.pas"/>
         <IsPartOfProject Value="True"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="5"/>
         <TopLine Value="69"/>
-        <CursorPos X="33" Y="87"/>
+        <CursorPos X="86" Y="82"/>
         <UsageCount Value="97"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -475,7 +474,7 @@
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="1"/>
         <TopLine Value="769"/>
-        <CursorPos X="52" Y="780"/>
+        <CursorPos X="41" Y="789"/>
         <UsageCount Value="97"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -651,7 +650,9 @@
         <ComponentName Value="ConfigurationForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="4"/>
+        <TopLine Value="130"/>
         <CursorPos X="63" Y="99"/>
         <UsageCount Value="94"/>
         <Loaded Value="True"/>
