@@ -62,7 +62,7 @@ begin
     GDConsole.Write('Initializing window...');
 
     //create window
-    FWindow := SDL_CreateWindow('', SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, DEFAULT_WIDTH, DEFAULT_HEIGHT, SDL_WINDOW_OPENGL or SDL_WINDOW_RESIZABLE or SDL_WINDOW_HIDDEN);
+    FWindow := SDL_CreateWindow('', SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, R_DEFAULT_WINDOW_WIDTH, R_DEFAULT_WINDOW_HEIGHT, SDL_WINDOW_OPENGL or SDL_WINDOW_RESIZABLE or SDL_WINDOW_HIDDEN);
     if FWindow = nil then
       GDConsole.Write('Failed to initialize SDL window: ' + SDL_GetError());
 
@@ -140,8 +140,8 @@ begin
   else
   begin
     SDL_SetWindowPosition(FWindow ,iRec.x+50, iRec.y+50);
-    SDL_SetWindowSize(FWindow, DEFAULT_WIDTH, DEFAULT_HEIGHT);
-    GDRenderer.ResizeViewPort(DEFAULT_WIDTH, DEFAULT_HEIGHT);
+    SDL_SetWindowSize(FWindow, R_DEFAULT_WINDOW_WIDTH, R_DEFAULT_WINDOW_HEIGHT);
+    GDRenderer.ResizeViewPort(R_DEFAULT_WINDOW_WIDTH, R_DEFAULT_WINDOW_HEIGHT);
   end;
 
   SDL_ShowWindow(FWindow);

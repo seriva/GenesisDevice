@@ -666,7 +666,7 @@ begin
   glClearColor(0.0, 0.0, 0.0, 1.0);
   GDWindow.MakeCurrent();
   GDRenderer.ClearFrame();
-  GDRenderer.SwitchToOrtho();
+  GDRenderer.SwitchToOrtho(R_HUD_WIDTH, R_HUD_HEIGHT);
   glClear(GL_COLOR_BUFFER_BIT);
 
   GDRenderer.RenderState( RS_COLOR );

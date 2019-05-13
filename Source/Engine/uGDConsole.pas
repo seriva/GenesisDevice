@@ -181,9 +181,9 @@ begin
     FCursorUpdate := Not(FCursorUpdate);
   end;
 
-  iHalf := round(R_HUDHEIGHT/2);
-  RenderFlatQuad(0, iHalf-7, R_HUDWIDTH, iHalf+7, true, false);
-  RenderFlatQuad(-5, iHalf-7, R_HUDWIDTH+5, 32, false, true);
+  iHalf := round(R_HUD_HEIGHT/2);
+  RenderFlatQuad(0, iHalf-7, R_HUD_WIDTH, iHalf+7, true, false);
+  RenderFlatQuad(-5, iHalf-7, R_HUD_WIDTH+5, 32, false, true);
 
   GDRenderer.RenderState(RS_TEXTS);
   iJ := 0;
@@ -195,16 +195,16 @@ begin
         GDGUI.Font.Color.Red
       else
         GDGUI.Font.Color := GDGUI.FontColor.Copy();
-      GDGUI.Font.Render(0, (R_HUDHEIGHT/2)+28+(iJ*25), 0.40, FLogText.Strings[iI] );
+      GDGUI.Font.Render(0, (R_HUD_HEIGHT/2)+28+(iJ*25), 0.40, FLogText.Strings[iI] );
       iJ := iJ + 1;
     end;
   end;
 
   GDGUI.Font.Color := GDGUI.FontColor.Copy();
-  GDGUI.Font.Render(0, (R_HUDHEIGHT/2)-3, 0.40, FCommand);
+  GDGUI.Font.Render(0, (R_HUD_HEIGHT/2)-3, 0.40, FCommand);
   iX := GDGUI.Font.TextWidth(Copy(FCommand, 1, FCursorpos-1), 0.40);
   if FCursorUpdate then
-     GDGUI.Font.Render(iX, (R_HUDHEIGHT/2)-3, 0.40, '_' );
+     GDGUI.Font.Render(iX, (R_HUD_HEIGHT/2)-3, 0.40, '_' );
 
   glDisable(GL_BLEND);
 end;

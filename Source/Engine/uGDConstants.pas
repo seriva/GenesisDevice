@@ -70,8 +70,10 @@ const
   TWaterDetail     : array[1..3] of String  = ('Low', 'Medium','High');
 
   //renderer constants
-  R_HUDWIDTH              = 1600;
-  R_HUDHEIGHT             = 1200;
+  R_DEFAULT_WINDOW_WIDTH  = 800;
+  R_DEFAULT_WINDOW_HEIGHT = 600;
+  R_HUD_WIDTH             = 1600;
+  R_HUD_HEIGHT            = 1200;
   R_VIEW_DISTANCE_STEP    = 10240;
   R_MIN_VIEW_DISTANCE     = 71680;
   R_MAX_VIEW_DISTANCE     = 122880;
@@ -147,10 +149,6 @@ const
   SHADER_COLOR    = PATH_SHADERS + 'color.shader';
   SHADER_TEXTURE  = PATH_SHADERS + 'texture.shader';
   SHADER_CLEAR    = PATH_SHADERS + 'clear.shader';
-
-  //window constants
-  DEFAULT_WIDTH = 800;
-  DEFAULT_HEIGHT = 600;
 
 implementation
 end.

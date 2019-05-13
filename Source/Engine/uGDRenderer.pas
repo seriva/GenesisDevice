@@ -114,7 +114,7 @@ type
     procedure   AddLine(aV1, aV2 : TGDVector);
 
     procedure   ClearFrame();
-    procedure   SwitchToOrtho();
+    procedure   SwitchToOrtho(aWidth, aHeight : integer);
     procedure   SwitchToPerspective();
 
     procedure   Render();
@@ -554,12 +554,12 @@ end;
 {* Switch to ortho view                                                       *}
 {******************************************************************************}
 
-procedure TGDRenderer.SwitchToOrtho();
+procedure TGDRenderer.SwitchToOrtho(aWidth, aHeight : integer);
 begin
   glMatrixMode(GL_PROJECTION);
   glPushMatrix();
   glLoadIdentity();
-  glOrtho(0, R_HUDWIDTH, 0, R_HUDHEIGHT, -1, 1);
+  glOrtho(0, aWidth, 0, aHeight, -1, 1);
   glMatrixMode(GL_MODELVIEW);
   glPushMatrix();
   glLoadIdentity();
@@ -762,7 +762,7 @@ end;
 
 procedure RenderGUI();
 begin
-  SwitchToOrtho();
+  SwitchToOrtho(R_HUD_WIDTH, R_HUD_HEIGHT);
     GDGUI.RenderScreens();
     If GDModes.RenderStats then GDStatistics.Render();
     GDConsole.Render();
