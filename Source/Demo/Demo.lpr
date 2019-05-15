@@ -25,34 +25,28 @@ program Demo;
 {$MODE Delphi}
 
 uses
-  //heaptrc, //For debugging
-  LCLIntf, LCLType, LMessages,
+  // heaptrc,
+  SysUtils,
   Forms, Interfaces,
-  {$IFDEF Win32}
-  Configuration in 'Configuration.pas' {ConfigurationForm},
-  {$ENDIF}
-  {$IFDEF Linux}
-  GDEngine,
-  {$ENDIF}
-  Main in 'Main.pas',
-  Player in 'Player.pas';
+  uConfiguration in 'uConfiguration.pas' {ConfigurationForm},
+  uGDEngine,
+  uMain in 'Main.pas',
+  uPlayer in 'Player.pas';
+
+label start;
 
 begin
-  //On linux where not running the settings interface because of threading issues
-  //we still need to investigate.
-  {$IFDEF Linux}
-  Engine.Settings.Load();
-  Engine.Init(@InitGame);
-  While not(Engine.Done) do
-  	Engine.Loop(@GameLoop);
-  Engine.Clear(@ClearGame);
-  {$ENDIF}
-
-  //On windows we have the settings interface.
-  {$IFDEF Win32}
+  // DeleteFile('leaks.txt');
+  // SetHeapTraceOutput('leaks.txt');
   Application.Initialize;
-  Application.Title := 'Demo';
-  Application.CreateForm(TConfigurationForm, ConfigurationForm);
-  Application.Run;
-  {$ENDIF}
+  Application.Scaled:=true;
+  start:
+  if SettingsExecute() then
+  begin
+    GDEngine.Init(@InitGame);
+    While not(GDEngine.Done) do
+      GDEngine.Loop(@GameLoop);
+    GDEngine.Clear(@ClearGame);
+    goto start;
+  end;
 end.

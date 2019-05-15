@@ -1,4 +1,62 @@
-//from "sdl_video.h"
+//from "sdl_video.h" and "sdl_sysvideo.h" and "sdl_shape.h"
+
+  {* Define the SDL window-shaper structure *}
+  PSDL_WindowShaper = ^TSDL_WindowShaper;
+  TSDL_WindowShaper = record
+    {* The window associated with the shaper *}
+    window: PSDL_Window;
+
+    {* The user's specified coordinates for the window, for once we give it a shape. *}
+    userx,usery: UInt32;
+
+    {* The parameters for shape calculation. *}
+    mode: TSDL_WindowShapeMode;
+
+    {* Has this window been assigned a shape? *}
+    hasshape: TSDL_Bool;
+
+    driverdata: Pointer;
+  end;
+
+ {* Define the SDL shape driver structure *}
+  PSDL_ShapeDriver = ^TSDL_ShapeDriver;
+  TSDL_ShapeDriver = record
+    CreateShaper: function(window: PSDL_Window): PSDL_WindowShaper; cdecl;
+    SetWindowShaper: function(shaper: PSDL_WindowShaper; shape: PSDL_Surface; shape_mode: PSDL_WindowShapeMode): Variant; cdecl;
+    ResizeWindowShape: function(window: PSDL_Window): Variant; cdecl;
+  end;
+
+  PSDL_WindowUserData = ^TSDL_WindowUserData;
+  TSDL_WindowUserData = record
+    name: PAnsiChar;
+    data: Pointer;
+    next: PSDL_WindowUserData;
+  end;
+
+  {**
+   *  \brief Possible return values from the SDL_HitTest callback.
+   *
+   *  \sa SDL_HitTest
+   *}
+  TSDL_HitTestResult = (
+    SDL_HITTEST_NORMAL,     {**< Region is normal. No special properties. *}
+    SDL_HITTEST_DRAGGABLE,  {**< Region can drag entire window. *}
+    SDL_HITTEST_RESIZE_TOPLEFT,
+    SDL_HITTEST_RESIZE_TOP,
+    SDL_HITTEST_RESIZE_TOPRIGHT,
+    SDL_HITTEST_RESIZE_RIGHT,
+    SDL_HITTEST_RESIZE_BOTTOMRIGHT,
+    SDL_HITTEST_RESIZE_BOTTOM,
+    SDL_HITTEST_RESIZE_BOTTOMLEFT,
+    SDL_HITTEST_RESIZE_LEFT
+  );
+
+  {**
+   *  \brief Callback used for hit-testing.
+   *
+   *  \sa SDL_SetWindowHitTest
+   *}
+  TSDL_HitTest = function(win: PSDL_Window; const area: PSDL_Point; data: Pointer): TSDL_HitTestResult; cdecl;
 
   {**
    *  The structure that defines a display mode
@@ -21,30 +79,33 @@
     driverdata: Pointer;         {**< driver-specific data, initialize to 0 *}
   end;
 
-  {* Define the SDL window-shaper structure *}
-  PSDL_WindowShaper = ^TSDL_WindowShaper;
-  TSDL_WindowShaper = record
-    {* The window associated with the shaper *}
-    window: PSDL_Window;
-
-    {* The user's specified coordinates for the window, for once we give it a shape. *}
-    userx,usery: UInt32;
-
-    {* The parameters for shape calculation. *}
-    mode: TSDL_WindowShapeMode;
-
-    {* Has this window been assigned a shape? *}
-    hasshape: TSDL_Bool;
-
-    driverdata: Pointer;
-  end;
-
-  PSDL_WindowUserData = ^TSDL_WindowUserData;
-  TSDL_WindowUserData = record
-    name: PAnsiChar;
-    data: Pointer;
-    next: PSDL_WindowUserData;
-  end;
+  {**
+   *  The type used to identify a window
+   *
+   *   SDL_CreateWindow()
+   *   SDL_CreateWindowFrom()
+   *   SDL_DestroyWindow()
+   *   SDL_GetWindowData()
+   *   SDL_GetWindowFlags()
+   *   SDL_GetWindowGrab()
+   *   SDL_GetWindowPosition()
+   *   SDL_GetWindowSize()
+   *   SDL_GetWindowTitle()
+   *   SDL_HideWindow()
+   *   SDL_MaximizeWindow()
+   *   SDL_MinimizeWindow()
+   *   SDL_RaiseWindow()
+   *   SDL_RestoreWindow()
+   *   SDL_SetWindowData()
+   *   SDL_SetWindowFullscreen()
+   *   SDL_SetWindowGrab()
+   *   SDL_SetWindowIcon()
+   *   SDL_SetWindowPosition()
+   *   SDL_SetWindowSize()
+   *   SDL_SetWindowBordered()
+   *   SDL_SetWindowTitle()
+   *   SDL_ShowWindow()
+   *}
 
   {* Define the SDL window structure, corresponding to toplevel windows *}
   TSDL_Window = record
@@ -57,11 +118,14 @@
     min_w, min_h: SInt32;
     max_w, max_h: SInt32;
     flags: UInt32;
+    last_fullscreen_flags: UInt32;
 
     {* Stored position and size for windowed mode * }
     windowed: TSDL_Rect;
 
     fullscreen_mode: TSDL_DisplayMode;
+
+    opacity: Float;
 
     brightness: Float;
     gamma: PUInt16;
@@ -70,7 +134,14 @@
     surface: PSDL_Surface;
     surface_valid: TSDL_Bool;
 
+    is_hiding: TSDL_Bool;
+    is_destroying: TSDL_Bool;
+    is_dropping: TSDL_Bool; {* drag/drop in progress, expecting SDL_SendDropComplete(). *}
+
     shaper: PSDL_WindowShaper;
+
+    hit_test: TSDL_HitTest;
+    hit_test_data: Pointer;
 
     data: PSDL_WindowUserData;
 
@@ -79,6 +150,10 @@
     prev: PSDL_Window;
     next: PSDL_Window;
   end;
+
+  function FULLSCREEN_VISIBLE(W: PSDL_Window): Variant;
+
+  { Functions from "sdl_shape.h" }
 
   {**
    * Get the shape parameters of a shaped window.
@@ -142,34 +217,6 @@ function SDL_CreateShapedWindow(title: PAnsiChar; x: UInt32; y: UInt32; w: UInt3
    *}
 function SDL_IsShapedWindow(window: PSDL_Window): TSDL_Bool cdecl; external SDL_LibName {$IFDEF DELPHI} {$IFDEF MACOS} name '_SDL_IsShapedWindow' {$ENDIF} {$ENDIF};
 
-  {**
-   *  The type used to identify a window
-   *
-   *   SDL_CreateWindow()
-   *   SDL_CreateWindowFrom()
-   *   SDL_DestroyWindow()
-   *   SDL_GetWindowData()
-   *   SDL_GetWindowFlags()
-   *   SDL_GetWindowGrab()
-   *   SDL_GetWindowPosition()
-   *   SDL_GetWindowSize()
-   *   SDL_GetWindowTitle()
-   *   SDL_HideWindow()
-   *   SDL_MaximizeWindow()
-   *   SDL_MinimizeWindow()
-   *   SDL_RaiseWindow()
-   *   SDL_RestoreWindow()
-   *   SDL_SetWindowData()
-   *   SDL_SetWindowFullscreen()
-   *   SDL_SetWindowGrab()
-   *   SDL_SetWindowIcon()
-   *   SDL_SetWindowPosition()
-   *   SDL_SetWindowSize()
-   *   SDL_SetWindowBordered()
-   *   SDL_SetWindowTitle()
-   *   SDL_ShowWindow()
-   *}
-
 const
   {**
    *  The flags on a window
@@ -190,13 +237,24 @@ const
   SDL_WINDOW_MOUSE_FOCUS = $00000400;        {**< window has mouse focus *}
   SDL_WINDOW_FULLSCREEN_DESKTOP = SDL_WINDOW_FULLSCREEN or $00001000;
   SDL_WINDOW_FOREIGN = $00000800;            {**< window not created by SDL *}
-  SDL_WINDOW_ALLOW_HIGHDPI = $00002000;      {**< window should be created in high-DPI mode if supported *}
+  SDL_WINDOW_ALLOW_HIGHDPI = $00002000;      {**< window should be created in high-DPI mode if supported.
+                                                   On macOS NSHighResolutionCapable must be set true in the
+                                                   application's Info.plist for this to have any effect. *}
+  SDL_WINDOW_MOUSE_CAPTURE = $00004000;      {**< window has mouse captured (unrelated to INPUT_GRABBED) *}
+  SDL_WINDOW_ALWAYS_ON_TOP = $00008000;      {**< window should always be above others *}
+  SDL_WINDOW_SKIP_TASKBAR  = $00010000;      {**< window should not be added to the taskbar *}
+  SDL_WINDOW_UTILITY       = $00020000;      {**< window should be treated as a utility window *}
+  SDL_WINDOW_TOOLTIP       = $00040000;      {**< window should be treated as a tooltip *}
+  SDL_WINDOW_POPUP_MENU    = $00080000;      {**< window should be treated as a popup menu *}
+  SDL_WINDOW_VULKAN        = $10000000;      {**< window usable for Vulkan surface *}
 
 type
   TSDL_WindowFlags = DWord;
 
-function SDL_WindowPos_IsUndefined(X: Variant): Variant;
-function SDL_WindowPos_IsCentered(X: Variant): Variant;
+function SDL_WINDOWPOS_UNDEFINED_DISPLAY(X: Variant): Variant;
+function SDL_WINDOWPOS_ISUNDEFINED(X: Variant): Variant;
+function SDL_WINDOWPOS_CENTERED_DISPLAY(X: Variant): Variant;
+function SDL_WINDOWPOS_ISCENTERED(X: Variant): Variant;
 
 const
    {**
@@ -233,6 +291,8 @@ const
   SDL_WINDOWEVENT_FOCUS_GAINED = 12;   {**< Window has gained keyboard focus *}
   SDL_WINDOWEVENT_FOCUS_LOST = 13;     {**< Window has lost keyboard focus *}
   SDL_WINDOWEVENT_CLOSE = 14;          {**< The window manager requests that the window be closed *}
+  SDL_WINDOWEVENT_TAKE_FOCUS = 15;     {**< Window is being offered a focus (should SetWindowInputFocus() on itself or a subwindow, or ignore) *}
+  SDL_WINDOWEVENT_HIT_TEST = 16;       {**< Window had a hit test that wasn't SDL_HITTEST_NORMAL. *}
 
 type
   TSDL_WindowEventID = DWord;
@@ -272,6 +332,9 @@ const
   SDL_GL_CONTEXT_PROFILE_MASK = 21;
   SDL_GL_SHARE_WITH_CURRENT_CONTEXT = 22;
   SDL_GL_FRAMEBUFFER_SRGB_CAPABLE = 23;
+  SDL_GL_CONTEXT_RELEASE_BEHAVIOR = 24;
+  SDL_GL_CONTEXT_RESET_NOTIFICATION = 25;
+  SDL_GL_CONTEXT_NO_ERROR = 26;
 
 type
   TSDL_GLattr = DWord;
@@ -292,6 +355,20 @@ const
 
 type
   TSDL_GLcontextFlag = DWord;
+
+const
+  SDL_GL_CONTEXT_RELEASE_BEHAVIOR_NONE   = $0000;
+  SDL_GL_CONTEXT_RELEASE_BEHAVIOR_FLUSH  = $0001;
+
+type
+  TSDL_GLcontextReleaseFlag = DWord;
+
+const
+  SDL_GL_CONTEXT_RESET_NO_NOTIFICATION   = $0000;
+  SDL_GL_CONTEXT_RESET_LOSE_CONTEXT      = $0001;
+
+type
+  TSDL_GLContextResetNotification = DWord;
 
   {* Function prototypes *}
 
@@ -380,6 +457,39 @@ function SDL_GetDisplayName(displayIndex: SInt32): PAnsiChar cdecl; external SDL
    *}
 
 function SDL_GetDisplayBounds(displayIndex: SInt32; rect: PSDL_Rect): SInt32 cdecl; external SDL_LibName {$IFDEF DELPHI} {$IFDEF MACOS} name '_SDL_GetDisplayBounds' {$ENDIF} {$ENDIF};
+
+  {**
+   *  \brief Get the dots/pixels-per-inch for a display
+   *
+   *  \note Diagonal, horizontal and vertical DPI can all be optionally
+   *        returned if the parameter is non-NULL.
+   *
+   *  \return 0 on success, or -1 if no DPI information is available or the index is out of range.
+   *
+   *  \sa SDL_GetNumVideoDisplays()
+   *}
+function SDL_GetDisplayDPI(displayIndex: SInt32; ddpi, hdpi, vdpi: PSingle): SInt32; cdecl; 
+  external SDL_LibName {$IFDEF DELPHI} {$IFDEF MACOS} name '_SDL_GetDisplayDPI' {$ENDIF} {$ENDIF}; 
+
+  {**
+   *  \brief Get the usable desktop area represented by a display, with the
+   *         primary display located at 0,0
+   *
+   *  This is the same area as SDL_GetDisplayBounds() reports, but with portions
+   *  reserved by the system removed. For example, on Mac OS X, this subtracts
+   *  the area occupied by the menu bar and dock.
+   *
+   *  Setting a window to be fullscreen generally bypasses these unusable areas,
+   *  so these are good guidelines for the maximum space available to a
+   *  non-fullscreen window.
+   *
+   *  \return 0 on success, or -1 if the index is out of range.
+   *
+   *  \sa SDL_GetDisplayBounds()
+   *  \sa SDL_GetNumVideoDisplays()
+   *}
+function SDL_GetDisplayUsableBounds(displayIndex: sInt32; rect: PSDL_Rect):sInt32; cdecl;
+  external SDL_LibName {$IFDEF DELPHI} {$IFDEF MACOS} name '_SDL_GetDisplayUsableBounds' {$ENDIF} {$ENDIF}; 
 
   {**
    *  Returns the number of available display modes.
@@ -480,24 +590,46 @@ function SDL_GetWindowDisplayMode(window: PSDL_Window; mode: PSDL_DisplayMode): 
 function SDL_GetWindowPixelFormat(window: PSDL_Window): UInt32 cdecl; external SDL_LibName {$IFDEF DELPHI} {$IFDEF MACOS} name '_SDL_GetWindowPixelFormat' {$ENDIF} {$ENDIF};
 
   {**
-   *  Create a window with the specified position, dimensions, and flags.
+   *  \brief Create a window with the specified position, dimensions, and flags.
    *
-   *  title The title of the window, in UTF-8 encoding.
-   *  x     The x position of the window, ::SDL_WINDOWPOS_CENTERED, or
+   *  \param title The title of the window, in UTF-8 encoding.
+   *  \param x     The x position of the window, ::SDL_WINDOWPOS_CENTERED, or
    *               ::SDL_WINDOWPOS_UNDEFINED.
-   *  y     The y position of the window, ::SDL_WINDOWPOS_CENTERED, or
+   *  \param y     The y position of the window, ::SDL_WINDOWPOS_CENTERED, or
    *               ::SDL_WINDOWPOS_UNDEFINED.
-   *  w     The width of the window.
-   *  h     The height of the window.
-   *  flags The flags for the window, a mask of any of the following:
-   *               ::SDL_WINDOW_FULLSCREEN, ::SDL_WINDOW_OPENGL, 
-   *               ::SDL_WINDOW_SHOWN,      ::SDL_WINDOW_BORDERLESS,
-   *               ::SDL_WINDOW_RESIZABLE,  ::SDL_WINDOW_MAXIMIZED, 
-   *               ::SDL_WINDOW_MINIMIZED,  ::SDL_WINDOW_INPUT_GRABBED.
+   *  \param w     The width of the window, in screen coordinates.
+   *  \param h     The height of the window, in screen coordinates.
+   *  \param flags The flags for the window, a mask of any of the following:
+   *               ::SDL_WINDOW_FULLSCREEN,    ::SDL_WINDOW_OPENGL,
+   *               ::SDL_WINDOW_HIDDEN,        ::SDL_WINDOW_BORDERLESS,
+   *               ::SDL_WINDOW_RESIZABLE,     ::SDL_WINDOW_MAXIMIZED,
+   *               ::SDL_WINDOW_MINIMIZED,     ::SDL_WINDOW_INPUT_GRABBED,
+   *               ::SDL_WINDOW_ALLOW_HIGHDPI, ::SDL_WINDOW_VULKAN.
    *
-   *  The id of the window created, or zero if window creation failed.
+   *  \return The created window, or NULL if window creation failed.
    *
-   *  SDL_DestroyWindow()
+   *  If the window is created with the SDL_WINDOW_ALLOW_HIGHDPI flag, its size
+   *  in pixels may differ from its size in screen coordinates on platforms with
+   *  high-DPI support (e.g. iOS and Mac OS X). Use SDL_GetWindowSize() to query
+   *  the client area's size in screen coordinates, and SDL_GL_GetDrawableSize(),
+   *  SDL_Vulkan_GetDrawableSize(), or SDL_GetRendererOutputSize() to query the
+   *  drawable size in pixels.
+   *
+   *  If the window is created with any of the SDL_WINDOW_OPENGL or
+   *  SDL_WINDOW_VULKAN flags, then the corresponding LoadLibrary function
+   *  (SDL_GL_LoadLibrary or SDL_Vulkan_LoadLibrary) is called and the
+   *  corresponding UnloadLibrary function is called by SDL_DestroyWindow().
+   *
+   *  If SDL_WINDOW_VULKAN is specified and there isn't a working Vulkan driver,
+   *  SDL_CreateWindow() will fail because SDL_Vulkan_LoadLibrary() will fail.
+   *
+   *  \note On non-Apple devices, SDL requires you to either not link to the
+   *        Vulkan loader or link to a dynamic library version. This limitation
+   *        may be removed in a future version of SDL.
+   *
+   *  \sa SDL_DestroyWindow()
+   *  \sa SDL_GL_LoadLibrary()
+   *  \sa SDL_Vulkan_LoadLibrary()
    *}
 
 function SDL_CreateWindow(const title: PAnsiChar; x: SInt32; y: SInt32; w: SInt32; h: SInt32; flags: UInt32): PSDL_Window cdecl; external SDL_LibName {$IFDEF DELPHI} {$IFDEF MACOS} name '_SDL_CreateWindow' {$ENDIF} {$ENDIF};
@@ -636,7 +768,25 @@ procedure SDL_SetWindowSize(window: PSDL_Window; w: SInt32; h: SInt32) cdecl; ex
    *}
 
 procedure SDL_GetWindowSize(window: PSDL_Window; w: PInt; h: PInt) cdecl; external SDL_LibName {$IFDEF DELPHI} {$IFDEF MACOS} name '_SDL_GetWindowSize' {$ENDIF} {$ENDIF};
-    
+
+  {**
+   *  \brief Get the size of a window's borders (decorations) around the client area.
+   *
+   *  \param window The window to query.
+   *  \param top Pointer to variable for storing the size of the top border. NULL is permitted.
+   *  \param left Pointer to variable for storing the size of the left border. NULL is permitted.
+   *  \param bottom Pointer to variable for storing the size of the bottom border. NULL is permitted.
+   *  \param right Pointer to variable for storing the size of the right border. NULL is permitted.
+   *
+   *  \return 0 on success, or -1 if getting this information is not supported.
+   *
+   *  \note if this function fails (returns -1), the size values will be
+   *        initialized to 0, 0, 0, 0 (if a non-NULL pointer is provided), as
+   *        if the window in question was borderless.
+   *}
+function SDL_GetWindowBordersSize(window: PSDL_Window; top, left, bottom, right: PsInt32):sInt32; cdecl;
+  external SDL_LibName {$IFDEF DELPHI} {$IFDEF MACOS} name '_SDL_GetWindowBordersSize' {$ENDIF} {$ENDIF};
+
   {**
    *  Set the minimum size of a window's client area.
    *  
@@ -707,6 +857,23 @@ procedure SDL_GetWindowMaximumSize(window: PSDL_Window; w: PInt; h: PInt) cdecl;
    *}
 
 procedure SDL_SetWindowBordered(window: PSDL_Window; bordered: TSDL_Bool) cdecl; external SDL_LibName {$IFDEF DELPHI} {$IFDEF MACOS} name '_SDL_SetWindowBordered' {$ENDIF} {$ENDIF};
+
+  {**
+   *  \brief Set the user-resizable state of a window.
+   *
+   *  This will add or remove the window's SDL_WINDOW_RESIZABLE flag and
+   *  allow/disallow user resizing of the window. This is a no-op if the
+   *  window's resizable state already matches the requested state.
+   *
+   *  \param window The window of which to change the resizable state.
+   *  \param resizable SDL_TRUE to allow resizing, SDL_FALSE to disallow.
+   *
+   *  \note You can't change the resizable state of a fullscreen window.
+   *
+   *  \sa SDL_GetWindowFlags()
+   *}
+procedure SDL_SetWindowResizable(window: PSDL_Window; resizable: TSDL_Bool); cdecl;
+  external SDL_LibName {$IFDEF DELPHI} {$IFDEF MACOS} name '_SDL_SetWindowResizable' {$ENDIF} {$ENDIF};
 
   {**
    *  Show a window.
@@ -825,6 +992,16 @@ procedure SDL_SetWindowGrab(window: PSDL_Window; grabbed: TSDL_Bool) cdecl; exte
 function SDL_GetWindowGrab(window: PSDL_Window): TSDL_Bool cdecl; external SDL_LibName {$IFDEF DELPHI} {$IFDEF MACOS} name '_SDL_GetWindowGrab' {$ENDIF} {$ENDIF};
 
   {**
+   *  \brief Get the window that currently has an input grab enabled.
+   *
+   *  \return This returns the window if input is grabbed, and NULL otherwise.
+   *
+   *  \sa SDL_SetWindowGrab()
+   *}
+function SDL_GetGrabbedWindow(): PSDL_Window; cdecl;
+  external SDL_LibName {$IFDEF DELPHI} {$IFDEF MACOS} name '_SDL_GetGrabbedWindow' {$ENDIF} {$ENDIF};
+
+  {**
    *  Set the brightness (gamma correction) for a window.
    *
    *  0 on success, or -1 if setting the brightness isn't supported.
@@ -844,6 +1021,62 @@ function SDL_SetWindowBrightness(window: PSDL_Window; brightness: Float): SInt32
    *}
 
 function SDL_GetWindowBrightness(window: PSDL_Window): Float cdecl; external SDL_LibName {$IFDEF DELPHI} {$IFDEF MACOS} name '_SDL_GetWindowBrightness' {$ENDIF} {$ENDIF};
+
+  {**
+   *  \brief Set the opacity for a window
+   *
+   *  \param window The window which will be made transparent or opaque
+   *  \param opacity Opacity (0.0f - transparent, 1.0f - opaque) This will be
+   *                 clamped internally between 0.0f and 1.0f.
+   * 
+   *  \return 0 on success, or -1 if setting the opacity isn't supported.
+   *
+   *  \sa SDL_GetWindowOpacity()
+   *}
+function SDL_SetWindowOpacity(window: PSDL_Window; opacity: Float):sInt32; cdecl;
+  external SDL_LibName {$IFDEF DELPHI} {$IFDEF MACOS} name '_SDL_SetWindowOpacity' {$ENDIF} {$ENDIF};
+
+  {**
+   *  \brief Get the opacity of a window.
+   *
+   *  If transparency isn't supported on this platform, opacity will be reported
+   *  as 1.0f without error.
+   *
+   *  \param window The window in question.
+   *  \param out_opacity Opacity (0.0f - transparent, 1.0f - opaque)
+   *
+   *  \return 0 on success, or -1 on error (invalid window, etc).
+   *
+   *  \sa SDL_SetWindowOpacity()
+   *}
+function SDL_GetWindowOpacity(window: PSDL_Window; out_opacity: PFloat):sInt32; cdecl;
+  external SDL_LibName {$IFDEF DELPHI} {$IFDEF MACOS} name '_SDL_GetWindowOpacity' {$ENDIF} {$ENDIF};
+
+  {** 
+   *  \brief Sets the window as a modal for another window
+   *
+   *  \param modal_window The window that should be modal
+   *  \param parent_window The parent window
+   * 
+   *  \return 0 on success, or -1 otherwise.
+   *}
+function SDL_SetWindowModalFor(modal_window, parent_window: PSDL_Window):sInt32; cdecl;
+  external SDL_LibName {$IFDEF DELPHI} {$IFDEF MACOS} name '_SDL_SetWindowModalFor' {$ENDIF} {$ENDIF};
+
+  {**
+   *  \brief Explicitly sets input focus to the window.
+   *
+   *  You almost certainly want SDL_RaiseWindow() instead of this function. Use
+   *  this with caution, as you might give focus to a window that's completely
+   *  obscured by other windows.
+   *
+   *  \param window The window that should get the input focus
+   * 
+   *  \return 0 on success, or -1 otherwise.
+   *  \sa SDL_RaiseWindow()
+   *}
+function SDL_SetWindowInputFocus(window: PSDL_Window):sInt32; cdecl;
+  external SDL_LibName {$IFDEF DELPHI} {$IFDEF MACOS} name '_SDL_SetWindowInputFocus' {$ENDIF} {$ENDIF};
 
   {**
    *  Set the gamma ramp for a window.
@@ -881,6 +1114,46 @@ function SDL_SetWindowGammaRamp(window: PSDL_Window; const red: PUInt16; const g
    *}
 
 function SDL_GetWindowGammaRamp(window: PSDL_Window; red: PUInt16; green: PUInt16; blue: PUInt16): SInt32 cdecl; external SDL_LibName {$IFDEF DELPHI} {$IFDEF MACOS} name '_SDL_GetWindowGammaRamp' {$ENDIF} {$ENDIF};
+
+  {**
+   *  \brief Provide a callback that decides if a window region has special properties.
+   *
+   *  Normally windows are dragged and resized by decorations provided by the
+   *  system window manager (a title bar, borders, etc), but for some apps, it
+   *  makes sense to drag them from somewhere else inside the window itself; for
+   *  example, one might have a borderless window that wants to be draggable
+   *  from any part, or simulate its own title bar, etc.
+   *
+   *  This function lets the app provide a callback that designates pieces of
+   *  a given window as special. This callback is run during event processing
+   *  if we need to tell the OS to treat a region of the window specially; the
+   *  use of this callback is known as "hit testing."
+   *
+   *  Mouse input may not be delivered to your application if it is within
+   *  a special area; the OS will often apply that input to moving the window or
+   *  resizing the window and not deliver it to the application.
+   *
+   *  Specifying NULL for a callback disables hit-testing. Hit-testing is
+   *  disabled by default.
+   *
+   *  Platforms that don't support this functionality will return -1
+   *  unconditionally, even if you're attempting to disable hit-testing.
+   *
+   *  Your callback may fire at any time, and its firing does not indicate any
+   *  specific behavior (for example, on Windows, this certainly might fire
+   *  when the OS is deciding whether to drag your window, but it fires for lots
+   *  of other reasons, too, some unrelated to anything you probably care about
+   *  _and when the mouse isn't actually at the location it is testing_).
+   *  Since this can fire at any time, you should try to keep your callback
+   *  efficient, devoid of allocations, etc.
+   *
+   *  \param window The window to set hit-testing on.
+   *  \param callback The callback to call when doing a hit-test.
+   *  \param callback_data An app-defined void pointer passed to the callback.
+   *  \return 0 on success, -1 on error (including unsupported).
+   *}
+Function SDL_SetWindowHitTest(window: PSDL_Window; callback: TSDL_HitTest; callback_data: Pointer): SInt32; cdecl;
+  external SDL_LibName {$IFDEF DELPHI} {$IFDEF MACOS} name '_SDL_SetWindowHitTest' {$ENDIF} {$ENDIF};
 
   {**
    *  Destroy a window.
@@ -1004,6 +1277,25 @@ function SDL_GL_GetCurrentWindow: PSDL_Window cdecl; external SDL_LibName {$IFDE
    *  Get the currently active OpenGL context.
    *}
 function SDL_GL_GetCurrentContext: TSDL_GLContext cdecl; external SDL_LibName {$IFDEF DELPHI} {$IFDEF MACOS} name '_SDL_GL_GetCurrentContext' {$ENDIF} {$ENDIF};
+
+  {**
+   *  Get the size of a window's underlying drawable in pixels (for use
+   *  with glViewport).
+   *
+   *  window   Window from which the drawable size should be queried
+   *  w        Pointer to variable for storing the width in pixels, may be NULL
+   *  h        Pointer to variable for storing the height in pixels, may be NULL
+   *
+   * This may differ from SDL_GetWindowSize() if we're rendering to a high-DPI
+   * drawable, i.e. the window was created with SDL_WINDOW_ALLOW_HIGHDPI on a
+   * platform with high-DPI support (Apple calls this "Retina"), and not disabled
+   * by the SDL_HINT_VIDEO_HIGHDPI_DISABLED hint.
+   *
+   *  SDL_GetWindowSize()
+   *  SDL_CreateWindow()
+   *}
+   
+procedure SDL_GL_GetDrawableSize(window: PSDL_Window; w: PInt; h: PInt); cdecl; external SDL_LibName {$IFDEF DELPHI} {$IFDEF MACOS} name '_SDL_GL_GetDrawableSize' {$ENDIF} {$ENDIF};
 
   {**
    *  Set the swap interval for the current OpenGL context.

@@ -28,7 +28,7 @@ interface
       {$IFDEF DARWIN}
         NEWTON_API = 'libnewton.dylib';
       {$ELSE}
-        NEWTON_API = 'libnewton.so';
+        NEWTON_API = 'libNewton.so';
       {$ENDIF}
     {$ENDIF}
     {$IFDEF MACOS}

@@ -1,5 +1,6 @@
 #VERTEX
 
+#version 120
 varying vec2  UV;
 
 void main()
@@ -13,6 +14,7 @@ void main()
 
 #FRAGMENT
 
+#version 120
 uniform sampler2D T_COLORMAP;
 uniform vec4 V_COLOR;
 

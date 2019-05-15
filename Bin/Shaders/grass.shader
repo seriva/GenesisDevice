@@ -1,5 +1,7 @@
 #VERTEX
 
+#version 120
+#extension GL_ARB_shading_language_420pack : enable
 #INCLUDE Inc/foliage_animation_uniform.inc
 #INCLUDE Inc/lighting_uniforms.inc
 #INCLUDE Inc/fog_uniforms.inc
@@ -43,6 +45,7 @@ void main(void)
 
 #FRAGMENT
 
+#version 120
 uniform sampler2D T_GRASSTEX;
 uniform sampler2D T_CAUSTICMAP;
 uniform sampler2D T_SHADOWMAP;

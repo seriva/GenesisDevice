@@ -55,26 +55,27 @@ type
   {**
    *  Flip constants for SDL_RenderCopyEx
    *}
-type
-  PSDL_RendererFlip = ^TSDL_RendererFlip;
-  TSDL_RendererFlip = (SDL_FLIP_NONE,       {**< Do not flip *}
-                       SDL_FLIP_HORIZONTAL, {**< flip horizontally *}
-                       SDL_FLIP_VERTICAL    {**< flip vertically *}
-                       );
+const
+  SDL_FLIP_NONE       = $0; {**< Do not flip *}
+  SDL_FLIP_HORIZONTAL = $1; {**< flip horizontally *}
+  SDL_FLIP_VERTICAL   = $2; {**< flip vertically *}
 
+type
   {**
    *  A structure representing rendering state
    *}
 
   PPSDL_Renderer = ^PSDL_Renderer;
   PSDL_Renderer = ^TSDL_Renderer;
-  TSDL_Renderer = record;
+  TSDL_Renderer = record
+    end;
 
   {**
    *  An efficient driver-specific representation of pixel data
    *}
   PSDL_Texture = ^TSDL_Texture;
-  TSDL_Texture = record;
+  TSDL_Texture = record
+    end;
 
   {* Function prototypes *}
 
@@ -397,6 +398,29 @@ function SDL_RenderSetLogicalSize(renderer: PSDL_Renderer; w: SInt32; h: SInt32)
    *}
 procedure SDL_RenderGetLogicalSize(renderer: PSDL_Renderer; w: PInt; h: PInt) cdecl; external SDL_LibName {$IFDEF DELPHI} {$IFDEF MACOS} name '_SDL_RenderGetLogicalSize' {$ENDIF} {$ENDIF};
 
+{**
+ *  \brief Set whether to force integer scales for resolution-independent rendering
+ *
+ *  \param renderer The renderer for which integer scaling should be set.
+ *  \param enable   Enable or disable integer scaling
+ *
+ *  This function restricts the logical viewport to integer values - that is, when
+ *  a resolution is between two multiples of a logical size, the viewport size is
+ *  rounded down to the lower multiple.
+ *
+ *  \sa SDL_RenderSetLogicalSize()
+ *}
+function SDL_RenderSetIntegerScale(renderer: PSDL_Renderer; enable : TSDL_bool): SInt32 cdecl; external SDL_LibName {$IFDEF DELPHI} {$IFDEF MACOS} name '_SDL_RenderSetIntegerScale' {$ENDIF} {$ENDIF};
+
+{**
+ *  \brief Get whether integer scales are forced for resolution-independent rendering
+ *
+ *  \param renderer The renderer from which integer scaling should be queried.
+ *
+ *  \sa SDL_RenderSetIntegerScale()
+ *}
+function SDL_RenderGetIntegerScale(renderer: PSDL_Renderer): TSDL_bool cdecl; external SDL_LibName {$IFDEF DELPHI} {$IFDEF MACOS} name '_SDL_RenderGetIntegerScale' {$ENDIF} {$ENDIF};
+
   {**
    *  Set the drawing area for rendering on the current target.
    *
@@ -444,6 +468,16 @@ function SDL_RenderSetClipRect(renderer: PSDL_Renderer; rect: PSDL_Rect): SInt32
    *   SDL_RenderSetClipRect()
    *}
 procedure SDL_RenderGetClipRect(renderer: PSDL_Renderer; rect: PSDL_Rect) cdecl; external SDL_LibName {$IFDEF DELPHI} {$IFDEF MACOS} name '_SDL_RenderGetClipRect' {$ENDIF} {$ENDIF};
+
+  {**
+   *  \brief Get whether clipping is enabled on the given renderer.
+   *
+   *  \param renderer The renderer from which clip state should be queried.
+   *
+   *  \sa SDL_RenderGetClipRect()
+   *}
+function SDL_RenderIsClipEnabled(renderer: PSDL_Renderer): TSDL_Bool; cdecl;
+  external SDL_LibName {$IFDEF DELPHI} {$IFDEF MACOS} name '_SDL_RenderIsClipEnabled' {$ENDIF} {$ENDIF};
 
   {**
    *  Set the drawing scale for rendering on the current target.
@@ -658,7 +692,7 @@ function SDL_RenderCopy(renderer: PSDL_Renderer; texture: PSDL_Texture; srcrect:
    *
    *   0 on success, or -1 on error
    *}
-function SDL_RenderCopyEx(renderer: PSDL_Renderer; texture: PSDL_Texture; const srcrect: PSDL_Rect; dstrect: PSDL_Rect; angle: Double; center: PSDL_Point; flip: TSDL_RendererFlip): SInt32 cdecl; external SDL_LibName {$IFDEF DELPHI} {$IFDEF MACOS} name '_SDL_RenderCopyEx' {$ENDIF} {$ENDIF};
+function SDL_RenderCopyEx(renderer: PSDL_Renderer; texture: PSDL_Texture; const srcrect: PSDL_Rect; dstrect: PSDL_Rect; angle: Double; center: PSDL_Point; flip: Integer): SInt32 cdecl; external SDL_LibName {$IFDEF DELPHI} {$IFDEF MACOS} name '_SDL_RenderCopyEx' {$ENDIF} {$ENDIF};
 
   {**
    *  Read pixels from the current rendering target.

@@ -1,5 +1,6 @@
 #VERTEX
 
+#version 120
 uniform int I_REFRACTION_UV;
 uniform int I_WAVES_UV;
 #INCLUDE Inc/lighting_uniforms.inc
@@ -22,6 +23,7 @@ void main()
 
 #FRAGMENT
 
+#version 120
 uniform sampler2D T_REFLECTION;
 uniform sampler2D T_DUDVMAP;
 uniform sampler2D T_CAUSTICMAP;
