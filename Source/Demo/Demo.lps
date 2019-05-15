@@ -3,12 +3,96 @@
   <ProjectSession>
     <PathDelim Value="\"/>
     <Version Value="11"/>
-    <BuildModes Active="Default"/>
+    <BuildModes Count="2" Active="Default">
+      <Item1 Name="Debug">
+        <CompilerOptions>
+          <Version Value="11"/>
+          <PathDelim Value="\"/>
+          <Target>
+            <Filename Value="..\..\Bin\Demo"/>
+          </Target>
+          <SearchPaths>
+            <IncludeFiles Value="..\Headers;..\Libraries\OpenGL;..\Libraries\Utils;$(ProjOutDir);..\Libraries\SDL"/>
+            <OtherUnitFiles Value="..\Libraries\OpenGL;..\Libraries\OpenAL;..\Libraries\SDL;..\Libraries\Newton;..\Engine"/>
+            <UnitOutputDirectory Value="..\..\Build"/>
+          </SearchPaths>
+          <Parsing>
+            <SyntaxOptions>
+              <SyntaxMode Value="Delphi"/>
+              <IncludeAssertionCode Value="True"/>
+            </SyntaxOptions>
+          </Parsing>
+          <CodeGeneration>
+            <Checks>
+              <IOChecks Value="True"/>
+              <RangeChecks Value="True"/>
+              <OverflowChecks Value="True"/>
+              <StackChecks Value="True"/>
+            </Checks>
+            <VerifyObjMethodCallValidity Value="True"/>
+          </CodeGeneration>
+          <Linking>
+            <Debugging>
+              <DebugInfoType Value="dsDwarf2Set"/>
+              <UseHeaptrc Value="True"/>
+              <TrashVariables Value="True"/>
+              <UseExternalDbgSyms Value="True"/>
+            </Debugging>
+            <Options>
+              <Win32>
+                <GraphicApplication Value="True"/>
+              </Win32>
+            </Options>
+          </Linking>
+          <Other>
+            <CustomOptions Value="-dBorland -dVer150 -dDelphi7 -dCompiler6_Up -dPUREPASCAL"/>
+          </Other>
+        </CompilerOptions>
+      </Item1>
+      <Item2 Name="Release">
+        <CompilerOptions>
+          <Version Value="11"/>
+          <PathDelim Value="\"/>
+          <Target>
+            <Filename Value="..\..\Bin\Demo"/>
+          </Target>
+          <SearchPaths>
+            <IncludeFiles Value="..\Headers;..\Libraries\OpenGL;..\Libraries\Utils;$(ProjOutDir);..\Libraries\SDL"/>
+            <OtherUnitFiles Value="..\Libraries\OpenGL;..\Libraries\OpenAL;..\Libraries\SDL;..\Libraries\Newton;..\Engine"/>
+            <UnitOutputDirectory Value="..\..\Build"/>
+          </SearchPaths>
+          <Parsing>
+            <SyntaxOptions>
+              <SyntaxMode Value="Delphi"/>
+            </SyntaxOptions>
+          </Parsing>
+          <CodeGeneration>
+            <SmartLinkUnit Value="True"/>
+            <Optimizations>
+              <OptimizationLevel Value="3"/>
+            </Optimizations>
+          </CodeGeneration>
+          <Linking>
+            <Debugging>
+              <GenerateDebugInfo Value="False"/>
+            </Debugging>
+            <LinkSmart Value="True"/>
+            <Options>
+              <Win32>
+                <GraphicApplication Value="True"/>
+              </Win32>
+            </Options>
+          </Linking>
+          <Other>
+            <CustomOptions Value="-dBorland -dVer150 -dDelphi7 -dCompiler6_Up -dPUREPASCAL"/>
+          </Other>
+        </CompilerOptions>
+      </Item2>
+    </BuildModes>
     <Units Count="124">
       <Unit0>
         <Filename Value="Demo.lpr"/>
         <IsPartOfProject Value="True"/>
-        <CursorPos X="6" Y="28"/>
         <UsageCount Value="308"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -648,9 +732,10 @@
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="2"/>
         <TopLine Value="255"/>
-        <CursorPos X="137" Y="267"/>
+        <CursorPos X="39" Y="263"/>
         <UsageCount Value="226"/>
         <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit82>
       <Unit83>
@@ -958,7 +1043,7 @@
       <Unit122>
         <Filename Value="..\Libraries\Newton\newton.inc"/>
         <EditorIndex Value="-1"/>
-        <UsageCount Value="0"/>
+        <UsageCount Value="10"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit122>
       <Unit123>
@@ -967,11 +1052,11 @@
         <WindowIndex Value="-1"/>
         <TopLine Value="-1"/>
         <CursorPos X="-1" Y="-1"/>
-        <UsageCount Value="0"/>
+        <UsageCount Value="10"/>
         <DefaultSyntaxHighlighter Value="LFM"/>
       </Unit123>
     </Units>
-    <JumpHistory Count="30" HistoryIndex="29">
+    <JumpHistory Count="28" HistoryIndex="27">
       <Position1>
         <Filename Value="uConfiguration.pas"/>
         <Caret Line="185" Column="51" TopLine="151"/>
@@ -1082,16 +1167,8 @@
       </Position27>
       <Position28>
         <Filename Value="..\Engine\uGDRenderer.pas"/>
-        <Caret Line="843" TopLine="847"/>
-      </Position28>
-      <Position29>
-        <Filename Value="..\Engine\uGDRenderer.pas"/>
-        <Caret Line="486" Column="39" TopLine="841"/>
-      </Position29>
-      <Position30>
-        <Filename Value="..\Engine\uGDRenderer.pas"/>
         <Caret Line="798" Column="11" TopLine="777"/>
-      </Position30>
+      </Position28>
     </JumpHistory>
     <RunParams>
       <FormatVersion Value="2"/>
