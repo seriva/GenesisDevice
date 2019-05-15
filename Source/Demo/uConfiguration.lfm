@@ -1,7 +1,7 @@
 object ConfigurationForm: TConfigurationForm
-  Left = 1758
+  Left = 2412
   Height = 336
-  Top = 502
+  Top = 458
   Width = 398
   ActiveControl = RunButton
   BorderIcons = [biSystemMenu]
@@ -48,8 +48,8 @@ object ConfigurationForm: TConfigurationForm
     TabOrder = 1
     object WindowTabSheet: TTabSheet
       Caption = 'Window'
-      ClientHeight = 268
-      ClientWidth = 390
+      ClientHeight = 271
+      ClientWidth = 392
       Font.Color = clWindowText
       Font.Height = -12
       Font.Name = 'MS Sans Serif'
@@ -57,13 +57,13 @@ object ConfigurationForm: TConfigurationForm
       ParentFont = False
       object WindowPanel: TPanel
         Left = 0
-        Height = 268
+        Height = 271
         Top = 0
-        Width = 390
+        Width = 392
         Align = alClient
         BevelOuter = bvNone
-        ClientHeight = 268
-        ClientWidth = 390
+        ClientHeight = 271
+        ClientWidth = 392
         Font.Color = clWindowText
         Font.Height = -12
         Font.Name = 'MS Sans Serif'
@@ -72,9 +72,9 @@ object ConfigurationForm: TConfigurationForm
         TabOrder = 0
         object GammaLabel: TLabel
           Left = 8
-          Height = 17
+          Height = 16
           Top = 88
-          Width = 56
+          Width = 51
           Caption = 'Gamma:'
           Font.Color = clWindowText
           Font.Height = -13
@@ -84,9 +84,9 @@ object ConfigurationForm: TConfigurationForm
         end
         object FullScreenCheckBox: TCheckBox
           Left = 8
-          Height = 23
+          Height = 20
           Top = 48
-          Width = 171
+          Width = 142
           Caption = 'Fullscreen                    '
           Font.Color = clWindowText
           Font.Height = -13
@@ -99,9 +99,9 @@ object ConfigurationForm: TConfigurationForm
         end
         object VerticalSyncCheckBox: TCheckBox
           Left = 136
-          Height = 23
+          Height = 20
           Top = 48
-          Width = 110
+          Width = 98
           Caption = 'Vertical Sync'
           Font.Color = clWindowText
           Font.Height = -13
@@ -130,9 +130,9 @@ object ConfigurationForm: TConfigurationForm
         end
         object MonitorLabel: TLabel
           Left = 8
-          Height = 17
+          Height = 16
           Top = 12
-          Width = 49
+          Width = 44
           Caption = 'Monitor'
           Font.Color = clWindowText
           Font.Height = -13
@@ -142,14 +142,14 @@ object ConfigurationForm: TConfigurationForm
         end
         object MonitorComboBox: TComboBox
           Left = 134
-          Height = 31
+          Height = 21
           Top = 8
           Width = 245
           Font.Color = clWindowText
           Font.Height = -12
           Font.Name = 'MS Sans Serif'
           Font.Style = [fsBold]
-          ItemHeight = 0
+          ItemHeight = 13
           OnChange = MonitorComboBoxChange
           ParentFont = False
           ParentShowHint = False
@@ -173,9 +173,9 @@ object ConfigurationForm: TConfigurationForm
           TabOrder = 4
           object ScaleLabel: TLabel
             Left = 8
-            Height = 17
+            Height = 16
             Top = 8
-            Width = 78
+            Width = 76
             Caption = 'Scale Factor'
             Font.Color = clWindowText
             Font.Height = -13
@@ -185,7 +185,7 @@ object ConfigurationForm: TConfigurationForm
           end
           object ScaleTrackBar: TTrackBar
             Left = 128
-            Height = 49
+            Height = 24
             Top = 8
             Width = 256
             Max = 100
@@ -203,9 +203,9 @@ object ConfigurationForm: TConfigurationForm
           end
           object ScaledLabel: TLabel
             Left = 8
-            Height = 17
+            Height = 16
             Top = 48
-            Width = 115
+            Width = 110
             Caption = 'Scaled Resolution'
             Font.Color = clWindowText
             Font.Height = -13
@@ -215,9 +215,9 @@ object ConfigurationForm: TConfigurationForm
           end
           object ScaledValueLabel: TLabel
             Left = 136
-            Height = 17
+            Height = 16
             Top = 48
-            Width = 41
+            Width = 36
             Caption = ' 0 x 0'
             Font.Color = clWindowText
             Font.Height = -13
@@ -231,8 +231,8 @@ object ConfigurationForm: TConfigurationForm
     end
     object RenderingTabSheet: TTabSheet
       Caption = 'Rendering'
-      ClientHeight = 268
-      ClientWidth = 390
+      ClientHeight = 271
+      ClientWidth = 392
       Font.Color = clWindowText
       Font.Height = -12
       Font.Name = 'MS Sans Serif'
@@ -241,13 +241,13 @@ object ConfigurationForm: TConfigurationForm
       ParentFont = False
       object RenderingPanel: TPanel
         Left = 0
-        Height = 268
+        Height = 271
         Top = 0
-        Width = 390
+        Width = 392
         Align = alClient
         BevelOuter = bvNone
-        ClientHeight = 268
-        ClientWidth = 390
+        ClientHeight = 271
+        ClientWidth = 392
         Font.Color = clWindowText
         Font.Height = -12
         Font.Name = 'MS Sans Serif'
@@ -256,9 +256,9 @@ object ConfigurationForm: TConfigurationForm
         TabOrder = 0
         object WaterDetailLabel: TLabel
           Left = 8
-          Height = 17
+          Height = 16
           Top = 208
-          Width = 81
+          Width = 74
           Caption = 'Water Detail'
           Font.Color = clWindowText
           Font.Height = -13
@@ -268,9 +268,9 @@ object ConfigurationForm: TConfigurationForm
         end
         object ViewDistanceLabel: TLabel
           Left = 8
-          Height = 17
+          Height = 16
           Top = 8
-          Width = 93
+          Width = 85
           Caption = 'View Distance'
           Font.Color = clWindowText
           Font.Height = -13
@@ -280,9 +280,9 @@ object ConfigurationForm: TConfigurationForm
         end
         object GrassDistanceLabel: TLabel
           Left = 8
-          Height = 17
+          Height = 16
           Top = 48
-          Width = 108
+          Width = 102
           Caption = 'Foliage Distance'
           Font.Color = clWindowText
           Font.Height = -13
@@ -292,9 +292,9 @@ object ConfigurationForm: TConfigurationForm
         end
         object FoliageDensityLabel: TLabel
           Left = 8
-          Height = 17
+          Height = 16
           Top = 88
-          Width = 101
+          Width = 94
           Caption = 'Foliage Density'
           Font.Color = clWindowText
           Font.Height = -13
@@ -304,9 +304,9 @@ object ConfigurationForm: TConfigurationForm
         end
         object TextureDetailLabel: TLabel
           Left = 8
-          Height = 17
+          Height = 16
           Top = 130
-          Width = 91
+          Width = 83
           Caption = 'Texture Detail'
           Font.Color = clWindowText
           Font.Height = -13
@@ -316,9 +316,9 @@ object ConfigurationForm: TConfigurationForm
         end
         object TextureFilteringLabel: TLabel
           Left = 8
-          Height = 17
+          Height = 16
           Top = 169
-          Width = 104
+          Width = 95
           Caption = 'Texture Filtering'
           Font.Color = clWindowText
           Font.Height = -13
@@ -376,14 +376,14 @@ object ConfigurationForm: TConfigurationForm
         end
         object TextureDetailComboBox: TComboBox
           Left = 136
-          Height = 31
+          Height = 21
           Top = 128
           Width = 247
           Font.Color = clWindowText
           Font.Height = -12
           Font.Name = 'MS Sans Serif'
           Font.Style = [fsBold]
-          ItemHeight = 0
+          ItemHeight = 13
           ParentFont = False
           ParentShowHint = False
           ShowHint = True
@@ -392,14 +392,14 @@ object ConfigurationForm: TConfigurationForm
         end
         object TextureFilterComboBox: TComboBox
           Left = 135
-          Height = 27
+          Height = 21
           Top = 168
           Width = 248
           Font.Color = clWindowText
           Font.Height = -12
           Font.Name = 'MS Sans Serif'
           Font.Style = [fsBold]
-          ItemHeight = 0
+          ItemHeight = 13
           Items.Strings = (
             ''
           )
@@ -411,14 +411,14 @@ object ConfigurationForm: TConfigurationForm
         end
         object WaterDetailComboBox: TComboBox
           Left = 135
-          Height = 27
+          Height = 21
           Top = 208
           Width = 248
           Font.Color = clWindowText
           Font.Height = -12
           Font.Name = 'MS Sans Serif'
           Font.Style = [fsBold]
-          ItemHeight = 0
+          ItemHeight = 13
           Items.Strings = (
             ''
           )
@@ -428,9 +428,9 @@ object ConfigurationForm: TConfigurationForm
         end
         object FXAACheckBox: TCheckBox
           Left = 320
-          Height = 23
+          Height = 20
           Top = 243
-          Width = 60
+          Width = 54
           Caption = 'FXAA'
           Font.Color = clWindowText
           Font.Height = -13
@@ -442,9 +442,9 @@ object ConfigurationForm: TConfigurationForm
         end
         object ShadowsCheckbox: TCheckBox
           Left = 135
-          Height = 23
+          Height = 20
           Top = 242
-          Width = 84
+          Width = 76
           Caption = 'Shadows'
           Font.Color = clWindowText
           Font.Height = -13
@@ -456,9 +456,9 @@ object ConfigurationForm: TConfigurationForm
         end
         object SSAOCheckbox: TCheckBox
           Left = 240
-          Height = 23
+          Height = 20
           Top = 242
-          Width = 61
+          Width = 57
           Caption = 'SSAO'
           Font.Color = clWindowText
           Font.Height = -13
@@ -470,9 +470,9 @@ object ConfigurationForm: TConfigurationForm
         end
         object DetailCheckbox: TCheckBox
           Left = 8
-          Height = 23
+          Height = 20
           Top = 242
-          Width = 128
+          Width = 107
           Caption = 'Detail texturing'
           Font.Color = clWindowText
           Font.Height = -13
@@ -486,8 +486,8 @@ object ConfigurationForm: TConfigurationForm
     end
     object InputTabSheet: TTabSheet
       Caption = 'Input'
-      ClientHeight = 268
-      ClientWidth = 390
+      ClientHeight = 271
+      ClientWidth = 392
       Font.Color = clWindowText
       Font.Height = -12
       Font.Name = 'MS Sans Serif'
@@ -554,8 +554,8 @@ object ConfigurationForm: TConfigurationForm
     end
     object SoundTabSheet: TTabSheet
       Caption = 'Sound'
-      ClientHeight = 268
-      ClientWidth = 390
+      ClientHeight = 271
+      ClientWidth = 392
       Font.Color = clWindowText
       Font.Height = -12
       Font.Name = 'MS Sans Serif'
