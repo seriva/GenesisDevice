@@ -121,24 +121,18 @@ procedure TGDEngine.Init(aInit : TGDCallback);
 var
   iSDLInit : boolean;
   iVersion : TSDL_Version;
-  iV1, iV2 : String;
+  iV : String;
 begin
   GDSettings.load();
 
   GDConsole.Write('.....Initializing SDL');
   try
     iSDLInit := not(SDL_Init(SDL_INIT_VIDEO or SDL_INIT_TIMER) < 0);
-    if iSDLInit then
-    begin
-      SDL_GetVersion(@iVersion);
-      iV1 :=  IntToStr(iVersion.major) + '.' + IntToStr(iVersion.minor) + '.' + IntToStr(iVersion.patch);
-      iV2 :=  IntToStr(MRS_SDL_MAJOR_VERSION) + '.' + IntToStr(MRS_SDL_MINOR_VERSION) + '.' + IntToStr(MRS_SDL_PATCH_VERSION);
-      GDConsole.Write('  Version: ' + iV1);
-      if (iV1 <> iV2) then
-        Raise Exception.Create('SDL version ' + iV2 + ' required.');
-    end
-    else
-    	Raise Exception.Create(SDL_GetError());
+    if not(iSDLInit) then
+       Raise Exception.Create(SDL_GetError());
+    SDL_GetVersion(@iVersion);
+    iV :=  IntToStr(iVersion.major) + '.' + IntToStr(iVersion.minor) + '.' + IntToStr(iVersion.patch);
+    GDConsole.Write('  Version: ' + iV);
     GDConsole.Write('.....Done initializing SDL');
   except
     on E: Exception do
