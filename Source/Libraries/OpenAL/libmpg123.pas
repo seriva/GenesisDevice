@@ -34,7 +34,7 @@ const
     link_libmpg123 = '@executable_path/../Frameworks/libmpg123-0.dylib';
     _PU = '_';
   {$ELSEIF Defined(UNIX)}
-    link_libmpg123 = 'libmpg123-0.so';
+    link_libmpg123 = 'libmpg123.so';
   {$IFEND}
 
 

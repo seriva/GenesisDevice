@@ -4,6 +4,6 @@ wget https://github.com/MADEAPPS/newton-dynamics/archive/newton-3.14.zip; unzip 
 cd newton-dynamics-newton-3.14
 mkdir build && cd build
 cmake -DNEWTON_DEMOS_SANDBOX=OFF .. && make
-sudo cp -rf ./lib/libNewton.so /usr/bin/
+sudo cp -rf ./lib/libNewton.so /usr/lib/
 cd ../../
 rm -rf newton-dynamics-newton-3.14
