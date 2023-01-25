@@ -2,14 +2,14 @@
 <CONFIG>
   <ProjectSession>
     <PathDelim Value="\"/>
-    <Version Value="11"/>
+    <Version Value="12"/>
     <BuildModes Active="Release"/>
-    <Units Count="121">
+    <Units Count="131">
       <Unit0>
         <Filename Value="Demo.lpr"/>
         <IsPartOfProject Value="True"/>
-        <TopLine Value="6"/>
-        <CursorPos X="81" Y="21"/>
+        <TopLine Value="14"/>
+        <CursorPos Y="52"/>
         <UsageCount Value="308"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -17,25 +17,25 @@
       <Unit1>
         <Filename Value="..\Libraries\OpenGL\dglOpenGL.pas"/>
         <IsPartOfProject Value="True"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="82"/>
+        <CursorPos X="223" Y="103"/>
         <UsageCount Value="308"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit1>
       <Unit2>
         <Filename Value="..\Libraries\OpenAL\mpg123.pas"/>
-        <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="10"/>
-        <CursorPos X="35" Y="25"/>
+        <CursorPos X="166" Y="10"/>
         <UsageCount Value="308"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit2>
       <Unit3>
         <Filename Value="..\Libraries\OpenAL\openal.pas"/>
-        <IsPartOfProject Value="True"/>
         <UnitName Value="OpenAL"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="25"/>
-        <CursorPos X="64" Y="2281"/>
+        <TopLine Value="71"/>
+        <CursorPos Y="64"/>
         <UsageCount Value="308"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit3>
@@ -279,19 +279,21 @@
       <Unit42>
         <Filename Value="..\Libraries\Newton\newton.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="342"/>
-        <CursorPos Y="375"/>
+        <EditorIndex Value="2"/>
+        <TopLine Value="73"/>
+        <CursorPos X="31" Y="111"/>
         <UsageCount Value="234"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit42>
       <Unit43>
         <Filename Value="..\Engine\uGDBaseCell.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="-1"/>
+        <EditorIndex Value="9"/>
         <TopLine Value="52"/>
-        <CursorPos X="4" Y="36"/>
+        <CursorPos X="37" Y="60"/>
         <UsageCount Value="229"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit43>
       <Unit44>
@@ -315,38 +317,38 @@
       <Unit46>
         <Filename Value="..\Engine\uGDCellManager.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="443"/>
-        <CursorPos X="5" Y="465"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="4"/>
+        <TopLine Value="94"/>
+        <CursorPos X="3" Y="115"/>
         <UsageCount Value="229"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit46>
       <Unit47>
         <Filename Value="..\Engine\uGDConsole.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="4"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="273"/>
         <CursorPos Y="304"/>
         <UsageCount Value="229"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit47>
       <Unit48>
         <Filename Value="..\Engine\uGDConstants.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="2"/>
+        <EditorIndex Value="-1"/>
         <TopLine Value="85"/>
         <CursorPos X="33" Y="99"/>
         <UsageCount Value="229"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit48>
       <Unit49>
         <Filename Value="..\Engine\uGDEngine.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="1"/>
-        <TopLine Value="125"/>
-        <CursorPos X="69" Y="130"/>
+        <EditorIndex Value="5"/>
+        <TopLine Value="57"/>
+        <CursorPos X="5" Y="202"/>
         <UsageCount Value="229"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -399,9 +401,9 @@
       <Unit55>
         <Filename Value="..\Engine\uGDMap.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="6"/>
-        <TopLine Value="107"/>
-        <CursorPos X="4" Y="107"/>
+        <EditorIndex Value="7"/>
+        <TopLine Value="69"/>
+        <CursorPos X="14" Y="88"/>
         <UsageCount Value="229"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -436,10 +438,11 @@
       <Unit59>
         <Filename Value="..\Engine\uGDMeshManager.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="177"/>
-        <CursorPos X="38" Y="205"/>
+        <EditorIndex Value="8"/>
+        <TopLine Value="105"/>
+        <CursorPos X="3" Y="52"/>
         <UsageCount Value="229"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit59>
       <Unit60>
@@ -463,9 +466,8 @@
       <Unit62>
         <Filename Value="..\Engine\uGDPhysics.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="5"/>
-        <TopLine Value="59"/>
-        <CursorPos Y="81"/>
+        <EditorIndex Value="3"/>
+        <CursorPos X="5" Y="42"/>
         <UsageCount Value="229"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -473,12 +475,10 @@
       <Unit63>
         <Filename Value="..\Engine\uGDRenderer.pas"/>
         <IsPartOfProject Value="True"/>
-        <IsVisibleTab Value="True"/>
-        <EditorIndex Value="7"/>
-        <TopLine Value="760"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="758"/>
         <CursorPos X="96" Y="624"/>
         <UsageCount Value="229"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit63>
       <Unit64>
@@ -520,19 +520,21 @@
       <Unit68>
         <Filename Value="..\Engine\uGDSound.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="4"/>
-        <CursorPos X="7" Y="24"/>
+        <EditorIndex Value="1"/>
+        <TopLine Value="287"/>
+        <CursorPos X="72" Y="306"/>
         <UsageCount Value="229"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit68>
       <Unit69>
         <Filename Value="..\Engine\uGDStatistics.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="20"/>
-        <CursorPos X="10" Y="39"/>
+        <EditorIndex Value="6"/>
+        <TopLine Value="106"/>
+        <CursorPos X="3" Y="48"/>
         <UsageCount Value="229"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit69>
       <Unit70>
@@ -628,10 +630,9 @@
       <Unit80>
         <Filename Value="uPlayer.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="Player"/>
         <EditorIndex Value="-1"/>
-        <TopLine Value="61"/>
-        <CursorPos X="3" Y="76"/>
+        <TopLine Value="34"/>
+        <CursorPos X="160" Y="26"/>
         <UsageCount Value="226"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit80>
@@ -650,11 +651,10 @@
         <ComponentName Value="ConfigurationForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <EditorIndex Value="3"/>
-        <TopLine Value="254"/>
-        <CursorPos X="26" Y="285"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="86"/>
+        <CursorPos X="30" Y="108"/>
         <UsageCount Value="226"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit82>
       <Unit83>
@@ -951,143 +951,248 @@
         <UsageCount Value="4"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit120>
+      <Unit121>
+        <Filename Value="..\Libraries\OpenAL\al.inc"/>
+        <IsPartOfProject Value="True"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="480"/>
+        <CursorPos X="3" Y="503"/>
+        <UsageCount Value="24"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit121>
+      <Unit122>
+        <Filename Value="..\Libraries\OpenAL\alc.inc"/>
+        <IsPartOfProject Value="True"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="162"/>
+        <CursorPos X="53" Y="185"/>
+        <UsageCount Value="24"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit122>
+      <Unit123>
+        <Filename Value="..\Libraries\OpenAL\alext.inc"/>
+        <IsPartOfProject Value="True"/>
+        <EditorIndex Value="-1"/>
+        <WindowIndex Value="-1"/>
+        <TopLine Value="-1"/>
+        <CursorPos X="-1" Y="-1"/>
+        <UsageCount Value="24"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit123>
+      <Unit124>
+        <Filename Value="..\Libraries\OpenAL\openalsoft.pas"/>
+        <IsPartOfProject Value="True"/>
+        <EditorIndex Value="11"/>
+        <TopLine Value="536"/>
+        <CursorPos X="34" Y="542"/>
+        <UsageCount Value="24"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit124>
+      <Unit125>
+        <Filename Value="..\Libraries\OpenAL\efx.inc"/>
+        <IsPartOfProject Value="True"/>
+        <EditorIndex Value="-1"/>
+        <WindowIndex Value="-1"/>
+        <TopLine Value="-1"/>
+        <CursorPos X="-1" Y="-1"/>
+        <UsageCount Value="24"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit125>
+      <Unit126>
+        <Filename Value="C:\fpcupdeluxe\fpcsrc\rtl\objpas\fgl.pp"/>
+        <EditorIndex Value="10"/>
+        <TopLine Value="145"/>
+        <CursorPos X="11" Y="164"/>
+        <UsageCount Value="11"/>
+        <Loaded Value="True"/>
+      </Unit126>
+      <Unit127>
+        <Filename Value="C:\fpcupdeluxe\fpcsrc\rtl\win\sysutils.pp"/>
+        <UnitName Value="SysUtils"/>
+        <EditorIndex Value="-1"/>
+        <UsageCount Value="10"/>
+      </Unit127>
+      <Unit128>
+        <Filename Value="C:\fpcupdeluxe\fpcsrc\rtl\objpas\sysutils\sysutilh.inc"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="321"/>
+        <CursorPos X="23" Y="330"/>
+        <UsageCount Value="10"/>
+      </Unit128>
+      <Unit129>
+        <Filename Value="C:\fpcupdeluxe\fpcsrc\rtl\objpas\sysutils\systhrdh.inc"/>
+        <EditorIndex Value="-1"/>
+        <UsageCount Value="10"/>
+      </Unit129>
+      <Unit130>
+        <Filename Value="..\Libraries\OpenAL\libmpg123.pas"/>
+        <IsPartOfProject Value="True"/>
+        <EditorIndex Value="12"/>
+        <TopLine Value="430"/>
+        <CursorPos X="10" Y="449"/>
+        <UsageCount Value="22"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit130>
     </Units>
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
-        <Filename Value="..\Engine\uGDPhysics.pas"/>
-        <Caret Line="31" Column="5" TopLine="3"/>
+        <Filename Value="..\Engine\uGDCellManager.pas"/>
+        <Caret Line="34" Column="3"/>
       </Position1>
       <Position2>
-        <Filename Value="..\Engine\uGDPhysics.pas"/>
-        <Caret Line="42" Column="7" TopLine="20"/>
+        <Filename Value="..\Engine\uGDCellManager.pas"/>
+        <Caret Line="110" Column="13" TopLine="78"/>
       </Position2>
       <Position3>
-        <Filename Value="..\Engine\uGDPhysics.pas"/>
-        <Caret Line="78" Column="7" TopLine="50"/>
+        <Filename Value="..\Engine\uGDCellManager.pas"/>
+        <Caret Line="115" Column="5" TopLine="78"/>
       </Position3>
       <Position4>
-        <Filename Value="..\Engine\uGDPhysics.pas"/>
-        <Caret Line="105" Column="5" TopLine="82"/>
+        <Filename Value="..\Engine\uGDEngine.pas"/>
+        <Caret Line="85" TopLine="66"/>
       </Position4>
       <Position5>
-        <Filename Value="Demo.lpr"/>
-        <Caret Line="29" Column="41" TopLine="6"/>
+        <Filename Value="..\Engine\uGDStatistics.pas"/>
+        <Caret Line="48" Column="3" TopLine="106"/>
       </Position5>
       <Position6>
-        <Filename Value="Demo.lpr"/>
-        <Caret Line="41" TopLine="6"/>
+        <Filename Value="..\Engine\uGDEngine.pas"/>
+        <Caret Line="85" Column="5" TopLine="66"/>
       </Position6>
       <Position7>
-        <Filename Value="Demo.lpr"/>
-        <Caret Line="47" TopLine="6"/>
+        <Filename Value="..\Engine\uGDEngine.pas"/>
+        <Caret Line="157" Column="5" TopLine="139"/>
       </Position7>
       <Position8>
         <Filename Value="..\Engine\uGDEngine.pas"/>
-        <Caret Line="171" TopLine="135"/>
+        <Caret Line="179" Column="5" TopLine="160"/>
       </Position8>
       <Position9>
-        <Filename Value="Demo.lpr"/>
-        <Caret Line="41" TopLine="6"/>
+        <Filename Value="..\Engine\uGDEngine.pas"/>
+        <Caret Line="202" Column="3" TopLine="183"/>
       </Position9>
       <Position10>
-        <Filename Value="Demo.lpr"/>
-        <Caret Line="47" TopLine="6"/>
+        <Filename Value="..\Engine\uGDEngine.pas"/>
+        <Caret Line="220" Column="5" TopLine="183"/>
       </Position10>
       <Position11>
-        <Filename Value="..\Engine\uGDPhysics.pas"/>
-        <Caret Line="81" TopLine="72"/>
+        <Filename Value="..\Engine\uGDCellManager.pas"/>
+        <Caret Line="474" Column="13" TopLine="455"/>
       </Position11>
       <Position12>
         <Filename Value="..\Engine\uGDEngine.pas"/>
-        <Caret Line="160" TopLine="144"/>
+        <Caret Line="202" Column="5" TopLine="57"/>
       </Position12>
       <Position13>
-        <Filename Value="..\Engine\uGDPhysics.pas"/>
-        <Caret Line="81" TopLine="59"/>
+        <Filename Value="..\Engine\uGDSound.pas"/>
+        <Caret Line="41" Column="14" TopLine="26"/>
       </Position13>
       <Position14>
-        <Filename Value="..\Engine\uGDEngine.pas"/>
-        <Caret Line="130" TopLine="116"/>
+        <Filename Value="Demo.lpr"/>
+        <Caret Line="52" TopLine="14"/>
       </Position14>
       <Position15>
-        <Filename Value="..\Engine\uGDEngine.pas"/>
-        <Caret Line="131" TopLine="116"/>
+        <Filename Value="..\Libraries\OpenAL\libmpg123.pas"/>
+        <Caret Line="12" Column="165"/>
       </Position15>
       <Position16>
-        <Filename Value="..\Engine\uGDEngine.pas"/>
-        <Caret Line="133" TopLine="116"/>
+        <Filename Value="..\Engine\uGDSound.pas"/>
+        <Caret Line="39" Column="25" TopLine="23"/>
       </Position16>
       <Position17>
-        <Filename Value="..\Engine\uGDEngine.pas"/>
-        <Caret Line="134" TopLine="116"/>
+        <Filename Value="..\Libraries\OpenAL\libmpg123.pas"/>
+        <Caret Line="22" Column="3" TopLine="3"/>
       </Position17>
       <Position18>
-        <Filename Value="..\Engine\uGDEngine.pas"/>
-        <Caret Line="135" TopLine="116"/>
+        <Filename Value="..\Engine\uGDSound.pas"/>
+        <Caret Line="262" Column="35" TopLine="243"/>
       </Position18>
       <Position19>
-        <Filename Value="..\Engine\uGDEngine.pas"/>
-        <Caret Line="136" TopLine="116"/>
+        <Filename Value="..\Engine\uGDSound.pas"/>
+        <Caret Line="444" Column="63" TopLine="434"/>
       </Position19>
       <Position20>
-        <Filename Value="..\Engine\uGDConsole.pas"/>
-        <Caret Line="297" TopLine="273"/>
+        <Filename Value="..\Engine\uGDSound.pas"/>
+        <Caret Line="262" Column="35" TopLine="243"/>
       </Position20>
       <Position21>
-        <Filename Value="..\Engine\uGDConsole.pas"/>
-        <Caret Line="298" TopLine="273"/>
+        <Filename Value="..\Engine\uGDSound.pas"/>
+        <Caret Line="438" Column="14" TopLine="429"/>
       </Position21>
       <Position22>
-        <Filename Value="..\Engine\uGDConsole.pas"/>
-        <Caret Line="299" TopLine="273"/>
+        <Filename Value="..\Engine\uGDSound.pas"/>
+        <Caret Line="262" Column="26" TopLine="99"/>
       </Position22>
       <Position23>
-        <Filename Value="..\Engine\uGDConsole.pas"/>
-        <Caret Line="300" TopLine="273"/>
+        <Filename Value="..\Engine\uGDSound.pas"/>
+        <Caret Line="245" Column="86" TopLine="244"/>
       </Position23>
       <Position24>
-        <Filename Value="..\Engine\uGDConsole.pas"/>
-        <Caret Line="303" TopLine="273"/>
+        <Filename Value="..\Engine\uGDSound.pas"/>
+        <Caret Line="438" Column="3" TopLine="406"/>
       </Position24>
       <Position25>
-        <Filename Value="..\Engine\uGDConsole.pas"/>
-        <Caret Line="304" TopLine="273"/>
+        <Filename Value="..\Engine\uGDSound.pas"/>
+        <Caret Line="263" Column="42" TopLine="243"/>
       </Position25>
       <Position26>
-        <Filename Value="..\Engine\uGDEngine.pas"/>
-        <Caret Line="137" TopLine="116"/>
+        <Filename Value="..\Engine\uGDSound.pas"/>
+        <Caret Line="518" Column="29" TopLine="501"/>
       </Position26>
       <Position27>
-        <Filename Value="..\Engine\uGDEngine.pas"/>
-        <Caret Line="146" TopLine="126"/>
+        <Filename Value="..\Engine\uGDSound.pas"/>
+        <Caret Line="265" Column="49" TopLine="246"/>
       </Position27>
       <Position28>
-        <Filename Value="..\Engine\uGDEngine.pas"/>
-        <Caret Line="158" TopLine="126"/>
+        <Filename Value="..\Libraries\OpenAL\libmpg123.pas"/>
+        <Caret Line="449" Column="10" TopLine="430"/>
       </Position28>
       <Position29>
-        <Filename Value="..\Engine\uGDEngine.pas"/>
-        <Caret Line="124" Column="47" TopLine="113"/>
+        <Filename Value="..\Engine\uGDPhysics.pas"/>
+        <Caret Line="105" Column="5" TopLine="88"/>
       </Position29>
       <Position30>
-        <Filename Value="..\Engine\uGDConstants.pas"/>
-        <Caret Line="99" Column="33" TopLine="85"/>
+        <Filename Value="..\Libraries\Newton\newton.pas"/>
+        <Caret Line="111" Column="31" TopLine="73"/>
       </Position30>
     </JumpHistory>
     <RunParams>
       <FormatVersion Value="2"/>
-      <Modes Count="0" ActiveMode="default"/>
+      <Modes ActiveMode="default"/>
     </RunParams>
   </ProjectSession>
   <Debugging>
-    <BreakPoints Count="1">
-      <Item1>
+    <BreakPoints>
+      <Item>
         <Kind Value="bpkSource"/>
         <WatchScope Value="wpsLocal"/>
         <WatchKind Value="wpkWrite"/>
         <Source Value="..\Libraries\Newton\newton.inc"/>
         <Line Value="1"/>
-      </Item1>
+      </Item>
+      <Item>
+        <Kind Value="bpkSource"/>
+        <WatchScope Value="wpsLocal"/>
+        <WatchKind Value="wpkWrite"/>
+        <Source Value="..\Libraries\OpenAL\openal.pas"/>
+        <Line Value="64"/>
+      </Item>
+      <Item>
+        <Kind Value="bpkSource"/>
+        <WatchScope Value="wpsLocal"/>
+        <WatchKind Value="wpkWrite"/>
+        <Source Value="..\Engine\uGDCellManager.pas"/>
+        <Line Value="474"/>
+      </Item>
+      <Item>
+        <Kind Value="bpkSource"/>
+        <WatchScope Value="wpsLocal"/>
+        <WatchKind Value="wpkWrite"/>
+        <Source Value="..\Libraries\OpenAL\mpg123.pas"/>
+        <Line Value="22"/>
+      </Item>
     </BreakPoints>
   </Debugging>
 </CONFIG>
