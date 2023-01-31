@@ -38,8 +38,8 @@ uses
   SysUtils,
   uGDConstants,
   uGDResource,
-  openal,
-  mpg123;
+  openalsoft,
+  libmpg123;
 
 Type
  TGDSoundResource = class (TGDResource)
@@ -52,9 +52,9 @@ Type
 
   TGDSoundStream = class (TGDSoundResource)
   private
-    FBuffers  : array[0..1] of TALUInt;
+    FBuffers  : array[0..1] of ALUInt;
     FHandle   : Pmpg123_handle;
-    FFormat   : TALEnum;
+    FFormat   : ALEnum;
     FRate     : Integer;
     FChannels : Integer;
     FEncoding : Integer;
@@ -62,7 +62,7 @@ Type
     constructor Create(aFileName : String);
     destructor  Destroy(); override;
 
-    function  Stream(aBuffer : TALUInt; aLoop : boolean = false): boolean;
+    function  Stream(aBuffer : ALUInt; aLoop : boolean = false): boolean;
     procedure ResetStream();
     procedure PreBuffer();
   end;
@@ -73,7 +73,7 @@ Type
 
   TGDSoundBuffer = class (TGDSoundResource)
   private
-    FBuffer  : TALuint;
+    FBuffer  : ALuint;
   public
     constructor Create(aFileName : String);
     destructor  Destroy(); override;
@@ -85,7 +85,7 @@ Type
 
   TGDSoundSource = class
   private
-    FSource   : TALuint;
+    FSource   : ALuint;
     FResource : TGDSoundResource;
     FLoop     : Boolean;
   public
@@ -127,6 +127,126 @@ implementation
 uses
   uGDEngine;
 
+type
+  //WAV file header
+  TWAVHeader = record
+    RIFFHeader: array[1..4] of AnsiChar;
+    FileSize: Integer;
+    WAVEHeader: array[1..4] of AnsiChar;
+    FormatHeader: array[1..4] of AnsiChar;
+    FormatHeaderSize: Integer;
+    FormatCode: Word;
+    ChannelNumber: Word;
+    SampleRate: Integer;
+    BytesPerSecond: Integer;
+    BytesPerSample: Word;
+    BitsPerSample: Word;
+  end;
+
+const
+  WAV_STANDARD = $0001;
+  WAV_IMA_ADPCM = $0011;
+  WAV_MP3 = $0055;
+
+function LoadWavStream(Stream: Tstream; var format: ALenum; var data: PALvoid;
+  var size: ALsizei; var freq: ALsizei; var loop: ALint): Boolean;
+var
+  WavHeader: TWavHeader;
+  readname: pansichar;
+  name: ansistring;
+  readint: integer;
+begin
+  Result := False;
+
+  //Read wav header
+  stream.Read(WavHeader, sizeof(TWavHeader));
+
+  //Determine SampleRate
+  freq := WavHeader.SampleRate;
+
+  //Detemine waveformat
+  if WavHeader.ChannelNumber = 1 then
+    case WavHeader.BitsPerSample of
+      8: format := AL_FORMAT_MONO8;
+      16: format := AL_FORMAT_MONO16;
+    end;
+
+  if WavHeader.ChannelNumber = 2 then
+    case WavHeader.BitsPerSample of
+      8: format := AL_FORMAT_STEREO8;
+      16: format := AL_FORMAT_STEREO16;
+    end;
+
+  //go to end of wavheader
+  stream.seek((8 - 44) + 12 + 4 + WavHeader.FormatHeaderSize + 4, soFromCurrent);
+    //hmm crappy...
+
+  //loop to rest of wave file data chunks
+  repeat
+    //read chunk name
+    getmem(readname, 4);
+    stream.Read(readname^, 4);
+    name := readname[0] + readname[1] + readname[2] + readname[3];
+    if name = 'data' then
+    begin
+      //Get the size of the wave data
+      stream.Read(readint, 4);
+      size := readint;
+      //if WavHeader.BitsPerSample = 8 then size:=size+1; //fix for 8bit???
+      //Read the actual wave data
+      getmem(data, size);
+      stream.Read(Data^, size);
+
+      //Decode wave data if needed
+      if WavHeader.FormatCode = WAV_IMA_ADPCM then
+      begin
+        //TODO: add code to decompress IMA ADPCM data
+      end;
+      if WavHeader.FormatCode = WAV_MP3 then
+      begin
+        //TODO: add code to decompress MP3 data
+      end;
+      Result := True;
+    end
+    else
+    begin
+      //Skip unknown chunk(s)
+      stream.Read(readint, 4);
+      stream.Position := stream.Position + readint;
+    end;
+    freemem(readname);
+  until stream.Position >= stream.size;
+end;
+
+procedure alutLoadWAVFile(fname: string; var format: ALenum; var data: PALvoid;
+  var size: ALsizei; var freq: ALsizei; var loop: ALint);
+var
+  Stream: TFileStream;
+begin
+  Stream := TFileStream.Create(fname, $0000);
+  LoadWavStream(Stream, format, data, size, freq, loop);
+  Stream.Free;
+end;
+
+procedure alutLoadWAVMemory(memory: PALbyte; var format: ALenum; var data:
+  PALvoid; var size: ALsizei; var freq: ALsizei; var loop: ALint);
+var
+  Stream: TMemoryStream;
+begin
+  Stream := TMemoryStream.Create;
+  Stream.Write(memory, sizeof(memory^));
+  LoadWavStream(Stream, format, data, size, freq, loop);
+  Stream.Free;
+end;
+
+procedure alutUnloadWAV(format: ALenum; data: PALvoid; size: ALsizei; freq:
+  ALsizei);
+begin
+  //Clean up
+  if data <> nil then
+    freemem(data);
+end;
+
 {******************************************************************************}
 {* Create stream class                                                        *}
 {******************************************************************************}
@@ -135,13 +255,14 @@ constructor TGDSoundStream.Create( aFileName : String);
 var
   iError : string;
   iResult : boolean;
+  lErrorCode : integer;
 begin
   GDConsole.Write('Loading sound stream ' + aFileName + '...');
   try
     iResult := true;
-    FHandle := mpg123_new(nil, nil);
+    FHandle := mpg123_new(nil, lErrorCode);
     mpg123_open(FHandle, PChar(aFileName));
-    mpg123_getformat(FHandle, @FRate, @FChannels, @FEncoding);
+    mpg123_getformat(FHandle, FRate, FChannels, FEncoding);
     mpg123_format_none(Fhandle);
     mpg123_format(Fhandle, Frate, FChannels, FEncoding);
     FFormat := AL_FORMAT_STEREO16;
@@ -172,17 +293,17 @@ end;
 {* Stream next part in the buffer                                             *}
 {******************************************************************************}
 
-function TGDSoundStream.Stream(aBuffer : TALUInt; aLoop : boolean = false): boolean;
+function TGDSoundStream.Stream(aBuffer : ALUInt; aLoop : boolean = false): boolean;
 const
   BUFFER_SIZE = 131072;
 var
   lD : Cardinal;
-  lData : TALvoid;
+  lData : PALvoid;
 begin
   result := true;
 
   getmem(lData, BUFFER_SIZE);
-  if mpg123_read(Fhandle, lData, BUFFER_SIZE, @lD) = MPG123_OK then
+  if mpg123_read(Fhandle, lData, BUFFER_SIZE, @lD) = Integer(MPG123_OK) then
   begin
     alBufferData(aBuffer, FFormat, lData, BUFFER_SIZE, FRate);
     result := true;
@@ -226,11 +347,11 @@ end;
 constructor TGDSoundBuffer.Create( aFileName : String);
 var
   iError : string;
-  iFormat: TALEnum;
-  iSize: TALSizei;
-  iFreq: TALSizei;
-  iLoop: TALInt;
-  iData: TALVoid;
+  iFormat: ALEnum;
+  iSize: ALSizei;
+  iFreq: ALSizei;
+  iLoop: ALInt;
+  iData: PALVoid;
   iResult : boolean;
 begin
   GDConsole.Write('Loading sound ' + aFileName + '...');
@@ -267,8 +388,8 @@ end;
 
 constructor TGDSoundSource.Create();
 var
-  iSourcePos: array [0..2] of TALfloat= ( 0.0, 0.0, 0.0 );
-  iSourceVel: array [0..2] of TALfloat= ( 0.0, 0.0, 0.0 );
+  iSourcePos: array [0..2] of ALfloat= ( 0.0, 0.0, 0.0 );
+  iSourceVel: array [0..2] of ALfloat= ( 0.0, 0.0, 0.0 );
 begin
   FResource := nil;
   AlGenSources(1, @FSource);
@@ -293,7 +414,7 @@ end;
 
 function TGDSoundSource.IsFree(): boolean;
 var
-  iState : TALCint;
+  iState : ALCint;
 begin
   if FResource = nil then
   begin
@@ -301,7 +422,7 @@ begin
     exit;
   end;
 
-  alGetSourcei(FSource, AL_SOURCE_STATE, @iState);
+  alGetSourcei(FSource, AL_SOURCE_STATE, iState);
   if (iState = AL_PLAYING) or (iState = AL_PAUSED) then
     result := false
   else
@@ -315,21 +436,19 @@ end;
 constructor TGDSound.Create();
 var
   iError, iV1, iV2 : string;
-  iDefaultDevice: PALCubyte;
-  iALInt1, iALInt2 : TALCint;
+  lErrorCode : integer;
+  iDefaultDevice: PALCchar;
+  iALInt1, iALInt2 : ALCint;
   iI : Integer;
 begin
   GDTiming.Start();
   GDConsole.Write('.....Initializing sound');
   try
     FInitialized := false;
-    if not(InitOpenAL()) then
+    if not(LoadOpenALCoreLibrary('')) then
       Raise Exception.Create('OpenAL library is missing!');
-    if not(InitMPG123()) then
-      Raise Exception.Create('mpg123 library is missing!');
-    iDefaultDevice := '';
     iDefaultDevice := alcGetString(nil, ALC_DEFAULT_DEVICE_SPECIFIER);
-    FDevice := alcOpenDevice(PChar(iDefaultDevice)); //for now only default device.
+    FDevice := alcOpenDevice(iDefaultDevice); //for now only default device.
     if FDevice = nil then
       Raise Exception.Create('Error initializing sound device!');
     FContext := alcCreateContext(FDevice,nil);
@@ -357,8 +476,10 @@ begin
       FSources[iI] := TGDSoundSource.Create();
 
     //Init mpg123 for mp3 streaming.
-    if mpg123_init() <> MPG123_OK then
-      Raise Exception.Create('Error initializing mpg123 library!');
+    lErrorCode := mpg123_init();
+    if lErrorCode <> Integer(MPG123_OK) then
+       Raise Exception.Create('Error initializing mpg123 library: ' + mpg123_plain_strerror(lErrorCode));
+
 
     FInitialized := true;
     GDTiming.Stop();
@@ -395,9 +516,7 @@ begin
     if not(alcGetError(FDevice) = AL_NO_ERROR) then
       Raise Exception.Create('Error destroying context!');
     alcCloseDevice(FDevice);
-
-    FreeMPG123();
-    FreeOpenAL();
+    UnloadOpenALSoftLibrary();
   except
     on E: Exception do
     begin
@@ -417,11 +536,11 @@ var
   iI,iProcessed : integer;
   iSource       : TGDSoundSource;
   iStream       : TGDSoundStream;
-  iBuffer       : TALUInt;
-  iState        : TALCint;
-  iListenerPos  : array [0..2] of TALfloat= ( 0.0, 0.0, 0.0);
-  iListenerVel  : array [0..2] of TALfloat= ( 0.0, 0.0, 0.0);
-  iListenerOri  : array [0..5] of TALfloat= ( 0.0, 0.0, -1.0, 0.0, 1.0, 0.0);
+  iBuffer       : ALUInt;
+  iState        : ALCint;
+  iListenerPos  : array [0..2] of ALfloat= ( 0.0, 0.0, 0.0);
+  iListenerVel  : array [0..2] of ALfloat= ( 0.0, 0.0, 0.0);
+  iListenerOri  : array [0..5] of ALfloat= ( 0.0, 0.0, -1.0, 0.0, 1.0, 0.0);
 begin
   if not(FInitialized) then exit;
 
@@ -437,9 +556,9 @@ begin
     iSource := FSources[iI];
     if iSource.FResource = nil then continue;
     if iSource.FResource.ResourceType <> SR_STREAM then continue;
-    alGetSourcei(iSource.FSource, AL_SOURCE_STATE, @iState);
+    alGetSourcei(iSource.FSource, AL_SOURCE_STATE, iState);
     if (iState = AL_PAUSED) then  continue;
-    alGetSourcei(iSource.FSource, AL_BUFFERS_PROCESSED, @iProcessed);
+    alGetSourcei(iSource.FSource, AL_BUFFERS_PROCESSED, iProcessed);
 
     iStream := iSource.FResource as TGDSoundStream;
     while (iProcessed > 0) do
@@ -539,12 +658,12 @@ end;
 procedure TGDSound.Pause(aIndex : Integer);
 var
   iSource : TGDSoundSource;
-  iState : TALCint;
+  iState : ALCint;
 begin
   if not(FInitialized) then exit;
   if (aIndex < 0) or (aIndex > S_MAX_SOURCES-1) then exit;
   iSource := FSources[aIndex];
-  alGetSourcei(iSource.FSource, AL_SOURCE_STATE, @iState);
+  alGetSourcei(iSource.FSource, AL_SOURCE_STATE, iState);
   if (iState = AL_PLAYING) then
     AlSourcePause(iSource.FSource);
 end;
@@ -556,12 +675,12 @@ end;
 procedure TGDSound.Resume(aIndex : Integer);
 var
   iSource : TGDSoundSource;
-  iState : TALCint;
+  iState : ALCint;
 begin
   if not(FInitialized) then exit;
   if (aIndex < 0) or (aIndex > S_MAX_SOURCES-1) then exit;
   iSource := FSources[aIndex];
-  alGetSourcei(iSource.FSource, AL_SOURCE_STATE, @iState);
+  alGetSourcei(iSource.FSource, AL_SOURCE_STATE, iState);
   if (iState = AL_PAUSED) then
     AlSourcePlay(iSource.FSource);
 end;
@@ -573,13 +692,13 @@ end;
 procedure TGDSound.Stop(aIndex : Integer);
 var
   iSource : TGDSoundSource;
-  iState : TALCint;
+  iState : ALCint;
 begin
   if not(FInitialized) then exit;
 
   if (aIndex < 0) or (aIndex > S_MAX_SOURCES-1) then exit;
   iSource := FSources[aIndex];
-  alGetSourcei(iSource.FSource, AL_SOURCE_STATE, @iState);
+  alGetSourcei(iSource.FSource, AL_SOURCE_STATE, iState);
   if (iState = AL_PLAYING) or (iState = AL_PAUSED) then
     AlSourceStop(iSource.FSource);
   if iSource.FResource.ResourceType = SR_STREAM then
