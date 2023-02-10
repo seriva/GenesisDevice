@@ -1,6 +1,6 @@
 {*******************************************************************************
 *                            Genesis Device Engine                             *
-*                   Copyright © 2007-2015 Luuk van Venrooij                    *
+*                   Copyright © 2007-2022 Luuk van Venrooij                    *
 *                        http://www.luukvanvenrooij.nl                         *
 *                         luukvanvenrooij84@gmail.com                          *
 ********************************************************************************
@@ -22,8 +22,6 @@
 *                                                                              *
 *******************************************************************************}   
 unit uGDSound;
-
-
 
 {******************************************************************************}
 {* Simple sound system based on OpenAL. Plays back WAV files and MP3.         *}

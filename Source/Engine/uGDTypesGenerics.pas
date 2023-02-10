@@ -1,6 +1,6 @@
 {*******************************************************************************
 *                            Genesis Device Engine                             *
-*                   Copyright © 2007-2015 Luuk van Venrooij                    *
+*                   Copyright © 2007-2022 Luuk van Venrooij                    *
 *                        http://www.luukvanvenrooij.nl                         *
 ********************************************************************************
 *                                                                              *
@@ -22,7 +22,7 @@
 *******************************************************************************}
 unit uGDTypesGenerics;
 
-{$mode objfpc}
+{$MODE objfpc}
 
 {******************************************************************************}
 {* Holds the generic types of the GD We put them in a seperate file      *}

@@ -1,6 +1,6 @@
 {*******************************************************************************
 *                            Genesis Device Engine                             *
-*                   Copyright © 2007-2015 Luuk van Venrooij                    *
+*                   Copyright © 2007-2022 Luuk van Venrooij                    *
 *                        http://www.luukvanvenrooij.nl                         *
 ********************************************************************************
 *                                                                              *
@@ -19,10 +19,8 @@
 *  You should have received a copy of the GNU General Public License           *
 *  along with Genesis Device.  If not, see <http://www.gnu.org/licenses/>.     *
 *                                                                              *
-*******************************************************************************}   
+*******************************************************************************}
 unit uGDWaterCell;
-
-
 
 {******************************************************************************}
 {* Holds the watercell class                                                  *}
