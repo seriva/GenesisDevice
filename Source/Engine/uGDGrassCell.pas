@@ -22,7 +22,7 @@
 *******************************************************************************}
 unit uGDGrassCell;
 
-{$MODE Delphi}
+
 
 {******************************************************************************}
 {* This unit hold the grasscell class. A grasscell is a small patch on the    *}

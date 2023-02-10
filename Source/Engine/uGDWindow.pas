@@ -1,6 +1,6 @@
 unit uGDWindow;
 
-{$mode delphi}
+
 
 interface
 

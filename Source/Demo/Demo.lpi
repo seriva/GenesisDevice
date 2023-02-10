@@ -74,7 +74,7 @@
             <Filename Value="..\..\Bin\Demo"/>
           </Target>
           <SearchPaths>
-            <IncludeFiles Value="..\Libraries\OpenGL;..\Libraries\OpenAL;..\Libraries\SDL;..\Libraries\Newton;..\Engine;$(ProjOutDir)"/>
+            <IncludeFiles Value="$(ProjOutDir)"/>
             <OtherUnitFiles Value="..\Libraries\OpenGL;..\Libraries\OpenAL;..\Libraries\SDL;..\Libraries\Newton;..\Engine"/>
             <UnitOutputDirectory Value="..\..\Build"/>
           </SearchPaths>

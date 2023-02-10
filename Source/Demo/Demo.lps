@@ -300,10 +300,9 @@
       <Unit44>
         <Filename Value="..\Engine\uGDCellManager.pas"/>
         <IsPartOfProject Value="True"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="4"/>
         <TopLine Value="374"/>
-        <CursorPos X="182" Y="390"/>
+        <CursorPos X="68" Y="399"/>
         <UsageCount Value="229"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
@@ -513,8 +512,9 @@
       <Unit67>
         <Filename Value="..\Engine\uGDStatistics.pas"/>
         <IsPartOfProject Value="True"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="6"/>
-        <TopLine Value="106"/>
+        <TopLine Value="92"/>
         <CursorPos X="3" Y="48"/>
         <UsageCount Value="229"/>
         <Loaded Value="True"/>
@@ -646,7 +646,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="480"/>
         <CursorPos X="3" Y="503"/>
-        <UsageCount Value="25"/>
+        <UsageCount Value="27"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit81>
       <Unit82>
@@ -655,7 +655,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="162"/>
         <CursorPos X="53" Y="185"/>
-        <UsageCount Value="25"/>
+        <UsageCount Value="27"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit82>
       <Unit83>
@@ -665,7 +665,7 @@
         <WindowIndex Value="-1"/>
         <TopLine Value="-1"/>
         <CursorPos X="-1" Y="-1"/>
-        <UsageCount Value="25"/>
+        <UsageCount Value="27"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit83>
       <Unit84>
@@ -674,7 +674,7 @@
         <EditorIndex Value="11"/>
         <TopLine Value="536"/>
         <CursorPos X="34" Y="542"/>
-        <UsageCount Value="25"/>
+        <UsageCount Value="27"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit84>
@@ -685,7 +685,7 @@
         <WindowIndex Value="-1"/>
         <TopLine Value="-1"/>
         <CursorPos X="-1" Y="-1"/>
-        <UsageCount Value="25"/>
+        <UsageCount Value="27"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit85>
       <Unit86>
@@ -694,7 +694,7 @@
         <EditorIndex Value="12"/>
         <TopLine Value="430"/>
         <CursorPos X="10" Y="449"/>
-        <UsageCount Value="23"/>
+        <UsageCount Value="25"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit86>
@@ -1013,7 +1013,7 @@
         <EditorIndex Value="10"/>
         <TopLine Value="145"/>
         <CursorPos X="11" Y="164"/>
-        <UsageCount Value="11"/>
+        <UsageCount Value="12"/>
         <Loaded Value="True"/>
       </Unit127>
       <Unit128>
