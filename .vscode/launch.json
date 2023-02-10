@@ -7,9 +7,18 @@
         {
             "type": "by-gdb",
             "request": "launch",
-            "name": "Launch(gdb)",
-            "program": "./Bin/Main.exe",
-            "cwd": "${workspaceRoot}"
+            "name": "Debug (Windows)",
+            "program": "${workspaceFolder}/Bin/Demo.exe",
+            "cwd": "${workspaceFolder}/Bin",
+            "preLaunchTask": "Debug (Windows)"
+        },
+        {
+            "type": "by-gdb",
+            "request": "launch",
+            "name": "Debug (Linux)",
+            "program": "${workspaceFolder}/Bin/Demo",
+            "cwd": "${workspaceFolder}/Bin",
+            "preLaunchTask": "Debug (Linux)"
         }
     ]
 }
