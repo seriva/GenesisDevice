@@ -22,7 +22,7 @@
 *******************************************************************************}
 unit uGDResources;
 
-{$MODE objfpc}
+{$mode objfpc}
 
 interface
 

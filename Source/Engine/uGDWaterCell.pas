@@ -19,8 +19,10 @@
 *  You should have received a copy of the GNU General Public License           *
 *  along with Genesis Device.  If not, see <http://www.gnu.org/licenses/>.     *
 *                                                                              *
-*******************************************************************************}
+*******************************************************************************}   
 unit uGDWaterCell;
+
+{$MODE Delphi}
 
 {******************************************************************************}
 {* Holds the watercell class                                                  *}

@@ -22,7 +22,7 @@
 *******************************************************************************}
 unit uGDMeshManager;
 
-{$MODE objfpc}
+{$mode objfpc}
 
 interface
 

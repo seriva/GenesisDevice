@@ -22,7 +22,10 @@
 *******************************************************************************}
 program Demo;
 
+{$MODE Delphi}
+
 uses
+  // heaptrc,
   SysUtils,
   Forms, Interfaces,
   uConfiguration in 'uConfiguration.pas' {ConfigurationForm},
@@ -32,6 +35,8 @@ uses
 label start;
 
 begin
+  // DeleteFile('leaks.txt');
+  // SetHeapTraceOutput('leaks.txt');
   Application.Initialize;
   Application.Scaled:=true;
   start:

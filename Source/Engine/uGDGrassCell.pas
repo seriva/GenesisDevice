@@ -22,6 +22,8 @@
 *******************************************************************************}
 unit uGDGrassCell;
 
+{$MODE Delphi}
+
 {******************************************************************************}
 {* This unit hold the grasscell class. A grasscell is a small patch on the    *}
 {* terrain which has grass on it. Where the patches are depends on the grass  *}

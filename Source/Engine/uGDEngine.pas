@@ -22,6 +22,8 @@
 *******************************************************************************}   
 unit uGDEngine;
 
+{$MODE Delphi}
+
 {******************************************************************************}
 {* This is the main unit of the  It holds the main variables,          *}
 {* callbacks and loops controling the  This unit will later be extended*}

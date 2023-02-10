@@ -22,7 +22,7 @@
 *******************************************************************************}
 unit uGDTypesGenerics;
 
-{$MODE objfpc}
+{$mode objfpc}
 
 {******************************************************************************}
 {* Holds the generic types of the GD We put them in a seperate file      *}

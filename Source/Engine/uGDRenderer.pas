@@ -22,6 +22,8 @@
 *******************************************************************************}   
 unit uGDRenderer;
 
+{$MODE Delphi}
+
 {******************************************************************************}
 {* Hold the main renderer class. The render class is responsible for          *}
 {* managing the opengl window, opengl states and GLSL shaders.                *}

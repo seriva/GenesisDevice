@@ -23,6 +23,8 @@
 *******************************************************************************}   
 unit uGDSound;
 
+{$MODE Delphi}
+
 {******************************************************************************}
 {* Simple sound system based on OpenAL. Plays back WAV files and MP3.         *}
 {* For now playback can only be on 16 sources and there is no support for     *}
