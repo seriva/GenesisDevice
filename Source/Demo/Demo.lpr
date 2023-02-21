@@ -1,6 +1,6 @@
 {*******************************************************************************
 *                            Genesis Device Engine                             *
-*                   Copyright © 2007-2015 Luuk van Venrooij                    *
+*                   Copyright © 2007-2022 Luuk van Venrooij                    *
 *                        http://www.luukvanvenrooij.nl                         *
 ********************************************************************************
 *                                                                              *
@@ -30,8 +30,7 @@ uses
   Forms, Interfaces,
   uConfiguration in 'uConfiguration.pas' {ConfigurationForm},
   uGDEngine,
-  uMain in 'Main.pas',
-  uPlayer in 'Player.pas';
+  uMain in 'Main.pas';
 
 label start;
 

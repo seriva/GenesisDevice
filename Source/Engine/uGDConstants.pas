@@ -1,6 +1,6 @@
 {*******************************************************************************
 *                            Genesis Device Engine                             *
-*                   Copyright © 2007-2015 Luuk van Venrooij                    *
+*                   Copyright © 2007-2022 Luuk van Venrooij                    *
 *                        http://www.luukvanvenrooij.nl                         *
 ********************************************************************************
 *                                                                              *
@@ -74,17 +74,17 @@ const
   R_DEFAULT_WINDOW_HEIGHT = 600;
   R_HUD_WIDTH             = 1600;
   R_HUD_HEIGHT            = 1200;
-  R_VIEW_DISTANCE_STEP    = 10240;
-  R_MIN_VIEW_DISTANCE     = 71680;
-  R_MAX_VIEW_DISTANCE     = 122880;
-  R_FOLIAGE_LOD_DISTANCE  = 2048;
-  R_FOLIAGE_DISTANCE_STEP = 1024;
+  R_VIEW_DISTANCE_STEP    = 20480;
+  R_MIN_VIEW_DISTANCE     = 143360;
+  R_MAX_VIEW_DISTANCE     = 245760;
+  R_FOLIAGE_LOD_DISTANCE  = 4096;
+  R_FOLIAGE_DISTANCE_STEP = 2048;
   R_LOD0_DISTANCE         = 20;
   R_LOD1_DISTANCE         = 40;
   R_LOD2_DISTANCE         = 70;
   R_CAUSTIC_TIME          = 50;
   R_NORMAL_LENGTH         = 32;
-  R_SHADOW_SIZE           = 4096;
+  R_SHADOW_SIZE           = 8192;
 
   //sound constants
   S_MAX_SOURCES = 16;
@@ -94,7 +94,7 @@ const
   MRS_OPENGL_MINOR_VERSION  = 0;
   MRS_TEXTURE_UNITS         = 8;
   MRS_ANISOTROPIC_FILTERING = 16;
-  MRS_TEXTURE_SIZE          = 4096;
+  MRS_TEXTURE_SIZE          = 8192;
   MRS_OPENAL_MAJOR_VERSION  = 1;
   MRS_OPENAL_MINOR_VERSION  = 1;
   MRS_NEWTON_VERSION 	    = 314;

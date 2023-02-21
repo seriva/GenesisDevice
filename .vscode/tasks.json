@@ -1,0 +1,147 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Debug (Windows)",
+            "file": "./Source/Demo/Demo.lpr",
+            "type": "fpc",
+            "buildOption": {
+                "outputFile": "./Bin/Demo.exe",
+                "unitOutputDir": "./Build",
+                "searchPath": [
+                    "./Source/Engine",
+                    "./Source/Libraries/Newton",
+                    "./Source/Libraries/OpenGL",
+                    "./Source/Libraries/OpenAL",
+                    "./Source/Libraries/SDL"
+                ],
+                "customOptions": [
+                    "-MDelphi",
+                    "-Scaghi",
+                    "-CirotR",
+                    "-O1",
+                    "-gw2",
+                    "-godwarfsets",
+                    "-gl",
+                    "-gh",
+                    "-Xg",
+                    "-gt",
+                    "-WG",
+                    "-l",
+                    "-vewnhibq",
+                    "-dLCL",
+                    "-dLCLwin32",
+                    "-dBorland",
+                    "-dVer150",
+                    "-dDelphi7",
+                    "-dCompiler6_Up",
+                    "-dPUREPASCAL"
+                ]               
+            }
+        },
+        {
+            "label": "Debug (Linux)",
+            "file": "./Source/Demo/Demo.lpr",
+            "type": "fpc",
+            "buildOption": {
+                "outputFile": "./Bin/Demo",
+                "unitOutputDir": "./Build",
+                "searchPath": [
+                    "./Source/Engine",
+                    "./Source/Libraries/Newton",
+                    "./Source/Libraries/OpenGL",
+                    "./Source/Libraries/OpenAL",
+                    "./Source/Libraries/SDL"
+                ],
+                "customOptions": [
+                    "-MDelphi",
+                    "-Scaghi",
+                    "-Cg",
+                    "-CirotR",
+                    "-O1",
+                    "-gw2",
+                    "-godwarfsets",
+                    "-gl",
+                    "-gh",
+                    "-Xg",
+                    "-gt",
+                    "-l",
+                    "-vewnhibq",
+                    "-dLCL",
+                    "-dLCLgtk2",
+                    "-dBorland",
+                    "-dVer150",
+                    "-dDelphi7",
+                    "-dCompiler6_Up",
+                    "-dPUREPASCAL"
+                ]               
+            }
+        },
+        {
+            "label": "Release (Windows)",
+            "file": "./Source/Demo/Demo.lpr",
+            "type": "fpc",
+            "buildOption": {
+                "outputFile": "./Bin/Demo.exe",
+                "unitOutputDir": "./Build",
+                "searchPath": [
+                    "./Source/Engine",
+                    "./Source/Libraries/Newton",
+                    "./Source/Libraries/OpenGL",
+                    "./Source/Libraries/OpenAL",
+                    "./Source/Libraries/SDL"
+                ],
+                "customOptions": [
+                    "-MDelphi",
+                    "-Scghi",
+                    "-CX",
+                    "-O3",
+                    "-XX",
+                    "-WG",
+                    "-l",
+                    "-vewnhibq",
+                    "-dLCL",
+                    "-dLCLwin32",
+                    "-dBorland",
+                    "-dVer150",
+                    "-dDelphi7",
+                    "-dCompiler6_Up",
+                    "-dPUREPASCAL"
+                ]               
+            }
+        },
+        {
+            "label": "Release (Linux)",
+            "file": "./Source/Demo/Demo.lpr",
+            "type": "fpc",
+            "buildOption": {
+                "outputFile": "./Bin/Demo",
+                "unitOutputDir": "./Build",
+                "searchPath": [
+                    "./Source/Engine",
+                    "./Source/Libraries/Newton",
+                    "./Source/Libraries/OpenGL",
+                    "./Source/Libraries/OpenAL",
+                    "./Source/Libraries/SDL"
+                ],
+                "customOptions": [
+                    "-MDelphi",
+                    "-Scghi",
+                    "-CX",
+                    "-Cg",
+                    "-O3",
+                    "-XX",
+                    "-l",
+                    "-vewnhibq",
+                    "-dLCL",
+                    "-dLCLgtk2",
+                    "-dBorland",
+                    "-dVer150",
+                    "-dDelphi7",
+                    "-dCompiler6_Up",
+                    "-dPUREPASCAL"
+                ]               
+            }
+        }
+    ]
+}

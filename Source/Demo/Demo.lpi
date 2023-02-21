@@ -29,7 +29,7 @@
             <Filename Value="..\..\Bin\Demo"/>
           </Target>
           <SearchPaths>
-            <IncludeFiles Value="..\Headers;..\Libraries\OpenGL;..\Libraries\Utils;$(ProjOutDir);..\Libraries\SDL;..\Libraries\OpenAL"/>
+            <IncludeFiles Value="$(ProjOutDir)"/>
             <OtherUnitFiles Value="..\Libraries\OpenGL;..\Libraries\OpenAL;..\Libraries\SDL;..\Libraries\Newton;..\Engine"/>
             <UnitOutputDirectory Value="..\..\Build"/>
           </SearchPaths>
@@ -74,7 +74,7 @@
             <Filename Value="..\..\Bin\Demo"/>
           </Target>
           <SearchPaths>
-            <IncludeFiles Value="..\Headers;..\Libraries\OpenGL;..\Libraries\Utils;$(ProjOutDir);..\Libraries\SDL;..\Libraries\OpenAL"/>
+            <IncludeFiles Value="..\Libraries\OpenGL;..\Libraries\OpenAL;..\Libraries\SDL;..\Libraries\Newton;..\Engine;$(ProjOutDir)"/>
             <OtherUnitFiles Value="..\Libraries\OpenGL;..\Libraries\OpenAL;..\Libraries\SDL;..\Libraries\Newton;..\Engine"/>
             <UnitOutputDirectory Value="..\..\Build"/>
           </SearchPaths>
@@ -286,7 +286,6 @@
       <Unit40>
         <Filename Value="..\Libraries\Newton\newton.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="Newton"/>
       </Unit40>
       <Unit41>
         <Filename Value="..\Engine\uGDBaseCell.pas"/>
