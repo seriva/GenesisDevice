@@ -342,19 +342,19 @@ begin
     if Not(iSecTris) then
     begin
       iForward := iTriangle.V2.Copy();
-      iForward.Substract( iTriangle.V1 );
+      iForward -=  iTriangle.V1;
       iForward.Normalize();
       iRight := iTriangle.V3.Copy();
-      iRight.Substract( iTriangle.V1 );
+      iRight -=  iTriangle.V1;
       iRight.Normalize();
     end
     else
     begin
       iForward := iTriangle.V1.Copy();
-      iForward.Substract( iTriangle.V2 );
+      iForward -=  iTriangle.V2;
       iForward.Normalize();
       iRight := iTriangle.V1.Copy();
-      iRight.Substract( iTriangle.V3 );
+      iRight -=  iTriangle.V3;
       iRight.Normalize();
     end;
 

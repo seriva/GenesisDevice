@@ -27,7 +27,8 @@ program Demo;
 uses
   // heaptrc,
   SysUtils,
-  Forms, Interfaces,
+  Forms, 
+  Interfaces,
   uConfiguration in 'uConfiguration.pas' {ConfigurationForm},
   uGDEngine,
   uMain in 'Main.pas';

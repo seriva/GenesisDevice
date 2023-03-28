@@ -114,9 +114,7 @@ begin
   begin
     iM1.ApplyToVector(Verts[iI]);
     iM2.ApplyToVector(Verts[iI]);
-    Verts[iI].Multiply(aScale);
-    Verts[iI].Devide(100);
-    Verts[iI].Add(aMove);
+    Verts[iI] := ((Verts[iI] * aScale) / 100) + aMove;
   end;
 end;
 

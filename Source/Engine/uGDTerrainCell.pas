@@ -176,8 +176,8 @@ begin
                               begin
                                 iV1 := GetPoint(iX,iY).Vertex.Copy();
                                 iV2 := GetPoint(iX,iY).Normal.Copy();
-                                iV2.Multiply(R_NORMAL_LENGTH);
-                                iV2.Add(iV1);
+                                iV2 *= R_NORMAL_LENGTH;
+                                iV2 += iV1;
                                 GDRenderer.AddLine(iV1, iV2);
                               end;
                             end;

@@ -256,8 +256,8 @@ var
 begin
   iSunPos := GDCamera.Position.Copy();
   iTemp := GDMap.LightDirection.inverse();
-  iTemp.Multiply(50000);
-  iSunPos.Add(iTemp);
+  iTemp *= 50000;
+  iSunPos += iTemp;
 
   glEnable(GL_POINT_SPRITE);
   glEnable(GL_BLEND);
@@ -289,8 +289,8 @@ var
 begin
   iSunPos := GDCamera.Position.Copy();
   iTemp := GDMap.LightDirection.inverse();
-  iTemp.Multiply(50000);
-  iSunPos.Add(iTemp);
+  iTemp *= 50000;
+  iSunPos += iTemp;
 
   glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
   glDepthMask(GL_FALSE);
