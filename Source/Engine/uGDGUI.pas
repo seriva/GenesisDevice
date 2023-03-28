@@ -412,7 +412,7 @@ begin
   FText  := aIniFile.ReadString( aSection, 'Text', '' );
   X      := aIniFile.ReadInteger( aSection, 'X', 0 );
   Y      := aIniFile.ReadInteger( aSection, 'Y', 0 );
-  FColor := ReadColor(aIniFile, aSection, 'Color');;
+  FColor := Color(1, 1, 1, 1); //ReadColor(aIniFile, aSection, 'Color');;
 end;
 
 destructor  TGDLabel.Destroy();
@@ -618,7 +618,7 @@ begin
   FX := aIniFile.ReadInteger('Loading', 'X', 1);
   FY := aIniFile.ReadInteger('Loading', 'Y', 1);
   FBarOnly := false;
-  FBarColor := ReadColor(aIniFile, 'Loading', 'Bar');
+  FBarColor.Reset(0, 0, 1, 1); //ReadColor(aIniFile, 'Loading', 'Bar');
 end;
 
 {******************************************************************************}
@@ -716,9 +716,9 @@ begin
   GDConsole.Use:=false;
   iIniFile := TIniFile.Create( PATH_INITS + GUI_INI );
 
-  FFontColor    := ReadColor(iIniFile,'DefaultColors', 'Font');
-  FOutlineColor := ReadColor(iIniFile, 'DefaultColors', 'Outline');
-  FFillColor    := ReadColor(iIniFile, 'DefaultColors', 'Fill');
+  FFontColor.Reset(0, 0, 0, 1); //ReadColor(iIniFile,'DefaultColors', 'Font');
+  FOutlineColor.Reset(1, 1, 1, 1); //ReadColor(iIniFile, 'DefaultColors', 'Outline');
+  FFillColor.Reset(0.3,0.3,0.3,0.8); //ReadColor(iIniFile, 'DefaultColors', 'Fill');
   FFont          := TGDFont.Create(iIniFile.ReadString('Font', 'Texture', 'console.fnt'));
   FMouseCursor   := TGDMouseCursor.Create(iIniFile.ReadString('Mouse', 'Texture', 'mouse.dds'),
                                           iIniFile.ReadInteger('Mouse', 'Size', 40));

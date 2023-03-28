@@ -145,14 +145,14 @@ begin
     result := true;
     FTerrainLoaded := true;
     iBmp := TGDBmp.Create( aNode.Find('HeightMap').AsString );
-    FTriangleSize  := aNode.Find('TriangleSize').AsNumber;
-    FHeightScale   := aNode.Find('HeightScale').AsNumber;
+    FTriangleSize  := Trunc(aNode.Find('TriangleSize').AsNumber);
+    FHeightScale   := Trunc(aNode.Find('HeightScale').AsNumber);
     FTerrainWidth  := iBmp.Width;
     FTerrainHeight := iBmp.Height;
     FDetailMult    := aNode.Find('DetailMult').AsNumber;
-    FDetailUVMult  := aNode.Find('DetailUVMult').AsNumber;
-    FDetailMapUV   := aNode.Find('DetailMapUV').AsNumber;
-    FCausticMapUV  := aNode.Find('CausticMapUV').AsNumber;
+    FDetailUVMult  := Trunc(aNode.Find('DetailUVMult').AsNumber);
+    FDetailMapUV   := Trunc(aNode.Find('DetailMapUV').AsNumber);
+    FCausticMapUV  := Trunc(aNode.Find('CausticMapUV').AsNumber);
 
     if ((FTerrainWidth mod 2) <> 1) or ((FTerrainHeight mod 2) <> 1) then
       Raise Exception.Create('Heightmap dimensions are incorrect!');

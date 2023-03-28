@@ -153,7 +153,7 @@ uses
 
 constructor TGDLayerItem.Create(aNode : TJsonNode);
 begin
-  TerrainRotation := aNode.Find('TerrainRotation').AsBool;
+  TerrainRotation := aNode.Find('TerrainRotation').AsBoolean;
   Scale           := ReadVector(aNode.Find('Scale').AsString);
   RandomScale     := ReadVector(aNode.Find('RandomScale').AsString);
   CoverOfTotal    := aNode.Find('CoverOfTotal').AsNumber;
@@ -222,6 +222,7 @@ end;
 
 constructor TGDLayer.Create(aNode : TJsonNode);
 var
+  iLayerItems : TJsonNode;
   iMap : TGDBmp;
   iX, iY : integer;
 begin
@@ -249,16 +250,14 @@ begin
   end;
   FreeAndNil(iMap);
 
-  //tree types
-  iX := 1;
-  while(aIniFile.SectionExists(aSection + '_Item' + IntToStr(iX))) do
+  //layer types
+  iLayerItems := aNode.Find('Items');
+  for iX := 0 to iLayerItems.Count-1 do
   begin
     if LayerType = LT_MESH then
-      LayerItems.Add(TGDMeshItem.Create(aIniFile, aSection + '_Item' + IntToStr(iX)))
+      LayerItems.Add(TGDMeshItem.Create(iLayerItems.Child(iX)))
     else
-      LayerItems.Add(TGDGrassItem.Create(aIniFile, aSection + '_Item' + IntToStr(iX)));
-
-    iX := iX + 1;
+      LayerItems.Add(TGDGrassItem.Create(iLayerItems.Child(iX)));    
   end;
 end;
 
@@ -313,6 +312,7 @@ end;
 
 Function TGDFoliage.InitFoliage( aNode : TJsonNode ) : boolean;
 var
+  iLayers : TJsonNode;
   iX : integer;
   iError : String;
 begin
@@ -327,12 +327,9 @@ begin
     FTreeAnimationSpeed     := aNode.Find('TreeAnimationSpeed').AsNumber;
     FTreeAnimationStrength  := aNode.Find('TreeAnimationStrength').AsNumber;
 
-    iX := 1;
-    while(aIniFile.SectionExists('Layer' + IntToStr(iX))) do
-    begin
-      FLayers.Add(TGDLayer.Create(aIniFile, 'Layer' + IntToStr(iX)));
-      iX := iX + 1;
-    end;
+    iLayers := aNode.Find('Layers');
+    for iX := 0 to iLayers.Count-1 do
+      FLayers.Add(TGDLayer.Create(iLayers.Child(iX))); 
   except
     on E: Exception do
     begin
