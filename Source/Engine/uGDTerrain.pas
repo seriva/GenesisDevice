@@ -30,7 +30,7 @@ uses
   SysUtils,
   Classes,
   Math,
-  IniFiles,
+  JsonTools,
   dglOpenGL,
   uGDBmp,
   uGDTexture,
@@ -79,7 +79,7 @@ type
     constructor Create();
     destructor  Destroy(); override;
 
-    function  InitTerrain( aIniFile : TIniFile ) : boolean;
+    function  InitTerrain( aNode : TJsonNode ) : boolean;
     procedure Clear();
 
     function  GetHeight( aX, aZ : Double; var aHeight : Double ): boolean;
@@ -127,7 +127,7 @@ end;
 {* Init terrain                                                               *}
 {******************************************************************************}
 
-function  TGDTerrain.InitTerrain( aIniFile : TIniFile ) : boolean;
+function  TGDTerrain.InitTerrain( aNode : TJsonNode ) : boolean;
 var
   iMapHeight  : Byte;
   iBmp        : TGDBmp;
@@ -144,15 +144,15 @@ begin
   try
     result := true;
     FTerrainLoaded := true;
-    iBmp := TGDBmp.Create(aIniFile.ReadString( 'Terrain', 'HeightMap', 'heightmap.bmp' ));
-    FTriangleSize  := aIniFile.ReadInteger('Terrain', 'TriangleSize', 512 );
-    FHeightScale   := aIniFile.ReadInteger('Terrain', 'HeightScale',  64 );
+    iBmp := TGDBmp.Create( aNode.Find('HeightMap').AsString );
+    FTriangleSize  := aNode.Find('TriangleSize').AsNumber;
+    FHeightScale   := aNode.Find('HeightScale').AsNumber;
     FTerrainWidth  := iBmp.Width;
     FTerrainHeight := iBmp.Height;
-    FDetailMult    := aIniFile.ReadFloat( 'Terrain', 'DetailMult', 0.5 );
-    FDetailUVMult  := aIniFile.ReadInteger('Terrain', 'DetailUVMult', 5 );
-    FDetailMapUV   := aIniFile.ReadInteger('Terrain', 'DetailMapUV', 100 );
-    FCausticMapUV  := aIniFile.ReadInteger('Terrain', 'CausticMapUV', 100 );
+    FDetailMult    := aNode.Find('DetailMult').AsNumber;
+    FDetailUVMult  := aNode.Find('DetailUVMult').AsNumber;
+    FDetailMapUV   := aNode.Find('DetailMapUV').AsNumber;
+    FCausticMapUV  := aNode.Find('CausticMapUV').AsNumber;
 
     if ((FTerrainWidth mod 2) <> 1) or ((FTerrainHeight mod 2) <> 1) then
       Raise Exception.Create('Heightmap dimensions are incorrect!');
@@ -205,13 +205,13 @@ begin
       end;
     end;
 
-    FColorTexture   := GDResources.LoadTexture(aIniFile.ReadString( 'Terrain', 'ColorMap', 'colormaps.bmp'), GDSettings.TextureDetail,GDSettings.TextureFilter);
-    FDetailTexture1 := GDResources.LoadTexture(aIniFile.ReadString( 'Terrain', 'DetailMap1', 'detailmap1.jpg'), GDSettings.TextureDetail,GDSettings.TextureFilter);
-    FDetailTexture2 := GDResources.LoadTexture(aIniFile.ReadString( 'Terrain', 'DetailMap2', 'detailmap2.jpg'), GDSettings.TextureDetail,GDSettings.TextureFilter);
-    FDetailTexture3 := GDResources.LoadTexture(aIniFile.ReadString( 'Terrain', 'DetailMap3', 'detailmap3.jpg'), GDSettings.TextureDetail,GDSettings.TextureFilter);
-    FDetailTexture4 := GDResources.LoadTexture(aIniFile.ReadString( 'Terrain', 'DetailMap4', 'detailmap4.jpg'), GDSettings.TextureDetail,GDSettings.TextureFilter);
-    FDetailTexture  := GDResources.LoadTexture(aIniFile.ReadString( 'Terrain', 'DetailMap', 'detail.dds'), GDSettings.TextureDetail,GDSettings.TextureFilter);
-    FDetailLookup   := GDResources.LoadTexture(aIniFile.ReadString( 'Terrain', 'DetailDistribution', 'detaillookup.jpg') ,TD_HIGH,GDSettings.TextureFilter);
+    FColorTexture   := GDResources.LoadTexture(aNode.Find('ColorMap').AsString, GDSettings.TextureDetail,GDSettings.TextureFilter);
+    FDetailTexture1 := GDResources.LoadTexture(aNode.Find('DetailMap1').AsString, GDSettings.TextureDetail,GDSettings.TextureFilter);
+    FDetailTexture2 := GDResources.LoadTexture(aNode.Find('DetailMap2').AsString, GDSettings.TextureDetail,GDSettings.TextureFilter);
+    FDetailTexture3 := GDResources.LoadTexture(aNode.Find('DetailMap3').AsString, GDSettings.TextureDetail,GDSettings.TextureFilter);
+    FDetailTexture4 := GDResources.LoadTexture(aNode.Find('DetailMap4').AsString, GDSettings.TextureDetail,GDSettings.TextureFilter);
+    FDetailTexture  := GDResources.LoadTexture(aNode.Find('DetailMap').AsString, GDSettings.TextureDetail,GDSettings.TextureFilter);
+    FDetailLookup   := GDResources.LoadTexture(aNode.Find('DetailDistribution').AsString ,TD_HIGH,GDSettings.TextureFilter);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 

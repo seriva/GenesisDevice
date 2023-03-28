@@ -31,7 +31,7 @@ uses
   Classes,
   LCLIntf,
   LCLType,
-  IniFiles,
+  JsonTools,
   uGDStringParsing,
   SysUtils,
   dglOpenGL,
@@ -91,7 +91,7 @@ type
     constructor Create();
     destructor  Destroy(); override;
 
-    function    InitWater(aTerrain : TGDTerrain; aIniFile : TIniFile ) : boolean;
+    function    InitWater(aTerrain : TGDTerrain; aNode : TJsonNode ) : boolean;
     procedure   Clear();
 
     procedure Resize();
@@ -159,7 +159,7 @@ end;
 {* Init the water                                                             *}
 {******************************************************************************}
 
-function TGDWater.InitWater(aTerrain : TGDTerrain; aIniFile : TIniFile ) : boolean;
+function TGDWater.InitWater(aTerrain : TGDTerrain; aNode : TJsonNode ) : boolean;
 var
   iI, iCount : Integer;
   iPath, iExt : String;
@@ -173,20 +173,20 @@ begin
 
     FCellCountX := (aTerrain.TerrainWidth-1) div TERRAIN_CELLSIZE;
     FCellCountY := (aTerrain.TerrainHeight-1) div TERRAIN_CELLSIZE;
-    FColor      := ReadColor(aIniFile, 'Water', 'Color');
+    FColor      := ReadColor( aNode.Find('Color').AsString );
 
     FBoundingBox.Max.Reset(aTerrain.GetPoint(aTerrain.TerrainWidth-1, 0).Vertex.x,
-                           aIniFile.ReadFloat( 'Water', 'Height', 0 ),
+                           aNode.Find('Height').AsNumber,
                            aTerrain.GetPoint(0, aTerrain.TerrainHeight-1).Vertex.z);
     FBoundingBox.Min.Reset(aTerrain.GetPoint(0, 0).Vertex.x,
-                           aIniFile.ReadFloat( 'Water', 'Height', 0 ),
+                           aNode.Find('Height').AsNumber,
                            aTerrain.GetPoint(0, 0).Vertex.z);
 
-    FRefractionUV := aIniFile.ReadInteger( 'Water', 'RefractionUV', 1 );
-    FWavesUV      := aIniFile.ReadInteger( 'Water', 'WavesUV', 1 );
-    FDepth        := aIniFile.ReadFloat( 'Water', 'Depth', 500 );
-    FMinDistance  := aIniFile.ReadFloat( 'Water', 'MinDistance', 0.1 );
-    FMaxDistance  := aIniFile.ReadFloat( 'Water', 'MaxDistance', 0.2 );
+    FRefractionUV := Trunc(aNode.Find('RefractionUV').AsNumber);
+    FWavesUV      := Trunc(aNode.Find('WavesUV').AsNumber);
+    FDepth        := Trunc(aNode.Find('Depth').AsNumber);
+    FMinDistance  := aNode.Find('MinDistance').AsNumber;
+    FMaxDistance  := aNode.Find('MaxDistance').AsNumber;
 
     Resize();
     FWaterTextures.Clear();
@@ -194,16 +194,16 @@ begin
     FWaterCounter := 0;
 
     //Water textures
-    iCount := aIniFile.ReadInteger('Water', 'WaterTexturesCount', 10 );
-    iPath  := aIniFile.ReadString( 'Water', 'WaterMapPath', 'textures/water/') + aIniFile.ReadString( 'Water', 'WaterMapPrefix', 'water');
-    iExt   := aIniFile.ReadString( 'Water', 'WaterMapExtension', 'dds');
+    iCount := Trunc(aNode.Find('WaterTexturesCount').AsNumber);
+    iPath  := aNode.Find('WaterMapPath').AsString + aNode.Find('WaterMapPrefix').AsString;
+    iExt   := aNode.Find('WaterMapExtension').AsString;
     for iI := 0 to iCount-1 do
       FWaterTextures.Add( GDResources.LoadTexture(iPath + IntToStr(iI) + '.' + iExt ,GDSettings.TextureDetail,GDSettings.TextureFilter) );
 
     //Caustic textures
-    iCount := aIniFile.ReadInteger('Water', 'CausticTexturesCount', 10 );
-    iPath  := aIniFile.ReadString( 'Water', 'CausticsMapPath', 'textures/water/') + aIniFile.ReadString( 'Water', 'CausticsMapPrefix', 'caust');
-    iExt   := aIniFile.ReadString( 'Water', 'CausticsMapExtension', 'dds');
+    iCount := Trunc(aNode.Find('CausticTexturesCount').AsNumber);
+    iPath  := aNode.Find('CausticsMapPath').AsString;
+    iExt   := aNode.Find('CausticsMapExtension').AsString;
     for iI := 0 to iCount-1 do
       FCausticTextures.Add( GDResources.LoadTexture(iPath + IntToStr(iI) + '.' + iExt ,GDSettings.TextureDetail,GDSettings.TextureFilter) );
 

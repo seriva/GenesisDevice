@@ -28,8 +28,7 @@ interface
 
 uses
   SysUtils,
-  IniFiles,
-  dglOpenGL,
+  JsonTools,
   uGDTerrain,
   uGDTypes,
   uGDFoliage,
@@ -143,74 +142,77 @@ end;
 
 procedure TGDMap.Load( aFileName : String );
 var
-  iIniFile : TIniFile;
-  iI : Integer;
-  iString         : String;
-  iMeshInput      : TGDMeshCellInput;
+  iNode      : TJsonNode;
+  iI         : Integer;
+  iString    : String;
+  iMeshInput : TGDMeshCellInput;
 begin
   GDTiming.Start();
-  iIniFile := TIniFile.Create(aFileName);
+  iNode := TJsonNode.Create();
   Clear();
   GDConsole.Write('......Loading map (' + aFileName + ')');
   GDGUI.LoadingScreen.Start('Loading ' + StringReplace( ExtractFileName(aFileName), ExtractFileExt(aFileName), '',  [rfReplaceAll] ) + '...', 6 );
 
+  //load map json
+  iNode.LoadFromFile(aFileName);
+
   //spawnpoint
-  FPlayerStart := ReadVector(iIniFile, 'SpawnPoint', 'Position');
-  FPlayerViewAngle := ReadVector(iIniFile, 'SpawnPoint', 'ViewAngle');
+  FPlayerStart := ReadVector(iNode.Find('SpawnPoint/Position').AsString);
+  FPlayerViewAngle := ReadVector(iNode.Find('SpawnPoint/ViewAngle').AsString);
 
   //directional light
-  FLightDirection := ReadVector(iIniFile, 'Light', 'Direction');
-  FLightAmbient   := ReadColor(iIniFile, 'Light', 'Ambient');
-  FLightDiffuse   := ReadColor(iIniFile, 'Light', 'Diffuse');
+  FLightDirection := ReadVector(iNode.Find('Light/Direction').AsString);
+  FLightAmbient   := ReadColor(iNode.Find('Light/Ambient').AsString);
+  FLightDiffuse   := ReadColor(iNode.Find('Light/Diffuse').AsString);
 
   //init fog
-  FFogColor    := ReadColor(iIniFile, 'Fog', 'Color');
+  FFogColor    := ReadColor(iNode.Find('Fog/Color').AsString);
   FFogDistance := GDSettings.ViewDistance;
   FFogMinDistance := (((FFogDistance * R_VIEW_DISTANCE_STEP) / 10) * 5);
   FFogMaxDistance := (((FFogDistance * R_VIEW_DISTANCE_STEP) / 10) * 7.5);
   GDGUI.LoadingScreen.Update();
 
   //init terrain
-  FTerrain.InitTerrain(iIniFile);
+  FTerrain.InitTerrain(iNode.Find('Terrain'));
   GDGUI.LoadingScreen.Update();
 
   //init sky
-  Skydome.InitSkyDome(iIniFile, (GDSettings.ViewDistance * R_VIEW_DISTANCE_STEP));
+  Skydome.InitSkyDome(iNode.Find('Sky'), (GDSettings.ViewDistance * R_VIEW_DISTANCE_STEP));
   GDGUI.LoadingScreen.Update();
 
   //foliage
-  Foliage.InitFoliage( iIniFile );
+  Foliage.InitFoliage( iNode.Find('Foliage') );
   GDGUI.LoadingScreen.Update();
 
   //init water
-  Water.InitWater(FTerrain, iIniFile );
+  Water.InitWater(FTerrain, iNode.Find('Water') );
   GDGUI.LoadingScreen.Update();
 
   //mesh entities
-  iI := 1;
-  while (iIniFile.SectionExists('Model' + IntToStr(iI))) do
-  begin
-    iString := 'Model' + IntToStr(iI);
+  //iI := 1;
+  //while (iIniFile.SectionExists('Model' + IntToStr(iI))) do
+  //begin
+  //  iString := 'Model' + IntToStr(iI);
 
-    iMeshInput.Model         := iIniFile.ReadString( iString, 'Model', '' );
-    iMeshInput.ModelLOD1     := iIniFile.ReadString( iString, 'ModelLOD1', '' );
-    iMeshInput.ModelLOD2     := iIniFile.ReadString( iString, 'ModelLOD2', '' );
-    iMeshInput.Position      := ReadVector(iIniFile, iString, 'Position');
-    iMeshInput.Rotation      := ReadVector(iIniFile, iString, 'Rotation');
-    iMeshInput.Scale         := ReadVector(iIniFile, iString, 'Scale');
-    iMeshInput.FadeDistance  := 0;
-    iMeshInput.FadeScale     := 0;
-    iMeshInput.CastShadow    := iIniFile.ReadBool( iString, 'CastShadow', false );
-    iMeshInput.ReceiveShadow := iIniFile.ReadBool( iString, 'ReceiveShadow', false );
+  //  iMeshInput.Model         := iIniFile.ReadString( iString, 'Model', '' );
+  //  iMeshInput.ModelLOD1     := iIniFile.ReadString( iString, 'ModelLOD1', '' );
+  //  iMeshInput.ModelLOD2     := iIniFile.ReadString( iString, 'ModelLOD2', '' );
+  //  iMeshInput.Position      := ReadVector(iIniFile, iString, 'Position');
+  //  iMeshInput.Rotation      := ReadVector(iIniFile, iString, 'Rotation');
+  //  iMeshInput.Scale         := ReadVector(iIniFile, iString, 'Scale');
+  //  iMeshInput.FadeDistance  := 0;
+  //  iMeshInput.FadeScale     := 0;
+  //  iMeshInput.CastShadow    := iIniFile.ReadBool( iString, 'CastShadow', false );
+  //  iMeshInput.ReceiveShadow := iIniFile.ReadBool( iString, 'ReceiveShadow', false );
 
-    FCellManager.AddMeshCell( TGDMeshCell.Create(iMeshInput)   );
+  //  FCellManager.AddMeshCell( TGDMeshCell.Create(iMeshInput)   );
 
-    iI := iI + 1;
-  end;
+  //  iI := iI + 1;
+  //end;
   GDGUI.LoadingScreen.Update();
 
   GDTiming.Stop();
-  FreeAndNil(iIniFile);
+  FreeAndNil(iNode);
   GDConsole.Write('......Done loading map (' + GDTiming.TimeInSeconds + ' Sec)');
 
   FCellManager.GenerateCells(FTerrain, FWater, FFoliage);
