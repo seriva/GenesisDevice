@@ -38,7 +38,6 @@ uses
   sdl2,
   Classes,
   JsonTools,
-  IniFiles,
   SysUtils,
   dglOpenGL,
   uGDTexture,
@@ -172,7 +171,7 @@ type
     FHeight : Integer;
     FTexture : TGDTexture;
   public
-    constructor Create(aIniFile : TIniFile; aSection : String);
+    constructor Create(aPanel : TJsonNode);
     destructor  Destroy(); override;
     procedure   Render();  override;
   end;
@@ -183,7 +182,7 @@ type
     FText : String;
     FColor : TGDColor;
   public
-    constructor Create(aIniFile : TIniFile; aSection : String);
+    constructor Create(aLabel : TJsonNode);
     destructor  Destroy(); override;
     procedure   Render();  override;
   end;
@@ -225,7 +224,7 @@ type
   TGDMouseCursor = class
   private
     FCursorTexture : TGDTexture;
-    FVisible     : Boolean;
+    FVisible       : Boolean;
     FPosition      : TPoint;
     FCursorSize    : Integer;
   public
@@ -366,16 +365,16 @@ begin
   //Do nothing
 end;
 
-constructor TGDPanel.Create(aIniFile : TIniFile; aSection : String);
+constructor TGDPanel.Create(aPanel : TJsonNode);
 var
   iStr : String;
 begin
-  Depth := aIniFile.ReadInteger( aSection, 'Depth', 0 );;
-  X := aIniFile.ReadInteger( aSection, 'X', 0 );
-  Y := aIniFile.ReadInteger( aSection, 'Y', 0 );
-  FWidth  := aIniFile.ReadInteger( aSection, 'Width', 0 );
-  FHeight := aIniFile.ReadInteger( aSection, 'Height', 0 );
-  iStr := aIniFile.ReadString( aSection, 'Texture', '' );
+  Depth   := Trunc(aPanel.Find('Depth').AsNumber); 
+  X       := Trunc(aPanel.Find('X').AsNumber);
+  Y       := Trunc(aPanel.Find('Y').AsNumber);
+  FWidth  := Trunc(aPanel.Find('Width').AsNumber);
+  FHeight := Trunc(aPanel.Find('Height').AsNumber); 
+  iStr    := aPanel.Find('Texture').AsString;
   if iStr <> '' then
     FTexture := GDResources.LoadTexture(iStr, TD_HIGH, TF_TRILINEAR)
   else
@@ -405,14 +404,14 @@ begin
   end;
 end;
 
-constructor TGDLabel.Create(aIniFile : TIniFile; aSection : String);
+constructor TGDLabel.Create(aLabel : TJsonNode);
 begin
-  Depth  := aIniFile.ReadInteger( aSection, 'Depth', 0 );
-  FScale := aIniFile.ReadFloat( aSection, 'Scale', 1 );
-  FText  := aIniFile.ReadString( aSection, 'Text', '' );
-  X      := aIniFile.ReadInteger( aSection, 'X', 0 );
-  Y      := aIniFile.ReadInteger( aSection, 'Y', 0 );
-  FColor := Color(1, 1, 1, 1); //ReadColor(aIniFile, aSection, 'Color');;
+  Depth  := Trunc(aLabel.Find('Depth').AsNumber); 
+  FScale := aLabel.Find('Scale').AsNumber;
+  FText  := aLabel.Find('Text').AsString; 
+  X      := Trunc(aLabel.Find('X').AsNumber);
+  Y      := Trunc(aLabel.Find('Y').AsNumber); 
+  FColor.Reset(aLabel.Find('Color').AsString);
 end;
 
 destructor  TGDLabel.Destroy();
@@ -429,30 +428,25 @@ end;
 
 constructor TGDScreen.Create(aFileName : String);
 var
-  iIniFile : TIniFile;
+  iScreen, iElement : TJsonNode;
   iI       : Integer;
 begin
   FComponents := TGDComponentList.create();
   FVisible := false;
-  iIniFile := TIniFile.Create( aFileName );
+  iScreen := TJsonNode.Create();
+  iScreen.LoadFromFile(PATH_GUI_SCREENS + aFileName);
 
   //Panels
-  iI := 1;
-  while(iIniFile.SectionExists('Panel' + IntToStr(iI))) do
-  begin
-    FComponents.Add( TGDPanel.Create(iIniFile, 'Panel' + IntToStr(iI)));
-    iI := iI + 1;
-  end;
+  iElement := iScreen.Find('Panels');
+  for iI := 0 to iElement.Count-1 do
+    FComponents.Add( TGDPanel.Create(iElement.Child(iI)) );
 
   //Labels
-  iI := 1;
-  while(iIniFile.SectionExists('Label' + IntToStr(iI))) do
-  begin
-    FComponents.Add(TGDLabel.Create(iIniFile, 'Label' + IntToStr(iI)));
-    iI := iI + 1;
-  end;
+  iElement := iScreen.Find('Labels');
+  for iI := 0 to iElement.Count-1 do
+    FComponents.Add( TGDLabel.Create(iElement.Child(iI)) );
 
-  FreeAndNil(iIniFile);
+  FreeAndNil(iScreen);
 end;
 
 destructor  TGDScreen.Destroy();
@@ -616,7 +610,7 @@ begin
   FMax  := 100;
   FPosition := 0;
   FX := Trunc(aSettings.Find('Loading/X').AsNumber);
-  FY := Trunc(aSettings.Find('Loading/X').AsNumber);
+  FY := Trunc(aSettings.Find('Loading/Y').AsNumber);
   FBarOnly := false;
   FBarColor.Reset(aSettings.Find('Loading/Bar').AsString);
 end;

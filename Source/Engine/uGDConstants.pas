@@ -106,7 +106,7 @@ const
   PATH_MODELS       = 'Models/';
   PATH_TEXTURES     = 'Textures/';
   PATH_GUI          = 'GUI/';
-  PATH_GUI_SCREENS  = PATH_GUI + 'Screens';
+  PATH_GUI_SCREENS  = PATH_GUI + 'Screens/';
 
   //file constants
   ENGINE_INI = 'Engine.ini';
