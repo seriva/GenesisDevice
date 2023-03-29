@@ -37,11 +37,11 @@ uses
   fgl,
   sdl2,
   Classes,
+  JsonTools,
   IniFiles,
   SysUtils,
   dglOpenGL,
   uGDTexture,
-  uGDStringParsing,
   uGDConstants,
   uGDWindow,
   uGDTypes;
@@ -257,7 +257,7 @@ type
     property Position : integer read FPosition write FPosition;
     property Use : boolean read FUse write FUse;
 
-    constructor Create(aIniFile : TIniFile);
+    constructor Create(aSettings : TJsonNode);
     destructor  Destroy();override;
 
     procedure   Start( aProcesName : String; aMax : integer );
@@ -412,7 +412,7 @@ begin
   FText  := aIniFile.ReadString( aSection, 'Text', '' );
   X      := aIniFile.ReadInteger( aSection, 'X', 0 );
   Y      := aIniFile.ReadInteger( aSection, 'Y', 0 );
-  FColor := ReadColor(aIniFile, aSection, 'Color');;
+  FColor := Color(1, 1, 1, 1); //ReadColor(aIniFile, aSection, 'Color');;
 end;
 
 destructor  TGDLabel.Destroy();
@@ -610,15 +610,15 @@ end;
 {* Create the loadingscreen class                                             *}
 {******************************************************************************}
 
-constructor TGDLoadingScreen.Create(aIniFile : TIniFile);
+constructor TGDLoadingScreen.Create(aSettings : TJsonNode);
 begin
   FUse := true;
   FMax  := 100;
   FPosition := 0;
-  FX := aIniFile.ReadInteger('Loading', 'X', 1);
-  FY := aIniFile.ReadInteger('Loading', 'Y', 1);
+  FX := Trunc(aSettings.Find('Loading/X').AsNumber);
+  FY := Trunc(aSettings.Find('Loading/X').AsNumber);
   FBarOnly := false;
-  FBarColor := ReadColor(aIniFile, 'Loading', 'Bar');
+  FBarColor.Reset(aSettings.Find('Loading/Bar').AsString);
 end;
 
 {******************************************************************************}
@@ -711,21 +711,21 @@ end;
 
 constructor TGDGUI.Create();
 var
-  iIniFile      : TIniFile;
+  iSettings : TJsonNode;
 begin
   GDConsole.Use:=false;
-  iIniFile := TIniFile.Create( PATH_INITS + GUI_INI );
+  iSettings := TJsonNode.Create();
+  iSettings.LoadFromFile(GUI_JSON);
 
-  FFontColor    := ReadColor(iIniFile,'DefaultColors', 'Font');
-  FOutlineColor := ReadColor(iIniFile, 'DefaultColors', 'Outline');
-  FFillColor    := ReadColor(iIniFile, 'DefaultColors', 'Fill');
-  FFont          := TGDFont.Create(iIniFile.ReadString('Font', 'Texture', 'console.fnt'));
-  FMouseCursor   := TGDMouseCursor.Create(iIniFile.ReadString('Mouse', 'Texture', 'mouse.dds'),
-                                          iIniFile.ReadInteger('Mouse', 'Size', 40));
-  FLoadingScreen := TGDLoadingScreen.Create(iIniFile);
+  FFontColor.Reset(iSettings.Find('DefaultColors/Font').AsString);
+  FOutlineColor.Reset(iSettings.Find('DefaultColors/Outline').AsString);
+  FFillColor.Reset(iSettings.Find('DefaultColors/Fill').AsString);
+  FFont          := TGDFont.Create(iSettings.Find('Font/Texture').AsString);
+  FMouseCursor   := TGDMouseCursor.Create(iSettings.Find('Mouse/Texture').AsString, Trunc(iSettings.Find('Mouse/Size').AsNumber));
+  FLoadingScreen := TGDLoadingScreen.Create(iSettings);
   FScreens       := TGDScreenList.Create();
 
-  FreeAndNil(iIniFile);
+  FreeAndNil(iSettings);
   GDConsole.Use:=true;
 end;
 

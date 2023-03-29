@@ -105,12 +105,13 @@ const
   PATH_SOUNDS       = 'Sounds/';
   PATH_MODELS       = 'Models/';
   PATH_TEXTURES     = 'Textures/';
-  PATH_INITS        = 'Ini/';
+  PATH_GUI          = 'GUI/';
+  PATH_GUI_SCREENS  = PATH_GUI + 'Screens';
 
   //file constants
   ENGINE_INI = 'Engine.ini';
   ENGINE_LOG = 'Engine.log';
-  GUI_INI    = 'GUI.ini';
+  GUI_JSON   =  PATH_GUI + 'GUI.json';
 
   //setting strings
   TGDTextureDetailStrings   : array[1..3] of String  = ('Low', 'Medium','High');

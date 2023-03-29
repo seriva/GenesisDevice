@@ -33,7 +33,7 @@ interface
 uses
   Classes,
   SysUtils,
-  IniFiles,
+  JsonTools,
   dglOpenGL,
   uGDTexture,
   uGDTypes,
@@ -70,7 +70,7 @@ type
     constructor Create();
     destructor  Destroy(); override;
 
-    procedure InitSkyDome( aIniFile : TIniFile; aSize : Double );
+    procedure InitSkyDome( aNode : TJsonNode; aSize : Double );
     procedure Clear();
     procedure Render();
 
@@ -186,22 +186,22 @@ end;
 {* Init the skydome                                                           *}
 {******************************************************************************}
 
-procedure TGDSkyDome.InitSkyDome(  aIniFile : TIniFile; aSize : Double );
+procedure TGDSkyDome.InitSkyDome( aNode : TJsonNode; aSize : Double );
 begin
   Clear();
-  FCloudTexture := GDResources.LoadTexture(aIniFile.ReadString( 'Sky', 'CloudMap', 'sky.dds' ), GDSettings.TextureDetail, GDSettings.TextureFilter);
+  FCloudTexture := GDResources.LoadTexture( aNode.Find('CloudMap').AsString, GDSettings.TextureDetail, GDSettings.TextureFilter);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-  FIntensity := aIniFile.ReadFloat( 'Sky', 'Intensity', 0.5 );
-  FCloudUV   := aIniFile.ReadFloat( 'Sky', 'CloudUV', 1.0 );
-  FAniSpeed1 := aIniFile.ReadFloat( 'Sky', 'AniSpeed1', 1000.0 );
-  FAniSpeed2 := aIniFile.ReadFloat( 'Sky', 'AniSpeed2', 1000.0 );
+  FIntensity := aNode.Find('Intensity').AsNumber;
+  FCloudUV   := aNode.Find('CloudUV').AsNumber;
+  FAniSpeed1 := aNode.Find('AniSpeed1').AsNumber;
+  FAniSpeed2 := aNode.Find('AniSpeed2').AsNumber;
   CalculateDome(aSize);
 
-  FSunTexture := GDResources.LoadTexture(aIniFile.ReadString( 'Sky', 'SunMap', 'sun.dds' ), GDSettings.TextureDetail, GDSettings.TextureFilter);
-  FSunFlareTexture := GDResources.LoadTexture(aIniFile.ReadString( 'Sky', 'SunFlareMap', 'sunflare.dds' ), GDSettings.TextureDetail, GDSettings.TextureFilter);
+  FSunTexture := GDResources.LoadTexture(aNode.Find('SunMap').AsString, GDSettings.TextureDetail, GDSettings.TextureFilter);
+  FSunFlareTexture := GDResources.LoadTexture(aNode.Find('SunFlareMap').AsString, GDSettings.TextureDetail, GDSettings.TextureFilter);
   glGenQueries(1, @FSunQuery);
-  FSunSize := aIniFile.ReadFloat( 'Sky', 'SunSize', 0.5 );
+  FSunSize := aNode.Find('SunSize').AsNumber;
 end;
 
 {******************************************************************************}
@@ -256,8 +256,8 @@ var
 begin
   iSunPos := GDCamera.Position.Copy();
   iTemp := GDMap.LightDirection.inverse();
-  iTemp.Multiply(50000);
-  iSunPos.Add(iTemp);
+  iTemp *= 50000;
+  iSunPos += iTemp;
 
   glEnable(GL_POINT_SPRITE);
   glEnable(GL_BLEND);
@@ -289,8 +289,8 @@ var
 begin
   iSunPos := GDCamera.Position.Copy();
   iTemp := GDMap.LightDirection.inverse();
-  iTemp.Multiply(50000);
-  iSunPos.Add(iTemp);
+  iTemp *= 50000;
+  iSunPos += iTemp;
 
   glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
   glDepthMask(GL_FALSE);

@@ -161,17 +161,16 @@ begin
 		For iJ := 0 to FMesh.Surfaces[iI].Indexes.Count - 1 do
     begin
       iVector := GDMap.MeshManager.Vertices.Items[FMesh.Surfaces[iI].Indexes[iJ]].Vertex.Copy();
-      iVector.Multiply(FScale);
-      iVector.Devide(100);
+      iVector := (iVector * FScale) / 100;
       FRotation.ApplyToVector(iVector);
-      iVector.Add( FPosition );
+      iVector += FPosition;
       iVertices.Add(iVector)
     end;
   end;
 
   iCenter.reset(0,0,0);
-  for iI := 0 to iVertices.Count-1 do iCenter.Add( iVertices.Items[iI] );
-  iCenter.Devide( iVertices.Count );
+  for iI := 0 to iVertices.Count-1 do iCenter += iVertices.Items[iI];
+  iCenter /= iVertices.Count;
   BoundingBox.Min.reset(iCenter.x, iCenter.y , iCenter.z);
   BoundingBox.Max.reset(iCenter.x, iCenter.y , iCenter.z);
 
@@ -269,14 +268,14 @@ begin
                             for iJ := 0 to iSur.Indexes.Count-1 do
                             begin
                               iV1 := GDMap.MeshManager.Vertices.Items[iSur.Indexes.Items[iJ]].Vertex.Copy();
-                              iV1.Multiply(FScale);
-                              iV1.Devide(100);
+                              iV1 *= FScale;
+                              iV1 /= 100;
                               FRotation.ApplyToVector(iV1);
-                              iV1.Add( FPosition );
+                              iV1 += FPosition;
                               iV2 := GDMap.MeshManager.Vertices.Items[iSur.Indexes.Items[iJ]].Normal.Copy();
                               FRotation.ApplyToVector(iV2);
-                              iV2.Multiply(R_NORMAL_LENGTH);
-                              iV2.Add(iV1);
+                              iV2 *= R_NORMAL_LENGTH;
+                              iV2 += iV1;
                               GDRenderer.AddLine(iV1, iV2);
                             end;
                           end;

@@ -181,7 +181,7 @@ begin
   iV.y := 0;
   iV.z := -iV2.z * aStep;
 
-  FPosition.Add( iV );
+  FPosition += iV;
 end;
 
 {******************************************************************************}
@@ -197,11 +197,8 @@ begin
   Direction.Reset(-1,0,0);
   iM.ApplyToVector(FDirection);
 
-  iV.x := FDirection.x * aStep;
-  iV.y := FDirection.y * aStep;
-  iV.z := FDirection.z * aStep;
-
-  FPosition.Add( iV );
+  iV := FDirection * aStep;
+  FPosition += iV;
 end;
 
 {******************************************************************************}

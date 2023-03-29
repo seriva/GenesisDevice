@@ -1,0 +1,19 @@
+{
+    "DefaultColors": {
+        "Font": "1.0,1.0,1.0,1.0",
+        "Outline": "1.0,1.0,1.0,1.0",
+        "Fill": "0.3,0.3,0.3,0.8"
+    },
+    "Font": {
+        "Texture": "Textures/System/font.dds"
+    },
+    "Mouse": {
+        "Texture": "Textures/System/mouse.dds",
+        "Size": 40
+    },
+    "Loading": {
+        "X": 500,
+        "Y": 575,
+        "Bar": "0.0,0.0,0.7,1.0"
+    }
+}

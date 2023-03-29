@@ -182,7 +182,7 @@ procedure TGDSettings.Load();
 var
   iIniFile : TIniFile;
 begin
-  iIniFile := TIniFile.Create( PATH_INITS + ENGINE_INI );
+  iIniFile := TIniFile.Create(ENGINE_INI);
 
   //window settings
   FDisplay :=      iIniFile.ReadInteger('Window', 'Display', 0);
@@ -223,7 +223,7 @@ procedure TGDSettings.Save();
 var
   iIniFile : TIniFile;
 begin
-  iIniFile := TIniFile.Create(PATH_INITS + ENGINE_INI);
+  iIniFile := TIniFile.Create(ENGINE_INI);
 
   //window
   iIniFile.WriteInteger('Window', 'Display', FDisplay);

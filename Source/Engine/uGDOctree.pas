@@ -257,7 +257,7 @@ begin
     begin
       iCell := TGDBaseCell( aQueryData.Cells.Items[  FCellIndexes[iI] ] );
       iVertex := TGDBaseCell( aQueryData.Cells.Items[  FCellIndexes[iI] ] ).BoundingBox.Center.Copy();
-      iVertex.Substract(GDCamera.Position.Copy());
+      iVertex := GDCamera.Position;
       iCell.Distance := iVertex.Magnitude();
 
       If (iCell.OjectType = SO_WATERCELL) and GDModes.RenderWater then

@@ -30,7 +30,7 @@ uses
   SysUtils,
   Classes,
   Math,
-  IniFiles,
+  JsonTools,
   dglOpenGL,
   uGDBmp,
   uGDTexture,
@@ -79,7 +79,7 @@ type
     constructor Create();
     destructor  Destroy(); override;
 
-    function  InitTerrain( aIniFile : TIniFile ) : boolean;
+    function  InitTerrain( aNode : TJsonNode ) : boolean;
     procedure Clear();
 
     function  GetHeight( aX, aZ : Double; var aHeight : Double ): boolean;
@@ -127,7 +127,7 @@ end;
 {* Init terrain                                                               *}
 {******************************************************************************}
 
-function  TGDTerrain.InitTerrain( aIniFile : TIniFile ) : boolean;
+function  TGDTerrain.InitTerrain( aNode : TJsonNode ) : boolean;
 var
   iMapHeight  : Byte;
   iBmp        : TGDBmp;
@@ -144,15 +144,15 @@ begin
   try
     result := true;
     FTerrainLoaded := true;
-    iBmp := TGDBmp.Create(aIniFile.ReadString( 'Terrain', 'HeightMap', 'heightmap.bmp' ));
-    FTriangleSize  := aIniFile.ReadInteger('Terrain', 'TriangleSize', 512 );
-    FHeightScale   := aIniFile.ReadInteger('Terrain', 'HeightScale',  64 );
+    iBmp := TGDBmp.Create( aNode.Find('HeightMap').AsString );
+    FTriangleSize  := Trunc(aNode.Find('TriangleSize').AsNumber);
+    FHeightScale   := Trunc(aNode.Find('HeightScale').AsNumber);
     FTerrainWidth  := iBmp.Width;
     FTerrainHeight := iBmp.Height;
-    FDetailMult    := aIniFile.ReadFloat( 'Terrain', 'DetailMult', 0.5 );
-    FDetailUVMult  := aIniFile.ReadInteger('Terrain', 'DetailUVMult', 5 );
-    FDetailMapUV   := aIniFile.ReadInteger('Terrain', 'DetailMapUV', 100 );
-    FCausticMapUV  := aIniFile.ReadInteger('Terrain', 'CausticMapUV', 100 );
+    FDetailMult    := aNode.Find('DetailMult').AsNumber;
+    FDetailUVMult  := Trunc(aNode.Find('DetailUVMult').AsNumber);
+    FDetailMapUV   := Trunc(aNode.Find('DetailMapUV').AsNumber);
+    FCausticMapUV  := Trunc(aNode.Find('CausticMapUV').AsNumber);
 
     if ((FTerrainWidth mod 2) <> 1) or ((FTerrainHeight mod 2) <> 1) then
       Raise Exception.Create('Heightmap dimensions are incorrect!');
@@ -205,13 +205,13 @@ begin
       end;
     end;
 
-    FColorTexture   := GDResources.LoadTexture(aIniFile.ReadString( 'Terrain', 'ColorMap', 'colormaps.bmp'), GDSettings.TextureDetail,GDSettings.TextureFilter);
-    FDetailTexture1 := GDResources.LoadTexture(aIniFile.ReadString( 'Terrain', 'DetailMap1', 'detailmap1.jpg'), GDSettings.TextureDetail,GDSettings.TextureFilter);
-    FDetailTexture2 := GDResources.LoadTexture(aIniFile.ReadString( 'Terrain', 'DetailMap2', 'detailmap2.jpg'), GDSettings.TextureDetail,GDSettings.TextureFilter);
-    FDetailTexture3 := GDResources.LoadTexture(aIniFile.ReadString( 'Terrain', 'DetailMap3', 'detailmap3.jpg'), GDSettings.TextureDetail,GDSettings.TextureFilter);
-    FDetailTexture4 := GDResources.LoadTexture(aIniFile.ReadString( 'Terrain', 'DetailMap4', 'detailmap4.jpg'), GDSettings.TextureDetail,GDSettings.TextureFilter);
-    FDetailTexture  := GDResources.LoadTexture(aIniFile.ReadString( 'Terrain', 'DetailMap', 'detail.dds'), GDSettings.TextureDetail,GDSettings.TextureFilter);
-    FDetailLookup   := GDResources.LoadTexture(aIniFile.ReadString( 'Terrain', 'DetailDistribution', 'detaillookup.jpg') ,TD_HIGH,GDSettings.TextureFilter);
+    FColorTexture   := GDResources.LoadTexture(aNode.Find('ColorMap').AsString, GDSettings.TextureDetail,GDSettings.TextureFilter);
+    FDetailTexture1 := GDResources.LoadTexture(aNode.Find('DetailMap1').AsString, GDSettings.TextureDetail,GDSettings.TextureFilter);
+    FDetailTexture2 := GDResources.LoadTexture(aNode.Find('DetailMap2').AsString, GDSettings.TextureDetail,GDSettings.TextureFilter);
+    FDetailTexture3 := GDResources.LoadTexture(aNode.Find('DetailMap3').AsString, GDSettings.TextureDetail,GDSettings.TextureFilter);
+    FDetailTexture4 := GDResources.LoadTexture(aNode.Find('DetailMap4').AsString, GDSettings.TextureDetail,GDSettings.TextureFilter);
+    FDetailTexture  := GDResources.LoadTexture(aNode.Find('DetailMap').AsString, GDSettings.TextureDetail,GDSettings.TextureFilter);
+    FDetailLookup   := GDResources.LoadTexture(aNode.Find('DetailDistribution').AsString ,TD_HIGH,GDSettings.TextureFilter);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
@@ -259,55 +259,63 @@ end;
 {* Get the heigth on a position on the terrain                                *}
 {******************************************************************************}
 
-function TGDTerrain.GetHeight( aX, aZ : Double; var aHeight : Double ): boolean;
+function TGDTerrain.GetHeight(aX, aZ: Double; var aHeight: Double): boolean;
 var
-  iRX, iRZ : integer;
-  iFX, iFZ,
-  iA, iB, iC, iD : Double;
+  iRX, iRZ: integer;
+  iFX, iFZ, iAB, iCD: Double;
+  iHalfTerrainWidth, iHalfTerrainHeight: Double;
 begin
-   aX := (aX + ((FTerrainWidth * FTriangleSize)/2)) / FTriangleSize;
-   aZ := (aZ + ((FTerrainHeight * FTriangleSize)/2)) / FTriangleSize;
-   if (aX < 0) or (aX >= FTerrainWidth-1) or
-      (aZ < 0) or (aZ >= FTerrainHeight-1) or
-       Not(FTerrainLoaded) then
-   begin
-     aHeight := 0.0;
-     result := false;
-     exit;
-   end;
-   iRX := trunc(aX);
-   iRZ := trunc(aZ);
-   iFX := aX - iRX;
-   iFZ := aZ - iRZ;
-   iA := GetPoint(iRX   ,iRZ).Vertex.Y;
-   iB := GetPoint(iRX+1 ,iRZ).Vertex.Y;
-   iC := GetPoint(iRX   ,iRZ+1).Vertex.Y;
-   iD := GetPoint(iRX+1 ,iRZ+1).Vertex.Y;
-   aHeight := (iA + (iB - iA) * iFX) + ((iC + (iD - iC) * iFX) - (iA + (iB - iA) * iFX)) * iFZ;
-   result := true;
+  iHalfTerrainWidth := (FTerrainWidth * FTriangleSize) * 0.5;
+  iHalfTerrainHeight := (FTerrainHeight * FTriangleSize) * 0.5;
+  aX := (aX + iHalfTerrainWidth) / FTriangleSize;
+  aZ := (aZ + iHalfTerrainHeight) / FTriangleSize;
+
+  if (aX < 0) or (aX >= FTerrainWidth - 1) or
+     (aZ < 0) or (aZ >= FTerrainHeight - 1) or
+     not FTerrainLoaded then
+  begin
+    aHeight := 0.0;
+    result := false;
+    exit;
+  end;
+
+  iRX := trunc(aX);
+  iRZ := trunc(aZ);
+  iFX := aX - iRX;
+  iFZ := aZ - iRZ;
+  
+  iAB := GetPoint(iRX, iRZ).Vertex.Y + (GetPoint(iRX + 1, iRZ).Vertex.Y - GetPoint(iRX, iRZ).Vertex.Y) * iFX;
+  iCD := GetPoint(iRX, iRZ + 1).Vertex.Y + (GetPoint(iRX + 1, iRZ + 1).Vertex.Y - GetPoint(iRX, iRZ + 1).Vertex.Y) * iFX;
+  aHeight := iAB + (iCD - iAB) * iFZ;
+  result := true;
 end;
 
 {******************************************************************************}
 {* Get the rotation on a position on the terrain                              *}
 {******************************************************************************}
 
-function  TGDTerrain.GetRotation( aX, aZ : Double; var aRotation : TGDVector ): boolean;
+function TGDTerrain.GetRotation(aX, aZ: Double; var aRotation: TGDVector): boolean;
 var
-  iRX, iRZ : integer;
-  iFX, iFZ, iA, iB, iC, iD : Double;
-  iTriangle : TGDTriangle;
-  iPos, iUp, iForward, iRight : TGDVector;
-  iFound : boolean;
-  iSecTris : boolean;
+  iRX, iRZ: integer;
+  iFX, iFZ, iA, iB, iC, iD: Double;
+  iTriangle: TGDTriangle;
+  iPos, iUp, iForward, iRight: TGDVector;
+  iFound, iSecTris: boolean;
+  iHalfTerrainWidth, iHalfTerrainHeight: Double;
+const
+  HALF_PI = PI * 0.5;
 begin
   result := false;
-  aRotation.Reset(0,0,0);
-  iPos.Reset(aX,0,aZ);
-  aX := (aX + ((FTerrainWidth * FTriangleSize)/2)) / FTriangleSize;
-  aZ := (aZ + ((FTerrainHeight * FTriangleSize)/2)) / FTriangleSize;
-  if (aX < 0) or (aX > FTerrainWidth-1) or
-     (aZ < 0) or (aZ > FTerrainHeight-1) or
-     Not(FTerrainLoaded) then
+  aRotation.Reset(0, 0, 0);
+  iPos.Reset(aX, 0, aZ);
+  iHalfTerrainWidth := (FTerrainWidth * FTriangleSize) * 0.5;
+  iHalfTerrainHeight := (FTerrainHeight * FTriangleSize) * 0.5;
+  aX := (aX + iHalfTerrainWidth) / FTriangleSize;
+  aZ := (aZ + iHalfTerrainHeight) / FTriangleSize;
+
+  if (aX < 0) or (aX > FTerrainWidth - 1) or
+     (aZ < 0) or (aZ > FTerrainHeight - 1) or
+     not FTerrainLoaded then
   begin
     exit;
   end;
@@ -316,24 +324,26 @@ begin
   iRZ := trunc(aZ);
   iFX := aX - iRX;
   iFZ := aZ - iRZ;
-  iA := GetPoint(iRX   ,iRZ).Vertex.Y;
-  iB := GetPoint(iRX+1 ,iRZ).Vertex.Y;
-  iC := GetPoint(iRX   ,iRZ+1).Vertex.Y;
-  iD := GetPoint(iRX+1 ,iRZ+1).Vertex.Y;
+  iA := GetPoint(iRX, iRZ).Vertex.Y;
+  iB := GetPoint(iRX + 1, iRZ).Vertex.Y;
+  iC := GetPoint(iRX, iRZ + 1).Vertex.Y;
+  iD := GetPoint(iRX + 1, iRZ + 1).Vertex.Y;
   iPos.Y := (iA + (iB - iA) * iFX) + ((iC + (iD - iC) * iFX) - (iA + (iB - iA) * iFX)) * iFZ;
 
   iTriangle.V1 := GetPoint(iRX, iRZ).Vertex.Copy();
-  iTriangle.V2 := GetPoint(iRX+1, iRZ).Vertex.Copy();
-  iTriangle.V3 := GetPoint(iRX, iRZ+1).Vertex.Copy();
+  iTriangle.V2 := GetPoint(iRX + 1, iRZ).Vertex.Copy();
+  iTriangle.V3 := GetPoint(iRX, iRZ + 1).Vertex.Copy();
   iFound := true;
-  iSecTris := false;;
-  If Not(iTriangle.PointInTraingle( iPos )) then
+  iSecTris := false;
+
+  if not iTriangle.PointInTraingle(iPos) then
   begin
-    iTriangle.V1 := GetPoint(iRX+1, iRZ+1).Vertex.Copy();
-    iTriangle.V2 := GetPoint(iRX, iRZ+1).Vertex.Copy();
-    iTriangle.V3 := GetPoint(iRX+1, iRZ).Vertex.Copy();
+    iTriangle.V1 := GetPoint(iRX + 1, iRZ + 1).Vertex.Copy();
+    iTriangle.V2 := GetPoint(iRX, iRZ + 1).Vertex.Copy();
+    iTriangle.V3 := GetPoint(iRX + 1, iRZ).Vertex.Copy();
     iSecTris := true;
-    If Not(iTriangle.PointInTraingle( iPos )) then
+
+    if not iTriangle.PointInTraingle(iPos) then
       iFound := false;
   end;
 
@@ -342,44 +352,37 @@ begin
     if Not(iSecTris) then
     begin
       iForward := iTriangle.V2.Copy();
-      iForward.Substract( iTriangle.V1 );
+      iForward -=  iTriangle.V1;
       iForward.Normalize();
       iRight := iTriangle.V3.Copy();
-      iRight.Substract( iTriangle.V1 );
+      iRight -= iTriangle.V1;
       iRight.Normalize();
     end
     else
     begin
       iForward := iTriangle.V1.Copy();
-      iForward.Substract( iTriangle.V2 );
+      iForward -=  iTriangle.V2;
       iForward.Normalize();
       iRight := iTriangle.V1.Copy();
-      iRight.Substract( iTriangle.V3 );
+      iRight -= iTriangle.V3;
       iRight.Normalize();
     end;
 
     iUp.CrossProduct( iRight, iForward );
     iUp.Normalize();
 
-    if iUP.X > 0.998 then
+    if abs(iUp.X) > 0.998 then
     begin
-      aRotation.X := RadToDeg( arctan2( iForward.Z, iRight.Z ) );
-      aRotation.Y := PI/2;
+      aRotation.X := RadToDeg(arctan2(iForward.Z, iRight.Z));
+      aRotation.Y := IfThen(iUp.X > 0.998, HALF_PI, -HALF_PI);
       aRotation.Z := 0;
     end
     else
-      if iUP.X < -0.998 then
-      begin
-        aRotation.X := RadToDeg( arctan2( iForward.Z, iRight.Z ) );
-        aRotation.Y := -PI/2;
-        aRotation.Z := 0;
-      end
-      else
-      begin
-        aRotation.X := RadToDeg( arctan2( -iUp.Z, iUp.Y ) );
-        aRotation.Y := RadToDeg( arctan2( -iRight.X, iForward.X ) );
-        aRotation.Z := RadToDeg( ArcSin( iUp.X ) );
-      end;
+    begin
+      aRotation.X := RadToDeg(arctan2(-iUp.Z, iUp.Y));
+      aRotation.Y := RadToDeg(arctan2(-iRight.X, iForward.X));
+      aRotation.Z := RadToDeg(ArcSin(iUp.X));
+    end;
     result := true;
   end;
 end;
