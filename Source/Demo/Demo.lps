@@ -4,13 +4,16 @@
     <PathDelim Value="\"/>
     <Version Value="12"/>
     <BuildModes Active="Release"/>
-    <Units Count="132">
+    <Units Count="133">
       <Unit0>
         <Filename Value="Demo.lpr"/>
         <IsPartOfProject Value="True"/>
-        <CursorPos X="204" Y="25"/>
+        <IsVisibleTab Value="True"/>
+        <TopLine Value="30"/>
+        <CursorPos X="27" Y="42"/>
         <UsageCount Value="308"/>
         <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit0>
       <Unit1>
         <Filename Value="..\Libraries\OpenGL\dglOpenGL.pas"/>
@@ -39,10 +42,11 @@
       <Unit4>
         <Filename Value="..\Libraries\SDL\sdl2.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="133"/>
+        <EditorIndex Value="4"/>
+        <TopLine Value="175"/>
         <CursorPos X="34" Y="162"/>
         <UsageCount Value="308"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit4>
       <Unit5>
@@ -265,6 +269,7 @@
         <TopLine Value="73"/>
         <CursorPos X="31" Y="111"/>
         <UsageCount Value="234"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit40>
       <Unit41>
         <Filename Value="..\Engine\uGDBaseCell.pas"/>
@@ -273,6 +278,7 @@
         <TopLine Value="52"/>
         <CursorPos X="37" Y="60"/>
         <UsageCount Value="229"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit41>
       <Unit42>
         <Filename Value="..\Engine\uGDBmp.pas"/>
@@ -295,11 +301,12 @@
       <Unit44>
         <Filename Value="..\Engine\uGDCellManager.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="3"/>
+        <EditorIndex Value="5"/>
         <TopLine Value="370"/>
         <CursorPos X="3" Y="375"/>
         <UsageCount Value="229"/>
         <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit44>
       <Unit45>
         <Filename Value="..\Engine\uGDConsole.pas"/>
@@ -326,6 +333,7 @@
         <TopLine Value="57"/>
         <CursorPos X="5" Y="202"/>
         <UsageCount Value="229"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit47>
       <Unit48>
         <Filename Value="..\Engine\uGDFoliage.pas"/>
@@ -375,12 +383,12 @@
       <Unit53>
         <Filename Value="..\Engine\uGDMap.pas"/>
         <IsPartOfProject Value="True"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="2"/>
         <TopLine Value="150"/>
         <CursorPos Y="153"/>
         <UsageCount Value="229"/>
         <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit53>
       <Unit54>
         <Filename Value="..\Engine\uGDMaterial.pas"/>
@@ -412,11 +420,12 @@
       <Unit57>
         <Filename Value="..\Engine\uGDMeshManager.pas"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="4"/>
+        <EditorIndex Value="6"/>
         <TopLine Value="178"/>
         <CursorPos X="15" Y="72"/>
         <UsageCount Value="229"/>
         <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit57>
       <Unit58>
         <Filename Value="..\Engine\uGDModes.pas"/>
@@ -442,6 +451,7 @@
         <EditorIndex Value="-1"/>
         <CursorPos X="5" Y="42"/>
         <UsageCount Value="229"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit60>
       <Unit61>
         <Filename Value="..\Engine\uGDRenderer.pas"/>
@@ -495,6 +505,7 @@
         <TopLine Value="287"/>
         <CursorPos X="72" Y="306"/>
         <UsageCount Value="229"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit66>
       <Unit67>
         <Filename Value="..\Engine\uGDStatistics.pas"/>
@@ -503,6 +514,7 @@
         <TopLine Value="106"/>
         <CursorPos X="3" Y="48"/>
         <UsageCount Value="229"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit67>
       <Unit68>
         <Filename Value="..\Engine\uGDStringParsing.pas"/>
@@ -557,6 +569,7 @@
         <CursorPos X="20" Y="63"/>
         <UsageCount Value="229"/>
         <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit73>
       <Unit74>
         <Filename Value="..\Engine\uGDTypesGenerics.pas"/>
@@ -618,10 +631,12 @@
         <ComponentName Value="ConfigurationForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <EditorIndex Value="-1"/>
-        <TopLine Value="86"/>
-        <CursorPos X="30" Y="108"/>
+        <EditorIndex Value="3"/>
+        <TopLine Value="190"/>
+        <CursorPos X="32" Y="195"/>
         <UsageCount Value="226"/>
+        <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit80>
       <Unit81>
@@ -630,7 +645,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="480"/>
         <CursorPos X="3" Y="503"/>
-        <UsageCount Value="26"/>
+        <UsageCount Value="28"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit81>
       <Unit82>
@@ -639,7 +654,7 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="162"/>
         <CursorPos X="53" Y="185"/>
-        <UsageCount Value="26"/>
+        <UsageCount Value="28"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit82>
       <Unit83>
@@ -649,7 +664,7 @@
         <WindowIndex Value="-1"/>
         <TopLine Value="-1"/>
         <CursorPos X="-1" Y="-1"/>
-        <UsageCount Value="26"/>
+        <UsageCount Value="28"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit83>
       <Unit84>
@@ -658,7 +673,8 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="536"/>
         <CursorPos X="34" Y="542"/>
-        <UsageCount Value="26"/>
+        <UsageCount Value="28"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit84>
       <Unit85>
         <Filename Value="..\Libraries\OpenAL\efx.inc"/>
@@ -667,7 +683,7 @@
         <WindowIndex Value="-1"/>
         <TopLine Value="-1"/>
         <CursorPos X="-1" Y="-1"/>
-        <UsageCount Value="26"/>
+        <UsageCount Value="28"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit85>
       <Unit86>
@@ -676,14 +692,16 @@
         <EditorIndex Value="-1"/>
         <TopLine Value="430"/>
         <CursorPos X="10" Y="449"/>
-        <UsageCount Value="24"/>
+        <UsageCount Value="26"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit86>
       <Unit87>
         <Filename Value="..\Libraries\JsonTools\jsontools.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="JsonTools"/>
         <EditorIndex Value="-1"/>
-        <UsageCount Value="20"/>
+        <UsageCount Value="22"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit87>
       <Unit88>
         <Filename Value="..\Libraries\OpenAL\mpg123.pas"/>
@@ -1020,8 +1038,16 @@
         <EditorIndex Value="-1"/>
         <UsageCount Value="10"/>
       </Unit131>
+      <Unit132>
+        <Filename Value="C:\fpcupdeluxe\lazarus\lcl\forms.pp"/>
+        <UnitName Value="Forms"/>
+        <EditorIndex Value="-1"/>
+        <TopLine Value="1859"/>
+        <CursorPos X="3" Y="1873"/>
+        <UsageCount Value="10"/>
+      </Unit132>
     </Units>
-    <JumpHistory Count="6" HistoryIndex="5">
+    <JumpHistory Count="17" HistoryIndex="16">
       <Position1>
         <Filename Value="Demo.lpr"/>
         <Caret Line="52" TopLine="14"/>
@@ -1046,17 +1072,59 @@
         <Filename Value="..\Engine\uGDCellManager.pas"/>
         <Caret Line="58" Column="134" TopLine="51"/>
       </Position6>
+      <Position7>
+        <Filename Value="uConfiguration.pas"/>
+        <Caret Line="323" Column="83" TopLine="192"/>
+      </Position7>
+      <Position8>
+        <Filename Value="uConfiguration.pas"/>
+        <Caret Line="331" TopLine="312"/>
+      </Position8>
+      <Position9>
+        <Filename Value="uConfiguration.pas"/>
+        <Caret Line="332" Column="65" TopLine="312"/>
+      </Position9>
+      <Position10>
+        <Filename Value="uConfiguration.pas"/>
+        <Caret Line="316" Column="94" TopLine="302"/>
+      </Position10>
+      <Position11>
+        <Filename Value="uConfiguration.pas"/>
+        <Caret Line="150" Column="108" TopLine="141"/>
+      </Position11>
+      <Position12>
+        <Filename Value="uConfiguration.pas"/>
+        <Caret Line="149" Column="108" TopLine="140"/>
+      </Position12>
+      <Position13>
+        <Filename Value="uConfiguration.pas"/>
+        <Caret Line="145" Column="5" TopLine="136"/>
+      </Position13>
+      <Position14>
+        <Filename Value="uConfiguration.pas"/>
+        <Caret Line="175" Column="125" TopLine="165"/>
+      </Position14>
+      <Position15>
+        <Filename Value="uConfiguration.pas"/>
+        <Caret Line="173" Column="30" TopLine="166"/>
+      </Position15>
+      <Position16>
+        <Filename Value="uConfiguration.pas"/>
+        <Caret Line="199" Column="37" TopLine="191"/>
+      </Position16>
+      <Position17>
+        <Filename Value="uConfiguration.pas"/>
+        <Caret Line="198" Column="37" TopLine="190"/>
+      </Position17>
     </JumpHistory>
     <RunParams>
       <FormatVersion Value="2"/>
       <Modes ActiveMode="default"/>
     </RunParams>
-    <HistoryLists Count="3">
+    <HistoryLists Count="1">
       <List0 Name="LaunchingApplication" Type="File" Count="1">
         <Item1 Value="C:\Windows\system32\cmd.exe /C ${TargetCmdLine}"/>
       </List0>
-      <List1 Name="WorkingDirectory" Type="File" Count="1"/>
-      <List2 Name="CommandLineParameters" Count="1"/>
     </HistoryLists>
   </ProjectSession>
   <Debugging>
@@ -1137,6 +1205,13 @@
         <WatchKind Value="wpkWrite"/>
         <Source Value="..\Engine\uGDMap.pas"/>
         <Line Value="157"/>
+      </Item>
+      <Item>
+        <Kind Value="bpkSource"/>
+        <WatchScope Value="wpsLocal"/>
+        <WatchKind Value="wpkWrite"/>
+        <Source Value="uConfiguration.pas"/>
+        <Line Value="328"/>
       </Item>
     </BreakPoints>
   </Debugging>
