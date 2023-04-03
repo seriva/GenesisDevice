@@ -1,25 +1,3 @@
-{*******************************************************************************
-*                            Genesis Device Engine                             *
-*                   Copyright © 2007-2022 Luuk van Venrooij                    *
-*                        http://www.luukvanvenrooij.nl                         *
-********************************************************************************
-*                                                                              *
-*  This file is part of the Genesis Device Engine                              *
-*                                                                              *
-*  The Genesis Device Engine is free software: you can redistribute            *
-*  it and/or modify it under the terms of the GNU Lesser General Public        *
-*  License as published by the Free Software Foundation, either version 3      *
-*  of the License, or any later version.                                       *
-*                                                                              *
-*  The Genesis Device Engine is distributed in the hope that                   *
-*  it will be useful, but WITHOUT ANY WARRANTY; without even the               *
-*  implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.    *
-*  See the GNU Lesser General Public License for more details.                 *
-*                                                                              *
-*  You should have received a copy of the GNU General Public License           *
-*  along with Genesis Device.  If not, see <http://www.gnu.org/licenses/>.     *
-*                                                                              *
-*******************************************************************************}   
 unit uGDTerrain;
 
 {$MODE Delphi}
@@ -41,11 +19,6 @@ uses
   uGDConstants;
 
 type
-
-{******************************************************************************}
-{*  Terrain class                                                             *}
-{******************************************************************************}
-
   TGDTerrain = class
   private
     FTerrainWidth      : Integer;
@@ -95,10 +68,6 @@ implementation
 uses
   uGDEngine;
 
-{******************************************************************************}
-{* Create the terrain class                                                   *}
-{******************************************************************************}
-
 constructor TGDTerrain.Create();
 begin
   FTerrainWidth  := 0;
@@ -112,9 +81,6 @@ begin
   FVertices      := TGDVertex_V_UV_N_List.Create();
 end;
 
-{******************************************************************************}
-{* Destroy the terrain class                                                  *}
-{******************************************************************************}
 
 destructor TGDTerrain.Destroy();
 begin
@@ -123,9 +89,6 @@ begin
   FreeAndNil(FVertices);
 end;
 
-{******************************************************************************}
-{* Init terrain                                                               *}
-{******************************************************************************}
 
 function  TGDTerrain.InitTerrain( aNode : TJsonNode ) : boolean;
 var
@@ -235,9 +198,6 @@ begin
   GDConsole.WriteOkFail(result, iError);
 end;
 
-{******************************************************************************}
-{* Clear the terrain                                                          *}
-{******************************************************************************}
 
 procedure TGDTerrain.Clear();
 begin
@@ -255,9 +215,6 @@ begin
   FTerrainLoaded := False;
 end;
 
-{******************************************************************************}
-{* Get the heigth on a position on the terrain                                *}
-{******************************************************************************}
 
 function TGDTerrain.GetHeight(aX, aZ: Double; var aHeight: Double): boolean;
 var
@@ -290,9 +247,6 @@ begin
   result := true;
 end;
 
-{******************************************************************************}
-{* Get the rotation on a position on the terrain                              *}
-{******************************************************************************}
 
 function TGDTerrain.GetRotation(aX, aZ: Double; var aRotation: TGDVector): boolean;
 var
@@ -387,18 +341,12 @@ begin
   end;
 end;
 
-{******************************************************************************}
-{* Get terrain point.                                                         *}
-{******************************************************************************}
 
 function TGDTerrain.GetPoint(aX, aZ : Integer): TGDVertex_V_UV_N;
 begin
   result := FVertices.Items[(aX * FTerrainWidth) + aZ];
 end;
 
-{******************************************************************************}
-{* Start the rendering of a terraincell                                       *}
-{******************************************************************************}
 
 procedure TGDTerrain.StartRendering( aRenderAttribute : TGDRenderAttribute; aRenderFor : TGDRenderFor );
 begin
@@ -441,9 +389,6 @@ begin
   end;
 end;
 
-{******************************************************************************}
-{* Stop the rendering of a terrain                                            *}
-{******************************************************************************}
 
 procedure TGDTerrain.EndRendering();
 begin

@@ -1,25 +1,3 @@
-{*******************************************************************************
-*                            Genesis Device Engine                             *
-*                   Copyright © 2007-2022 Luuk van Venrooij                    *
-*                        http://www.luukvanvenrooij.nl                         *
-********************************************************************************
-*                                                                              *
-*  This file is part of the Genesis Device Engine                              *
-*                                                                              *
-*  The Genesis Device Engine is free software: you can redistribute            *
-*  it and/or modify it under the terms of the GNU Lesser General Public        *
-*  License as published by the Free Software Foundation, either version 3      *
-*  of the License, or any later version.                                       *
-*                                                                              *
-*  The Genesis Device Engine is distributed in the hope that                   *
-*  it will be useful, but WITHOUT ANY WARRANTY; without even the               *
-*  implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.    *
-*  See the GNU Lesser General Public License for more details.                 *
-*                                                                              *
-*  You should have received a copy of the GNU General Public License           *
-*  along with Genesis Device.  If not, see <http://www.gnu.org/licenses/>.     *
-*                                                                              *
-*******************************************************************************}   
 unit uGDMap;
 
 {$MODE Delphi}
@@ -41,11 +19,6 @@ uses
   uGDMeshCell;
 
 type
-
-{******************************************************************************}
-{* Map class                                                                  *}
-{******************************************************************************}
-
   TGDMap = class
   private
     FPlayerStart     : TGDVector;
@@ -105,10 +78,6 @@ implementation
 uses
   uGDEngine;
 
-{******************************************************************************}
-{* Create map class                                                           *}
-{******************************************************************************}
-
 constructor TGDMap.Create();
 begin
   inherited;
@@ -120,9 +89,6 @@ begin
   FMeshManager := TGDMeshManager.Create();
 end;
 
-{******************************************************************************}
-{* Destroy map class                                                          *}
-{******************************************************************************}
 
 destructor  TGDMap.Destroy();
 begin
@@ -136,9 +102,6 @@ begin
   FreeAndNil(FMeshManager);
 end;
 
-{******************************************************************************}
-{* Init the map                                                               *}
-{******************************************************************************}
 
 procedure TGDMap.Load( aFileName : String );
 var
@@ -219,9 +182,6 @@ begin
   GDCamera.MouseLook(0,0,1,1,0,False);
 end;
 
-{******************************************************************************}
-{* Clear the map                                                              *}
-{******************************************************************************}
 
 procedure TGDMap.Clear();
 begin
@@ -247,45 +207,30 @@ begin
   FMeshManager.ClearBuffers();
 end;
 
-{******************************************************************************}
-{* Get visible object count                                                   *}
-{******************************************************************************}
 
 function TGDMap.ObjectCount(): integer;
 begin
   result := FCellManager.ObjectCount();
 end;
 
-{******************************************************************************}
-{* Get visible triangle count                                                 *}
-{******************************************************************************}
 
 function TGDMap.TriangleCount(): integer;
 begin
   result := FCellManager.TriangleCount + FSkyDome.TriangleCount;
 end;
 
-{******************************************************************************}
-{* Update the map                                                             *}
-{******************************************************************************}
 
 procedure TGDMap.Update();
 begin
   FWater.Update();
 end;
 
-{******************************************************************************}
-{* Detect visible cells                                                       *}
-{******************************************************************************}
 
 procedure TGDMap.DetectVisibleCells();
 begin
   FCellManager.DetectVisibleCells();
 end;
 
-{******************************************************************************}
-{* Render visible cells                                                       *}
-{******************************************************************************}
 
 procedure TGDMap.RenderVisibleCells(aRenderAttribute : TGDRenderAttribute; aRenderFor : TGDRenderFor);
 begin

@@ -1,25 +1,3 @@
-{*******************************************************************************
-*                            Genesis Device Engine                             *
-*                   Copyright © 2007-2022 Luuk van Venrooij                    *
-*                        http://www.luukvanvenrooij.nl                         *
-********************************************************************************
-*                                                                              *
-*  This file is part of the Genesis Device Engine                              *
-*                                                                              *
-*  The Genesis Device Engine is free software: you can redistribute            *
-*  it and/or modify it under the terms of the GNU Lesser General Public        *
-*  License as published by the Free Software Foundation, either version 3      *
-*  of the License, or any later version.                                       *
-*                                                                              *
-*  The Genesis Device Engine is distributed in the hope that                   *
-*  it will be useful, but WITHOUT ANY WARRANTY; without even the               *
-*  implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.    *
-*  See the GNU Lesser General Public License for more details.                 *
-*                                                                              *
-*  You should have received a copy of the GNU General Public License           *
-*  along with Genesis Device.  If not, see <http://www.gnu.org/licenses/>.     *
-*                                                                              *
-*******************************************************************************}   
 unit uGDFoliage;
 
 {$MODE objfpc}
@@ -40,10 +18,6 @@ uses
   uGDResource;
 
 type
- {******************************************************************************}
- {* Layertype class                                                            *}
- {******************************************************************************}
-
   TGDLayerItem = class
   private
   public
@@ -57,9 +31,6 @@ type
   end;
   TGDLayerItemList = specialize TFPGObjectList<TGDLayerItem>;
 
-{******************************************************************************}
-{* GrassItem class                                                            *}
-{******************************************************************************}
 
   TGDGrassItem = class (TGDLayerItem)
   private
@@ -70,9 +41,6 @@ type
     destructor  Destroy(); override;
   end;
 
-{******************************************************************************}
-{* MeshItem class                                                             *}
-{******************************************************************************}
 
   TGDMeshItem = class (TGDLayerItem)
   private
@@ -90,9 +58,6 @@ type
     destructor  Destroy(); override;
   end;
 
-{******************************************************************************}
-{* Layer class                                                                *}
-{******************************************************************************}
 
   TGDLayer = class
   private
@@ -111,9 +76,6 @@ type
   end;
   TGDLayerList = specialize TFPGObjectList<TGDLayer>;
 
-{******************************************************************************}
-{* Foliage class                                                              *}
-{******************************************************************************}
 
   TGDFoliage = class
   private
@@ -147,10 +109,6 @@ implementation
 uses
   uGDEngine;
 
-{******************************************************************************}
-{* Create the layertype class                                                 *}
-{******************************************************************************}
-
 constructor TGDLayerItem.Create(aNode : TJsonNode);
 begin
   TerrainRotation := aNode.Find('TerrainRotation').AsBoolean;
@@ -159,17 +117,11 @@ begin
   CoverOfTotal    := aNode.Find('CoverOfTotal').AsNumber;
 end;
 
-{******************************************************************************}
-{* Create the layertype class                                                 *}
-{******************************************************************************}
 
 destructor  TGDLayerItem.Destroy();
 begin
 end;
 
-{******************************************************************************}
-{* Create the grasstype class                                                 *}
-{******************************************************************************}
 
 constructor TGDGrassItem.Create(aNode : TJsonNode);
 begin
@@ -177,9 +129,6 @@ begin
   Texture := GDResources.LoadTexture(aNode.Find('Texture').AsString, TD_HIGH, GDSettings.TextureFilter);
 end;
 
-{******************************************************************************}
-{* Destroy the grasstype                                                      *}
-{******************************************************************************}
 
 destructor  TGDGrassItem.Destroy();
 begin
@@ -187,9 +136,6 @@ begin
   inherited
 end;
 
-{******************************************************************************}
-{* Create the treetype class                                                  *}
-{******************************************************************************}
 
 constructor TGDMeshItem.Create(aNode : TJsonNode);
 begin
@@ -204,9 +150,6 @@ begin
 	ReceiveShadow  := aNode.Find('ReceiveShadow').AsBoolean;
 end;
 
-{******************************************************************************}
-{* Destroy the treetype                                                       *}
-{******************************************************************************}
 
 destructor  TGDMeshItem.Destroy();
 begin
@@ -216,9 +159,6 @@ begin
   inherited
 end;
 
-{******************************************************************************}
-{* Create layer                                                               *}
-{******************************************************************************}
 
 constructor TGDLayer.Create(aNode : TJsonNode);
 var
@@ -261,9 +201,6 @@ begin
   end;
 end;
 
-{******************************************************************************}
-{* Destroy layer                                                              *}
-{******************************************************************************}
 
 destructor TGDLayer.Destroy();
 var
@@ -278,27 +215,18 @@ begin
   FreeAndNil(LayerItems);
 end;
 
-{******************************************************************************}
-{* Check location on layermap                                                 *}
-{******************************************************************************}
 
 Function TGDLayer.CheckMap( aX, aY : Integer ) : Boolean;
 begin
   result := Map[aX, aY];
 end;
 
-{******************************************************************************}
-{* Create the foliage class                                                   *}
-{******************************************************************************}
 
 constructor TGDFoliage.Create();
 begin
   FLayers := TGDLayerList.Create();
 end;
 
-{******************************************************************************}
-{* Destroy the foliage class                                                  *}
-{******************************************************************************}
 
 destructor  TGDFoliage.Destroy();
 begin
@@ -306,9 +234,6 @@ begin
   FreeAndNil(FLayers);
 end;
 
-{******************************************************************************}
-{* Init the foliage                                                           *}
-{******************************************************************************}
 
 Function TGDFoliage.InitFoliage( aNode : TJsonNode ) : boolean;
 var
@@ -342,18 +267,12 @@ begin
   GDConsole.Use := true;
 end;
 
-{******************************************************************************}
-{* Clear the foliage                                                          *}
-{******************************************************************************}
 
 procedure TGDFoliage.Clear();
 begin
   FLayers.Clear();
 end;
 
-{******************************************************************************}
-{* Start the rendering of a grasscell                                         *}
-{******************************************************************************}
 
 procedure TGDFoliage.StartRenderingGrass( aRenderAttribute : TGDRenderAttribute );
 begin
@@ -380,9 +299,6 @@ begin
   end;
 end;
 
-{******************************************************************************}
-{* End the rendering of a grasscell                                           *}
-{******************************************************************************}
 
 procedure TGDFoliage.EndRenderingGrass();
 begin

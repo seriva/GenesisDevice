@@ -1,47 +1,15 @@
-{*******************************************************************************
-*                            Genesis Device Engine                             *
-*                   Copyright © 2007-2022 Luuk van Venrooij                    *
-*                        http://www.luukvanvenrooij.nl                         *
-********************************************************************************
-*                                                                              *
-*  This file is part of the Genesis Device Engine                              *
-*                                                                              *
-*  The Genesis Device Engine is free software: you can redistribute            *
-*  it and/or modify it under the terms of the GNU Lesser General Public        *
-*  License as published by the Free Software Foundation, either version 3      *
-*  of the License, or any later version.                                       *
-*                                                                              *
-*  The Genesis Device Engine is distributed in the hope that                   *
-*  it will be useful, but WITHOUT ANY WARRANTY; without even the               *
-*  implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.    *
-*  See the GNU Lesser General Public License for more details.                 *
-*                                                                              *
-*  You should have received a copy of the GNU General Public License           *
-*  along with Genesis Device.  If not, see <http://www.gnu.org/licenses/>.     *
-*                                                                              *
-*******************************************************************************}   
 unit uGDCamera;
 
 {$mode objfpc}
 
-{******************************************************************************}
-{* Holds the FPS camera class                                                 *}
-{******************************************************************************}
-
 interface
 
 uses
-  LCLIntf,
-  LCLType,
-  SysUtils,
   dglOpenGL,
   uGDTypes;
 
 type
 
-{******************************************************************************}
-{* Camera class                                                               *}
-{******************************************************************************}
   TCameraFrustum = array[0..5, 0..3] of double;
 
   TGDCamera = class
@@ -77,10 +45,6 @@ type
 
 implementation
 
-{******************************************************************************}
-{* Normalize a frustumplane                                                   *}
-{******************************************************************************}
-
 procedure NormalizePlane(aFrustum : TCameraFrustum; aSide: Integer);
 var
   iMagnitude       : glFloat;
@@ -94,9 +58,6 @@ begin
   aFrustum[aSide][3] := aFrustum[aSide][3] / iMagnitude;
 end;
 
-{******************************************************************************}
-{* Create the camera class                                                    *}
-{******************************************************************************}
 
 Constructor TGDCamera.Create();
 Begin
@@ -106,18 +67,12 @@ Begin
   FRotation.Reset(0,0,0);
 end;
 
-{******************************************************************************}
-{* Destroy the camera class                                                   *}
-{******************************************************************************}
 
 Destructor  TGDCamera.Destroy();
 begin
   inherited
 end;
 
-{******************************************************************************}
-{* Set the direction vector                                                   *}
-{******************************************************************************}
 
 Procedure TGDCamera.SetDirection(aV : TGDVector);
 Begin
@@ -126,9 +81,6 @@ Begin
   FDirection.z := aV.z;
 end;
 
-{******************************************************************************}
-{* Set the uo vector                                                          *}
-{******************************************************************************}
 
 Procedure TGDCamera.SetUpvector(aV : TGDVector);
 Begin
@@ -137,9 +89,6 @@ Begin
   FUpvector.z := aV.z;
 end;
 
-{******************************************************************************}
-{* Set the position point                                                     *}
-{******************************************************************************}
 
 Procedure TGDCamera.SetPosition(aV : TGDVector);
 Begin
@@ -148,9 +97,6 @@ Begin
   FPosition.z := aV.z;
 end;
 
-{******************************************************************************}
-{* Set the rotation vector                                                    *}
-{******************************************************************************}
 
 Procedure TGDCamera.SetRotation(aV : TGDVector);
 Begin
@@ -159,9 +105,6 @@ Begin
   FRotation.z := aV.z;
 end;
 
-{******************************************************************************}
-{* Strafe the camera left or right                                            *}
-{******************************************************************************}
 
 procedure TGDCamera.Strafe(aStep : Double);
 var
@@ -184,9 +127,6 @@ begin
   FPosition += iV;
 end;
 
-{******************************************************************************}
-{* move the camera forward or backward                                        *}
-{******************************************************************************}
 
 procedure TGDCamera.Move(aStep : Double);
 var
@@ -201,9 +141,6 @@ begin
   FPosition += iV;
 end;
 
-{******************************************************************************}
-{* Use the mouse to look arround 6 degrees                                    *}
-{******************************************************************************}
 
 procedure  TGDCamera.MouseLook(aOldX, aOldY, aNewX, aNewY  : Integer; aSensitivity : Double; aInvertMouse : Boolean);
 var dDeltaX, dDeltaY : double;
@@ -229,9 +166,6 @@ begin
   iM.ApplyToVector(FDirection);
 end;
 
-{******************************************************************************}
-{* Translate the camera                                                       *}
-{******************************************************************************}
 
 procedure TGDCamera.Translate();
 
@@ -245,9 +179,6 @@ Begin
   CalculateFrustum();
 end;
 
-{******************************************************************************}
-{* Calculate camera frustum                                                   *}
-{******************************************************************************}
 
 Procedure TGDCamera.CalculateFrustum();
 var
@@ -313,9 +244,6 @@ begin
   NormalizePlane(FFrustum, 5);
 end;
 
-{******************************************************************************}
-{* Is a box in the current camera view                                        *}
-{******************************************************************************}
 
 function TGDCamera.BoxInView(aBox : TGDBoundingBox): Boolean;
 var

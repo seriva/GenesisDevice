@@ -1,32 +1,6 @@
-{*******************************************************************************
-*                            Genesis Device Engine                             *
-*                   Copyright © 2007-2022 Luuk van Venrooij                    *
-*                        http://www.luukvanvenrooij.nl                         *
-********************************************************************************
-*                                                                              *
-*  This file is part of the Genesis Device Engine                              *
-*                                                                              *
-*  The Genesis Device Engine is free software: you can redistribute            *
-*  it and/or modify it under the terms of the GNU Lesser General Public        *
-*  License as published by the Free Software Foundation, either version 3      *
-*  of the License, or any later version.                                       *
-*                                                                              *
-*  The Genesis Device Engine is distributed in the hope that                   *
-*  it will be useful, but WITHOUT ANY WARRANTY; without even the               *
-*  implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.    *
-*  See the GNU Lesser General Public License for more details.                 *
-*                                                                              *
-*  You should have received a copy of the GNU General Public License           *
-*  along with Genesis Device.  If not, see <http://www.gnu.org/licenses/>.     *
-*                                                                              *
-*******************************************************************************}   
-unit uGDStatistics;
+ unit uGDStatistics;
 
 {$MODE Delphi}
-
-{******************************************************************************}
-{* This units holds classes for statistics                                    *}
-{******************************************************************************}
 
 interface
 
@@ -40,11 +14,6 @@ uses
   uGDConstants;
 
 type
-
-{******************************************************************************}
-{* Statistics class                                                           *}
-{******************************************************************************}
-
   TGDStatistics = class(TObject)
   private
     FFPSTime          : Integer;
@@ -71,23 +40,17 @@ implementation
 uses
   uGDEngine;
 
-{******************************************************************************}
-{* Create                                                                     *}
-{******************************************************************************}
-
 constructor TGDStatistics.Create();
 begin
   FLastTime := GDTiming.GetTime()+1000;
 end;
 
-{******************************************************************************}
-{* Start and stop procedures for gathering time information                   *}
-{******************************************************************************}
 
 procedure TGDStatistics.FrameStart();
 begin
   GDTiming.Start();
 end;
+
 
 procedure TGDStatistics.FrameStop();
 begin
@@ -95,10 +58,6 @@ begin
   FFrameTimeSlice := GDTiming.TimeInMilliSeconds();
 end;
 
-
-{******************************************************************************}
-{* Update the statistic                                                       *}
-{******************************************************************************}
 
 procedure TGDStatistics.Update();
 begin
@@ -113,9 +72,6 @@ begin
   end;
 end;
 
-{******************************************************************************}
-{* Render the statistic                                                       *}
-{******************************************************************************}
 
 procedure TGDStatistics.Render();
 begin

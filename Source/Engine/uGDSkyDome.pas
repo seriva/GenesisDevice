@@ -1,32 +1,6 @@
-{*******************************************************************************
-*                            Genesis Device Engine                             *
-*                   Copyright © 2007-2022 Luuk van Venrooij                    *
-*                        http://www.luukvanvenrooij.nl                         *
-********************************************************************************
-*                                                                              *
-*  This file is part of the Genesis Device Engine                              *
-*                                                                              *
-*  The Genesis Device Engine is free software: you can redistribute            *
-*  it and/or modify it under the terms of the GNU Lesser General Public        *
-*  License as published by the Free Software Foundation, either version 3      *
-*  of the License, or any later version.                                       *
-*                                                                              *
-*  The Genesis Device Engine is distributed in the hope that                   *
-*  it will be useful, but WITHOUT ANY WARRANTY; without even the               *
-*  implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.    *
-*  See the GNU Lesser General Public License for more details.                 *
-*                                                                              *
-*  You should have received a copy of the GNU General Public License           *
-*  along with Genesis Device.  If not, see <http://www.gnu.org/licenses/>.     *
-*                                                                              *
-*******************************************************************************}   
 unit uGDSkyDome;
 
 {$MODE Delphi}
-
-{******************************************************************************}
-{* Holds the skydome class                                                    *}
-{******************************************************************************}
 
 interface
 
@@ -43,11 +17,6 @@ uses
   uGDTypesGenerics;
 
 type
-
-{******************************************************************************}
-{* Skydome class                                                              *}
-{******************************************************************************}
-
   TGDSkyDome = class
   private
     FIndexBuffer     : TGDGLIndexBuffer;
@@ -83,18 +52,11 @@ implementation
 uses
   uGDEngine;
 
-{******************************************************************************}
-{* Create the skydome class                                                   *}
-{******************************************************************************}
-
 constructor TGDSkyDome.Create();
 begin
   inherited;
 end;
 
-{******************************************************************************}
-{* Destroy the skydome class                                                  *}
-{******************************************************************************}
 
 destructor  TGDSkyDome.Destroy();
 begin
@@ -102,9 +64,6 @@ begin
   Inherited;
 end;
 
-{******************************************************************************}
-{* Clear the skydome                                                          *}
-{******************************************************************************}
 
 procedure TGDSkyDome.Clear();
 begin
@@ -118,9 +77,6 @@ begin
   FSunSize := 0.5;
 end;
 
-{******************************************************************************}
-{* Calculate the skydome                                                      *}
-{******************************************************************************}
 
 procedure TGDSkyDome.CalculateDome( aSize : Double );
 var
@@ -182,9 +138,6 @@ begin
   FreeAndNil(iIndexes);
 end;
 
-{******************************************************************************}
-{* Init the skydome                                                           *}
-{******************************************************************************}
 
 procedure TGDSkyDome.InitSkyDome( aNode : TJsonNode; aSize : Double );
 begin
@@ -204,9 +157,6 @@ begin
   FSunSize := aNode.Find('SunSize').AsNumber;
 end;
 
-{******************************************************************************}
-{* Render the skydome                                                         *}
-{******************************************************************************}
 
 procedure TGDSkyDome.Render();
 begin
@@ -246,9 +196,6 @@ begin
   glPopMatrix();
 end;
 
-{******************************************************************************}
-{* Render the sun                                                             *}
-{******************************************************************************}
 
 procedure TGDSkyDome.RenderSun();
 var
@@ -278,9 +225,6 @@ begin
   glDisable(GL_BLEND);
 end;
 
-{******************************************************************************}
-{* Render the sunflare                                                        *}
-{******************************************************************************}
 
 procedure TGDSkyDome.RenderSunFlare();
 var

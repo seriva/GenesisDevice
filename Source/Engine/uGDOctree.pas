@@ -1,25 +1,3 @@
-{*******************************************************************************
-*                            Genesis Device Engine                             *
-*                   Copyright © 2007-2022 Luuk van Venrooij                    *
-*                        http://www.luukvanvenrooij.nl                         *
-********************************************************************************
-*                                                                              *
-*  This file is part of the Genesis Device Engine                              *
-*                                                                              *
-*  The Genesis Device Engine is free software: you can redistribute            *
-*  it and/or modify it under the terms of the GNU Lesser General Public        *
-*  License as published by the Free Software Foundation, either version 3      *
-*  of the License, or any later version.                                       *
-*                                                                              *
-*  The Genesis Device Engine is distributed in the hope that                   *
-*  it will be useful, but WITHOUT ANY WARRANTY; without even the               *
-*  implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.    *
-*  See the GNU Lesser General Public License for more details.                 *
-*                                                                              *
-*  You should have received a copy of the GNU General Public License           *
-*  along with Genesis Device.  If not, see <http://www.gnu.org/licenses/>.     *
-*                                                                              *
-*******************************************************************************}   
 unit uGDOctree;
 
 {$MODE Delphi}
@@ -35,11 +13,6 @@ uses
   uGDBaseCell;
 
 type
-
-{******************************************************************************}
-{* Visibility query                                                           *}
-{******************************************************************************}
-
   TGDVisibilityQuery = record
     Cells               : TGDBaseCellList;
     VisibleTerrainCells : TGDBaseCellList;
@@ -47,10 +20,6 @@ type
     VisibleMeshCells    : TGDBaseCellList;
     VisibleWaterCells   : TGDBaseCellList;
   end;
-
-{******************************************************************************}
-{* Octree class                                                               *}
-{******************************************************************************}
 
   TGDOctree = class
   private
@@ -74,18 +43,11 @@ implementation
 uses
   uGDEngine;
 
-{******************************************************************************}
-{* Create octree class                                                        *}
-{******************************************************************************}
-
 constructor TGDOctree.Create();
 begin
   SetLength(FCellIndexes,0);
 end;
 
-{******************************************************************************}
-{* Destroy octree class                                                       *}
-{******************************************************************************}
 
 destructor TGDOctree.Destroy();
 begin
@@ -93,9 +55,6 @@ begin
   inherited;
 end;
 
-{******************************************************************************}
-{* Init the octree`s subnodes                                                 *}
-{******************************************************************************}
 
 procedure TGDOctree.InitSubOCTreeNodes(aCells : TGDBaseCellList);
 
@@ -179,9 +138,6 @@ begin
   SetupNode(7);
 end;
 
-{******************************************************************************}
-{* Init the octree                                                            *}
-{******************************************************************************}
 
 procedure TGDOctree.InitOcTree(aCells : TGDBaseCellList);
 var
@@ -221,9 +177,6 @@ begin
   InitSubOctreeNodes(aCells);
 end;
 
-{******************************************************************************}
-{* Clear the octree                                                           *}
-{******************************************************************************}
 
 procedure TGDOctree.Clear();
 var
@@ -237,9 +190,6 @@ begin
     FreeAndNil(FSubNodes[iI])
 end;
 
-{******************************************************************************}
-{* Get the visible objects                                                    *}
-{******************************************************************************}
 
 procedure TGDOctree.GetVisibleCells(aQueryData : TGDVisibilityQuery);
 var
@@ -289,9 +239,6 @@ begin
       FSubNodes[iI].GetVisibleCells(aQueryData);
 end;
 
-{******************************************************************************}
-{* Render the treeboxes                                                       *}
-{******************************************************************************}
 
 procedure TGDOctree.RenderTreeBoxes();
 var

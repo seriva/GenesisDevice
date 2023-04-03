@@ -1,37 +1,8 @@
-{*******************************************************************************
-*                            Genesis Device Engine                             *
-*                   Copyright © 2007-2022 Luuk van Venrooij                    *
-*                        http://www.luukvanvenrooij.nl                         *
-********************************************************************************
-*                                                                              *
-*  This file is part of the Genesis Device Engine                              *
-*                                                                              *
-*  The Genesis Device Engine is free software: you can redistribute            *
-*  it and/or modify it under the terms of the GNU Lesser General Public        *
-*  License as published by the Free Software Foundation, either version 3      *
-*  of the License, or any later version.                                       *
-*                                                                              *
-*  The Genesis Device Engine is distributed in the hope that                   *
-*  it will be useful, but WITHOUT ANY WARRANTY; without even the               *
-*  implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.    *
-*  See the GNU Lesser General Public License for more details.                 *
-*                                                                              *
-*  You should have received a copy of the GNU General Public License           *
-*  along with Genesis Device.  If not, see <http://www.gnu.org/licenses/>.     *
-*                                                                              *
-*******************************************************************************}   
 unit uGDGUI;
 
 {$MODE objfpc}
 
 interface
-
-{******************************************************************************}
-{* This contains the main GUI class for ingame/inengine UI:                   *}
-{* - Loadingscreen                                                            *}
-{* - Mousecursor                                                              *}
-{* - Font                                                                     *}
-{******************************************************************************}
 
 uses
   fgl,
@@ -146,11 +117,6 @@ const
   );
 
 type
-
-{******************************************************************************}
-{* GUI component classes                                                      *}
-{******************************************************************************}
-
   TGDComponent = class
   private
     FDepth : Integer;
@@ -200,9 +166,6 @@ type
   end;
   TGDScreenList = specialize TFPGObjectList<TGDScreen>;
 
-{******************************************************************************}
-{* Font class                                                                 *}
-{******************************************************************************}
 
   TGDFont = class
   private
@@ -217,9 +180,6 @@ type
     function    TextWidth(const str : String; const scale : Single = 1): Integer;
   end;
 
-{******************************************************************************}
-{* Mousecursor class                                                          *}
-{******************************************************************************}
 
   TGDMouseCursor = class
   private
@@ -236,9 +196,6 @@ type
     procedure Render();
   end;
 
-{******************************************************************************}
-{* Loadingscreen class                                                        *}
-{******************************************************************************}
 
   TGDLoadingScreen = class
   private
@@ -263,9 +220,6 @@ type
     procedure   Update();
   end;
 
-{******************************************************************************}
-{* Main GUIManager class                                                      *}
-{******************************************************************************}
 
   TGDGUI = class
   private
@@ -356,9 +310,6 @@ begin
   end;
 end;
 
-{******************************************************************************}
-{* GUI component classes                                                      *}
-{******************************************************************************}
 
 procedure TGDComponent.Render();
 begin
@@ -463,9 +414,6 @@ begin
     FComponents.Items[iI].Render();
 end;
 
-{******************************************************************************}
-{* Create the font class                                                      *}
-{******************************************************************************}
 
 constructor TGDFont.Create(aTexture : string);
 begin
@@ -473,9 +421,6 @@ begin
   FTexture := GDResources.LoadTexture(aTexture, TD_HIGH, TF_TRILINEAR);
 end;
 
-{******************************************************************************}
-{* Destroy the font class                                                     *}
-{******************************************************************************}
 
 destructor TGDFont.Destroy();
 begin
@@ -483,9 +428,6 @@ begin
   inherited;
 end;
 
-{******************************************************************************}
-{* Text width the font                                                        *}
-{******************************************************************************}
 
 function TGDFont.TextWidth(const str : String; const scale : Single = 1): Integer;
 var
@@ -503,9 +445,6 @@ begin
   result := x;
 end;
 
-{******************************************************************************}
-{* Render a string                                                            *}
-{******************************************************************************}
 
 Procedure TGDFont.Render( aLeft, aTop, aScale : Double; aString : string);
 var
@@ -532,9 +471,6 @@ begin
   end;
 end;
 
-{******************************************************************************}
-{* Create the mousecursor class                                               *}
-{******************************************************************************}
 
 constructor TGDMouseCursor.Create(aFileName: String; aCursorSize : Integer );
 begin
@@ -543,9 +479,6 @@ begin
   FCursorTexture := GDResources.LoadTexture(aFileName, TD_HIGH, TF_TRILINEAR);
 end;
 
-{******************************************************************************}
-{* Destroy the mousecursor class                                              *}
-{******************************************************************************}
 
 destructor  TGDMouseCursor.Destroy();
 begin
@@ -554,9 +487,6 @@ begin
   FVisible := false;
 end;
 
-{******************************************************************************}
-{* Render the mousecursor                                                     *}
-{******************************************************************************}
 
 procedure TGDMouseCursor.Render();
 var
@@ -600,9 +530,6 @@ begin
   end;
 end;
 
-{******************************************************************************}
-{* Create the loadingscreen class                                             *}
-{******************************************************************************}
 
 constructor TGDLoadingScreen.Create(aSettings : TJsonNode);
 begin
@@ -615,18 +542,12 @@ begin
   FBarColor.Reset(aSettings.Find('Loading/Bar').AsString);
 end;
 
-{******************************************************************************}
-{* Destroy the loadingscreen class                                            *}
-{******************************************************************************}
 
 destructor TGDLoadingScreen.Destroy();
 begin
   inherited;
 end;
 
-{******************************************************************************}
-{* Update the loadingscreen                                                   *}
-{******************************************************************************}
 
 procedure TGDLoadingScreen.Update();
 begin
@@ -635,9 +556,6 @@ begin
   Render();
 end;
 
-{******************************************************************************}
-{* Setup the loadingscreen                                                    *}
-{******************************************************************************}
 
 procedure TGDLoadingScreen.Start( aProcesName : String; aMax : integer );
 begin
@@ -648,9 +566,6 @@ begin
   Render();
 end;
 
-{******************************************************************************}
-{* Render the loadingscreen                                                   *}
-{******************************************************************************}
 
 Procedure TGDLoadingScreen.Render();
 var
@@ -699,9 +614,6 @@ begin
   GDWindow.Swap();
 end;
 
-{******************************************************************************}
-{* Create the GUI class                                                       *}
-{******************************************************************************}
 
 constructor TGDGUI.Create();
 var
@@ -723,9 +635,6 @@ begin
   GDConsole.Use:=true;
 end;
 
-{******************************************************************************}
-{* Destroy the GUI class                                                      *}
-{******************************************************************************}
 
 destructor  TGDGUI.Destroy();
 begin
@@ -735,9 +644,6 @@ begin
   FreeAndNil(FScreens);
 end;
 
-{******************************************************************************}
-{* Init screen                                                                *}
-{******************************************************************************}
 
 function TGDGUI.InitScreen(aFileName : String): TGDScreen;
 begin
@@ -745,36 +651,24 @@ begin
   FScreens.Add(result);
 end;
 
-{******************************************************************************}
-{* Clear screens                                                              *}
-{******************************************************************************}
 
 procedure TGDGUI.ClearScreens();
 begin
   FScreens.Clear();
 end;
 
-{******************************************************************************}
-{* Get screen visible                                                         *}
-{******************************************************************************}
 
 function TGDGUI.ScreenGetVisible(aScreen : TGDScreen): Boolean;
 begin
   result := aScreen.Visible;
 end;
 
-{******************************************************************************}
-{* Set screen visible                                                         *}
-{******************************************************************************}
 
 procedure TGDGUI.ScreenSetVisible(aScreen : TGDScreen; aVisible : Boolean);
 begin
   aScreen.Visible := aVisible;
 end;
 
-{******************************************************************************}
-{* Set screen visible                                                         *}
-{******************************************************************************}
 
 procedure TGDGUI.RenderScreens();
 var

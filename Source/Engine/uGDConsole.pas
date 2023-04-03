@@ -1,33 +1,6 @@
-{*******************************************************************************
-*                            Genesis Device Engine                             *
-*                   Copyright © 2007-2022 Luuk van Venrooij                    *
-*                        http://www.luukvanvenrooij.nl                         *
-*                         luukvanvenrooij84@gmail.com                          *
-********************************************************************************
-*                                                                              *
-*  This file is part of the Genesis Device Engine                              *
-*                                                                              *
-*  The Genesis Device Engine is free software: you can redistribute            *
-*  it and/or modify it under the terms of the GNU Lesser General Public        *
-*  License as published by the Free Software Foundation, either version 3      *
-*  of the License, or any later version.                                       *
-*                                                                              *
-*  The Genesis Device Engine is distributed in the hope that                   *
-*  it will be useful, but WITHOUT ANY WARRANTY; without even the               *
-*  implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.    *
-*  See the GNU Lesser General Public License for more details.                 *
-*                                                                              *
-*  You should have received a copy of the GNU General Public License           *
-*  along with Genesis Device.  If not, see <http://www.gnu.org/licenses/>.     *
-*                                                                              *
-*******************************************************************************}   
 unit uGDConsole;
 
 {$MODE objfpc}
-
-{******************************************************************************}
-{* Holds the console class for logging commands                               *}
-{******************************************************************************}
 
 interface
 
@@ -42,11 +15,6 @@ uses
   uGDStringParsing;
 
 type
-
-{******************************************************************************}
-{* Console class                                                              *}
-{******************************************************************************}
-
   TGDCommandType = (CT_BOOLEAN, CT_INTEGER, CT_FLOAT, CT_FUNCTION);
 
   PBoolean  = ^Boolean;
@@ -65,10 +33,6 @@ type
   end;
 
   TGDCommandMap = specialize TFPGMap<String, TGDCommand>;
-
-{******************************************************************************}
-{* Console class                                                              *}
-{******************************************************************************}
 
   TGDConsole = class
   private
@@ -108,9 +72,6 @@ implementation
 uses
   uGDEngine;
 
-{******************************************************************************}
-{* Show help                                                                  *}
-{******************************************************************************}
 
 procedure Help();
 var
@@ -126,9 +87,6 @@ begin
   GDConsole.Write('');
 end;
 
-{******************************************************************************}
-{* Create the console class                                                   *}
-{******************************************************************************}
 
 constructor TGDConsole.Create();
 begin
@@ -147,9 +105,6 @@ begin
   FLastTime := GDTiming.GetTime()+500;
 end;
 
-{******************************************************************************}
-{* Destroy the console class                                                  *}
-{******************************************************************************}
 
 destructor  TGDConsole.Destroy();
 begin
@@ -159,9 +114,6 @@ begin
   FreeAndNil(FCommandHistory);
 end;
 
-{******************************************************************************}
-{* Render the console                                                         *}
-{******************************************************************************}
 
 procedure TGDConsole.Render();
 var
@@ -209,9 +161,6 @@ begin
   glDisable(GL_BLEND);
 end;
 
-{******************************************************************************}
-{* Add a character to the console command input                               *}
-{******************************************************************************}
 
 procedure TGDConsole.AddChar( aChar : Char );
 begin
@@ -222,9 +171,6 @@ begin
   FCursorPos := FCursorPos + 1;
 end;
 
-{******************************************************************************}
-{* Control the console                                                        *}
-{******************************************************************************}
 
 procedure TGDConsole.Control( aKey : Integer );
 begin
@@ -289,10 +235,6 @@ begin
 end;
 
 
-{******************************************************************************}
-{* Write to the log                                                           *}
-{******************************************************************************}
-
 procedure TGDConsole.Write(aString : String; aNewLine : boolean = true);
 begin
   If FUse = False then exit;
@@ -303,9 +245,6 @@ begin
   FLogText.SaveToFile(ENGINE_LOG);
 end;
 
-{******************************************************************************}
-{* Write Ok or fail to the log                                                *}
-{******************************************************************************}
 
 procedure TGDConsole.WriteOkFail(aResult : boolean; aError : String; aIncludeFailed : boolean = true);
 begin
@@ -320,9 +259,6 @@ begin
   end;
 end;
 
-{******************************************************************************}
-{* Add a command to the console.                                              *}
-{******************************************************************************}
 
 procedure TGDConsole.AddCommand(aCommand, aHelp : String; aType : TGDCommandType; aPointer : Pointer );
 var
@@ -341,9 +277,6 @@ begin
   CommandMap.Sort;
 end;
 
-{******************************************************************************}
-{* Add a command to the console.                                              *}
-{******************************************************************************}
 
 procedure TGDConsole.ExecuteCommand(aCommand : String);
 var

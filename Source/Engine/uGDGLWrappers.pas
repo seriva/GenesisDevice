@@ -1,39 +1,8 @@
-{*******************************************************************************
-*                            Genesis Device Engine                             *
-*                   Copyright © 2007-2022 Luuk van Venrooij                    *
-*                        http://www.luukvanvenrooij.nl                         *
-********************************************************************************
-*                                                                              *
-*  This file is part of the Genesis Device Engine                              *
-*                                                                              *
-*  The Genesis Device Engine is free software: you can redistribute            *
-*  it and/or modify it under the terms of the GNU Lesser General Public        *
-*  License as published by the Free Software Foundation, either version 3      *
-*  of the License, or any later version.                                       *
-*                                                                              *
-*  The Genesis Device Engine is distributed in the hope that                   *
-*  it will be useful, but WITHOUT ANY WARRANTY; without even the               *
-*  implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.    *
-*  See the GNU Lesser General Public License for more details.                 *
-*                                                                              *
-*  You should have received a copy of the GNU General Public License           *
-*  along with Genesis Device.  If not, see <http://www.gnu.org/licenses/>.     *
-*                                                                              *
-*******************************************************************************}   
 unit uGDGLWrappers;
 
 {$MODE Delphi}
 
 interface
-
-{******************************************************************************}
-{* This unit holds wrappers arround some of the OpenGL functionality          *}
-{* - Vertex, fragment and geometry shaders.                                   *}
-{* - Frame and Render buffers                                                 *}
-{* - Display lists                                                            *}
-{* - Vertex buffers                                                           *}
-{* - Index buffers                                                            *}
-{******************************************************************************}
 
 uses
   SysUtils,
@@ -46,11 +15,6 @@ uses
   uGDTexture;
 
 Type
-
-{******************************************************************************}
-{* Shader class                                                               *}
-{******************************************************************************}
-
   TGDShaderType = (ST_GEOM, ST_VERT, ST_FRAG);
 
   TGDGLShader = class
@@ -76,9 +40,6 @@ Type
     procedure SetMatrix(aVariable : String; aMatrix : TGDMatrix);
   end;
 
-{******************************************************************************}
-{* Render buffer class                                                        *}
-{******************************************************************************}
 
   TGDGLRenderBuffer = class
   private
@@ -91,9 +52,6 @@ Type
     procedure Unbind();
   end;
 
-{******************************************************************************}
-{* Frame buffer class                                                         *}
-{******************************************************************************}
 
   TGDGLFrameBuffer = class
   private
@@ -109,9 +67,6 @@ Type
     procedure Status();
   end;
 
-{******************************************************************************}
-{* Displaylist class                                                          *}
-{******************************************************************************}
 
   TGDGLDisplayList = class
   private
@@ -125,9 +80,6 @@ Type
     procedure CallList();
   end;
 
-{******************************************************************************}
-{* VertexBuffer                                                               *}
-{******************************************************************************}
 
   TGDGLVertexBuffer = class
   private
@@ -144,9 +96,6 @@ Type
     procedure Render(aPrimitive : cardinal);
   end;
 
-{******************************************************************************}
-{* IndexBuffer                                                                *}
-{******************************************************************************}
 
   TGDGLIndexBuffer = class
   private
@@ -163,9 +112,6 @@ Type
     procedure Render(aPrimitive : cardinal);
   end;
 
-{******************************************************************************}
-{* Occlusion Query class                                                      *}
-{******************************************************************************}
 
   TGDGLOcclusionQuery = class
   private
@@ -183,10 +129,6 @@ implementation
 
 uses
   uGDEngine;
-
-{******************************************************************************}
-{* Create shader class                                                        *}
-{******************************************************************************}
 
 constructor TGDGLShader.Create(aFileName : string);
 var
@@ -260,9 +202,6 @@ begin
   GDConsole.WriteOkFail(iOk, iError);
 end;
 
-{******************************************************************************}
-{* Destroy shader class                                                       *}
-{******************************************************************************}
 
 destructor  TGDGLShader.Destroy();
 
@@ -283,9 +222,6 @@ begin
   glDeleteObjectARB(FProgramObject);
 end;
 
-{******************************************************************************}
-{* Get the infolog after the shader is compiled                               *}
-{******************************************************************************}
 
 function TGDGLShader.GetInfoLog(aObject : GLhandleARB): String;
 var
@@ -302,9 +238,6 @@ begin
   end;
 end;
 
-{******************************************************************************}
-{* Load and compile a shader shader                                           *}
-{******************************************************************************}
 
 function TGDGLShader.LoadShader( aSrc: String; atype: GLenum): GLhandleARB;
 var
@@ -326,90 +259,60 @@ begin
   result := iShader;
 end;
 
-{******************************************************************************}
-{* Enable the shader                                                          *}
-{******************************************************************************}
 
 procedure TGDGLShader.Bind();
 begin
   glUseProgramObjectARB(FProgramObject);
 end;
 
-{******************************************************************************}
-{* Disable the shader                                                         *}
-{******************************************************************************}
 
 procedure TGDGLShader.UnBind();
 begin
   glUseProgramObjectARB(0);
 end;
 
-{******************************************************************************}
-{* Pass an int to the compiled shader shader program                          *}
-{******************************************************************************}
 
 procedure TGDGLShader.SetInt(aVariable : String;  aV : integer);
 begin
    glUniform1iARB( glGetUniformLocationARB(FProgramObject, @PAnsiChar(AnsiString(aVariable))[0]), aV);
 end;
 
-{******************************************************************************}
-{* Pass a float to the compiled shader program                                *}
-{******************************************************************************}
 
 procedure TGDGLShader.SetFloat(aVariable : String; aV : Double);
 begin
   glUniform1fARB( glGetUniformLocationARB(FProgramObject, @PAnsiChar(AnsiString(aVariable))[0]), aV);
 end;
 
-{******************************************************************************}
-{*  Pass 2 floats to the compiled shader program                              *}
-{******************************************************************************}
 
 procedure TGDGLShader.SetFloat2(aVariable : String; aV0, aV1 : Double);
 begin
   glUniform2fARB( glGetUniformLocationARB(FProgramObject, @PAnsiChar(AnsiString(aVariable))[0]), aV0, aV1);
 end;
 
-{******************************************************************************}
-{* Pass 3 floats to the compiled shader program                               *}
-{******************************************************************************}
 
 procedure TGDGLShader.SetFloat3(aVariable : String; aV0, aV1, aV2 : Double);
 begin
   glUniform3fARB( glGetUniformLocationARB(FProgramObject, @PAnsiChar(AnsiString(aVariable))[0]), aV0, aV1, aV2);
 end;
 
-{******************************************************************************}
-{* Pass 4 floats to the compiled shader program                               *}
-{******************************************************************************}
 
 procedure TGDGLShader.SetFloat4(aVariable : String; aV0, aV1, aV2, aV3 : Double);
 begin
   glUniform4fARB( glGetUniformLocationARB(FProgramObject, @PAnsiChar(AnsiString(aVariable))[0]),aV0, aV1, aV2, aV3);
 end;
 
-{******************************************************************************}
-{* Pass matrix to the compiled shader program                                 *}
-{******************************************************************************}
 
 procedure TGDGLShader.SetMatrix(aVariable : String; aMatrix : TGDMatrix);
 begin
   glUniformMatrix4fv( glGetUniformLocationARB(FProgramObject, @PAnsiChar(AnsiString(aVariable))[0]), 1, false, @aMatrix.data[0]);
 end;
 
-{******************************************************************************}
-{* Create the framebuffer class                                               *}
-{******************************************************************************}
 
 constructor TGDGLFrameBuffer.Create();
 begin
   glGenFrameBuffersEXT(1, @FBufferID);
 end;
 
-{******************************************************************************}
-{* Destroy the framebuffer class                                              *}
-{******************************************************************************}
 
 destructor TGDGLFrameBuffer.Destroy();
 begin
@@ -417,45 +320,30 @@ begin
   glDeleteFrameBuffers(1, @FBufferID);
 end;
 
-{******************************************************************************}
-{* Bind the framebuffer                                                       *}
-{******************************************************************************}
 
 procedure TGDGLFrameBuffer.Bind();
 begin
   glBindFramebuffer(GL_FRAMEBUFFER, FBufferID);
 end;
 
-{******************************************************************************}
-{* Unbind the framebuffer                                                     *}
-{******************************************************************************}
 
 procedure TGDGLFrameBuffer.Unbind();
 begin
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
 end;
 
-{******************************************************************************}
-{* Attach a texture to the frame buffer                                       *}
-{******************************************************************************}
 
 procedure TGDGLFrameBuffer.AttachTexture( aTexture : TGDTexture; aAttachement, aTexTarget : cardinal);
 begin
   glFramebufferTexture2D(GL_FRAMEBUFFER, aAttachement, aTexTarget, aTexture.Texture, 0);
 end;
 
-{******************************************************************************}
-{* Attach renderbuffer to the framebuffer                                     *}
-{******************************************************************************}
 
 procedure TGDGLFrameBuffer.AttachRenderBuffer(aRenderBuffer : TGDGLRenderBuffer; aAttachement : cardinal);
 begin
   glFramebufferRenderbuffer(GL_FRAMEBUFFER,aAttachement,GL_RENDERBUFFER,aRenderBuffer.FBufferID);
 end;
 
-{******************************************************************************}
-{* Get the status of the framebuffer                                          *}
-{******************************************************************************}
 
 procedure TGDGLFrameBuffer.Status();
 var
@@ -486,9 +374,6 @@ begin
   end;
 end;
 
-{******************************************************************************}
-{* Create the renderbuffer class                                              *}
-{******************************************************************************}
 
 constructor TGDGLRenderBuffer.Create(aSizeW, aSizeH : Integer; aFormat  : cardinal);
 begin
@@ -497,9 +382,6 @@ begin
   glRenderbufferStorage(GL_RENDERBUFFER, aFormat,aSizeW, aSizeH);
 end;
 
-{******************************************************************************}
-{* Destroy the renderbuffer class                                             *}
-{******************************************************************************}
 
 destructor  TGDGLRenderBuffer.Destroy();
 begin
@@ -507,36 +389,24 @@ begin
   glDeleteRenderBuffers(1, @FBufferID);
 end;
 
-{******************************************************************************}
-{* Bind the renderbuffer                                                      *}
-{******************************************************************************}
 
 procedure TGDGLRenderBuffer.Bind();
 begin
   glBindRenderBuffer(GL_RENDERBUFFER, FBufferID);
 end;
 
-{******************************************************************************}
-{* Unbind the renderbuffer                                                    *}
-{******************************************************************************}
 
 procedure TGDGLRenderBuffer.Unbind();
 begin
   glBindRenderBuffer(GL_RENDERBUFFER, 0);
 end;
 
-{******************************************************************************}
-{* Create the displaylist                                                     *}
-{******************************************************************************}
 
 constructor TGDGLDisplayList.Create();
 begin
   FDisplayList := glGenLists(1);
 end;
 
-{******************************************************************************}
-{* Destroy the displaylist                                                    *}
-{******************************************************************************}
 
 destructor  TGDGLDisplayList.Destroy();
 begin
@@ -544,36 +414,24 @@ begin
   inherited;
 end;
 
-{******************************************************************************}
-{* Start the creation of the list                                             *}
-{******************************************************************************}
 
 procedure TGDGLDisplayList.StartList();
 begin
   glNewList(FDisplayList,GL_COMPILE);
 end;
 
-{******************************************************************************}
-{* End the creation of the list                                               *}
-{******************************************************************************}
 
 procedure TGDGLDisplayList.EndList();
 begin
   glEndList();
 end;
 
-{******************************************************************************}
-{* Call the list                                                              *}
-{******************************************************************************}
 
 procedure TGDGLDisplayList.CallList();
 begin
   glCallList(FDisplayList);
 end;
 
-{******************************************************************************}
-{* Create VertexBuffer                                                        *}
-{******************************************************************************}
 
 constructor TGDGLVertexBuffer.Create();
 begin
@@ -582,9 +440,6 @@ begin
   FItemSize := 0;
 end;
 
-{******************************************************************************}
-{* Destroy VertexBuffer                                                       *}
-{******************************************************************************}
 
 destructor TGDGLVertexBuffer.Destroy();
 begin
@@ -592,9 +447,6 @@ begin
   inherited;
 end;
 
-{******************************************************************************}
-{* Bind VertexBuffer                                                          *}
-{******************************************************************************}
 
 procedure TGDGLVertexBuffer.Bind(aLayout : TGDVertexLayout);
 begin
@@ -635,9 +487,6 @@ begin
   end;
 end;
 
-{******************************************************************************}
-{* Bind VertexBuffer                                                          *}
-{******************************************************************************}
 
 procedure TGDGLVertexBuffer.UnBind();
 begin
@@ -648,9 +497,6 @@ begin
   glBindBuffer(GL_ARRAY_BUFFER, 0);
 end;
 
-{******************************************************************************}
-{* Update VertexBuffer data                                                   *}
-{******************************************************************************}
 
 procedure TGDGLVertexBuffer.Update(aData : TFPSList; aDrawType  : cardinal);
 begin
@@ -659,18 +505,12 @@ begin
   glBufferData(GL_ARRAY_BUFFER, FItemSize*FCount, aData.List, aDrawType);
 end;
 
-{******************************************************************************}
-{* Render VertexBuffer data                                                   *}
-{******************************************************************************}
 
 procedure TGDGLVertexBuffer.Render(aPrimitive : cardinal);
 begin
   glDrawArrays(aPrimitive, 0, FCount);
 end;
 
-{******************************************************************************}
-{* Create IndexBuffer                                                         *}
-{******************************************************************************}
 
 constructor TGDGLIndexBuffer.Create();
 begin
@@ -679,9 +519,6 @@ begin
   FItemSize := 0;
 end;
 
-{******************************************************************************}
-{* Destroy IndexBuffer                                                        *}
-{******************************************************************************}
 
 destructor TGDGLIndexBuffer.Destroy();
 begin
@@ -689,27 +526,18 @@ begin
   inherited;
 end;
 
-{******************************************************************************}
-{* Bind IndexBuffer                                                           *}
-{******************************************************************************}
 
 procedure TGDGLIndexBuffer.Bind();
 begin
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, FBufferID);
 end;
 
-{******************************************************************************}
-{* Bind VertexBuffer                                                          *}
-{******************************************************************************}
 
 procedure TGDGLIndexBuffer.UnBind();
 begin
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 end;
 
-{******************************************************************************}
-{* Update IndexBuffer data                                                   *}
-{******************************************************************************}
 
 procedure TGDGLIndexBuffer.Update(aData : TFPSList; aDrawType  : cardinal);
 begin
@@ -718,18 +546,12 @@ begin
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, FItemSize*FCount, aData.List, aDrawType);
 end;
 
-{******************************************************************************}
-{* Render IndexBuffer data                                                   *}
-{******************************************************************************}
 
 procedure TGDGLIndexBuffer.Render(aPrimitive : cardinal);
 begin
   glDrawElements(aPrimitive, FCount, GL_UNSIGNED_INT, nil);
 end;
 
-{******************************************************************************}
-{* Create the OcclusionQuery class                                            *}
-{******************************************************************************}
 
 constructor TGDGLOcclusionQuery.Create();
 begin
@@ -737,9 +559,6 @@ begin
   FState := OS_HIDDEN;
 end;
 
-{******************************************************************************}
-{* Destroy the OcclusionQuery class                                           *}
-{******************************************************************************}
 
 destructor TGDGLOcclusionQuery.Destroy();
 begin
@@ -747,9 +566,6 @@ begin
   glDeleteQueries(1, @FOQID);
 end;
 
-{******************************************************************************}
-{* Enable the OcclusionQuery                                                  *}
-{******************************************************************************}
 
 procedure TGDGLOcclusionQuery.Bind();
 begin
@@ -758,9 +574,6 @@ begin
   glBeginQuery(GL_SAMPLES_PASSED, FOQID);
 end;
 
-{******************************************************************************}
-{* Disable the OcclusionQuery                                                 *}
-{******************************************************************************}
 
 procedure TGDGLOcclusionQuery.UnBind();
 begin

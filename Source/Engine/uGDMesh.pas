@@ -1,25 +1,3 @@
-{*******************************************************************************
-*                            Genesis Device Engine                             *
-*                   Copyright © 2007-2022 Luuk van Venrooij                    *
-*                        http://www.luukvanvenrooij.nl                         *
-********************************************************************************
-*                                                                              *
-*  This file is part of the Genesis Device Engine                              *
-*                                                                              *
-*  The Genesis Device Engine is free software: you can redistribute            *
-*  it and/or modify it under the terms of the GNU Lesser General Public        *
-*  License as published by the Free Software Foundation, either version 3      *
-*  of the License, or any later version.                                       *
-*                                                                              *
-*  The Genesis Device Engine is distributed in the hope that                   *
-*  it will be useful, but WITHOUT ANY WARRANTY; without even the               *
-*  implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.    *
-*  See the GNU Lesser General Public License for more details.                 *
-*                                                                              *
-*  You should have received a copy of the GNU General Public License           *
-*  along with Genesis Device.  If not, see <http://www.gnu.org/licenses/>.     *
-*                                                                              *
-*******************************************************************************}   
 unit uGDMesh;
 
 {$mode objfpc}
@@ -41,11 +19,6 @@ Uses
   uGDStringParsing;
 
 Type
-
-{******************************************************************************}
-{* Surface class                                                              *}
-{******************************************************************************}
-
   TGDSurface = class (TObject)
   private
     FMaterial      : TGDMaterial;
@@ -65,9 +38,6 @@ Type
   end;
   TGDSurfaceList = specialize TFPGObjectList<TGDSurface>;
 
-{******************************************************************************}
-{* Mesh class                                                                 *}
-{******************************************************************************}
 
   TGDMesh = class (TGDResource)
   private
@@ -88,10 +58,6 @@ implementation
 uses
   uGDEngine;
 
-{******************************************************************************}
-{* Create surface                                                             *}
-{******************************************************************************}
-
 constructor TGDSurface.Create();
 begin
   FMaterial    := Nil;
@@ -100,9 +66,6 @@ begin
   Inherited;
 end;
 
-{******************************************************************************}
-{* Destroy surface                                                            *}
-{******************************************************************************}
 
 destructor TGDSurface.Destroy();
 begin
@@ -112,9 +75,6 @@ begin
   Inherited;
 end;
 
-{******************************************************************************}
-{* Render surface                                                             *}
-{******************************************************************************}
 
 procedure TGDSurface.Render(aRenderAttribute : TGDRenderAttribute; aRenderFor : TGDRenderFor);
 begin
@@ -145,9 +105,6 @@ begin
   FIndexBuffer.Unbind();
 end;
 
-{******************************************************************************}
-{* Create the mesh class                                                      *}
-{******************************************************************************}
 
 constructor TGDMesh.Create( aFileName : String );
 var
@@ -294,18 +251,12 @@ begin
   GDConsole.WriteOkFail(iResult, iError);
 end;
 
-{******************************************************************************}
-{* Destroy the mesh class                                                     *}
-{******************************************************************************}
 
 destructor  TGDMesh.Destroy();
 begin
   FreeAndnil(FSurfaces);
 end;
 
-{******************************************************************************}
-{* Create the segment dpl                                                     *}
-{******************************************************************************}
 
 procedure TGDMesh.CreateBuffers();
 var

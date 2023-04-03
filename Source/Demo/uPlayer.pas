@@ -1,32 +1,6 @@
-{*******************************************************************************
-*                            Genesis Device Engine                             *
-*                   Copyright © 2007-2022 Luuk van Venrooij                    *
-*                        http://www.luukvanvenrooij.nl                         *
-********************************************************************************
-*                                                                              *
-*  This file is part of the Genesis Device Engine.                             *
-*                                                                              *
-*  The Genesis Device Engine is free software: you can redistribute            *
-*  it and/or modify it under the terms of the GNU Lesser General Public        *
-*  License as published by the Free Software Foundation, either version 3      *
-*  of the License, or any later version.                                       *
-*                                                                              *
-*  The Genesis Device Engine is distributed in the hope that                   *
-*  it will be useful, but WITHOUT ANY WARRANTY; without even the               *
-*  implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.    *
-*  See the GNU Lesser General Public License for more details.                 *
-*                                                                              *
-*  You should have received a copy of the GNU General Public License           *
-*  along with Genesis Device.  If not, see <http://www.gnu.org/licenses/>.     *
-*                                                                              *
-*******************************************************************************}
 unit uPlayer;
 
 {$MODE Delphi}
-
-{******************************************************************************}
-{* This units hold the playerobject for the game                              *}
-{******************************************************************************}
 
 interface
 
@@ -35,10 +9,6 @@ uses
   SysUtils;
 
 type
-
-{******************************************************************************}
-{* Player class                                                               *}
-{******************************************************************************}
 
   TPlayer = class
   private
@@ -75,10 +45,6 @@ implementation
 uses
   uMain;
 
-{******************************************************************************}
-{* Create player class                                                        *}
-{******************************************************************************}
-
 Constructor TPlayer.Create();
 begin
   inherited;
@@ -86,54 +52,36 @@ begin
   FSinkMultiplier     := 50;
 end;
 
-{******************************************************************************}
-{* Destroy player class                                                       *}
-{******************************************************************************}
 
 Destructor TPlayer.Destroy();
 begin
   inherited;
 end;
 
-{******************************************************************************}
-{*  Move forwards                                                             *}
-{******************************************************************************}
 
 procedure TPlayer.MoveForward();
 begin
   GDCamera.Move( MovementSpeed );
 end;
 
-{******************************************************************************}
-{* Move backwards                                                             *}
-{******************************************************************************}
 
 procedure TPlayer.MoveBackWard();
 begin
   GDCamera.Move( -MovementSpeed );
 end;
 
-{******************************************************************************}
-{* Move left                                                                  *}
-{******************************************************************************}
 
 procedure TPlayer.MoveLeft();
 begin
   GDCamera.Strafe(MovementSpeed);
 end;
 
-{******************************************************************************}
-{* Move right                                                                 *}
-{******************************************************************************}
 
 procedure TPlayer.MoveRight();
 begin
   GDCamera.Strafe(-MovementSpeed);
 end;
 
-{******************************************************************************}
-{* Set player running mode                                                    *}
-{******************************************************************************}
 
 Procedure TPlayer.Run();
 begin
@@ -146,9 +94,6 @@ begin
   if not(Clip) then FMovementMultiplier := 2000;
 end;
 
-{******************************************************************************}
-{* Set player walking mode                                                    *}
-{******************************************************************************}
 
 Procedure TPlayer.Walk();
 begin
@@ -161,9 +106,6 @@ begin
   if not(Clip) then FMovementMultiplier := 2000;
 end;
 
-{******************************************************************************}
-{* Check if the player is in water                                            *}
-{******************************************************************************}
 
 Function TPlayer.PlayerInWater() : boolean;
 begin
@@ -173,9 +115,6 @@ begin
     result := false;
 end;
 
-{******************************************************************************}
-{* Check if the under water                                                   *}
-{******************************************************************************}
 
 Function TPlayer.PlayerUnderWater() : boolean;
 begin
@@ -185,9 +124,6 @@ begin
     result := false;
 end;
 
-{******************************************************************************}
-{* Do player collision and physics                                            *}
-{******************************************************************************}
 
 procedure TPlayer.DoPlayerCollisionAndPhysics();
 var

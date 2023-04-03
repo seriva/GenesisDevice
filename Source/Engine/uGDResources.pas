@@ -1,25 +1,3 @@
-{*******************************************************************************
-*                            Genesis Device Engine                             *
-*                   Copyright © 2007-2022 Luuk van Venrooij                    *
-*                        http://www.luukvanvenrooij.nl                         *
-********************************************************************************
-*                                                                              *
-*  This file is part of the Genesis Device Engine                              *
-*                                                                              *
-*  The Genesis Device Engine is free software: you can redistribute            *
-*  it and/or modify it under the terms of the GNU Lesser General Public        *
-*  License as published by the Free Software Foundation, either version 3      *
-*  of the License, or any later version.                                       *
-*                                                                              *
-*  The Genesis Device Engine is distributed in the hope that                   *
-*  it will be useful, but WITHOUT ANY WARRANTY; without even the               *
-*  implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.    *
-*  See the GNU Lesser General Public License for more details.                 *
-*                                                                              *
-*  You should have received a copy of the GNU General Public License           *
-*  along with Genesis Device.  If not, see <http://www.gnu.org/licenses/>.     *
-*                                                                              *
-*******************************************************************************}
 unit uGDResources;
 
 {$mode objfpc}
@@ -40,11 +18,6 @@ uses
   FGL;
 
 type
-
- {******************************************************************************}
- {* Recourses class                                                            *}
- {******************************************************************************}
-
    TResources = specialize TFPGMap<String,TGDResource>;
    TGDResources = class (TResources)
    private
@@ -66,10 +39,6 @@ implementation
 uses
   uGDEngine;
 
-{******************************************************************************}
-{* Load a texture resource                                                    *}
-{******************************************************************************}
-
 function TGDResources.LoadTexture(aFileName : String; aDetail : TGDTextureDetail; aTextureFilter : TGDTextureFilter): TGDTexture;
 var
   iIdx : Integer;
@@ -84,9 +53,6 @@ begin
   end;
 end;
 
-{******************************************************************************}
-{* Load a mesh resource                                                       *}
-{******************************************************************************}
 
 function TGDResources.Loadmesh(aFileName : String): TGDMesh;
 var
@@ -108,9 +74,6 @@ begin
   end;
 end;
 
-{******************************************************************************}
-{* Load a sound buffer resource                                               *}
-{******************************************************************************}
 
 function TGDResources.LoadSoundBuffer(aFileName : String): TGDSoundBuffer;
 var
@@ -126,9 +89,6 @@ begin
   end;
 end;
 
-{******************************************************************************}
-{* Load a sound stream resource                                               *}
-{******************************************************************************}
 
 function TGDResources.LoadSoundStream(aFileName : String): TGDSoundStream;
 var
@@ -144,9 +104,6 @@ begin
   end;
 end;
 
-{******************************************************************************}
-{* Load materials                                                             *}
-{******************************************************************************}
 
 procedure TGDResources.LoadMaterials(aFileName : String);
 var
@@ -240,9 +197,6 @@ begin
   end;
 end;
 
-{******************************************************************************}
-{* Add a resources                                                            *}
-{******************************************************************************}
 
 procedure TGDResources.AddResource(aName : String; aResource : TGDResource);
 begin
@@ -252,9 +206,6 @@ begin
   Sort();
 end;
 
-{******************************************************************************}
-{* Add a resources                                                            *}
-{******************************************************************************}
 
 function  TGDResources.GetResource(aIndex : integer): TGDResource;
 begin
@@ -262,9 +213,6 @@ begin
   result.RefCount := result.RefCount-1;
 end;
 
-{******************************************************************************}
-{* Remove a resources                                                         *}
-{******************************************************************************}
 
 procedure TGDResources.RemoveResource(var aResource : TGDResource);
 var
@@ -285,9 +233,6 @@ begin
   end
 end;
 
-{******************************************************************************}
-{* Clear all resources                                                        *}
-{******************************************************************************}
 
 procedure TGDResources.Clear();
 var

@@ -1,39 +1,6 @@
-{*******************************************************************************
-*                            Genesis Device Engine                             *
-*                   Copyright © 2007-2022 Luuk van Venrooij                    *
-*                        http://www.luukvanvenrooij.nl                         *
-********************************************************************************
-*                                                                              *
-*  This file is part of the Genesis Device Engine                              *
-*                                                                              *
-*  The Genesis Device Engine is free software: you can redistribute            *
-*  it and/or modify it under the terms of the GNU Lesser General Public        *
-*  License as published by the Free Software Foundation, either version 3      *
-*  of the License, or any later version.                                       *
-*                                                                              *
-*  The Genesis Device Engine is distributed in the hope that                   *
-*  it will be useful, but WITHOUT ANY WARRANTY; without even the               *
-*  implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.    *
-*  See the GNU Lesser General Public License for more details.                 *
-*                                                                              *
-*  You should have received a copy of the GNU General Public License           *
-*  along with Genesis Device.  If not, see <http://www.gnu.org/licenses/>.     *
-*                                                                              *
-*******************************************************************************}   
 unit uGDInput;
 
 {$MODE objfpc}
-
-{******************************************************************************}
-{* This unit holds the input classes of the GD types of input actions:   *}
-{* - Direct (done every frame)                                                *}
-{* - Single (done once till the key is pressed again)                         *}
-{* - Up     (done as a keyup event)                                           *}
-{* - Down   (done as a keydown event)                                         *}
-{*                                                                            *}
-{* Currently only mouse buttons are not supported, but will be in feature     *}
-{* versions.                                                                  *}
-{******************************************************************************}
 
 interface
 
@@ -47,10 +14,6 @@ uses
 type
   PKeyStateArr = ^TKeyStateArr;
   TKeyStateArr = array[0..65000] of UInt8;
-
-{******************************************************************************}
-{* Inputaction class                                                          *}
-{******************************************************************************}
 
   TGDInputAction = class
   private
@@ -68,10 +31,6 @@ type
     procedure Execute();
   end;
   TGDInputActionList = specialize TFPGObjectList<TGDInputAction>;
-
-{******************************************************************************}
-{* Input class                                                                *}
-{******************************************************************************}
 
   TGDInput = class
   private
@@ -104,10 +63,6 @@ implementation
 uses
   uGDEngine;
 
-{******************************************************************************}
-{* Create inputaction class                                                   *}
-{******************************************************************************}
-
 Constructor TGDInputAction.Create(aKey: integer; aAction : TGDCallback;  aConsoleDisabled : boolean);
 begin
   FKey := aKey;
@@ -116,9 +71,6 @@ begin
   FConsoleDisabled := aConsoleDisabled;
 end;
 
-{******************************************************************************}
-{* Destroy inputaction class                                                  *}
-{******************************************************************************}
 
 Destructor  TGDInputAction.Destroy();
 begin
@@ -128,9 +80,6 @@ begin
   FConsoleDisabled := false;
 end;
 
-{******************************************************************************}
-{* Execute the inputaction                                                    *}
-{******************************************************************************}
 
 procedure TGDInputAction.Execute();
 begin
@@ -138,9 +87,6 @@ begin
       FAction();
 end;
 
-{******************************************************************************}
-{* Create the input class                                                     *}
-{******************************************************************************}
 
 Constructor TGDInput.Create();
 var
@@ -167,9 +113,6 @@ begin
   GDConsole.WriteOkFail(FInitialized, iError);
 end;
 
-{******************************************************************************}
-{* Destroy the input class                                                    *}
-{******************************************************************************}
 
 Destructor  TGDInput.Destroy();
 var
@@ -196,10 +139,6 @@ begin
 end;
 
 
-{******************************************************************************}
-{* Set key state                                                              *}
-{******************************************************************************}
-
 function TGDInput.KeyState(aKey : Byte): boolean;
 begin
   result := false;
@@ -207,9 +146,6 @@ begin
     result := FKeyBuffer^[aKey] <> 0;
 end;
 
-{******************************************************************************}
-{* Execute direct events                                                      *}
-{******************************************************************************}
 
 procedure TGDInput.Update();
 var
@@ -277,9 +213,6 @@ begin
   end;
 end;
 
-{******************************************************************************}
-{* Register an input action                                                   *}
-{******************************************************************************}
 
 procedure TGDInput.AddAction(aType : TGDInputTypes; aKey : integer; aAction : TGDCallback; aConsoleDisabled : boolean );
 var
@@ -294,9 +227,6 @@ begin
   end;
 end;
 
-{******************************************************************************}
-{* Clear the inputmanager                                                     *}
-{******************************************************************************}
 
 procedure TGDInput.Clear();
 begin

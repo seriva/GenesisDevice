@@ -1,26 +1,4 @@
-{*******************************************************************************
-*                            Genesis Device Engine                             *
-*                   Copyright © 2007-2022 Luuk van Venrooij                    *
-*                        http://www.luukvanvenrooij.nl                         *
-********************************************************************************
-*                                                                              *
-*  This file is part of the Genesis Device Engine                              *
-*                                                                              *
-*  The Genesis Device Engine is free software: you can redistribute            *
-*  it and/or modify it under the terms of the GNU Lesser General Public        *
-*  License as published by the Free Software Foundation, either version 3      *
-*  of the License, or any later version.                                       *
-*                                                                              *
-*  The Genesis Device Engine is distributed in the hope that                   *
-*  it will be useful, but WITHOUT ANY WARRANTY; without even the               *
-*  implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.    *
-*  See the GNU Lesser General Public License for more details.                 *
-*                                                                              *
-*  You should have received a copy of the GNU General Public License           *
-*  along with Genesis Device.  If not, see <http://www.gnu.org/licenses/>.     *
-*                                                                              *
-*******************************************************************************}   
-unit uGDWater;
+ unit uGDWater;
 
 {$MODE Delphi}
 
@@ -44,11 +22,6 @@ uses
   uGDTerrain;
 
 type
-
-{******************************************************************************}
-{* water class                                                                *}
-{******************************************************************************}
-
   TGDWater = Class
   private
     FLastTime        : Integer;
@@ -117,10 +90,6 @@ implementation
 uses
   uGDEngine;
 
-{******************************************************************************}
-{* Create the water class                                                     *}
-{******************************************************************************}
-
 constructor TGDWater.Create();
 begin
   FFrameBuffer     := TGDGLFrameBuffer.Create();
@@ -132,9 +101,6 @@ begin
   FVertices        := TGDVertex_V_UV_List.Create();
 end;
 
-{******************************************************************************}
-{* Destroy the water class                                                    *}
-{******************************************************************************}
 
 destructor  TGDWater.Destroy();
 begin
@@ -146,18 +112,12 @@ begin
   inherited;
 end;
 
-{******************************************************************************}
-{* Get the water height                                                       *}
-{******************************************************************************}
 
 function TGDWater.GetHeight() : Double;
 begin
   result := FBoundingBox.Max.Y;
 end;
 
-{******************************************************************************}
-{* Init the water                                                             *}
-{******************************************************************************}
 
 function TGDWater.InitWater(aTerrain : TGDTerrain; aNode : TJsonNode ) : boolean;
 var
@@ -225,9 +185,6 @@ begin
   GDConsole.WriteOkFail(result, iError);
 end;
 
-{******************************************************************************}
-{* Resize the water reflection texture and buffers                            *}
-{******************************************************************************}
 
 procedure TGDWater.Resize();
 begin
@@ -254,9 +211,6 @@ begin
   FReflection   := TGDTexture.Create(GL_RGBA, GL_RGBA, FWidth,FHeight);
 end;
 
-{******************************************************************************}
-{* Clear water                                                                *}
-{******************************************************************************}
 
 procedure TGDWater.Clear();
 var
@@ -293,18 +247,12 @@ begin
   FWaterLoaded := false;
 end;
 
-{******************************************************************************}
-{* Check if the water if visible                                              *}
-{******************************************************************************}
 
 Function TGDWater.Visible() : boolean;
 begin
   result := GDCamera.BoxInView(FBoundingBox);
 end;
 
-{******************************************************************************}
-{* Update animations                                                          *}
-{******************************************************************************}
 
 procedure TGDWater.Update();
 begin
@@ -324,9 +272,6 @@ begin
   end;
 end;
 
-{******************************************************************************}
-{* Start the reflection rendering of the water                                *}
-{******************************************************************************}
 
 procedure TGDWater.StartReflection();
 var
@@ -354,9 +299,6 @@ begin
   end
 end;
 
-{******************************************************************************}
-{* End the reflection rendering of the water                                  *}
-{******************************************************************************}
 
 procedure TGDWater.EndReflection();
 begin
@@ -370,9 +312,6 @@ begin
   FFrameBuffer.UnBind();
 end;
 
-{******************************************************************************}
-{* Start the water rendering                                                  *}
-{******************************************************************************}
 
 procedure TGDWater.StartRendering( aRenderAttribute : TGDRenderAttribute; aRenderFor : TGDRenderFor );
 begin
@@ -410,9 +349,6 @@ begin
   glDisable(GL_CULL_FACE);
 end;
 
-{******************************************************************************}
-{* End the water rendering                                                    *}
-{******************************************************************************}
 
 procedure TGDWater.EndRendering();
 begin
@@ -421,9 +357,6 @@ begin
   glDisable(GL_BLEND);
 end;
 
-{******************************************************************************}
-{* Check if camera is underwater                                              *}
-{******************************************************************************}
 
 function TGDWater.UnderWater(): boolean;
 begin
@@ -433,18 +366,12 @@ begin
     result := false;
 end;
 
-{******************************************************************************}
-{* Add vertex to water vertexlist                                             *}
-{******************************************************************************}
 
 function  TGDWater.AddVertex(aV : TGDVertex_V_UV): integer;
 begin
   result := FVertices.add(aV);
 end;
 
-{******************************************************************************}
-{* Update water VBO                                                           *}
-{******************************************************************************}
 
 procedure TGDWater.UpdateVBO();
 begin
@@ -453,9 +380,6 @@ begin
   FVertexBuffer.Unbind()
 end;
 
-{******************************************************************************}
-{* Bind the caustic texture                                                   *}
-{******************************************************************************}
 
 procedure TGDWater.BindCausticTexture();
 begin
@@ -465,9 +389,6 @@ begin
   end;
 end;
 
-{******************************************************************************}
-{* Bind the water texture                                                     *}
-{******************************************************************************}
 
 procedure TGDWater.BindWaterTexture();
 begin

@@ -1,26 +1,4 @@
-{*******************************************************************************
-*                            Genesis Device Engine                             *
-*                   Copyright © 2007-2022 Luuk van Venrooij                    *
-*                        http://www.luukvanvenrooij.nl                         *
-********************************************************************************
-*                                                                              *
-*  This file is part of the Genesis Device Engine                              *
-*                                                                              *
-*  The Genesis Device Engine is free software: you can redistribute            *
-*  it and/or modify it under the terms of the GNU Lesser General Public        *
-*  License as published by the Free Software Foundation, either version 3      *
-*  of the License, or any later version.                                       *
-*                                                                              *
-*  The Genesis Device Engine is distributed in the hope that                   *
-*  it will be useful, but WITHOUT ANY WARRANTY; without even the               *
-*  implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.    *
-*  See the GNU Lesser General Public License for more details.                 *
-*                                                                              *
-*  You should have received a copy of the GNU General Public License           *
-*  along with Genesis Device.  If not, see <http://www.gnu.org/licenses/>.     *
-*                                                                              *
-*******************************************************************************}   
-unit uGDSettings;
+  unit uGDSettings;
 
 {$MODE Delphi}
 
@@ -34,11 +12,6 @@ uses
   FileUtil;
 
 type
-
-{******************************************************************************}
-{* Settings class                                                             *}
-{******************************************************************************}
-
   TGDSettings = class
   private
     //window settings
@@ -124,10 +97,6 @@ uses
   uGDEngine,
   uGDConsole;
 
-{******************************************************************************}
-{* Create the settings class                                                  *}
-{******************************************************************************}
-
 constructor TGDSettings.Create();
 begin
   //window settings
@@ -165,18 +134,12 @@ begin
   GDConsole.AddCommand('RDetail', '0,1 : Enable or disable detail texturing', CT_BOOLEAN, @FUseDetail);
 end;
 
-{******************************************************************************}
-{* Destroy the settings class                                                 *}
-{******************************************************************************}
 
 destructor  TGDSettings.Destroy();
 begin
   inherited;
 end;
 
-{******************************************************************************}
-{* Load the settings from an ini-file                                         *}
-{******************************************************************************}
 
 procedure TGDSettings.Load();
 var
@@ -215,9 +178,6 @@ begin
   Save();
 end;
 
-{******************************************************************************}
-{* Saves the settings to an ini-files                                         *}
-{******************************************************************************}
 
 procedure TGDSettings.Save();
 var
@@ -255,9 +215,6 @@ begin
   FreeAndNil(iIniFile)
 end;
 
-{******************************************************************************}
-{* Set view distance                                                          *}
-{******************************************************************************}
 
 procedure TGDSettings.SetViewDistance(aDistance : Integer);
 var
@@ -272,9 +229,6 @@ begin
   FLOD2 := iStep * R_LOD2_DISTANCE;
 end;
 
-{******************************************************************************}
-{* Set texture detail                                                         *}
-{******************************************************************************}
 
 procedure TGDSettings.SetTextureDetail(aStr : String);
 var
@@ -284,18 +238,12 @@ begin
     If  aStr = TGDTextureDetailStrings[iI] then FTextureDetail := TGDTextureDetail(iI);
 end;
 
-{******************************************************************************}
-{* Get texture detail                                                         *}
-{******************************************************************************}
 
 function TGDSettings.GetTextureDetail() : String;
 begin
   result := TGDTextureDetailStrings[ Integer(FTextureDetail) ];
 end;
 
-{******************************************************************************}
-{* Set texture filter                                                         *}
-{******************************************************************************}
 
 procedure TGDSettings.SetTextureFilter(aStr : String);
 var
@@ -305,18 +253,12 @@ begin
     If  aStr = TGDTextureFilterStrings[iI] then FTextureFilter := TGDTextureFilter(iI);
 end;
 
-{******************************************************************************}
-{* Get texture filter                                                         *}
-{******************************************************************************}
 
 function TGDSettings.GetTextureFilter() : String;
 begin
   result := TGDTextureFilterStrings[ Integer(FTextureFilter) ];
 end;
 
-{******************************************************************************}
-{* Set water detail                                                           *}
-{******************************************************************************}
 
 procedure TGDSettings.SetWaterDetail(aStr : String);
 var
@@ -326,9 +268,6 @@ begin
     If  aStr = TGDWaterDetailStrings[iI] then FWaterDetail := TGDWaterDetail(iI);
 end;
 
-{******************************************************************************}
-{* Get the water detail                                                       *}
-{******************************************************************************}
 
 function TGDSettings.GetWaterDetail() : String;
 begin

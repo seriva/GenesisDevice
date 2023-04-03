@@ -1,34 +1,6 @@
-{*******************************************************************************
-*                            Genesis Device Engine                             *
-*                   Copyright © 2007-2022 Luuk van Venrooij                    *
-*                        http://www.luukvanvenrooij.nl                         *
-*                         luukvanvenrooij84@gmail.com                          *
-********************************************************************************
-*                                                                              *
-*  This file is part of the Genesis Device Engine                              *
-*                                                                              *
-*  The Genesis Device Engine is free software: you can redistribute            *
-*  it and/or modify it under the terms of the GNU Lesser General Public        *
-*  License as published by the Free Software Foundation, either version 3      *
-*  of the License, or any later version.                                       *
-*                                                                              *
-*  The Genesis Device Engine is distributed in the hope that                   *
-*  it will be useful, but WITHOUT ANY WARRANTY; without even the               *
-*  implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.    *
-*  See the GNU Lesser General Public License for more details.                 *
-*                                                                              *
-*  You should have received a copy of the GNU General Public License           *
-*  along with Genesis Device.  If not, see <http://www.gnu.org/licenses/>.     *
-*                                                                              *
-*******************************************************************************}   
 unit uGDMeshCell;
 
 {$MODE Delphi}
-
-
-{******************************************************************************}
-{* Holds the mesh cell class                                                  *}
-{******************************************************************************}
 
 interface
 
@@ -44,11 +16,6 @@ uses
   uGDTypesGenerics;
 
 type
-
-{******************************************************************************}
-{* Meshcell input record                                                      *}
-{******************************************************************************}
-
   TGDMeshCellInput = record
     Model         : String;
     ModelLOD1     : String;
@@ -62,9 +29,6 @@ type
     ReceiveShadow : Boolean;
   end;
 
-{******************************************************************************}
-{* Mesh cell class                                                            *}
-{******************************************************************************}
 
   TGDMeshCell = class (TGDBaseCell)
   private
@@ -98,9 +62,6 @@ type
     function TriangleCount() : Integer;
   end;
 
-  {******************************************************************************}
-  {*  MeshCell Surface                                                          *}
-  {******************************************************************************}
 
    TGDMeshCellSurface = record
     Surface  : TGDSurface;
@@ -120,9 +81,6 @@ begin
   B := true;
 end;
 
-{******************************************************************************}
-{* Create the meshcell class                                                  *}
-{******************************************************************************}
 
 constructor TGDMeshCell.Create(aInput : TGDMeshCellInput);
 var
@@ -202,9 +160,6 @@ begin
   FReceiveShadow := aInput.ReceiveShadow;
 end;
 
-{******************************************************************************}
-{* Destroy the  meshcell class                                                *}
-{******************************************************************************}
 
 destructor  TGDMeshCell.Destroy();
 begin
@@ -213,9 +168,6 @@ begin
   Inherited;
 end;
 
-{******************************************************************************}
-{* Render the meshcell                                                        *}
-{******************************************************************************}
 
 procedure TGDMeshCell.Render( aRenderAttribute : TGDRenderAttribute; aRenderFor : TGDRenderFor );
 var
@@ -283,9 +235,6 @@ begin
     end;
 end;
 
-{******************************************************************************}
-{* Apply meshcell settings                                                    *}
-{******************************************************************************}
 
 procedure TGDMeshCell.ApplyMeshCell(aRenderAttribute : TGDRenderAttribute; aRenderFor : TGDRenderFor);
 
@@ -309,9 +258,6 @@ begin
   GDRenderer.MeshShader.SetInt('I_FLIP_NORMAL', 0);
 end;
 
-{******************************************************************************}
-{* Return meshcell triangle count                                             *}
-{******************************************************************************}
 
 function TGDMeshCell.TriangleCount() : Integer;
 begin
