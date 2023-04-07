@@ -195,7 +195,7 @@ begin
   GDConsole.Write( '.....Done initializing game resources (' +  GDTiming.TimeInSeconds() + ' Sec)' );
 
   //map
-  GDMap.Load( 'Maps/Demo/map.json' );
+  GDMap.Load( 'Maps/Demo/map.map' );
 
   //final settings.
   IntroScreen.Visible := true;

@@ -18,7 +18,7 @@ function PrintLastLine(str){
 
 function ConvertObjToJson(file) {
     process.stdout.write(file + ' -> ')
-    let output = `${path.basename(file, '.obj')}.json`;
+    let output = `${path.basename(file, '.obj')}.mesh`;
     try {
         console.log(fs.existsSync(file))
         if (!fs.existsSync(file)) {

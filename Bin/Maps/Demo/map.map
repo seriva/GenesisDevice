@@ -162,9 +162,9 @@
                 "UpperLimit": 7500,
                 "Items": [
                     {
-                        "Model": "Models/Trees/tree_01_a/tree_01_a.obj",
-                        "ModelLOD1": "Models/Trees/tree_01_a/tree_01_a_lod1.obj",
-                        "ModelLOD2": "Models/Trees/tree_01_a/tree_01_a_lod2.obj",
+                        "Model": "Models/Trees/tree_01_a/tree_01_a.mesh",
+                        "ModelLOD1": "Models/Trees/tree_01_a/tree_01_a_lod1.mesh",
+                        "ModelLOD2": "Models/Trees/tree_01_a/tree_01_a_lod2.mesh",
                         "OffsetPosition": "0,-120,0",
                         "Scale": "800,800,800",
                         "RandomScale": "550,550,550",
@@ -176,9 +176,9 @@
                         "TerrainRotation": false
                     },
                     {
-                        "Model": "Models/Trees/tree_01_f/tree_01_f.obj",
-                        "ModelLOD1": "Models/Trees/tree_01_f/tree_01_f_lod1.obj",
-                        "ModelLOD2": "Models/Trees/tree_01_f/tree_01_f_lod2.obj",
+                        "Model": "Models/Trees/tree_01_f/tree_01_f.mesh",
+                        "ModelLOD1": "Models/Trees/tree_01_f/tree_01_f_lod1.mesh",
+                        "ModelLOD2": "Models/Trees/tree_01_f/tree_01_f_lod2.mesh",
                         "OffsetPosition": "0,-120,0",
                         "Scale": "800,800,800",
                         "RandomScale": "400,400,400",
@@ -190,9 +190,9 @@
                         "TerrainRotation": false
                     },
                     {
-                        "Model": "Models/Trees/tree_02_a/tree_02_a.obj",
-                        "ModelLOD1": "Models/Trees/tree_02_a/tree_02_a_lod1.obj",
-                        "ModelLOD2": "Models/Trees/tree_02_a/tree_02_a_lod2.obj",
+                        "Model": "Models/Trees/tree_02_a/tree_02_a.mesh",
+                        "ModelLOD1": "Models/Trees/tree_02_a/tree_02_a_lod1.mesh",
+                        "ModelLOD2": "Models/Trees/tree_02_a/tree_02_a_lod2.mesh",
                         "OffsetPosition": "0,-120,0",
                         "Scale": "800,800,800",
                         "RandomScale": "400,400,400",
@@ -204,7 +204,7 @@
                         "TerrainRotation": false
                     },
                     {
-                        "Model": "Models/Trees/bush_02/bush_02.obj",
+                        "Model": "Models/Trees/bush_02/bush_02.mesh",
                         "ModelLOD1": "",
                         "ModelLOD2": "",        
                         "OffsetPosition": "0,-50,0",                    
@@ -227,7 +227,7 @@
                 "UpperLimit": 50000,
                 "Items": [
                     {
-                        "Model": "Models/Rocks/rock1.obj",
+                        "Model": "Models/Rocks/rock1.mesh",
                         "ModelLOD1": "",
                         "ModelLOD2": "",        
                         "OffsetPosition": "0,0,0",  
@@ -241,7 +241,7 @@
                         "TerrainRotation": true
                     },
                     {
-                        "Model": "Models/Rocks/rock2.obj",
+                        "Model": "Models/Rocks/rock2.mesh",
                         "ModelLOD1": "",
                         "ModelLOD2": "",        
                         "OffsetPosition": "0,0,0",  
@@ -255,7 +255,7 @@
                         "TerrainRotation": true
                     },
                     {
-                        "Model": "Models/Rocks/rock3.obj",
+                        "Model": "Models/Rocks/rock3.mesh",
                         "ModelLOD1": "",
                         "ModelLOD2": "",        
                         "OffsetPosition": "0,0,0",  
@@ -269,7 +269,7 @@
                         "TerrainRotation": true
                     },
                     {
-                        "Model": "Models/Rocks/rock4.obj",
+                        "Model": "Models/Rocks/rock4.mesh",
                         "ModelLOD1": "",
                         "ModelLOD2": "",        
                         "OffsetPosition": "0,0,0",  
@@ -283,7 +283,7 @@
                         "TerrainRotation": true
                     },
                     {
-                        "Model": "Models/Rocks/rock5.obj",
+                        "Model": "Models/Rocks/rock5.mesh",
                         "ModelLOD1": "",
                         "ModelLOD2": "",        
                         "OffsetPosition": "0,0,0",  
@@ -297,7 +297,7 @@
                         "TerrainRotation": true
                     },
                     {
-                        "Model": "Models/Rocks/rock6.obj",
+                        "Model": "Models/Rocks/rock6.mesh",
                         "ModelLOD1": "",
                         "ModelLOD2": "",        
                         "OffsetPosition": "0,0,0",  
@@ -311,7 +311,7 @@
                         "TerrainRotation": true
                     },
                     {
-                        "Model": "Models/Rocks/rock7.obj",
+                        "Model": "Models/Rocks/rock7.mesh",
                         "ModelLOD1": "",
                         "ModelLOD2": "",        
                         "OffsetPosition": "0,0,0",  
@@ -325,7 +325,7 @@
                         "TerrainRotation": true
                     },
                     {
-                        "Model": "Models/Rocks/rock8.obj",
+                        "Model": "Models/Rocks/rock8.mesh",
                         "ModelLOD1": "",
                         "ModelLOD2": "",        
                         "OffsetPosition": "0,0,0",  
@@ -339,7 +339,7 @@
                         "TerrainRotation": true
                     },
                     {
-                        "Model": "Models/Rocks/rock9.obj",
+                        "Model": "Models/Rocks/rock9.mesh",
                         "ModelLOD1": "",
                         "ModelLOD2": "",        
                         "OffsetPosition": "0,0,0",  
@@ -353,7 +353,7 @@
                         "TerrainRotation": true
                     },
                     {
-                        "Model": "Models/Rocks/rock10.obj",
+                        "Model": "Models/Rocks/rock10.mesh",
                         "ModelLOD1": "",
                         "ModelLOD2": "",        
                         "OffsetPosition": "0,0,0",  
@@ -367,7 +367,7 @@
                         "TerrainRotation": true
                     },
                     {
-                        "Model": "Models/Rocks/rock11.obj",
+                        "Model": "Models/Rocks/rock11.mesh",
                         "ModelLOD1": "",
                         "ModelLOD2": "",        
                         "OffsetPosition": "0,0,0",  
@@ -381,7 +381,7 @@
                         "TerrainRotation": true
                     },
                     {
-                        "Model": "Models/Rocks/rock13.obj",
+                        "Model": "Models/Rocks/rock13.mesh",
                         "ModelLOD1": "",
                         "ModelLOD2": "",        
                         "OffsetPosition": "0,0,0",  
@@ -395,7 +395,7 @@
                         "TerrainRotation": true
                     },
                     {
-                        "Model": "Models/Rocks/rock14.obj",
+                        "Model": "Models/Rocks/rock14.mesh",
                         "ModelLOD1": "",
                         "ModelLOD2": "",        
                         "OffsetPosition": "0,0,0",  
@@ -409,7 +409,7 @@
                         "TerrainRotation": true
                     },
                     {
-                        "Model": "Models/Rocks/rock15.obj",
+                        "Model": "Models/Rocks/rock15.mesh",
                         "ModelLOD1": "",
                         "ModelLOD2": "",        
                         "OffsetPosition": "0,0,0",  
@@ -423,7 +423,7 @@
                         "TerrainRotation": true
                     },
                     {
-                        "Model": "Models/Rocks/rock16.obj",
+                        "Model": "Models/Rocks/rock16.mesh",
                         "ModelLOD1": "",
                         "ModelLOD2": "",        
                         "OffsetPosition": "0,0,0",  
@@ -442,7 +442,7 @@
     },
     "Models": [
         {
-            "Model": "Models/Buildings/docks.obj",
+            "Model": "Models/Buildings/docks.mesh",
             "ModelLOD1": "",
             "ModelLOD2": "", 
             "Position": "-17090,1000,13424",
@@ -452,7 +452,7 @@
             "ReceiveShadow": true
         },
         {
-            "Model": "Models/Buildings/docks.obj",
+            "Model": "Models/Buildings/docks.mesh",
             "ModelLOD1": "",
             "ModelLOD2": "", 
             "Position": "-13390,1000,13424",
@@ -462,7 +462,7 @@
             "ReceiveShadow": true
         },
         {
-            "Model": "Models/Buildings/Longhouse_LOD01.obj",
+            "Model": "Models/Buildings/Longhouse_LOD01.mesh",
             "ModelLOD1": "",
             "ModelLOD2": "", 
             "Position": "-14560,2015,19030",
@@ -472,7 +472,7 @@
             "ReceiveShadow": true
         },
         {
-            "Model": "Models/Buildings/Storehouse_LOD01.obj",
+            "Model": "Models/Buildings/Storehouse_LOD01.mesh",
             "ModelLOD1": "",
             "ModelLOD2": "", 
             "Position": "-18090,2015,19030",
@@ -482,7 +482,7 @@
             "ReceiveShadow": true
         },
         {
-            "Model": "Models/Buildings/Haywagon_LOD01.obj",
+            "Model": "Models/Buildings/Haywagon_LOD01.mesh",
             "ModelLOD1": "",
             "ModelLOD2": "", 
             "Position": "-16818,2015,16138",
@@ -492,7 +492,7 @@
             "ReceiveShadow": true
         },
         {
-            "Model": "Models/Buildings/Barrel_LOD01.obj",
+            "Model": "Models/Buildings/Barrel_LOD01.mesh",
             "ModelLOD1": "",
             "ModelLOD2": "", 
             "Position": "-18000,2185,20108",
@@ -502,7 +502,7 @@
             "ReceiveShadow": true
         },
         {
-            "Model": "Models/Buildings/Barrel_LOD01.obj",
+            "Model": "Models/Buildings/Barrel_LOD01.mesh",
             "ModelLOD1": "",
             "ModelLOD2": "", 
             "Position": "-17740,2185,20380",
@@ -512,7 +512,7 @@
             "ReceiveShadow": true
         },
         {
-            "Model": "Models/Buildings/Barrel_LOD01.obj",
+            "Model": "Models/Buildings/Barrel_LOD01.mesh",
             "ModelLOD1": "",
             "ModelLOD2": "", 
             "Position": "-18260,2185,20108",
@@ -522,7 +522,7 @@
             "ReceiveShadow": true
         },
         {
-            "Model": "Models/Buildings/Barrel_LOD01.obj",
+            "Model": "Models/Buildings/Barrel_LOD01.mesh",
             "ModelLOD1": "",
             "ModelLOD2": "", 
             "Position": "-17740,2185,20150",
@@ -532,7 +532,7 @@
             "ReceiveShadow": true
         },
         {
-            "Model": "Models/Buildings/Barrel_LOD01.obj",
+            "Model": "Models/Buildings/Barrel_LOD01.mesh",
             "ModelLOD1": "",
             "ModelLOD2": "", 
             "Position": "-18260,2185,19840",
@@ -542,7 +542,7 @@
             "ReceiveShadow": true
         },
         {
-            "Model": "Models/Buildings/Barrel_LOD01.obj",
+            "Model": "Models/Buildings/Barrel_LOD01.mesh",
             "ModelLOD1": "",
             "ModelLOD2": "", 
             "Position": "-17950,2185,19800",
@@ -552,7 +552,7 @@
             "ReceiveShadow": true
         },
         {
-            "Model": "Models/Buildings/Barrel_LOD01.obj",
+            "Model": "Models/Buildings/Barrel_LOD01.mesh",
             "ModelLOD1": "",
             "ModelLOD2": "", 
             "Position": "-18230,2185,19580",
@@ -562,7 +562,7 @@
             "ReceiveShadow": true
         },
         {
-            "Model": "Models/Buildings/Barrel_LOD01.obj",
+            "Model": "Models/Buildings/Barrel_LOD01.mesh",
             "ModelLOD1": "",
             "ModelLOD2": "", 
             "Position": "-17950,2185,19580",
@@ -572,7 +572,7 @@
             "ReceiveShadow": true
         },
         {
-            "Model": "Models/Buildings/Barrel_LOD01.obj",
+            "Model": "Models/Buildings/Barrel_LOD01.mesh",
             "ModelLOD1": "",
             "ModelLOD2": "", 
             "Position": "-18250,2185,19310",
@@ -582,7 +582,7 @@
             "ReceiveShadow": true
         },
         {
-            "Model": "Models/Buildings/Barrel_LOD01.obj",
+            "Model": "Models/Buildings/Barrel_LOD01.mesh",
             "ModelLOD1": "",
             "ModelLOD2": "", 
             "Position": "-18000,2185,19310",
@@ -592,7 +592,7 @@
             "ReceiveShadow": true
         },
         {
-            "Model": "Models/Buildings/Barrel_LOD01.obj",
+            "Model": "Models/Buildings/Barrel_LOD01.mesh",
             "ModelLOD1": "",
             "ModelLOD2": "", 
             "Position": "-18000,2185,20380",
@@ -602,7 +602,7 @@
             "ReceiveShadow": true
         },
         {
-            "Model": "Models/Buildings/Barrel_LOD01.obj",
+            "Model": "Models/Buildings/Barrel_LOD01.mesh",
             "ModelLOD1": "",
             "ModelLOD2": "", 
             "Position": "-18260,2185,20380",
@@ -612,7 +612,7 @@
             "ReceiveShadow": true
         },
         {
-            "Model": "Models/Buildings/Barrel_LOD01.obj",
+            "Model": "Models/Buildings/Barrel_LOD01.mesh",
             "ModelLOD1": "",
             "ModelLOD2": "", 
             "Position": "-18250,2185,19000",
@@ -622,7 +622,7 @@
             "ReceiveShadow": true
         },
         {
-            "Model": "Models/Buildings/Barrel_LOD01.obj",
+            "Model": "Models/Buildings/Barrel_LOD01.mesh",
             "ModelLOD1": "",
             "ModelLOD2": "", 
             "Position": "-18000,2185,19000",
@@ -632,7 +632,7 @@
             "ReceiveShadow": true
         },
         {
-            "Model": "Models/Buildings/Crate_LOD01.obj",
+            "Model": "Models/Buildings/Crate_LOD01.mesh",
             "ModelLOD1": "",
             "ModelLOD2": "", 
             "Position": "-17800,2185,18700",
@@ -642,7 +642,7 @@
             "ReceiveShadow": true
         },
         {
-            "Model": "Models/Buildings/Crate_LOD01.obj",
+            "Model": "Models/Buildings/Crate_LOD01.mesh",
             "ModelLOD1": "",
             "ModelLOD2": "", 
             "Position": "-17800,2185,18300",
@@ -652,7 +652,7 @@
             "ReceiveShadow": true
         },
         {
-            "Model": "Models/Buildings/Crate_LOD01.obj",
+            "Model": "Models/Buildings/Crate_LOD01.mesh",
             "ModelLOD1": "",
             "ModelLOD2": "", 
             "Position": "-17400,2185,17900",
@@ -662,7 +662,7 @@
             "ReceiveShadow": true
         },
         {
-            "Model": "Models/Buildings/Crate_LOD01.obj",
+            "Model": "Models/Buildings/Crate_LOD01.mesh",
             "ModelLOD1": "",
             "ModelLOD2": "", 
             "Position": "-17800,2185,17900",
@@ -672,7 +672,7 @@
             "ReceiveShadow": true
         },
         {
-            "Model": "Models/Buildings/Crate_LOD01.obj",
+            "Model": "Models/Buildings/Crate_LOD01.mesh",
             "ModelLOD1": "",
             "ModelLOD2": "", 
             "Position": "-17400,2500,17900",
@@ -682,7 +682,7 @@
             "ReceiveShadow": true
         },
         {
-            "Model": "Models/Buildings/Woodpile_LOD01.obj",
+            "Model": "Models/Buildings/Woodpile_LOD01.mesh",
             "ModelLOD1": "",
             "ModelLOD2": "", 
             "Position": "-16800,2140,19000",
@@ -692,7 +692,7 @@
             "ReceiveShadow": true
         },
         {
-            "Model": "Models/Buildings/Woodpile_LOD01.obj",
+            "Model": "Models/Buildings/Woodpile_LOD01.mesh",
             "ModelLOD1": "",
             "ModelLOD2": "", 
             "Position": "-16800,2140,18000",
@@ -702,7 +702,7 @@
             "ReceiveShadow": true
         },
         {
-            "Model": "Models/Buildings/Woodpile_LOD01.obj",
+            "Model": "Models/Buildings/Woodpile_LOD01.mesh",
             "ModelLOD1": "",
             "ModelLOD2": "", 
             "Position": "-16800,2140,20000",
