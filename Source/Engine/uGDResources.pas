@@ -113,12 +113,10 @@ var
   iIdx, iI  : Integer;
 begin
   try
-    If Not(FileExistsUTF8(aFileName) ) then
+    If Not(FileExists(aFileName) ) then
       Raise Exception.Create('');
     iMaterials := TJsonNode.Create();
     iMaterials.LoadFromFile(aFileName);
-
-    GDConsole.Write('Loading materials ' + aFileName + '...');
 
     for iI := 0 to iMaterials.Count-1 do
     begin

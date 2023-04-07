@@ -1,6 +1,6 @@
 [
     {
-        "Name": "Rock",
+        "Name": "rock",
         "ColorMap": "Models/Rocks/rock.dds",
         "DetailMap": "Textures/Detail/detail.dds",
         "HasAlpha": false,

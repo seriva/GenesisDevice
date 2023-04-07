@@ -123,7 +123,7 @@ begin
 
     FSurfaces := TGDSurfaceList.Create();
 
-    If Not(FileExistsUTF8(aFileName) ) then
+    If Not(FileExists(aFileName) ) then
       Raise Exception.Create('Mesh ' + aFileName + ' doesn`t excist!');
 
     //create the Json node
