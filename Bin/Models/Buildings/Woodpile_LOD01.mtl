@@ -1,31 +1,32 @@
-# Wavefront MTL file
-# Creator: Ultimate Unwrap3D Pro v3.27
-# URL: http://www.unwrap3d.com
-# Time: Thu Apr 11 09:36:52 2013
-# num_materials: 3
-
-newmtl Barkend01_BarkEnd01_D_tga_Smoothing
-colormap Models/Buildings/BarkEnd01_D.dds
-detailmap Textures/Detail/detail.dds    
-has_alpha false
-alpha_func 0.7
-detail_uv_mult 4
-detail_mult 0.4
-
-newmtl barkstripped_01_BarkStripped01_D_tga_Smoothing
-colormap Models/Buildings/BarkStripped01_D.dds
-detailmap Textures/Detail/detail.dds    
-has_alpha false
-alpha_func 0.7
-detail_uv_mult 4
-detail_mult 0.4
-
-newmtl Planks_old2_PlanksOld02_D_tga_Smoothing
-colormap Models/Buildings/PlanksOld02_D.dds
-detailmap Textures/Detail/detail.dds    
-has_alpha false
-alpha_func 0.7
-detail_uv_mult 4
-detail_mult 0.4
-
-# num_materials: 3
+[
+    {
+        "Name": "Barkend01_BarkEnd01_D_tga_Smoothing",
+        "ColorMap": "Models/Buildings/BarkEnd01_D.dds",
+        "DetailMap": "Textures/Detail/detail.dds",
+        "HasAlpha": false,
+        "AlphaFunc": 0.7,
+        "DetailUVMult": 4,
+        "DetailMult": 0.4,
+        "DoTreeAnim": false
+    },
+    {
+        "Name": "barkstripped_01_BarkStripped01_D_tga_Smoothing",
+        "ColorMap": "Models/Buildings/BarkStripped01_D.dds",
+        "DetailMap": "Textures/Detail/detail.dds",
+        "HasAlpha": false,
+        "AlphaFunc": 0.7,
+        "DetailUVMult": 4,
+        "DetailMult": 0.4,
+        "DoTreeAnim": false
+    },
+    {
+        "Name": "Planks_old2_PlanksOld02_D_tga_Smoothing",
+        "ColorMap": "Models/Buildings/PlanksOld02_D.dds",
+        "DetailMap": "Textures/Detail/detail.dds",
+        "HasAlpha": false,
+        "AlphaFunc": 0.7,
+        "DetailUVMult": 4,
+        "DetailMult": 0.4,
+        "DoTreeAnim": false
+    }
+]

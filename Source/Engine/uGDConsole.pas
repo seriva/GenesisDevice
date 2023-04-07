@@ -11,8 +11,7 @@ uses
   SDL2,
   dglOpenGL,
   uGDGUI,
-  uGDConstants,
-  uGDStringParsing;
+  uGDConstants;
 
 type
   TGDCommandType = (CT_BOOLEAN, CT_INTEGER, CT_FLOAT, CT_FUNCTION);
@@ -85,6 +84,12 @@ begin
     GDConsole.Write(iCommand.Command + ' - ' + iCommand.Help);
   end;
   GDConsole.Write('');
+end;
+
+
+function CharacterIsWhiteSpace(const aChar : AnsiChar ): boolean;
+begin
+  result := ((aChar = ' ') or (aChar = #9) or (aChar = #10) or (aChar = #13));
 end;
 
 

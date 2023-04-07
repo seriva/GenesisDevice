@@ -9,11 +9,9 @@
         <Filename Value="Demo.lpr"/>
         <IsPartOfProject Value="True"/>
         <IsVisibleTab Value="True"/>
-        <TopLine Value="30"/>
-        <CursorPos X="27" Y="42"/>
+        <CursorPos X="27" Y="30"/>
         <UsageCount Value="308"/>
         <Loaded Value="True"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit0>
       <Unit1>
         <Filename Value="..\Libraries\OpenGL\dglOpenGL.pas"/>
@@ -47,7 +45,6 @@
         <CursorPos X="34" Y="162"/>
         <UsageCount Value="308"/>
         <Loaded Value="True"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit4>
       <Unit5>
         <Filename Value="..\Libraries\SDL\sdlaudio.inc"/>
@@ -306,7 +303,6 @@
         <CursorPos X="3" Y="375"/>
         <UsageCount Value="229"/>
         <Loaded Value="True"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit44>
       <Unit45>
         <Filename Value="..\Engine\uGDConsole.pas"/>
@@ -388,7 +384,6 @@
         <CursorPos Y="153"/>
         <UsageCount Value="229"/>
         <Loaded Value="True"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit53>
       <Unit54>
         <Filename Value="..\Engine\uGDMaterial.pas"/>
@@ -425,7 +420,6 @@
         <CursorPos X="15" Y="72"/>
         <UsageCount Value="229"/>
         <Loaded Value="True"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit57>
       <Unit58>
         <Filename Value="..\Engine\uGDModes.pas"/>
@@ -518,7 +512,6 @@
       </Unit67>
       <Unit68>
         <Filename Value="..\Engine\uGDStringParsing.pas"/>
-        <IsPartOfProject Value="True"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="13"/>
         <CursorPos X="4" Y="33"/>
@@ -569,7 +562,6 @@
         <CursorPos X="20" Y="63"/>
         <UsageCount Value="229"/>
         <Loaded Value="True"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit73>
       <Unit74>
         <Filename Value="..\Engine\uGDTypesGenerics.pas"/>
@@ -637,7 +629,6 @@
         <UsageCount Value="226"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
-        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit80>
       <Unit81>
         <Filename Value="..\Libraries\OpenAL\al.inc"/>

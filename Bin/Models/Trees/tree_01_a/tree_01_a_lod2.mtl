@@ -1,4 +1,12 @@
-newmtl Material::lod_tree_01_a_LOD2
-colormap Models/Trees/tree_01_a/lod_tree_01_a.dds
-has_alpha true
-alpha_func 0.55
+[
+    {
+        "Name": "Material::lod_tree_01_a_LOD2",
+        "ColorMap": "Models/Trees/tree_01_a/lod_tree_01_a.dds",
+        "DetailMap": "",
+        "HasAlpha": true,
+        "AlphaFunc": 0.55,
+        "DetailUVMult": 1,
+        "DetailMult": 0.5,
+        "DoTreeAnim": false
+    }
+]

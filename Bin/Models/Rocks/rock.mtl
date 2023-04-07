@@ -1,7 +1,12 @@
-newmtl rock
-colormap Models/Rocks/rock.dds
-detailmap Textures/Detail/detail.dds
-has_alpha false
-alpha_func 0.7
-detail_uv_mult 60
-detail_mult 0.4
+[
+    {
+        "Name": "Rock",
+        "ColorMap": "Models/Rocks/rock.dds",
+        "DetailMap": "Textures/Detail/detail.dds",
+        "HasAlpha": false,
+        "AlphaFunc": 0.7,
+        "DetailUVMult": 60,
+        "DetailMult": 0.4,
+        "DoTreeAnim": false
+    }
+]

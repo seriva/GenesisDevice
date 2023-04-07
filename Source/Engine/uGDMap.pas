@@ -15,7 +15,6 @@ uses
   uGDWater,
   uGDCellManager,
   uGDMeshManager,
-  uGDStringparsing,
   uGDMeshCell;
 
 type

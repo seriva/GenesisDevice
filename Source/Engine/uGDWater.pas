@@ -10,7 +10,6 @@ uses
   LCLIntf,
   LCLType,
   JsonTools,
-  uGDStringParsing,
   SysUtils,
   dglOpenGL,
   uGDTexture,

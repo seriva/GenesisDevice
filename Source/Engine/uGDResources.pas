@@ -5,9 +5,9 @@ unit uGDResources;
 interface
 
 uses
-  uGDStringParsing,
   Classes,
   SysUtils,
+  JsonTools,
   uGDResource,
   uGDTexture,
   uGDMesh,
@@ -107,89 +107,42 @@ end;
 
 procedure TGDResources.LoadMaterials(aFileName : String);
 var
-  iFile : TMemoryStream;
+  iMaterials, iMaterial : TJsonNode;
   iMat  : TGDMaterial;
-  iStr  : String;
-  iIdx : Integer;
+  iName, iStr : String;
+  iIdx, iI  : Integer;
 begin
   try
     If Not(FileExistsUTF8(aFileName) ) then
       Raise Exception.Create('');
+    iMaterials := TJsonNode.Create();
+    iMaterials.LoadFromFile(aFileName);
 
-    iFile := TMemoryStream.Create();
-    iFile.LoadFromFile(aFileName);
-    CommentString := '#';
+    GDConsole.Write('Loading materials ' + aFileName + '...');
 
-    while (iFile.Position < iFile.Size) do
+    for iI := 0 to iMaterials.Count-1 do
     begin
-      iStr := GetNextToken(iFile);
-      if iStr = 'newmtl' then //read the material name
-      begin
-        iStr := GetNextToken(iFile);
-        iIdx := IndexOf(iStr);
-        if iIdx >= 0 then
-        begin
-          iMat:= nil;
-          continue;
-        end;
-        iMat := TGDMaterial.Create();
-        AddResource(iStr, iMat);
+      iMaterial := iMaterials.Child(iI);
+
+      iName := iMaterial.find('Name').AsString;
+      iIdx := IndexOf(iName);
+      if iIdx >= 0 then
         continue;
-      end else if iStr = 'colormap' then //load the material texture
-      begin
-        if iMat = nil then
-          continue;
-        iStr := GetNextToken(iFile);
-        iMat.Texture := GDResources.LoadTexture(iStr , GDSettings.TextureDetail,GDSettings.TextureFilter);
-        continue;
-      end else if iStr = 'detailmap' then //load the material detail
-      begin
-        if iMat = nil then
-          continue;
-        iStr := GetNextToken(iFile);
+      iMat := TGDMaterial.Create();
+      iMat.Texture := GDResources.LoadTexture(iMaterial.find('ColorMap').AsString , GDSettings.TextureDetail,GDSettings.TextureFilter);
+      iStr := iMaterial.find('DetailMap').AsString;
+      if iStr <> '' then
         iMat.Detail := GDResources.LoadTexture(iStr , GDSettings.TextureDetail,GDSettings.TextureFilter);
-        continue;
-      end
-      else if iStr = 'has_alpha' then //read alpha
-      begin
-        if iMat = nil then
-          continue;
-        iStr := GetNextToken(iFile);
-        iMat.HasAlpha:= iStr = 'true';
-        continue;
-      end
-      else if iStr = 'do_treeanim' then //read tree animation
-      begin
-        if iMat = nil then
-           continue;
-        iStr := GetNextToken(iFile);
-        iMat.DoTreeAnim:= iStr = 'true';
-        continue;
-      end
-      else if iStr = 'alpha_func' then //read alpha function
-      begin
-        if iMat = nil then
-          continue;
-        iStr := GetNextToken(iFile);
-        iMat.AlphaFunc := StrToFloat(iStr);
-        continue;
-      end else if iStr = 'detail_uv_mult' then //read detail uv mult
-      begin
-        if iMat = nil then
-          continue;
-        iStr := GetNextToken(iFile);
-        iMat.DetailUVMult := StrToInt(iStr);
-        continue;
-      end else if iStr = 'detail_mult' then //read detail mult
-      begin
-        if iMat = nil then
-          continue;
-        iStr := GetNextToken(iFile);
-        iMat.DetailMult := StrToFloat(iStr);
-        continue;
-      end;
+      iMat.HasAlpha     := iMaterial.Find('HasAlpha').AsBoolean; 
+      iMat.DoTreeAnim   := iMaterial.Find('DoTreeAnim').AsBoolean;
+      iMat.AlphaFunc    := iMaterial.Find('AlphaFunc').AsNumber;
+      iMat.DetailUVMult := Trunc(iMaterial.Find('DetailUVMult').AsNumber);
+      iMat.DetailMult   := iMaterial.Find('DetailMult').AsNumber;
+
+      AddResource(iName, iMat);
     end;
-    FreeAndNil(iFile);
+
+    FreeAndNil(iMaterials);
   except
     on E: Exception do
     begin

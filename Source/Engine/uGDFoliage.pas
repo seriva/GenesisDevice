@@ -10,7 +10,6 @@ uses
   dglOpenGL,
   JsonTools,
   uGDBmp,
-  uGDStringParsing,
   uGDTexture,
   uGDTypes,
   uGDConstants,

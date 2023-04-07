@@ -12,8 +12,7 @@ Uses
   uGDConstants,
   FileUtil,
   uGDResource,
-  uGDGLWrappers,
-  uGDStringParsing;
+  uGDGLWrappers;
 
 Type
   TGDMaterial = class (TGDResource)
