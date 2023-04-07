@@ -1,4 +1,7 @@
 {
+    "Materials": {
+        "File": "docks.mtl"
+    },
     "Surfaces" : [
         {
             "Material" : "_1___Default_Smoothing",

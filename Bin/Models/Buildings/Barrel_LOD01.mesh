@@ -1,4 +1,7 @@
 {
+    "Materials": {
+        "File": "Woodpile_LOD01.mtl"
+    },
     "Surfaces" : [
         {
             "Material" : "barrel01_Barrel01_D_tga_Smoothing",

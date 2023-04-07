@@ -1,4 +1,7 @@
 {
+    "Materials": {
+        "File": "tree_02_a.mtl"
+    },
     "Surfaces" : [
         {
             "Material" : "Material::bark_02_c",

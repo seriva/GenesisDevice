@@ -1,4 +1,7 @@
 {
+    "Materials": {
+        "File": "Crate_LOD01.mtl"
+    },
     "Surfaces" : [
         {
             "Material" : "crate_crate01_D_tga",

@@ -1,4 +1,7 @@
 {
+    "Materials": {
+        "File": "Haywagon_LOD01.mtl"
+    },
     "Surfaces" : [
         {
             "Material" : "Metal_MetalWorn01_D_tga_Smoothing",

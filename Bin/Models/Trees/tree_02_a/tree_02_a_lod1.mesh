@@ -1,4 +1,7 @@
 {
+    "Materials": {
+        "File": "tree_02_a_lod1.mtl"
+    },
     "Surfaces" : [
         {
             "Material" : "Material::leaves_03_c_LOD1",

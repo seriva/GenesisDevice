@@ -1,4 +1,7 @@
 {
+    "Materials": {
+        "File": "Storehouse_LOD01.mtl"
+    },
     "Surfaces" : [
         {
             "Material" : "Beam02_Beam02_D_tga",

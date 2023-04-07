@@ -1,4 +1,7 @@
 {
+    "Materials": {
+        "File": "bush_02.mtl"
+    },
     "Surfaces" : [
         {
             "Material" : "Material::leaves_03_c",

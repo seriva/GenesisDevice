@@ -1,4 +1,7 @@
 {
+    "Materials": {
+        "File": "rock.mtl"
+    },
     "Surfaces" : [
         {
             "Material" : "rock",
