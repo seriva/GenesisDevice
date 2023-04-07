@@ -204,7 +204,6 @@ end;
 
 procedure TGDVector.Reset(aArray: String);
 var
-  lStr : String;
   lSplit : TStringList;
 begin
   lSplit := TStringList.create;
@@ -411,7 +410,6 @@ end;
 
 procedure TGDColor.Reset(aArray: String);
 var
-  lStr : String;
   lSplit : TStringList;
 begin
   lSplit := TStringList.create;

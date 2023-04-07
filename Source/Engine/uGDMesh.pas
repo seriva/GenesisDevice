@@ -8,6 +8,7 @@ Uses
   fgl,
   SysUtils,
   Classes,
+  JsonTools,
   dglOpenGL,
   uGDTypes,
   uGDConstants,
@@ -15,8 +16,7 @@ Uses
   uGDGLWrappers,
   LazFileUtils,
   uGDTypesGenerics,
-  uGDResource,
-  uGDStringParsing;
+  uGDResource;
 
 Type
   TGDSurface = class (TObject)
@@ -108,50 +108,13 @@ end;
 
 constructor TGDMesh.Create( aFileName : String );
 var
-  iIdx : Integer;
-  iFile : TMemoryStream;
-  iSL : TStringList;
-  iStr, iError : String;
-  iVec, iNorm : TGDVector;
-  iUV : TGDUVCoord;
-  iMat : TGDMaterial;
-  iResult : boolean;
-  iSur : TGDSurface;
-  iVertices : TGDVertex_V_List;
-  iNormals  : TGDVertex_V_List;
-  iUVS      : TGDVertex_UV_List;
-
-function ParseVertex(aStr : String): TGDIdxVertex;
-begin
-  iSL.Clear();
-  ExtractStrings(['/'], [], PChar(AnsiString(aStr)), iSL);
-  result.Vertex := StrToInt(iSL.Strings[0])-1;
-  result.UV     := StrToInt(iSL.Strings[1])-1;
-  if iSL.Count > 2 then
-  	result.Normal := StrToInt(iSL.Strings[2])-1
-  else
-    result.Normal := -1;
-end;
-
-function AddVertex(iIdxVertex : TGDIdxVertex): integer;
-var
+  iMesh, iSurfaces, iSurface, iVerts, iNorms, iUVs, iIndices : TJsonNode;
+  iError, iStr : String;
+  iOffset, iCount, iI, iJ, iIdx : Integer;
   iV : TGDVertex_V_UV_N_C;
-begin
-  iV.Vertex := iVertices.Items[iIdxVertex.Vertex].Copy();
-  iV.UV     := iUVS.Items[iIdxVertex.UV].Copy();
-
-  if -1 <> iIdxVertex.Normal then
-  	iV.Normal := iNormals.Items[iIdxVertex.Normal].Copy()
-  else
-    iV.Normal.Reset(0,0,0);
-
-  if iSur.Material.DoTreeAnim then
-    iV.Color  := Color(0.75 + (Random(25)/100), 0.75 + (Random(25)/100), 0.75 + (Random(25)/100), 1)
-  else
-    iV.Color  := Color(1,1,1,1);
-
-  result := GDMap.MeshManager.Vertices.Add(iV);
-end;
+  iResult : boolean;
+  iMat : TGDMaterial;
+  iSur : TGDSurface;
 
 begin
   GDConsole.Write('Loading mesh ' + aFileName + '...');
@@ -159,80 +122,80 @@ begin
     iResult := true;
 
     FSurfaces := TGDSurfaceList.Create();
-    iSL       := TStringList.Create();
-    iVertices := TGDVertex_V_List.Create();
-    iNormals  := TGDVertex_V_List.Create();
-    iUVs      := TGDVertex_UV_List.Create();
 
     If Not(FileExistsUTF8(aFileName) ) then
       Raise Exception.Create('Mesh ' + aFileName + ' doesn`t excist!');
 
-    //create the filestream
+    //create the Json node
     Name := aFileName;
-    iFile := TMemoryStream.Create();
-    iFile.LoadFromFile(aFileName);
-
-    //set the comment string
-    CommentString := '#';
+    iMesh := TJsonNode.Create();
+    iMesh.LoadFromFile(aFileName);
     GDConsole.Use:=false;
 
-    while (iFile.Position < iFile.Size) do
-    begin
-      iStr := GetNextToken(iFile);
-      if iStr = 'mtllib' then //read the material lib
-      begin
-        iStr := GetNextToken(iFile);
-        GDResources.LoadMaterials(ExtractFilePath(aFileName) + iStr);
-        continue;
-      end
-      else if iStr = 'v' then //read a vertex
-      begin
-        iVec.x := StrToFloat(GetNextToken(iFile));
-        iVec.y := StrToFloat(GetNextToken(iFile));
-        iVec.z := StrToFloat(GetNextToken(iFile));
-        iVertices.Add(iVec);
-        continue;
-      end
-      else if iStr = 'vt' then //read a uv
-      begin
-        iUV.U := StrToFloat(GetNextToken(iFile));
-        iUV.V := -StrToFloat(GetNextToken(iFile));
-        iUVs.Add(iUV);
-        continue;
-      end
-      else if iStr = 'vn' then //read a normal
-      begin
-        iNorm.x := StrToFloat(GetNextToken(iFile));
-        iNorm.y := StrToFloat(GetNextToken(iFile));
-        iNorm.z := StrToFloat(GetNextToken(iFile));
-        iNormals.Add(iNorm);
-        continue;
-      end
-      else if iStr = 'usemtl' then //read the current material for the faces
-      begin
-        iStr := GetNextToken(iFile);
-        if not(GDResources.Find(iStr, iIdx)) then
-           Raise Exception.Create('Material ' + iStr + ' doesn`t excist!');
-        iMat := TGDMaterial(GDResources.Data[iIdx]);
-        iSur := TGDSurface.Create();
-        iSur.FMaterial := iMat;
-        FSurfaces.Add(iSur);
-        continue;
-      end
-      else if iStr = 'f' then //read a face (we only support triangles)
-      begin
-        if (iSur = nil) then
-           Raise Exception.Create('No material for surface!');
+    //load materials
+    iStr := iMesh.Find('Materials/File').AsString;
+    GDResources.LoadMaterials(ExtractFilePath(aFileName) + iStr);
 
-        //we only support triangles now.
-        iSur.Indexes.Add( AddVertex(ParseVertex(GetNextToken(iFile))));
-        iSur.Indexes.Add( AddVertex(ParseVertex(GetNextToken(iFile))));
-        iSur.Indexes.Add( AddVertex(ParseVertex(GetNextToken(iFile))));
-        iSur.TriangleCount := iSur.TriangleCount + 1;
-        continue;
-      end;
+    //load vertices
+    iVerts :=  iMesh.Find('Vertices');
+    iNorms :=  iMesh.Find('Normals');
+    iUVs   :=  iMesh.Find('UVs');
+
+    iCount := iVerts.count div 3;
+    iOffset := GDMap.MeshManager.Vertices.count;
+    for iI := 0 to iCount-1 do
+    begin
+      //vertex
+      iV.Vertex.x := iVerts.Child((iI * 3)).AsNumber;
+      iV.Vertex.y := iVerts.Child((iI * 3) + 1).AsNumber;
+      iV.Vertex.z := iVerts.Child((iI * 3) + 2).AsNumber;
+
+      //normal
+      iV.Normal.x := iNorms.Child((iI * 3)).AsNumber;
+      iV.Normal.y := iNorms.Child((iI * 3) + 1).AsNumber;
+      iV.Normal.z := iNorms.Child((iI * 3) + 2).AsNumber;
+
+      //uv
+      iV.UV.u := iUVs.Child((iI * 2)).AsNumber;
+      iV.UV.v := -iUVs.Child((iI * 2) + 1).AsNumber;
+
+      //color
+      iV.Color  := Color(1,1,1,1);
+      GDMap.MeshManager.Vertices.Add(iV);
     end;
-    FreeAndNil(iFile);
+
+    //load surfaces
+    iSurfaces := iMesh.Find('Surfaces');
+    for iI := 0 to iSurfaces.Count-1 do
+    begin
+      iSurface := iSurfaces.Child(iI);
+
+      //get material
+      iStr := iSurface.Find('Material').AsString; 
+      if not(GDResources.Find(iStr, iIdx)) then
+        Raise Exception.Create('Material ' + iStr + ' doesn`t excist!');
+      iMat := TGDMaterial(GDResources.Data[iIdx]);
+
+      //create surface
+      iSur := TGDSurface.Create();
+      iSur.FMaterial := iMat;
+      FSurfaces.Add(iSur);
+
+      //indexes
+      iIndices := iSurface.Find('Indices');
+      for iJ := 0 to iIndices.count-1  do
+      begin
+        iIdx := Trunc(iIndices.Child(iJ).AsNumber) + iOffset;
+        iSur.FIndexes.Add(iIdx);
+        if iSur.Material.DoTreeAnim then
+        begin
+          iV := GDMap.MeshManager.Vertices[iIdx];
+          iV.Color := Color(0.75 + (Random(25)/100), 0.75 + (Random(25)/100), 0.75 + (Random(25)/100), 1);
+          GDMap.MeshManager.Vertices[iIdx] := iV;
+        end;
+      end;
+    end; 
+
     CreateBuffers();
   except
     on E: Exception do
@@ -242,11 +205,7 @@ begin
     end;
   end;
 
-  FreeAndNil(iSL);
-  FreeAndNil(iVertices);
-  FreeAndNil(iNormals);
-  FreeAndNil(iUVS);
-
+  FreeAndNil(iMesh);
   GDConsole.Use:=true;
   GDConsole.WriteOkFail(iResult, iError);
 end;
