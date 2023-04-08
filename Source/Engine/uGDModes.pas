@@ -5,10 +5,6 @@ unit uGDModes;
 interface
 
 uses
-  LCLIntf,
-  LCLType,
-  SysUtils,
-  dglOpenGL,
   uGDConstants;
 
 type

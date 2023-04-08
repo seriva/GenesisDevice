@@ -362,7 +362,7 @@ begin
   FText  := aLabel.Find('Text').AsString; 
   X      := Trunc(aLabel.Find('X').AsNumber);
   Y      := Trunc(aLabel.Find('Y').AsNumber); 
-  FColor.Reset(aLabel.Find('Color').AsString);
+  FColor.Reset(aLabel.Find('Color'));
 end;
 
 destructor  TGDLabel.Destroy();
@@ -539,7 +539,7 @@ begin
   FX := Trunc(aSettings.Find('Loading/X').AsNumber);
   FY := Trunc(aSettings.Find('Loading/Y').AsNumber);
   FBarOnly := false;
-  FBarColor.Reset(aSettings.Find('Loading/Bar').AsString);
+  FBarColor.Reset(aSettings.Find('Loading/Bar'));
 end;
 
 
@@ -623,9 +623,9 @@ begin
   iSettings := TJsonNode.Create();
   iSettings.LoadFromFile(GUI_JSON);
 
-  FFontColor.Reset(iSettings.Find('DefaultColors/Font').AsString);
-  FOutlineColor.Reset(iSettings.Find('DefaultColors/Outline').AsString);
-  FFillColor.Reset(iSettings.Find('DefaultColors/Fill').AsString);
+  FFontColor.Reset(iSettings.Find('DefaultColors/Font'));
+  FOutlineColor.Reset(iSettings.Find('DefaultColors/Outline'));
+  FFillColor.Reset(iSettings.Find('DefaultColors/Fill'));
   FFont          := TGDFont.Create(iSettings.Find('Font/Texture').AsString);
   FMouseCursor   := TGDMouseCursor.Create(iSettings.Find('Mouse/Texture').AsString, Trunc(iSettings.Find('Mouse/Size').AsNumber));
   FLoadingScreen := TGDLoadingScreen.Create(iSettings);

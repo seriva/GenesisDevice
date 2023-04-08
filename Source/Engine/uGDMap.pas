@@ -119,16 +119,16 @@ begin
   iMap.LoadFromFile(aFileName);
 
   //spawnpoint
-  FPlayerStart.Reset(iMap.Find('SpawnPoint/Position').AsString);
-  FPlayerViewAngle.Reset(iMap.Find('SpawnPoint/ViewAngle').AsString);
+  FPlayerStart.Reset(iMap.Find('SpawnPoint/Position'));
+  FPlayerViewAngle.Reset(iMap.Find('SpawnPoint/ViewAngle'));
 
   //directional light
-  FLightDirection.Reset(iMap.Find('Light/Direction').AsString);
-  FLightAmbient.Reset(iMap.Find('Light/Ambient').AsString);
-  FLightDiffuse.Reset(iMap.Find('Light/Diffuse').AsString);
+  FLightDirection.Reset(iMap.Find('Light/Direction'));
+  FLightAmbient.Reset(iMap.Find('Light/Ambient'));
+  FLightDiffuse.Reset(iMap.Find('Light/Diffuse'));
 
   //init fog
-  FFogColor.Reset(iMap.Find('Fog/Color').AsString);
+  FFogColor.Reset(iMap.Find('Fog/Color'));
   FFogDistance := GDSettings.ViewDistance;
   FFogMinDistance := (((FFogDistance * R_VIEW_DISTANCE_STEP) / 10) * 5);
   FFogMaxDistance := (((FFogDistance * R_VIEW_DISTANCE_STEP) / 10) * 7.5);
@@ -158,9 +158,9 @@ begin
     iMeshInput.Model         := iModel.Find('Model').AsString; 
     iMeshInput.ModelLOD1     := iModel.Find('ModelLOD1').AsString;
     iMeshInput.ModelLOD2     := iModel.Find('ModelLOD2').AsString;
-    iMeshInput.Position.Reset(iModel.Find('Position').AsString);
-    iMeshInput.Rotation.Reset(iModel.Find('Rotation').AsString);
-    iMeshInput.Scale.Reset(iModel.Find('Scale').AsString);
+    iMeshInput.Position.Reset(iModel.Find('Position'));
+    iMeshInput.Rotation.Reset(iModel.Find('Rotation'));
+    iMeshInput.Scale.Reset(iModel.Find('Scale'));
     iMeshInput.FadeDistance  := 0;
     iMeshInput.FadeScale     := 0;
     iMeshInput.CastShadow    := iModel.Find('CastShadow').AsBoolean; 

@@ -5,7 +5,6 @@ unit uGDWindow;
 interface
 
 uses
-  Classes,
   SysUtils,
   SDL2,
   uGDConstants,

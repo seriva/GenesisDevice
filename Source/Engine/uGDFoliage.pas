@@ -111,8 +111,8 @@ uses
 constructor TGDLayerItem.Create(aNode : TJsonNode);
 begin
   TerrainRotation := aNode.Find('TerrainRotation').AsBoolean;
-  Scale.Reset(aNode.Find('Scale').AsString);
-  RandomScale.Reset(aNode.Find('RandomScale').AsString);
+  Scale.Reset(aNode.Find('Scale'));
+  RandomScale.Reset(aNode.Find('RandomScale'));
   CoverOfTotal    := aNode.Find('CoverOfTotal').AsNumber;
 end;
 
@@ -142,9 +142,9 @@ begin
   Mesh           := GDResources.Loadmesh(aNode.Find('Model').AsString);
   MeshLOD1       := GDResources.Loadmesh(aNode.Find('ModelLOD1').AsString);
   MeshLOD2       := GDResources.Loadmesh(aNode.Find('ModelLOD2').AsString);
-  OffsetPosition.Reset(aNode.Find('OffsetPosition').AsString);
-  Rotation.Reset(aNode.Find('Rotation').AsString);
-  RandomRotation.Reset(aNode.Find('RandomRotation').AsString);
+  OffsetPosition.Reset(aNode.Find('OffsetPosition'));
+  Rotation.Reset(aNode.Find('Rotation'));
+  RandomRotation.Reset(aNode.Find('RandomRotation'));
  	CastShadow     := aNode.Find('CastShadow').AsBoolean;
 	ReceiveShadow  := aNode.Find('ReceiveShadow').AsBoolean;
 end;

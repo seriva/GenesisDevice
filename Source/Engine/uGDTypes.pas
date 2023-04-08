@@ -8,13 +8,14 @@ interface
 uses
   Classes,
   Math,
+  JsonTools,
   SysUtils,
   dglOpenGL;
 
 type
   TGDVector = record
     procedure   Reset(aX,aY,aZ: Single); overload;
-    procedure   Reset(aArray: String); overload;
+    procedure   Reset(aArray: TJsonNode); overload;
     procedure   SetX(aX : Single);
     procedure   SetY(aY : Single);
     procedure   SetZ(aZ : Single);
@@ -58,7 +59,7 @@ type
 
   TGDColor = record
     procedure   Reset(aR,aG,aB,aA : Single); overload;
-    procedure   Reset(aArray: String); overload;
+    procedure   Reset(aArray: TJsonNode); overload;
     function    Copy() : TGDColor;
 
     procedure   Red();
@@ -202,19 +203,11 @@ begin
   Z := aZ;
 end;
 
-procedure TGDVector.Reset(aArray: String);
-var
-  lSplit : TStringList;
+procedure TGDVector.Reset(aArray: TJsonNode);
 begin
-  lSplit := TStringList.create;
-  try
-    ExtractStrings([','], [], PChar(aArray), lSplit);
-    X := StrToFloat(lSplit.Strings[0]);
-    Y := StrToFloat(lSplit.Strings[1]);
-    Z := StrToFloat(lSplit.Strings[2]);
-  finally
-    lSplit.free;
-  end;
+  X := aArray.Child(0).AsNumber;
+  Y := aArray.Child(1).AsNumber;
+  Z := aArray.Child(2).AsNumber;
 end;
 
 
@@ -408,21 +401,14 @@ begin
   a := aA;
 end;
 
-procedure TGDColor.Reset(aArray: String);
-var
-  lSplit : TStringList;
+procedure TGDColor.Reset(aArray: TJsonNode);
 begin
-  lSplit := TStringList.create;
-  try 
-    ExtractStrings([','], [], PChar(aArray), lSplit);
-    r := StrToFloat(lSplit.Strings[0]);
-    g := StrToFloat(lSplit.Strings[1]);
-    b := StrToFloat(lSplit.Strings[2]);
-    a := StrToFloat(lSplit.Strings[3]);
-  finally
-    lSplit.free;
-  end;
+  r := aArray.Child(0).AsNumber;
+  g := aArray.Child(1).AsNumber;
+  b := aArray.Child(2).AsNumber;
+  a := aArray.Child(3).AsNumber;
 end;
+
 
 function TGDColor.Copy(): TGDColor;
 begin

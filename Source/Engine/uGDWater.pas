@@ -132,7 +132,7 @@ begin
 
     FCellCountX := (aTerrain.TerrainWidth-1) div TERRAIN_CELLSIZE;
     FCellCountY := (aTerrain.TerrainHeight-1) div TERRAIN_CELLSIZE;
-    FColor.Reset( aNode.Find('Color').AsString );
+    FColor.Reset( aNode.Find('Color') );
 
     FBoundingBox.Max.Reset(aTerrain.GetPoint(aTerrain.TerrainWidth-1, 0).Vertex.x,
                            aNode.Find('Height').AsNumber,
