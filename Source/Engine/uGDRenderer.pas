@@ -1,33 +1,6 @@
-{*******************************************************************************
-*                            Genesis Device Engine                             *
-*                   Copyright © 2007-2022 Luuk van Venrooij                    *
-*                        http://www.luukvanvenrooij.nl                         *
-********************************************************************************
-*                                                                              *
-*  This file is part of the Genesis Device Engine                              *
-*                                                                              *
-*  The Genesis Device Engine is free software: you can redistribute            *
-*  it and/or modify it under the terms of the GNU Lesser General Public        *
-*  License as published by the Free Software Foundation, either version 3      *
-*  of the License, or any later version.                                       *
-*                                                                              *
-*  The Genesis Device Engine is distributed in the hope that                   *
-*  it will be useful, but WITHOUT ANY WARRANTY; without even the               *
-*  implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.    *
-*  See the GNU Lesser General Public License for more details.                 *
-*                                                                              *
-*  You should have received a copy of the GNU General Public License           *
-*  along with Genesis Device.  If not, see <http://www.gnu.org/licenses/>.     *
-*                                                                              *
-*******************************************************************************}   
 unit uGDRenderer;
 
 {$MODE Delphi}
-
-{******************************************************************************}
-{* Hold the main renderer class. The render class is responsible for          *}
-{* managing the opengl window, opengl states and GLSL shaders.                *}
-{******************************************************************************}
 
 interface
 
@@ -41,11 +14,6 @@ uses
   uGDTypes;
 
 type
-
-{******************************************************************************}
-{* Renderer class                                                             *}
-{******************************************************************************}
-
   TGDRenderer  = Class
   private
     FState          : TGDRenderState;
@@ -125,10 +93,6 @@ implementation
 uses
   uGDConsole,
   uGDEngine;
-
-{******************************************************************************}
-{* Create the renderer class                                                  *}
-{******************************************************************************}
 
 constructor TGDRenderer.Create();
 var
@@ -260,9 +224,6 @@ begin
   end;
 end;
 
-{******************************************************************************}
-{* Destroy the renderer class                                                 *}
-{******************************************************************************}
 
 Destructor TGDRenderer.Destroy();
 var
@@ -293,9 +254,6 @@ begin
   GDConsole.WriteOkFail(iResult, iError);
 end;
 
-{******************************************************************************}
-{* Resize the windows viewport                                                *}
-{******************************************************************************}
 
 procedure TGDRenderer.ResizeViewPort();
 begin
@@ -308,9 +266,6 @@ begin
   InitFrameBuffers(GDWindow.ScaledWidth, GDWindow.ScaledHeight);
 end;
 
-{******************************************************************************}
-{* Set color                                                                  *}
-{******************************************************************************}
 
 procedure TGDRenderer.SetColor(aC : TGDColor);
 begin
@@ -326,9 +281,6 @@ begin
   FColorShader.SetInt('I_CUSTOM_TRANSLATE', 0);
 end;
 
-{******************************************************************************}
-{* Set joined paramters of shaders.                                           *}
-{******************************************************************************}
 
 procedure TGDRenderer.SetJoinedParams(aShader : TGDGLShader; aForShadows : boolean = false);
 begin
@@ -390,9 +342,6 @@ begin
   end;
 end;
 
-{******************************************************************************}
-{* Set the renderstate                                                        *}
-{******************************************************************************}
 
 procedure  TGDRenderer.RenderState( aState : TGDRenderState );
 begin
@@ -424,9 +373,6 @@ begin
     end;
 end;
 
-{******************************************************************************}
-{* Add line to render                                                         *}
-{******************************************************************************}
 
 procedure TGDRenderer.AddLine(aV1, aV2 : TGDVector);
 begin
@@ -434,9 +380,6 @@ begin
   FLinesVertices.Add( aV2.Copy() );
 end;
 
-{******************************************************************************}
-{* Init the shaders                                                           *}
-{******************************************************************************}
 
 procedure TGDRenderer.InitShaders();
 begin
@@ -457,9 +400,6 @@ begin
   GDConsole.Write('.....Done initializing shaders (' + GDTiming.TimeInSeconds + ' Sec)');
 end;
 
-{******************************************************************************}
-{* Clear the shaders                                                          *}
-{******************************************************************************}
 
 procedure TGDRenderer.ClearShaders();
 begin
@@ -476,9 +416,6 @@ begin
   FreeAndNil(FClearShader);
 end;
 
-{******************************************************************************}
-{* Init the framebuffers                                                      *}
-{******************************************************************************}
 
 procedure TGDRenderer.InitFrameBuffers(aWidth, aHeight : integer);
 var
@@ -517,9 +454,6 @@ begin
   FShadowFBO.Unbind();
 end;
 
-{******************************************************************************}
-{* Clear the framebuffers                                                     *}
-{******************************************************************************}
 
 procedure TGDRenderer.ClearFrameBuffers();
 begin
@@ -537,9 +471,6 @@ begin
   FreeAndNil(FShadowTex);
 end;
 
-{******************************************************************************}
-{* Clear frame                                                                *}
-{******************************************************************************}
 
 procedure TGDRenderer.ClearFrame();
 begin
@@ -547,9 +478,6 @@ begin
   glLoadIdentity;
 end;
 
-{******************************************************************************}
-{* Switch to ortho view                                                       *}
-{******************************************************************************}
 
 procedure TGDRenderer.SwitchToOrtho(aWidth, aHeight : integer);
 begin
@@ -563,9 +491,6 @@ begin
   glLoadIdentity();
 end;
 
-{******************************************************************************}
-{* Switch to perspective view                                                 *}
-{******************************************************************************}
 
 procedure TGDRenderer.SwitchToPerspective();
 begin
@@ -579,19 +504,11 @@ procedure TGDRenderer.Render();
 var
   iC : TGDColor;
 
-{******************************************************************************}
-{* Render static geometry                                                     *}
-{******************************************************************************}
-
 Procedure RenderStaticGeometry(aRenderFor : TGDRenderFor = RF_NORMAL);
 begin
   If GDModes.RenderSky then GDMap.SkyDome.Render();
   GDMap.RenderVisibleCells( RA_NORMAL, aRenderFor );
 end;
-
-{******************************************************************************}
-{* Render the screen quad for post processing                                 *}
-{******************************************************************************}
 
 procedure RenderQuad();
 begin
@@ -599,10 +516,6 @@ begin
   FQuadVertexBuffer.Render(GL_QUADS);
   FQuadVertexBuffer.Unbind()
 end;
-
-{******************************************************************************}
-{* Apply blur to a source image                                               *}
-{******************************************************************************}
 
 procedure ApplyBlurToImage( aSourceImage : TGDTexture; aBlurStrength : double );
 begin
@@ -633,9 +546,6 @@ begin
   glEnable(GL_DEPTH_TEST);
 end;
 
-{******************************************************************************}
-{* Render debug                                                               *}
-{******************************************************************************}
 
 Procedure RenderDebug();
 
@@ -660,10 +570,6 @@ begin
   If GDModes.RenderNodeBoxes then RenderLines(1,1,0,1, RA_NODE_BOXES);
 end;
 
-{******************************************************************************}
-{* Render water reflections                                                   *}
-{******************************************************************************}
-
 procedure RenderWaterReflection();
 begin
   If (GDModes.RenderWireframe = false) and GDMap.Water.Visible() then
@@ -681,10 +587,6 @@ begin
     GDMap.Water.EndReflection();
   end;
 end;
-
-{******************************************************************************}
-{* Render water reflections                                                   *}
-{******************************************************************************}
 
 procedure RenderShadowMap();
 var
@@ -753,10 +655,6 @@ begin
   end;
 end;
 
-{******************************************************************************}
-{* Render GUI                                                               *}
-{******************************************************************************}
-
 procedure RenderGUI();
 begin
   SwitchToOrtho(R_HUD_WIDTH, R_HUD_HEIGHT);
@@ -766,10 +664,6 @@ begin
     GDGUI.MouseCursor.Render();
   SwitchToPerspective();
 end;
-
-{******************************************************************************}
-{* Render source image                                                        *}
-{******************************************************************************}
 
 procedure RenderSourceImage(aUnderWater : boolean);
 
@@ -789,10 +683,6 @@ begin
     ApplyBlurToImage( FFrameShadowTex, 8);
 end;
 
-{******************************************************************************}
-{* Clear buffers                                                              *}
-{******************************************************************************}
-
 procedure ClearBuffers();
 begin
   glDisable(GL_DEPTH_TEST);
@@ -806,10 +696,6 @@ begin
   FFrameFBO.Unbind();
   glEnable(GL_DEPTH_TEST);
 end;
-
-{******************************************************************************}
-{* Render the final source image                                              *}
-{******************************************************************************}
 
 procedure RenderFinal();
 begin

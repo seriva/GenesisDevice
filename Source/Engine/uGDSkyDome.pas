@@ -1,39 +1,13 @@
-{*******************************************************************************
-*                            Genesis Device Engine                             *
-*                   Copyright © 2007-2022 Luuk van Venrooij                    *
-*                        http://www.luukvanvenrooij.nl                         *
-********************************************************************************
-*                                                                              *
-*  This file is part of the Genesis Device Engine                              *
-*                                                                              *
-*  The Genesis Device Engine is free software: you can redistribute            *
-*  it and/or modify it under the terms of the GNU Lesser General Public        *
-*  License as published by the Free Software Foundation, either version 3      *
-*  of the License, or any later version.                                       *
-*                                                                              *
-*  The Genesis Device Engine is distributed in the hope that                   *
-*  it will be useful, but WITHOUT ANY WARRANTY; without even the               *
-*  implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.    *
-*  See the GNU Lesser General Public License for more details.                 *
-*                                                                              *
-*  You should have received a copy of the GNU General Public License           *
-*  along with Genesis Device.  If not, see <http://www.gnu.org/licenses/>.     *
-*                                                                              *
-*******************************************************************************}   
 unit uGDSkyDome;
 
 {$MODE Delphi}
-
-{******************************************************************************}
-{* Holds the skydome class                                                    *}
-{******************************************************************************}
 
 interface
 
 uses
   Classes,
   SysUtils,
-  IniFiles,
+  JsonTools,
   dglOpenGL,
   uGDTexture,
   uGDTypes,
@@ -43,11 +17,6 @@ uses
   uGDTypesGenerics;
 
 type
-
-{******************************************************************************}
-{* Skydome class                                                              *}
-{******************************************************************************}
-
   TGDSkyDome = class
   private
     FIndexBuffer     : TGDGLIndexBuffer;
@@ -70,7 +39,7 @@ type
     constructor Create();
     destructor  Destroy(); override;
 
-    procedure InitSkyDome( aIniFile : TIniFile; aSize : Double );
+    procedure InitSkyDome( aNode : TJsonNode; aSize : Double );
     procedure Clear();
     procedure Render();
 
@@ -83,18 +52,11 @@ implementation
 uses
   uGDEngine;
 
-{******************************************************************************}
-{* Create the skydome class                                                   *}
-{******************************************************************************}
-
 constructor TGDSkyDome.Create();
 begin
   inherited;
 end;
 
-{******************************************************************************}
-{* Destroy the skydome class                                                  *}
-{******************************************************************************}
 
 destructor  TGDSkyDome.Destroy();
 begin
@@ -102,9 +64,6 @@ begin
   Inherited;
 end;
 
-{******************************************************************************}
-{* Clear the skydome                                                          *}
-{******************************************************************************}
 
 procedure TGDSkyDome.Clear();
 begin
@@ -118,9 +77,6 @@ begin
   FSunSize := 0.5;
 end;
 
-{******************************************************************************}
-{* Calculate the skydome                                                      *}
-{******************************************************************************}
 
 procedure TGDSkyDome.CalculateDome( aSize : Double );
 var
@@ -182,31 +138,25 @@ begin
   FreeAndNil(iIndexes);
 end;
 
-{******************************************************************************}
-{* Init the skydome                                                           *}
-{******************************************************************************}
 
-procedure TGDSkyDome.InitSkyDome(  aIniFile : TIniFile; aSize : Double );
+procedure TGDSkyDome.InitSkyDome( aNode : TJsonNode; aSize : Double );
 begin
   Clear();
-  FCloudTexture := GDResources.LoadTexture(aIniFile.ReadString( 'Sky', 'CloudMap', 'sky.dds' ), GDSettings.TextureDetail, GDSettings.TextureFilter);
+  FCloudTexture := GDResources.LoadTexture( aNode.Find('CloudMap').AsString, GDSettings.TextureDetail, GDSettings.TextureFilter);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-  FIntensity := aIniFile.ReadFloat( 'Sky', 'Intensity', 0.5 );
-  FCloudUV   := aIniFile.ReadFloat( 'Sky', 'CloudUV', 1.0 );
-  FAniSpeed1 := aIniFile.ReadFloat( 'Sky', 'AniSpeed1', 1000.0 );
-  FAniSpeed2 := aIniFile.ReadFloat( 'Sky', 'AniSpeed2', 1000.0 );
+  FIntensity := aNode.Find('Intensity').AsNumber;
+  FCloudUV   := aNode.Find('CloudUV').AsNumber;
+  FAniSpeed1 := aNode.Find('AniSpeed1').AsNumber;
+  FAniSpeed2 := aNode.Find('AniSpeed2').AsNumber;
   CalculateDome(aSize);
 
-  FSunTexture := GDResources.LoadTexture(aIniFile.ReadString( 'Sky', 'SunMap', 'sun.dds' ), GDSettings.TextureDetail, GDSettings.TextureFilter);
-  FSunFlareTexture := GDResources.LoadTexture(aIniFile.ReadString( 'Sky', 'SunFlareMap', 'sunflare.dds' ), GDSettings.TextureDetail, GDSettings.TextureFilter);
+  FSunTexture := GDResources.LoadTexture(aNode.Find('SunMap').AsString, GDSettings.TextureDetail, GDSettings.TextureFilter);
+  FSunFlareTexture := GDResources.LoadTexture(aNode.Find('SunFlareMap').AsString, GDSettings.TextureDetail, GDSettings.TextureFilter);
   glGenQueries(1, @FSunQuery);
-  FSunSize := aIniFile.ReadFloat( 'Sky', 'SunSize', 0.5 );
+  FSunSize := aNode.Find('SunSize').AsNumber;
 end;
 
-{******************************************************************************}
-{* Render the skydome                                                         *}
-{******************************************************************************}
 
 procedure TGDSkyDome.Render();
 begin
@@ -246,9 +196,6 @@ begin
   glPopMatrix();
 end;
 
-{******************************************************************************}
-{* Render the sun                                                             *}
-{******************************************************************************}
 
 procedure TGDSkyDome.RenderSun();
 var
@@ -256,8 +203,8 @@ var
 begin
   iSunPos := GDCamera.Position.Copy();
   iTemp := GDMap.LightDirection.inverse();
-  iTemp.Multiply(50000);
-  iSunPos.Add(iTemp);
+  iTemp *= 50000;
+  iSunPos += iTemp;
 
   glEnable(GL_POINT_SPRITE);
   glEnable(GL_BLEND);
@@ -278,9 +225,6 @@ begin
   glDisable(GL_BLEND);
 end;
 
-{******************************************************************************}
-{* Render the sunflare                                                        *}
-{******************************************************************************}
 
 procedure TGDSkyDome.RenderSunFlare();
 var
@@ -289,8 +233,8 @@ var
 begin
   iSunPos := GDCamera.Position.Copy();
   iTemp := GDMap.LightDirection.inverse();
-  iTemp.Multiply(50000);
-  iSunPos.Add(iTemp);
+  iTemp *= 50000;
+  iSunPos += iTemp;
 
   glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
   glDepthMask(GL_FALSE);

@@ -1,21 +1,42 @@
-newmtl Material::leaves_03_c_LOD1
-colormap Models/Trees/shared/leaves_03_c.dds
-has_alpha true
-alpha_func 0.50
-do_treeanim true
-
-newmtl Material::bark_02_c_LOD1
-colormap Models/Trees/shared/bark_02_c.dds
-has_alpha false
-alpha_func 0.50
-
-newmtl  Material::bark_01_c_LOD1
-colormap Models/Trees/shared/bark_01_c.dds
-has_alpha false
-alpha_func 0.50
-
-newmtl Material::branch_01_c_LOD1
-colormap Models/Trees/shared/branch_01_c.dds
-has_alpha true
-alpha_func 0.50
-do_treeanim true
+[
+    {
+        "Name": "Material::leaves_03_c_LOD1",
+        "ColorMap": "Models/Trees/shared/leaves_03_c.dds",
+        "DetailMap": "",
+        "HasAlpha": true,
+        "AlphaFunc": 0.5,
+        "DetailUVMult": 1,
+        "DetailMult": 0.5,
+        "DoTreeAnim": true
+    },
+    {
+        "Name": "Material::bark_02_c_LOD1",
+        "ColorMap": "Models/Trees/shared/bark_02_c.dds",
+        "DetailMap": "",
+        "HasAlpha": false,
+        "AlphaFunc": 1,
+        "DetailUVMult": 1,
+        "DetailMult": 0.5,
+        "DoTreeAnim": false
+    },
+    {
+        "Name": "Material::bark_01_c_LOD1",
+        "ColorMap": "Models/Trees/shared/bark_01_c.dds",
+        "DetailMap": "",
+        "HasAlpha": false,
+        "AlphaFunc": 1,
+        "DetailUVMult": 1,
+        "DetailMult": 0.5,
+        "DoTreeAnim": false
+    },
+    {
+        "Name": "Material::branch_01_c_LOD1",
+        "ColorMap": "Models/Trees/shared/branch_01_c.dds",
+        "DetailMap": "",
+        "HasAlpha": true,
+        "AlphaFunc": 0.5,
+        "DetailUVMult": 1,
+        "DetailMult": 0.5,
+        "DoTreeAnim": true
+    }
+]

@@ -1,47 +1,17 @@
-{*******************************************************************************
-*                            Genesis Device Engine                             *
-*                   Copyright © 2007-2022 Luuk van Venrooij                    *
-*                        http://www.luukvanvenrooij.nl                         *
-********************************************************************************
-*                                                                              *
-*  This file is part of the Genesis Device Engine                              *
-*                                                                              *
-*  The Genesis Device Engine is free software: you can redistribute            *
-*  it and/or modify it under the terms of the GNU Lesser General Public        *
-*  License as published by the Free Software Foundation, either version 3      *
-*  of the License, or any later version.                                       *
-*                                                                              *
-*  The Genesis Device Engine is distributed in the hope that                   *
-*  it will be useful, but WITHOUT ANY WARRANTY; without even the               *
-*  implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.    *
-*  See the GNU Lesser General Public License for more details.                 *
-*                                                                              *
-*  You should have received a copy of the GNU General Public License           *
-*  along with Genesis Device.  If not, see <http://www.gnu.org/licenses/>.     *
-*                                                                              *
-*******************************************************************************}   
 unit uGDGUI;
 
 {$MODE objfpc}
 
 interface
 
-{******************************************************************************}
-{* This contains the main GUI class for ingame/inengine UI:                   *}
-{* - Loadingscreen                                                            *}
-{* - Mousecursor                                                              *}
-{* - Font                                                                     *}
-{******************************************************************************}
-
 uses
   fgl,
   sdl2,
   Classes,
-  IniFiles,
+  JsonTools,
   SysUtils,
   dglOpenGL,
   uGDTexture,
-  uGDStringParsing,
   uGDConstants,
   uGDWindow,
   uGDTypes;
@@ -147,11 +117,6 @@ const
   );
 
 type
-
-{******************************************************************************}
-{* GUI component classes                                                      *}
-{******************************************************************************}
-
   TGDComponent = class
   private
     FDepth : Integer;
@@ -172,7 +137,7 @@ type
     FHeight : Integer;
     FTexture : TGDTexture;
   public
-    constructor Create(aIniFile : TIniFile; aSection : String);
+    constructor Create(aPanel : TJsonNode);
     destructor  Destroy(); override;
     procedure   Render();  override;
   end;
@@ -183,7 +148,7 @@ type
     FText : String;
     FColor : TGDColor;
   public
-    constructor Create(aIniFile : TIniFile; aSection : String);
+    constructor Create(aLabel : TJsonNode);
     destructor  Destroy(); override;
     procedure   Render();  override;
   end;
@@ -201,9 +166,6 @@ type
   end;
   TGDScreenList = specialize TFPGObjectList<TGDScreen>;
 
-{******************************************************************************}
-{* Font class                                                                 *}
-{******************************************************************************}
 
   TGDFont = class
   private
@@ -218,14 +180,11 @@ type
     function    TextWidth(const str : String; const scale : Single = 1): Integer;
   end;
 
-{******************************************************************************}
-{* Mousecursor class                                                          *}
-{******************************************************************************}
 
   TGDMouseCursor = class
   private
     FCursorTexture : TGDTexture;
-    FVisible     : Boolean;
+    FVisible       : Boolean;
     FPosition      : TPoint;
     FCursorSize    : Integer;
   public
@@ -237,9 +196,6 @@ type
     procedure Render();
   end;
 
-{******************************************************************************}
-{* Loadingscreen class                                                        *}
-{******************************************************************************}
 
   TGDLoadingScreen = class
   private
@@ -257,16 +213,13 @@ type
     property Position : integer read FPosition write FPosition;
     property Use : boolean read FUse write FUse;
 
-    constructor Create(aIniFile : TIniFile);
+    constructor Create(aSettings : TJsonNode);
     destructor  Destroy();override;
 
     procedure   Start( aProcesName : String; aMax : integer );
     procedure   Update();
   end;
 
-{******************************************************************************}
-{* Main GUIManager class                                                      *}
-{******************************************************************************}
 
   TGDGUI = class
   private
@@ -357,25 +310,22 @@ begin
   end;
 end;
 
-{******************************************************************************}
-{* GUI component classes                                                      *}
-{******************************************************************************}
 
 procedure TGDComponent.Render();
 begin
   //Do nothing
 end;
 
-constructor TGDPanel.Create(aIniFile : TIniFile; aSection : String);
+constructor TGDPanel.Create(aPanel : TJsonNode);
 var
   iStr : String;
 begin
-  Depth := aIniFile.ReadInteger( aSection, 'Depth', 0 );;
-  X := aIniFile.ReadInteger( aSection, 'X', 0 );
-  Y := aIniFile.ReadInteger( aSection, 'Y', 0 );
-  FWidth  := aIniFile.ReadInteger( aSection, 'Width', 0 );
-  FHeight := aIniFile.ReadInteger( aSection, 'Height', 0 );
-  iStr := aIniFile.ReadString( aSection, 'Texture', '' );
+  Depth   := Trunc(aPanel.Find('Depth').AsNumber); 
+  X       := Trunc(aPanel.Find('X').AsNumber);
+  Y       := Trunc(aPanel.Find('Y').AsNumber);
+  FWidth  := Trunc(aPanel.Find('Width').AsNumber);
+  FHeight := Trunc(aPanel.Find('Height').AsNumber); 
+  iStr    := aPanel.Find('Texture').AsString;
   if iStr <> '' then
     FTexture := GDResources.LoadTexture(iStr, TD_HIGH, TF_TRILINEAR)
   else
@@ -405,14 +355,14 @@ begin
   end;
 end;
 
-constructor TGDLabel.Create(aIniFile : TIniFile; aSection : String);
+constructor TGDLabel.Create(aLabel : TJsonNode);
 begin
-  Depth  := aIniFile.ReadInteger( aSection, 'Depth', 0 );
-  FScale := aIniFile.ReadFloat( aSection, 'Scale', 1 );
-  FText  := aIniFile.ReadString( aSection, 'Text', '' );
-  X      := aIniFile.ReadInteger( aSection, 'X', 0 );
-  Y      := aIniFile.ReadInteger( aSection, 'Y', 0 );
-  FColor := ReadColor(aIniFile, aSection, 'Color');;
+  Depth  := Trunc(aLabel.Find('Depth').AsNumber); 
+  FScale := aLabel.Find('Scale').AsNumber;
+  FText  := aLabel.Find('Text').AsString; 
+  X      := Trunc(aLabel.Find('X').AsNumber);
+  Y      := Trunc(aLabel.Find('Y').AsNumber); 
+  FColor.Reset(aLabel.Find('Color'));
 end;
 
 destructor  TGDLabel.Destroy();
@@ -429,30 +379,25 @@ end;
 
 constructor TGDScreen.Create(aFileName : String);
 var
-  iIniFile : TIniFile;
+  iScreen, iElement : TJsonNode;
   iI       : Integer;
 begin
   FComponents := TGDComponentList.create();
   FVisible := false;
-  iIniFile := TIniFile.Create( aFileName );
+  iScreen := TJsonNode.Create();
+  iScreen.LoadFromFile(PATH_GUI_SCREENS + aFileName);
 
   //Panels
-  iI := 1;
-  while(iIniFile.SectionExists('Panel' + IntToStr(iI))) do
-  begin
-    FComponents.Add( TGDPanel.Create(iIniFile, 'Panel' + IntToStr(iI)));
-    iI := iI + 1;
-  end;
+  iElement := iScreen.Find('Panels');
+  for iI := 0 to iElement.Count-1 do
+    FComponents.Add( TGDPanel.Create(iElement.Child(iI)) );
 
   //Labels
-  iI := 1;
-  while(iIniFile.SectionExists('Label' + IntToStr(iI))) do
-  begin
-    FComponents.Add(TGDLabel.Create(iIniFile, 'Label' + IntToStr(iI)));
-    iI := iI + 1;
-  end;
+  iElement := iScreen.Find('Labels');
+  for iI := 0 to iElement.Count-1 do
+    FComponents.Add( TGDLabel.Create(iElement.Child(iI)) );
 
-  FreeAndNil(iIniFile);
+  FreeAndNil(iScreen);
 end;
 
 destructor  TGDScreen.Destroy();
@@ -469,9 +414,6 @@ begin
     FComponents.Items[iI].Render();
 end;
 
-{******************************************************************************}
-{* Create the font class                                                      *}
-{******************************************************************************}
 
 constructor TGDFont.Create(aTexture : string);
 begin
@@ -479,9 +421,6 @@ begin
   FTexture := GDResources.LoadTexture(aTexture, TD_HIGH, TF_TRILINEAR);
 end;
 
-{******************************************************************************}
-{* Destroy the font class                                                     *}
-{******************************************************************************}
 
 destructor TGDFont.Destroy();
 begin
@@ -489,9 +428,6 @@ begin
   inherited;
 end;
 
-{******************************************************************************}
-{* Text width the font                                                        *}
-{******************************************************************************}
 
 function TGDFont.TextWidth(const str : String; const scale : Single = 1): Integer;
 var
@@ -509,9 +445,6 @@ begin
   result := x;
 end;
 
-{******************************************************************************}
-{* Render a string                                                            *}
-{******************************************************************************}
 
 Procedure TGDFont.Render( aLeft, aTop, aScale : Double; aString : string);
 var
@@ -538,9 +471,6 @@ begin
   end;
 end;
 
-{******************************************************************************}
-{* Create the mousecursor class                                               *}
-{******************************************************************************}
 
 constructor TGDMouseCursor.Create(aFileName: String; aCursorSize : Integer );
 begin
@@ -549,9 +479,6 @@ begin
   FCursorTexture := GDResources.LoadTexture(aFileName, TD_HIGH, TF_TRILINEAR);
 end;
 
-{******************************************************************************}
-{* Destroy the mousecursor class                                              *}
-{******************************************************************************}
 
 destructor  TGDMouseCursor.Destroy();
 begin
@@ -560,9 +487,6 @@ begin
   FVisible := false;
 end;
 
-{******************************************************************************}
-{* Render the mousecursor                                                     *}
-{******************************************************************************}
 
 procedure TGDMouseCursor.Render();
 var
@@ -606,33 +530,24 @@ begin
   end;
 end;
 
-{******************************************************************************}
-{* Create the loadingscreen class                                             *}
-{******************************************************************************}
 
-constructor TGDLoadingScreen.Create(aIniFile : TIniFile);
+constructor TGDLoadingScreen.Create(aSettings : TJsonNode);
 begin
   FUse := true;
   FMax  := 100;
   FPosition := 0;
-  FX := aIniFile.ReadInteger('Loading', 'X', 1);
-  FY := aIniFile.ReadInteger('Loading', 'Y', 1);
+  FX := Trunc(aSettings.Find('Loading/X').AsNumber);
+  FY := Trunc(aSettings.Find('Loading/Y').AsNumber);
   FBarOnly := false;
-  FBarColor := ReadColor(aIniFile, 'Loading', 'Bar');
+  FBarColor.Reset(aSettings.Find('Loading/Bar'));
 end;
 
-{******************************************************************************}
-{* Destroy the loadingscreen class                                            *}
-{******************************************************************************}
 
 destructor TGDLoadingScreen.Destroy();
 begin
   inherited;
 end;
 
-{******************************************************************************}
-{* Update the loadingscreen                                                   *}
-{******************************************************************************}
 
 procedure TGDLoadingScreen.Update();
 begin
@@ -641,9 +556,6 @@ begin
   Render();
 end;
 
-{******************************************************************************}
-{* Setup the loadingscreen                                                    *}
-{******************************************************************************}
 
 procedure TGDLoadingScreen.Start( aProcesName : String; aMax : integer );
 begin
@@ -654,9 +566,6 @@ begin
   Render();
 end;
 
-{******************************************************************************}
-{* Render the loadingscreen                                                   *}
-{******************************************************************************}
 
 Procedure TGDLoadingScreen.Render();
 var
@@ -705,33 +614,27 @@ begin
   GDWindow.Swap();
 end;
 
-{******************************************************************************}
-{* Create the GUI class                                                       *}
-{******************************************************************************}
 
 constructor TGDGUI.Create();
 var
-  iIniFile      : TIniFile;
+  iSettings : TJsonNode;
 begin
   GDConsole.Use:=false;
-  iIniFile := TIniFile.Create( PATH_INITS + GUI_INI );
+  iSettings := TJsonNode.Create();
+  iSettings.LoadFromFile(GUI_JSON);
 
-  FFontColor    := ReadColor(iIniFile,'DefaultColors', 'Font');
-  FOutlineColor := ReadColor(iIniFile, 'DefaultColors', 'Outline');
-  FFillColor    := ReadColor(iIniFile, 'DefaultColors', 'Fill');
-  FFont          := TGDFont.Create(iIniFile.ReadString('Font', 'Texture', 'console.fnt'));
-  FMouseCursor   := TGDMouseCursor.Create(iIniFile.ReadString('Mouse', 'Texture', 'mouse.dds'),
-                                          iIniFile.ReadInteger('Mouse', 'Size', 40));
-  FLoadingScreen := TGDLoadingScreen.Create(iIniFile);
+  FFontColor.Reset(iSettings.Find('DefaultColors/Font'));
+  FOutlineColor.Reset(iSettings.Find('DefaultColors/Outline'));
+  FFillColor.Reset(iSettings.Find('DefaultColors/Fill'));
+  FFont          := TGDFont.Create(iSettings.Find('Font/Texture').AsString);
+  FMouseCursor   := TGDMouseCursor.Create(iSettings.Find('Mouse/Texture').AsString, Trunc(iSettings.Find('Mouse/Size').AsNumber));
+  FLoadingScreen := TGDLoadingScreen.Create(iSettings);
   FScreens       := TGDScreenList.Create();
 
-  FreeAndNil(iIniFile);
+  FreeAndNil(iSettings);
   GDConsole.Use:=true;
 end;
 
-{******************************************************************************}
-{* Destroy the GUI class                                                      *}
-{******************************************************************************}
 
 destructor  TGDGUI.Destroy();
 begin
@@ -741,9 +644,6 @@ begin
   FreeAndNil(FScreens);
 end;
 
-{******************************************************************************}
-{* Init screen                                                                *}
-{******************************************************************************}
 
 function TGDGUI.InitScreen(aFileName : String): TGDScreen;
 begin
@@ -751,36 +651,24 @@ begin
   FScreens.Add(result);
 end;
 
-{******************************************************************************}
-{* Clear screens                                                              *}
-{******************************************************************************}
 
 procedure TGDGUI.ClearScreens();
 begin
   FScreens.Clear();
 end;
 
-{******************************************************************************}
-{* Get screen visible                                                         *}
-{******************************************************************************}
 
 function TGDGUI.ScreenGetVisible(aScreen : TGDScreen): Boolean;
 begin
   result := aScreen.Visible;
 end;
 
-{******************************************************************************}
-{* Set screen visible                                                         *}
-{******************************************************************************}
 
 procedure TGDGUI.ScreenSetVisible(aScreen : TGDScreen; aVisible : Boolean);
 begin
   aScreen.Visible := aVisible;
 end;
 
-{******************************************************************************}
-{* Set screen visible                                                         *}
-{******************************************************************************}
 
 procedure TGDGUI.RenderScreens();
 var

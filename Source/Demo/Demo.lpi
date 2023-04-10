@@ -30,7 +30,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="..\Libraries\OpenGL;..\Libraries\OpenAL;..\Libraries\SDL;..\Libraries\Newton;..\Engine"/>
+            <OtherUnitFiles Value="..\Libraries\OpenGL;..\Libraries\OpenAL;..\Libraries\SDL;..\Libraries\Newton;..\Engine;..\Libraries\JsonTools"/>
             <UnitOutputDirectory Value="..\..\Build"/>
           </SearchPaths>
           <Parsing>
@@ -75,7 +75,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="..\Libraries\OpenGL;..\Libraries\OpenAL;..\Libraries\SDL;..\Libraries\Newton;..\Engine;$(ProjOutDir)"/>
-            <OtherUnitFiles Value="..\Libraries\OpenGL;..\Libraries\OpenAL;..\Libraries\SDL;..\Libraries\Newton;..\Engine"/>
+            <OtherUnitFiles Value="..\Libraries\OpenGL;..\Libraries\OpenAL;..\Libraries\SDL;..\Libraries\Newton;..\Engine;..\Libraries\JsonTools"/>
             <UnitOutputDirectory Value="..\..\Build"/>
           </SearchPaths>
           <Parsing>
@@ -396,83 +396,84 @@
         <IsPartOfProject Value="True"/>
       </Unit67>
       <Unit68>
-        <Filename Value="..\Engine\uGDStringParsing.pas"/>
+        <Filename Value="..\Engine\uGDTerrain.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit68>
       <Unit69>
-        <Filename Value="..\Engine\uGDTerrain.pas"/>
+        <Filename Value="..\Engine\uGDTerrainCell.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit69>
       <Unit70>
-        <Filename Value="..\Engine\uGDTerrainCell.pas"/>
+        <Filename Value="..\Engine\uGDTexture.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit70>
       <Unit71>
-        <Filename Value="..\Engine\uGDTexture.pas"/>
+        <Filename Value="..\Engine\uGDTiming.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit71>
       <Unit72>
-        <Filename Value="..\Engine\uGDTiming.pas"/>
+        <Filename Value="..\Engine\uGDTypes.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit72>
       <Unit73>
-        <Filename Value="..\Engine\uGDTypes.pas"/>
+        <Filename Value="..\Engine\uGDTypesGenerics.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit73>
       <Unit74>
-        <Filename Value="..\Engine\uGDTypesGenerics.pas"/>
+        <Filename Value="..\Engine\uGDWater.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit74>
       <Unit75>
-        <Filename Value="..\Engine\uGDWater.pas"/>
+        <Filename Value="..\Engine\uGDWaterCell.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit75>
       <Unit76>
-        <Filename Value="..\Engine\uGDWaterCell.pas"/>
+        <Filename Value="..\Engine\uGDWindow.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit76>
       <Unit77>
-        <Filename Value="..\Engine\uGDWindow.pas"/>
+        <Filename Value="uPlayer.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit77>
       <Unit78>
-        <Filename Value="uPlayer.pas"/>
+        <Filename Value="uMain.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit78>
       <Unit79>
-        <Filename Value="uMain.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit79>
-      <Unit80>
         <Filename Value="uConfiguration.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="ConfigurationForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
+      </Unit79>
+      <Unit80>
+        <Filename Value="..\Libraries\OpenAL\al.inc"/>
+        <IsPartOfProject Value="True"/>
       </Unit80>
       <Unit81>
-        <Filename Value="..\Libraries\OpenAL\al.inc"/>
+        <Filename Value="..\Libraries\OpenAL\alc.inc"/>
         <IsPartOfProject Value="True"/>
       </Unit81>
       <Unit82>
-        <Filename Value="..\Libraries\OpenAL\alc.inc"/>
+        <Filename Value="..\Libraries\OpenAL\alext.inc"/>
         <IsPartOfProject Value="True"/>
       </Unit82>
       <Unit83>
-        <Filename Value="..\Libraries\OpenAL\alext.inc"/>
+        <Filename Value="..\Libraries\OpenAL\openalsoft.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit83>
       <Unit84>
-        <Filename Value="..\Libraries\OpenAL\openalsoft.pas"/>
+        <Filename Value="..\Libraries\OpenAL\efx.inc"/>
         <IsPartOfProject Value="True"/>
       </Unit84>
       <Unit85>
-        <Filename Value="..\Libraries\OpenAL\efx.inc"/>
+        <Filename Value="..\Libraries\OpenAL\libmpg123.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit85>
       <Unit86>
-        <Filename Value="..\Libraries\OpenAL\libmpg123.pas"/>
+        <Filename Value="..\Libraries\JsonTools\jsontools.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="JsonTools"/>
       </Unit86>
     </Units>
   </ProjectOptions>
@@ -484,7 +485,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="..\Headers;..\Libraries\OpenGL;..\Libraries\Utils;$(ProjOutDir);..\Libraries\SDL;..\Libraries\OpenAL"/>
-      <OtherUnitFiles Value="..\Libraries\OpenGL;..\Libraries\OpenAL;..\Libraries\SDL;..\Libraries\Newton;..\Engine"/>
+      <OtherUnitFiles Value="..\Libraries\OpenGL;..\Libraries\OpenAL;..\Libraries\SDL;..\Libraries\Newton;..\Engine;..\Libraries\JsonTools"/>
       <UnitOutputDirectory Value="..\..\Build"/>
     </SearchPaths>
     <Parsing>

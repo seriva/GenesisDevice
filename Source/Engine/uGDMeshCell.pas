@@ -1,34 +1,6 @@
-{*******************************************************************************
-*                            Genesis Device Engine                             *
-*                   Copyright © 2007-2022 Luuk van Venrooij                    *
-*                        http://www.luukvanvenrooij.nl                         *
-*                         luukvanvenrooij84@gmail.com                          *
-********************************************************************************
-*                                                                              *
-*  This file is part of the Genesis Device Engine                              *
-*                                                                              *
-*  The Genesis Device Engine is free software: you can redistribute            *
-*  it and/or modify it under the terms of the GNU Lesser General Public        *
-*  License as published by the Free Software Foundation, either version 3      *
-*  of the License, or any later version.                                       *
-*                                                                              *
-*  The Genesis Device Engine is distributed in the hope that                   *
-*  it will be useful, but WITHOUT ANY WARRANTY; without even the               *
-*  implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.    *
-*  See the GNU Lesser General Public License for more details.                 *
-*                                                                              *
-*  You should have received a copy of the GNU General Public License           *
-*  along with Genesis Device.  If not, see <http://www.gnu.org/licenses/>.     *
-*                                                                              *
-*******************************************************************************}   
 unit uGDMeshCell;
 
 {$MODE Delphi}
-
-
-{******************************************************************************}
-{* Holds the mesh cell class                                                  *}
-{******************************************************************************}
 
 interface
 
@@ -44,11 +16,6 @@ uses
   uGDTypesGenerics;
 
 type
-
-{******************************************************************************}
-{* Meshcell input record                                                      *}
-{******************************************************************************}
-
   TGDMeshCellInput = record
     Model         : String;
     ModelLOD1     : String;
@@ -62,9 +29,6 @@ type
     ReceiveShadow : Boolean;
   end;
 
-{******************************************************************************}
-{* Mesh cell class                                                            *}
-{******************************************************************************}
 
   TGDMeshCell = class (TGDBaseCell)
   private
@@ -98,9 +62,6 @@ type
     function TriangleCount() : Integer;
   end;
 
-  {******************************************************************************}
-  {*  MeshCell Surface                                                          *}
-  {******************************************************************************}
 
    TGDMeshCellSurface = record
     Surface  : TGDSurface;
@@ -120,9 +81,6 @@ begin
   B := true;
 end;
 
-{******************************************************************************}
-{* Create the meshcell class                                                  *}
-{******************************************************************************}
 
 constructor TGDMeshCell.Create(aInput : TGDMeshCellInput);
 var
@@ -161,17 +119,16 @@ begin
 		For iJ := 0 to FMesh.Surfaces[iI].Indexes.Count - 1 do
     begin
       iVector := GDMap.MeshManager.Vertices.Items[FMesh.Surfaces[iI].Indexes[iJ]].Vertex.Copy();
-      iVector.Multiply(FScale);
-      iVector.Devide(100);
+      iVector := (iVector * FScale) / 100;
       FRotation.ApplyToVector(iVector);
-      iVector.Add( FPosition );
+      iVector += FPosition;
       iVertices.Add(iVector)
     end;
   end;
 
   iCenter.reset(0,0,0);
-  for iI := 0 to iVertices.Count-1 do iCenter.Add( iVertices.Items[iI] );
-  iCenter.Devide( iVertices.Count );
+  for iI := 0 to iVertices.Count-1 do iCenter += iVertices.Items[iI];
+  iCenter /= iVertices.Count;
   BoundingBox.Min.reset(iCenter.x, iCenter.y , iCenter.z);
   BoundingBox.Max.reset(iCenter.x, iCenter.y , iCenter.z);
 
@@ -203,9 +160,6 @@ begin
   FReceiveShadow := aInput.ReceiveShadow;
 end;
 
-{******************************************************************************}
-{* Destroy the  meshcell class                                                *}
-{******************************************************************************}
 
 destructor  TGDMeshCell.Destroy();
 begin
@@ -214,9 +168,6 @@ begin
   Inherited;
 end;
 
-{******************************************************************************}
-{* Render the meshcell                                                        *}
-{******************************************************************************}
 
 procedure TGDMeshCell.Render( aRenderAttribute : TGDRenderAttribute; aRenderFor : TGDRenderFor );
 var
@@ -269,14 +220,14 @@ begin
                             for iJ := 0 to iSur.Indexes.Count-1 do
                             begin
                               iV1 := GDMap.MeshManager.Vertices.Items[iSur.Indexes.Items[iJ]].Vertex.Copy();
-                              iV1.Multiply(FScale);
-                              iV1.Devide(100);
+                              iV1 *= FScale;
+                              iV1 /= 100;
                               FRotation.ApplyToVector(iV1);
-                              iV1.Add( FPosition );
+                              iV1 += FPosition;
                               iV2 := GDMap.MeshManager.Vertices.Items[iSur.Indexes.Items[iJ]].Normal.Copy();
                               FRotation.ApplyToVector(iV2);
-                              iV2.Multiply(R_NORMAL_LENGTH);
-                              iV2.Add(iV1);
+                              iV2 *= R_NORMAL_LENGTH;
+                              iV2 += iV1;
                               GDRenderer.AddLine(iV1, iV2);
                             end;
                           end;
@@ -284,9 +235,6 @@ begin
     end;
 end;
 
-{******************************************************************************}
-{* Apply meshcell settings                                                    *}
-{******************************************************************************}
 
 procedure TGDMeshCell.ApplyMeshCell(aRenderAttribute : TGDRenderAttribute; aRenderFor : TGDRenderFor);
 
@@ -310,9 +258,6 @@ begin
   GDRenderer.MeshShader.SetInt('I_FLIP_NORMAL', 0);
 end;
 
-{******************************************************************************}
-{* Return meshcell triangle count                                             *}
-{******************************************************************************}
 
 function TGDMeshCell.TriangleCount() : Integer;
 begin

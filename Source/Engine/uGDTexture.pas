@@ -1,32 +1,6 @@
-{*******************************************************************************
-*                            Genesis Device Engine                             *
-*                   Copyright © 2007-2022 Luuk van Venrooij                    *
-*                        http://www.luukvanvenrooij.nl                         *
-********************************************************************************
-*                                                                              *
-*  This file is part of the Genesis Device Engine                              *
-*                                                                              *
-*  The Genesis Device Engine is free software: you can redistribute            *
-*  it and/or modify it under the terms of the GNU Lesser General Public        *
-*  License as published by the Free Software Foundation, either version 3      *
-*  of the License, or any later version.                                       *
-*                                                                              *
-*  The Genesis Device Engine is distributed in the hope that                   *
-*  it will be useful, but WITHOUT ANY WARRANTY; without even the               *
-*  implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.    *
-*  See the GNU Lesser General Public License for more details.                 *
-*                                                                              *
-*  You should have received a copy of the GNU General Public License           *
-*  along with Genesis Device.  If not, see <http://www.gnu.org/licenses/>.     *
-*                                                                              *
-*******************************************************************************}   
-unit uGDTexture;
+ unit uGDTexture;
 
 {$MODE objfpc}
-
-{******************************************************************************}
-{* Holds the texture class and managing system                                *}
-{******************************************************************************}
 
 interface
 
@@ -37,10 +11,6 @@ Uses
  SysUtils,
  dglOpenGL,
  uGDConstants;
-
-{******************************************************************************}
-{* Records for loading DDS files                                              *}
-{******************************************************************************}
 
 const
      DDSD_CAPS        = $00000001;
@@ -114,10 +84,6 @@ const
    FOURCC_DXT3 = $33545844; // 'DXT3'
    FOURCC_DXT5 = $35545844; // 'DXT5'
 
-{******************************************************************************}
-{* Texture class                                                              *}
-{******************************************************************************}
-
 type
   TGDTexture = class (TGDResource)
   private
@@ -138,10 +104,6 @@ implementation
 
 uses
   uGDEngine;
-
-{******************************************************************************}
-{* Create the texture class                                                   *}
-{******************************************************************************}
 
 constructor TGDTexture.Create(aFileName : String; aDetail : TGDTextureDetail; aTextureFilter : TGDTextureFilter);
 var
@@ -354,18 +316,12 @@ begin
   end;
 end;
 
-{******************************************************************************}
-{* Destroy the texture class                                                  *}
-{******************************************************************************}
 
 destructor  TGDTexture.Destroy();
 begin
   glDeleteTextures(1, @FTexture);
 end;
 
-{******************************************************************************}
-{* Bind the texture to a texture unit                                         *}
-{******************************************************************************}
 
 procedure TGDTexture.BindTexture(aTU : GLenum);
 begin

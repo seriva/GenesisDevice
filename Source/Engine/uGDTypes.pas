@@ -1,25 +1,4 @@
-{*******************************************************************************
-*                            Genesis Device Engine                             *
-*                   Copyright © 2007-2022 Luuk van Venrooij                    *
-*                        http://www.luukvanvenrooij.nl                         *
-********************************************************************************
-*                                                                              *
-*  This file is part of the Genesis Device Engine                              *
-*                                                                              *
-*  The Genesis Device Engine is free software: you can redistribute            *
-*  it and/or modify it under the terms of the GNU Lesser General Public        *
-*  License as published by the Free Software Foundation, either version 3      *
-*  of the License, or any later version.                                       *
-*                                                                              *
-*  The Genesis Device Engine is distributed in the hope that                   *
-*  it will be useful, but WITHOUT ANY WARRANTY; without even the               *
-*  implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.    *
-*  See the GNU Lesser General Public License for more details.                 *
-*                                                                              *
-*  You should have received a copy of the GNU General Public License           *
-*  along with Genesis Device.  If not, see <http://www.gnu.org/licenses/>.     *
-*                                                                              *
-*******************************************************************************}   
+
 unit uGDTypes;
 
 {$MODE Delphi}
@@ -27,57 +6,46 @@ unit uGDTypes;
 interface
 
 uses
+  Classes,
   Math,
+  JsonTools,
   SysUtils,
   dglOpenGL;
 
 type
-
-{******************************************************************************}
-{* Vector                                                                     *}
-{******************************************************************************}
-
   TGDVector = record
-    procedure   Reset(aX,aY,aZ: Single);
+    procedure   Reset(aX,aY,aZ: Single); overload;
+    procedure   Reset(aArray: TJsonNode); overload;
     procedure   SetX(aX : Single);
     procedure   SetY(aY : Single);
     procedure   SetZ(aZ : Single);
     function    Copy(): TGDVector;
-
-    procedure   Add(aX,aY,aZ: Single);overload;
-    procedure   Add(aD : Single);overload;
-    procedure   Add(const aVector : TGDVector);overload;
-    procedure   Substract(aX,aY,aZ: Single);overload;
-    procedure   Substract(aD : Single);overload;
-    procedure   Substract(const aVector : TGDVector);overload;
-    procedure   Multiply(aX,aY,aZ: Single);overload;
-    procedure   Multiply(aD : Single);overload;
-    procedure   Multiply(const aVector : TGDVector);overload;
-    procedure   Devide(aX,aY,aZ: Single);overload;
-    procedure   Devide(aD : Single);overload;
-    procedure   Devide(const aVector : TGDVector);overload;
-
     function    DotProduct(const aVector : TGDVector) : Single; overload;
     procedure   CrossProduct(const aVector1, aVector2: TGDVector);overload;
     function    Angle(const aVector : TGDVector ) : Single;
     procedure   Normalize();
     function    Magnitude(): Single;
     function    Inverse(): TGDVector;
-
     function    ArrayPointer() : PGLfloat;
-    class operator Equal (v1, v2: TGDVector) B: Boolean;
+
+    class operator Add(const aV1, aV2: TGDVector): TGDVector; overload;
+    class operator Add(const aV: TGDVector; aD: Single): TGDVector; overload;
+    class operator Subtract(const aV1, aV2: TGDVector): TGDVector; overload;
+    class operator Subtract(const aV: TGDVector; aD: Single): TGDVector; overload;
+    class operator Multiply(const aV1, aV2: TGDVector): TGDVector; overload;
+    class operator Multiply(const aV: TGDVector; aD: Single): TGDVector; overload;
+    class operator Divide(const aV1, aV2: TGDVector): TGDVector; overload;
+    class operator Divide(const aV: TGDVector; aD: Single): TGDVector; overload;
+    class operator Equal(aV1, aV2: TGDVector) B: Boolean;
 
     case Boolean of
       TRUE: ( x, y, z : Single; );
       FALSE: ( xyz: array [0..2] of Single; );
   end;
 
-{******************************************************************************}
-{* UV                                                                         *}
-{******************************************************************************}
 
   TGDUVCoord  = record
-    procedure   Reset(aU,aV : Single);overload;
+    procedure   Reset(aU,aV : Single);
     function    Copy(): TGDUVCoord;
 
     function    ArrayPointer() : PGLfloat;
@@ -88,12 +56,10 @@ type
       FALSE: ( uv: array [0..1] of Single; );
   end;
 
-{******************************************************************************}
-{* Color                                                                      *}
-{******************************************************************************}
 
   TGDColor = record
-    procedure   Reset(aR,aG,aB,aA : Single);
+    procedure   Reset(aR,aG,aB,aA : Single); overload;
+    procedure   Reset(aArray: TJsonNode); overload;
     function    Copy() : TGDColor;
 
     procedure   Red();
@@ -110,9 +76,6 @@ type
       FALSE: ( rgba: array [0..3] of Single; );
   end;
 
-{******************************************************************************}
-{* Matrix                                                                     *}
-{******************************************************************************}
 
   TGDMatrix = record
     data : array[0..3, 0..3] of Single;
@@ -133,9 +96,6 @@ type
     function    ArrayPointer() : PGLfloat;
   end;
 
-{******************************************************************************}
-{* Triangle class                                                             *}
-{******************************************************************************}
 
   TGDTriangle = record
     Normal   : TGDVector;
@@ -150,9 +110,6 @@ type
     function    PointInTraingle( aV : TGDVector ) : boolean;
   end;
 
-{******************************************************************************}
-{* Axis aligned bounding box class                                            *}
-{******************************************************************************}
 
   TGDBoundingBox = record
     Min : TGDVector;
@@ -166,9 +123,6 @@ type
     procedure RenderWireFrame();
   end;
 
-{******************************************************************************}
-{* Interleaved vertex types                                                   *}
-{******************************************************************************}
 
   TGDIdxVertex = record
     Vertex : Integer;
@@ -200,9 +154,6 @@ type
     class operator Equal(v1, v2: TGDVertex_V_UV_N_C) B: Boolean;
   end;
 
-{******************************************************************************}
-{* Type create functions                                                      *}
-{******************************************************************************}
 
 function Vector(aX,aY,aZ: Single) : TGDVector;
 function UVCoord(aU,aV : Single) : TGDUVCoord;
@@ -220,23 +171,14 @@ function SameSide( aP1, aP2, aA, aB : TGDVector) : boolean;
 var
   iCP1, iCP2, iBA, iP1A, iP2A : TGDVector;
 begin
-  iBA := aB.Copy();
-  iBA.Substract( aA );
-  iP1A := aP1.Copy();
-  iP1A.Substract(aA);
-  iP2A := aP2.Copy();
-  iP2A.Substract(aA);
+  iBA := aB - aA;
+  iP1A := aP1 - aA;
+  iP2A := aP2 - aA;
   iCP1.CrossProduct( iBA, iP1A );
   iCP2.CrossProduct( iBA, iP2A );
-  if iCP1.DotProduct(iCP2) >= 0 then
-    result := true
-  else
-    result := false;
+  result := (iCP1.DotProduct(iCP2) >= 0)
 end;
 
-{******************************************************************************}
-{* Type create functions                                                      *}
-{******************************************************************************}
 
 function Vector(aX,aY,aZ: Single) : TGDVector;
 begin
@@ -253,9 +195,6 @@ begin
   result.reset(aR,aG,aB,aA)
 end;
 
-{******************************************************************************}
-{* Reset the vector                                                           *}
-{******************************************************************************}
 
 procedure TGDVector.Reset(aX,aY,aZ: Single);
 begin
@@ -264,9 +203,13 @@ begin
   Z := aZ;
 end;
 
-{******************************************************************************}
-{* set the vector element                                                     *}
-{******************************************************************************}
+procedure TGDVector.Reset(aArray: TJsonNode);
+begin
+  X := aArray.Child(0).AsNumber;
+  Y := aArray.Child(1).AsNumber;
+  Z := aArray.Child(2).AsNumber;
+end;
+
 
 procedure   TGDVector.SetX(aX : Single);
 begin
@@ -283,109 +226,66 @@ begin
   Z := aZ;
 end;
 
-{******************************************************************************}
-{* Add a vector                                                               *}
-{******************************************************************************}
 
-procedure TGDVector.Add(aX,aY,aZ: Single);
+class operator TGDVector.Add(const aV1, aV2: TGDVector): TGDVector;
 begin
-  X := X + aX;
-  Y := Y + aY;
-  Z := Z + aZ;
+  Result.x := aV1.x + aV2.x;
+  Result.y := aV1.y + aV2.y;
+  Result.z := aV1.z + aV2.z;
 end;
 
-procedure TGDVector.Add(aD : Single);
+class operator TGDVector.Add(const aV: TGDVector; aD: Single): TGDVector;
 begin
-  X := X + aD;
-  Y := Y + aD;
-  Z := Z + aD;
+  Result.x := aV.x + aD;
+  Result.y := aV.y + aD;
+  Result.z := aV.z + aD;
 end;
 
-procedure TGDVector.Add(const aVector : TGDVector);
+
+class operator TGDVector.Subtract(const aV1, aV2: TGDVector): TGDVector;
 begin
-  X := X + aVector.X;
-  Y := Y + aVector.Y;
-  Z := Z + aVector.Z;
+  Result.x := aV1.x - aV2.x;
+  Result.y := aV1.y - aV2.y;
+  Result.z := aV1.z - aV2.z;
 end;
 
-{******************************************************************************}
-{* Substract a vector                                                         *}
-{******************************************************************************}
-
-procedure TGDVector.Substract(aX,aY,aZ: Single);
+class operator TGDVector.Subtract(const aV: TGDVector; aD: Single): TGDVector;
 begin
-  X := X - aX;
-  Y := Y - aY;
-  Z := Z - aZ;
+  Result.x := aV.x - aD;
+  Result.y := aV.y - aD;
+  Result.z := aV.z - aD;
 end;
 
-procedure TGDVector.Substract( aD : Single);
+
+class operator TGDVector.Multiply(const aV1, aV2: TGDVector): TGDVector;
 begin
-  X := X - aD;
-  Y := Y - aD;
-  Z := Z - aD;
+  Result.x := aV1.x * aV2.x;
+  Result.y := aV1.y * aV2.y;
+  Result.z := aV1.z * aV2.z;
 end;
 
-procedure TGDVector.Substract(const aVector : TGDVector);
+class operator TGDVector.Multiply(const aV: TGDVector; aD: Single): TGDVector;
 begin
-  X := X - aVector.X;
-  Y := Y - aVector.Y;
-  Z := Z - aVector.Z;
+  Result.x := aV.x * aD;
+  Result.y := aV.y * aD;
+  Result.z := aV.z * aD;
 end;
 
-{******************************************************************************}
-{* Multiply the vector                                                        *}
-{******************************************************************************}
 
-procedure TGDVector.Multiply(aX,aY,aZ: Single);
+class operator TGDVector.Divide(const aV1, aV2: TGDVector): TGDVector;
 begin
-  X := X * aX;
-  Y := Y * aY;
-  Z := Z * aZ;
+  Result.x := aV1.x / aV2.x;
+  Result.y := aV1.y / aV2.y;
+  Result.z := aV1.z / aV2.z;
 end;
 
-procedure TGDVector.Multiply(aD : Single);
+class operator TGDVector.Divide(const aV: TGDVector; aD: Single): TGDVector;
 begin
-  X := X * aD;
-  Y := Y * aD;
-  Z := Z * aD;
+  Result.x := aV.x / aD;
+  Result.y := aV.y / aD;
+  Result.z := aV.z / aD;
 end;
 
-procedure TGDVector.Multiply(const aVector : TGDVector);
-begin
-  X := X * aVector.X;
-  Y := Y * aVector.Y;
-  Z := Z * aVector.Z;
-end;
-
-{******************************************************************************}
-{* Devide the vector                                                          *}
-{******************************************************************************}
-
-procedure TGDVector.Devide(aX,aY,aZ: Single);
-begin
-  X := X / aX;
-  Y := Y / aY;
-  Z := Z / aZ;
-end;
-
-procedure TGDVector.Devide(aD : Single);
-begin
-  X := X / aD;
-  Y := Y / aD;
-  Z := Z / aD;
-end;
-
-procedure TGDVector.Devide(const aVector : TGDVector);
-begin
-  X := X / aVector.X;
-  Y := Y / aVector.Y;
-  Z := Z / aVector.Z;
-end;
-
-{******************************************************************************}
-{* Copy the vector                                                            *}
-{******************************************************************************}
 
 function TGDVector.Copy(): TGDVector;
 begin
@@ -394,18 +294,12 @@ begin
   result.z := z;
 end;
 
-{******************************************************************************}
-{* Calculate the vector magnitude                                             *}
-{******************************************************************************}
 
 function TGDVector.Magnitude(): Single;
 begin
   Result := sqrt((X * X) + (Y * Y) + (Z * Z));
 end;
 
-{******************************************************************************}
-{* Normalize the vector                                                       *}
-{******************************************************************************}
 
 procedure TGDVector.Normalize();
 var
@@ -417,18 +311,12 @@ begin
   Z := Z / iMag;
 end;
 
-{******************************************************************************}
-{* Dotproduct of the vector                                                   *}
-{******************************************************************************}
 
 function TGDVector.DotProduct( const aVector : TGDVector) : Single;
 begin
   Result :=  ( (X * aVector.x) + (Y * aVector.y) + (Z * aVector.z) );
 end;
 
-{******************************************************************************}
-{* Crossproduct of the vector                                                 *}
-{******************************************************************************}
 
 procedure TGDVector.CrossProduct(const aVector1, aVector2: TGDVector);
 begin
@@ -437,9 +325,6 @@ begin
 	Z := ((aVector1.x * aVector2.y) - (aVector1.y * aVector2.x));
 end;
 
-{******************************************************************************}
-{* Angle between 2 vectors                                                    *}
-{******************************************************************************}
 
 function TGDVector.Angle(const aVector : TGDVector ) : Single;
 var
@@ -458,9 +343,6 @@ begin
 	result :=  iAngle;
 end;
 
-{******************************************************************************}
-{* Vector inverse                                                             *}
-{******************************************************************************}
 
 function TGDVector.Inverse(): TGDVector;
 begin
@@ -469,20 +351,14 @@ begin
   result.z := -self.z;
 end;
 
-{******************************************************************************}
-{* Vector equals                                                              *}
-{******************************************************************************}
 
-class operator TGDVector.Equal (v1, v2: TGDVector) B: Boolean;
+class operator TGDVector.Equal(aV1, aV2: TGDVector) B: Boolean;
 begin
-  B := (Abs(v1.x - v2.x) < EPSILON) and
-       (Abs(v1.y - v2.y) < EPSILON) and
-       (Abs(v1.z - v2.z) < EPSILON);
+  B := (Abs(aV1.x - aV2.x) < EPSILON) and
+       (Abs(aV1.y - aV2.y) < EPSILON) and
+       (Abs(aV1.z - aV2.z) < EPSILON);
 end;
 
-{******************************************************************************}
-{* Get the array pointer                                                      *}
-{******************************************************************************}
 
 function TGDVector.ArrayPointer() : PGLfloat;
 begin
@@ -490,19 +366,12 @@ begin
 end;
 
 
-{******************************************************************************}
-{* Reset the UV                                                               *}
-{******************************************************************************}
-
 procedure TGDUVCoord.Reset(aU,aV : Single);
 begin
   U := aU;
   V := aV;
 end;
 
-{******************************************************************************}
-{* Copy the UV                                                                *}
-{******************************************************************************}
 
 function TGDUVCoord.Copy(): TGDUVCoord;
 begin
@@ -510,9 +379,6 @@ begin
   result.v := v;
 end;
 
-{******************************************************************************}
-{* UV equals                                                                  *}
-{******************************************************************************}
 
 class operator TGDUVCoord.Equal (uv1, uv2: TGDUVCoord)B: Boolean;
 begin
@@ -520,18 +386,12 @@ begin
        (Abs(uv1.v - uv2.v) < EPSILON);
 end;
 
-{******************************************************************************}
-{* Get the UV array pointer                                                   *}
-{******************************************************************************}
 
 function TGDUVCoord.ArrayPointer() : PGLfloat;
 begin
   result := @uv;
 end;
 
-{******************************************************************************}
-{* Reset the color                                                            *}
-{******************************************************************************}
 
 procedure TGDColor.Reset(aR,aG,aB,aA : Single);
 begin
@@ -540,6 +400,15 @@ begin
   b := aB;
   a := aA;
 end;
+
+procedure TGDColor.Reset(aArray: TJsonNode);
+begin
+  r := aArray.Child(0).AsNumber;
+  g := aArray.Child(1).AsNumber;
+  b := aArray.Child(2).AsNumber;
+  a := aArray.Child(3).AsNumber;
+end;
+
 
 function TGDColor.Copy(): TGDColor;
 begin
@@ -550,10 +419,6 @@ begin
 end;
 
 
-{******************************************************************************}
-{* Set the color to red                                                       *}
-{******************************************************************************}
-
 procedure TGDColor.Red();
 begin
   r := 1;
@@ -562,9 +427,6 @@ begin
   a := 1;
 end;
 
-{******************************************************************************}
-{* Set the color to green                                                     *}
-{******************************************************************************}
 
 procedure TGDColor.Green();
 begin
@@ -574,9 +436,6 @@ begin
   a := 1;
 end;
 
-{******************************************************************************}
-{* Set the color to blue
-{******************************************************************************}
 
 procedure TGDColor.Blue();
 begin
@@ -586,9 +445,6 @@ begin
   a := 1;
 end;
 
-{******************************************************************************}
-{* Set the color to white
-{******************************************************************************}
 
 procedure TGDColor.White();
 begin
@@ -598,9 +454,6 @@ begin
   a := 1;
 end;
 
-{******************************************************************************}
-{* Set the color to black
-{******************************************************************************}
 
 procedure TGDColor.Black();
 begin
@@ -610,18 +463,12 @@ begin
   a := 1;
 end;
 
-{******************************************************************************}
-{* Get the color array pointer                                                *}
-{******************************************************************************}
 
 function TGDColor.ArrayPointer() : PGLFloat;
 begin
   result := @rgba;
 end;
 
-{******************************************************************************}
-{* Color equals                                                               *}
-{******************************************************************************}
 
 class operator TGDColor.Equal (c1, c2: TGDColor) B: Boolean;
 begin
@@ -631,9 +478,6 @@ begin
        (Abs(c1.a - c2.a) < EPSILON);
 end;
 
-{******************************************************************************}
-{* Empty the matrix                                                           *}
-{******************************************************************************}
 
 procedure TGDMatrix.EmptyMatrix();
 begin
@@ -658,9 +502,6 @@ begin
   Data[3,3] := 0;
 end;
 
-{******************************************************************************}
-{* Fill with identity matrix                                                  *}
-{******************************************************************************}
 
 procedure TGDMatrix.IdentityMatrix();
 begin
@@ -685,9 +526,6 @@ begin
   Data[3,3] := 0;
 end;
 
-{******************************************************************************}
-{* invert matrix                                                              *}
-{******************************************************************************}
 
 procedure TGDMatrix.Invert();
 Var
@@ -698,9 +536,6 @@ begin
       Data[iC,iR] := -Data[iC,iR];
 end;
 
-{******************************************************************************}
-{* Create X rotation matrix                                                   *}
-{******************************************************************************}
 
 procedure TGDMatrix.CreateRotationX(aRX : Single);
 begin
@@ -712,9 +547,6 @@ begin
   Data[2,2] := cos(aRX);
 end;
 
-{******************************************************************************}
-{* Create Y rotation matrix                                                   *}
-{******************************************************************************}
 
 procedure TGDMatrix.CreateRotationY(aRY : Single);
 begin
@@ -726,9 +558,6 @@ begin
   Data[2,2] := cos(aRY);
 end;
 
-{******************************************************************************}
-{* Create Z rotation matrix                                                   *}
-{******************************************************************************}
 
 procedure TGDMatrix.CreateRotationZ(aRZ : Single);
 begin
@@ -740,9 +569,6 @@ begin
   Data[1,1] := cos(aRZ);
 end;
 
-{******************************************************************************}
-{* Multiply the matrix                                                        *}
-{******************************************************************************}
 
 procedure TGDMatrix.Multiply(aM1, aM2: TGDMatrix);
 begin
@@ -764,9 +590,6 @@ begin
   Data[3,3]:=aM1.Data[3,0]*aM2.Data[0,3]+aM1.Data[3,1]*aM2.Data[1,3]+aM1.Data[3,2]*aM2.Data[2,3]+aM1.Data[3,3]*aM2.Data[3,3];
 end;
 
-{******************************************************************************}
-{* Create a rotation matrix                                                   *}
-{******************************************************************************}
 
 procedure TGDMatrix.CreateRotation(const aV : TGDVector );
 var
@@ -782,9 +605,6 @@ begin
   Multiply(iMX,iM);
 end;
 
-{******************************************************************************}
-{* Apply the matrix to a vector                                               *}
-{******************************************************************************}
 
 procedure TGDMatrix.ApplyToVector(var aV : TGDVector );
 var
@@ -796,9 +616,6 @@ begin
   aV.z := iV.x * Data[0,2] + iV.y * Data[1,2] + iV.z * Data[2,2] + Data[3,2];
 end;
 
-{******************************************************************************}
-{* Copy the matrix                                                            *}
-{******************************************************************************}
 
 function TGDMatrix.Copy() : TGDMatrix;
 Var
@@ -809,18 +626,12 @@ begin
       result.Data[iC,iR] := Data[iC,iR];
 end;
 
-{******************************************************************************}
-{* Get the matrix array pointer                                               *}
-{******************************************************************************}
 
 function TGDMatrix.ArrayPointer() : PGLfloat;
 begin
   result := @Data;
 end;
 
-{******************************************************************************}
-{* Reset the triangle                                                         *}
-{******************************************************************************}
 
 procedure TGDTriangle.Reset(aX1,aY1,aZ1,aX2,aY2,aZ2,aX3,aY3,aZ3 : Single);
 begin
@@ -829,20 +640,14 @@ begin
   V3.Reset(aX3,aY3,aZ3);
 end;
 
-{******************************************************************************}
-{* Move the traingle                                                          *}
-{******************************************************************************}
 
 procedure TGDTriangle.Move( aMove : TGDVector );
 begin
-  V1.Add( aMove );
-  V2.Add( aMove );
-  V3.Add( aMove );
+  V1 += aMove;
+  V2 += aMove;
+  V3 += aMove;
 end;
 
-{******************************************************************************}
-{* Rotate the triangle                                                        *}
-{******************************************************************************}
 
 procedure TGDTriangle.Rotate( aRotation : TGDVector );
 var
@@ -854,23 +659,14 @@ begin
   iM.ApplyToVector( V3 );
 end;
 
-{******************************************************************************}
-{* Scale the triangle                                                         *}
-{******************************************************************************}
 
 procedure   TGDTriangle.Scale( aScale : TGDVector );
 begin
-  V1.Multiply(aScale);
-  V1.Devide(100);
-  V2.Multiply(aScale);
-  V2.Devide(100);
-  V3.Multiply(aScale);
-  V3.Devide(100);
+  V1 := (V1 * aScale) / 100;
+  V2 := (V2 * aScale) / 100;
+  V2 := (V3 * aScale) / 100;
 end;
 
-{******************************************************************************}
-{* Calculate the normal of the triangle                                       *}
-{******************************************************************************}
 
 procedure TGDTriangle.CalculateNormal();
 var
@@ -878,16 +674,13 @@ var
   iVVector2 : TGDVector;
 begin
   iVVector1.Reset( V3.x, V3.Y, V3.Z);
-  iVVector1.Substract( V1 );
+  iVVector1 -= V1;
   iVVector2.Reset(V2.x, V2.Y, V2.Z);
-  iVVector2.Substract( V1 );
+  iVVector2 -= V1;
   Normal.CrossProduct( iVVector1, iVVector2 );
   Normal.Normalize();
 end;
 
-{******************************************************************************}
-{* Copy the triangle                                                          *}
-{******************************************************************************}
 
 function TGDTriangle.Copy(): TGDTriangle;
 begin
@@ -897,9 +690,6 @@ begin
   result.V3 := V3.Copy();
 end;
 
-{******************************************************************************}
-{* Check if the point is in the triangle
-{******************************************************************************}
 
 Function TGDTriangle.PointInTraingle( aV : TGDVector ) : boolean;
 begin
@@ -911,9 +701,6 @@ begin
     result := false;
 end;
 
-{******************************************************************************}
-{* Check if a AABB is inside another AABB                                     *}
-{******************************************************************************}
 
 function TGDBoundingBox.BoxInsideBox( aBoundingBox : TGDBoundingBox ) : boolean;
 begin
@@ -924,9 +711,6 @@ begin
     result := false;
 end;
 
-{******************************************************************************}
-{* Check if a point is inside the AABB                                        *}
-{******************************************************************************}
 
 function  TGDBoundingBox.PointInsideBox( aV : TGDVector ) : boolean;
 begin
@@ -937,20 +721,13 @@ begin
     result := false;
 end;
 
-{******************************************************************************}
-{* Calculate the center of the AABB using the MIN and the MAX points          *}
-{******************************************************************************}
 
 procedure TGDBoundingBox.CalculateCenter();
 begin
  Center := Max.Copy;
- Center.Add(Min);
- Center.Devide(2);
+ Center := (Center + Min) / 2;
 end;
 
-{******************************************************************************}
-{* Render the AABB wireframe                                                  *}
-{******************************************************************************}
 
 procedure TGDBoundingBox.RenderWireFrame();
 begin
@@ -970,9 +747,6 @@ begin
   GDRenderer.AddLine( Vector(Max.x, Max.y, Min.Z), Vector(Max.x, Min.y, Min.Z ));
 end;
 
-{******************************************************************************}
-{* Interleaved vertex types                                                   *}
-{******************************************************************************}
 
 class operator TGDVertex_V_UV.Equal(v1, v2: TGDVertex_V_UV) B: Boolean;
 begin

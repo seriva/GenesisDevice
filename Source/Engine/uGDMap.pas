@@ -1,25 +1,3 @@
-{*******************************************************************************
-*                            Genesis Device Engine                             *
-*                   Copyright © 2007-2022 Luuk van Venrooij                    *
-*                        http://www.luukvanvenrooij.nl                         *
-********************************************************************************
-*                                                                              *
-*  This file is part of the Genesis Device Engine                              *
-*                                                                              *
-*  The Genesis Device Engine is free software: you can redistribute            *
-*  it and/or modify it under the terms of the GNU Lesser General Public        *
-*  License as published by the Free Software Foundation, either version 3      *
-*  of the License, or any later version.                                       *
-*                                                                              *
-*  The Genesis Device Engine is distributed in the hope that                   *
-*  it will be useful, but WITHOUT ANY WARRANTY; without even the               *
-*  implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.    *
-*  See the GNU Lesser General Public License for more details.                 *
-*                                                                              *
-*  You should have received a copy of the GNU General Public License           *
-*  along with Genesis Device.  If not, see <http://www.gnu.org/licenses/>.     *
-*                                                                              *
-*******************************************************************************}   
 unit uGDMap;
 
 {$MODE Delphi}
@@ -28,8 +6,7 @@ interface
 
 uses
   SysUtils,
-  IniFiles,
-  dglOpenGL,
+  JsonTools,
   uGDTerrain,
   uGDTypes,
   uGDFoliage,
@@ -38,15 +15,9 @@ uses
   uGDWater,
   uGDCellManager,
   uGDMeshManager,
-  uGDStringparsing,
   uGDMeshCell;
 
 type
-
-{******************************************************************************}
-{* Map class                                                                  *}
-{******************************************************************************}
-
   TGDMap = class
   private
     FPlayerStart     : TGDVector;
@@ -106,10 +77,6 @@ implementation
 uses
   uGDEngine;
 
-{******************************************************************************}
-{* Create map class                                                           *}
-{******************************************************************************}
-
 constructor TGDMap.Create();
 begin
   inherited;
@@ -121,9 +88,6 @@ begin
   FMeshManager := TGDMeshManager.Create();
 end;
 
-{******************************************************************************}
-{* Destroy map class                                                          *}
-{******************************************************************************}
 
 destructor  TGDMap.Destroy();
 begin
@@ -137,80 +101,76 @@ begin
   FreeAndNil(FMeshManager);
 end;
 
-{******************************************************************************}
-{* Init the map                                                               *}
-{******************************************************************************}
 
 procedure TGDMap.Load( aFileName : String );
 var
-  iIniFile : TIniFile;
-  iI : Integer;
-  iString         : String;
-  iMeshInput      : TGDMeshCellInput;
+  iMap, iModels, iModel : TJsonNode;
+  iI            : Integer;
+  iString       : String;
+  iMeshInput    : TGDMeshCellInput;
 begin
   GDTiming.Start();
-  iIniFile := TIniFile.Create(aFileName);
+  iMap := TJsonNode.Create();
   Clear();
   GDConsole.Write('......Loading map (' + aFileName + ')');
   GDGUI.LoadingScreen.Start('Loading ' + StringReplace( ExtractFileName(aFileName), ExtractFileExt(aFileName), '',  [rfReplaceAll] ) + '...', 6 );
 
+  //load map json
+  iMap.LoadFromFile(aFileName);
+
   //spawnpoint
-  FPlayerStart := ReadVector(iIniFile, 'SpawnPoint', 'Position');
-  FPlayerViewAngle := ReadVector(iIniFile, 'SpawnPoint', 'ViewAngle');
+  FPlayerStart.Reset(iMap.Find('SpawnPoint/Position'));
+  FPlayerViewAngle.Reset(iMap.Find('SpawnPoint/ViewAngle'));
 
   //directional light
-  FLightDirection := ReadVector(iIniFile, 'Light', 'Direction');
-  FLightAmbient   := ReadColor(iIniFile, 'Light', 'Ambient');
-  FLightDiffuse   := ReadColor(iIniFile, 'Light', 'Diffuse');
+  FLightDirection.Reset(iMap.Find('Light/Direction'));
+  FLightAmbient.Reset(iMap.Find('Light/Ambient'));
+  FLightDiffuse.Reset(iMap.Find('Light/Diffuse'));
 
   //init fog
-  FFogColor    := ReadColor(iIniFile, 'Fog', 'Color');
+  FFogColor.Reset(iMap.Find('Fog/Color'));
   FFogDistance := GDSettings.ViewDistance;
   FFogMinDistance := (((FFogDistance * R_VIEW_DISTANCE_STEP) / 10) * 5);
   FFogMaxDistance := (((FFogDistance * R_VIEW_DISTANCE_STEP) / 10) * 7.5);
   GDGUI.LoadingScreen.Update();
 
   //init terrain
-  FTerrain.InitTerrain(iIniFile);
+  FTerrain.InitTerrain(iMap.Find('Terrain'));
   GDGUI.LoadingScreen.Update();
 
   //init sky
-  Skydome.InitSkyDome(iIniFile, (GDSettings.ViewDistance * R_VIEW_DISTANCE_STEP));
+  Skydome.InitSkyDome(iMap.Find('Sky'), (GDSettings.ViewDistance * R_VIEW_DISTANCE_STEP));
   GDGUI.LoadingScreen.Update();
 
   //foliage
-  Foliage.InitFoliage( iIniFile );
+  Foliage.InitFoliage( iMap.Find('Foliage') );
   GDGUI.LoadingScreen.Update();
 
   //init water
-  Water.InitWater(FTerrain, iIniFile );
+  Water.InitWater(FTerrain, iMap.Find('Water') );
   GDGUI.LoadingScreen.Update();
 
   //mesh entities
-  iI := 1;
-  while (iIniFile.SectionExists('Model' + IntToStr(iI))) do
+  iModels := iMap.Find('Models');
+  for iI := 0 to iModels.Count-1 do
   begin
-    iString := 'Model' + IntToStr(iI);
-
-    iMeshInput.Model         := iIniFile.ReadString( iString, 'Model', '' );
-    iMeshInput.ModelLOD1     := iIniFile.ReadString( iString, 'ModelLOD1', '' );
-    iMeshInput.ModelLOD2     := iIniFile.ReadString( iString, 'ModelLOD2', '' );
-    iMeshInput.Position      := ReadVector(iIniFile, iString, 'Position');
-    iMeshInput.Rotation      := ReadVector(iIniFile, iString, 'Rotation');
-    iMeshInput.Scale         := ReadVector(iIniFile, iString, 'Scale');
+    iModel := iModels.Child(iI);
+    iMeshInput.Model         := iModel.Find('Model').AsString; 
+    iMeshInput.ModelLOD1     := iModel.Find('ModelLOD1').AsString;
+    iMeshInput.ModelLOD2     := iModel.Find('ModelLOD2').AsString;
+    iMeshInput.Position.Reset(iModel.Find('Position'));
+    iMeshInput.Rotation.Reset(iModel.Find('Rotation'));
+    iMeshInput.Scale.Reset(iModel.Find('Scale'));
     iMeshInput.FadeDistance  := 0;
     iMeshInput.FadeScale     := 0;
-    iMeshInput.CastShadow    := iIniFile.ReadBool( iString, 'CastShadow', false );
-    iMeshInput.ReceiveShadow := iIniFile.ReadBool( iString, 'ReceiveShadow', false );
-
-    FCellManager.AddMeshCell( TGDMeshCell.Create(iMeshInput)   );
-
-    iI := iI + 1;
-  end;
+    iMeshInput.CastShadow    := iModel.Find('CastShadow').AsBoolean; 
+    iMeshInput.ReceiveShadow := iModel.Find('ReceiveShadow').AsBoolean;
+    FCellManager.AddMeshCell( TGDMeshCell.Create(iMeshInput)   );   
+  end; 
   GDGUI.LoadingScreen.Update();
 
   GDTiming.Stop();
-  FreeAndNil(iIniFile);
+  FreeAndNil(iMap);
   GDConsole.Write('......Done loading map (' + GDTiming.TimeInSeconds + ' Sec)');
 
   FCellManager.GenerateCells(FTerrain, FWater, FFoliage);
@@ -221,9 +181,6 @@ begin
   GDCamera.MouseLook(0,0,1,1,0,False);
 end;
 
-{******************************************************************************}
-{* Clear the map                                                              *}
-{******************************************************************************}
 
 procedure TGDMap.Clear();
 begin
@@ -249,45 +206,30 @@ begin
   FMeshManager.ClearBuffers();
 end;
 
-{******************************************************************************}
-{* Get visible object count                                                   *}
-{******************************************************************************}
 
 function TGDMap.ObjectCount(): integer;
 begin
   result := FCellManager.ObjectCount();
 end;
 
-{******************************************************************************}
-{* Get visible triangle count                                                 *}
-{******************************************************************************}
 
 function TGDMap.TriangleCount(): integer;
 begin
   result := FCellManager.TriangleCount + FSkyDome.TriangleCount;
 end;
 
-{******************************************************************************}
-{* Update the map                                                             *}
-{******************************************************************************}
 
 procedure TGDMap.Update();
 begin
   FWater.Update();
 end;
 
-{******************************************************************************}
-{* Detect visible cells                                                       *}
-{******************************************************************************}
 
 procedure TGDMap.DetectVisibleCells();
 begin
   FCellManager.DetectVisibleCells();
 end;
 
-{******************************************************************************}
-{* Render visible cells                                                       *}
-{******************************************************************************}
 
 procedure TGDMap.RenderVisibleCells(aRenderAttribute : TGDRenderAttribute; aRenderFor : TGDRenderFor);
 begin

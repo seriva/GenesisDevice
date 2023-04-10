@@ -1,25 +1,3 @@
-{*******************************************************************************
-*                            Genesis Device Engine                             *
-*                   Copyright © 2007-2022 Luuk van Venrooij                    *
-*                        http://www.luukvanvenrooij.nl                         *
-********************************************************************************
-*                                                                              *
-*  This file is part of the Genesis Device Engine                              *
-*                                                                              *
-*  The Genesis Device Engine is free software: you can redistribute            *
-*  it and/or modify it under the terms of the GNU Lesser General Public        *
-*  License as published by the Free Software Foundation, either version 3      *
-*  of the License, or any later version.                                       *
-*                                                                              *
-*  The Genesis Device Engine is distributed in the hope that                   *
-*  it will be useful, but WITHOUT ANY WARRANTY; without even the               *
-*  implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.    *
-*  See the GNU Lesser General Public License for more details.                 *
-*                                                                              *
-*  You should have received a copy of the GNU General Public License           *
-*  along with Genesis Device.  If not, see <http://www.gnu.org/licenses/>.     *
-*                                                                              *
-*******************************************************************************}
 unit uGDResources;
 
 {$mode objfpc}
@@ -27,9 +5,9 @@ unit uGDResources;
 interface
 
 uses
-  uGDStringParsing,
   Classes,
   SysUtils,
+  JsonTools,
   uGDResource,
   uGDTexture,
   uGDMesh,
@@ -40,11 +18,6 @@ uses
   FGL;
 
 type
-
- {******************************************************************************}
- {* Recourses class                                                            *}
- {******************************************************************************}
-
    TResources = specialize TFPGMap<String,TGDResource>;
    TGDResources = class (TResources)
    private
@@ -66,10 +39,6 @@ implementation
 uses
   uGDEngine;
 
-{******************************************************************************}
-{* Load a texture resource                                                    *}
-{******************************************************************************}
-
 function TGDResources.LoadTexture(aFileName : String; aDetail : TGDTextureDetail; aTextureFilter : TGDTextureFilter): TGDTexture;
 var
   iIdx : Integer;
@@ -84,9 +53,6 @@ begin
   end;
 end;
 
-{******************************************************************************}
-{* Load a mesh resource                                                       *}
-{******************************************************************************}
 
 function TGDResources.Loadmesh(aFileName : String): TGDMesh;
 var
@@ -108,9 +74,6 @@ begin
   end;
 end;
 
-{******************************************************************************}
-{* Load a sound buffer resource                                               *}
-{******************************************************************************}
 
 function TGDResources.LoadSoundBuffer(aFileName : String): TGDSoundBuffer;
 var
@@ -126,9 +89,6 @@ begin
   end;
 end;
 
-{******************************************************************************}
-{* Load a sound stream resource                                               *}
-{******************************************************************************}
 
 function TGDResources.LoadSoundStream(aFileName : String): TGDSoundStream;
 var
@@ -144,95 +104,43 @@ begin
   end;
 end;
 
-{******************************************************************************}
-{* Load materials                                                             *}
-{******************************************************************************}
 
 procedure TGDResources.LoadMaterials(aFileName : String);
 var
-  iFile : TMemoryStream;
+  iMaterials, iMaterial : TJsonNode;
   iMat  : TGDMaterial;
-  iStr  : String;
-  iIdx : Integer;
+  iName, iStr : String;
+  iIdx, iI  : Integer;
 begin
   try
-    If Not(FileExistsUTF8(aFileName) ) then
+    If Not(FileExists(aFileName) ) then
       Raise Exception.Create('');
+    iMaterials := TJsonNode.Create();
+    iMaterials.LoadFromFile(aFileName);
 
-    iFile := TMemoryStream.Create();
-    iFile.LoadFromFile(aFileName);
-    CommentString := '#';
-
-    while (iFile.Position < iFile.Size) do
+    for iI := 0 to iMaterials.Count-1 do
     begin
-      iStr := GetNextToken(iFile);
-      if iStr = 'newmtl' then //read the material name
-      begin
-        iStr := GetNextToken(iFile);
-        iIdx := IndexOf(iStr);
-        if iIdx >= 0 then
-        begin
-          iMat:= nil;
-          continue;
-        end;
-        iMat := TGDMaterial.Create();
-        AddResource(iStr, iMat);
+      iMaterial := iMaterials.Child(iI);
+
+      iName := iMaterial.find('Name').AsString;
+      iIdx := IndexOf(iName);
+      if iIdx >= 0 then
         continue;
-      end else if iStr = 'colormap' then //load the material texture
-      begin
-        if iMat = nil then
-          continue;
-        iStr := GetNextToken(iFile);
-        iMat.Texture := GDResources.LoadTexture(iStr , GDSettings.TextureDetail,GDSettings.TextureFilter);
-        continue;
-      end else if iStr = 'detailmap' then //load the material detail
-      begin
-        if iMat = nil then
-          continue;
-        iStr := GetNextToken(iFile);
+      iMat := TGDMaterial.Create();
+      iMat.Texture := GDResources.LoadTexture(iMaterial.find('ColorMap').AsString , GDSettings.TextureDetail,GDSettings.TextureFilter);
+      iStr := iMaterial.find('DetailMap').AsString;
+      if iStr <> '' then
         iMat.Detail := GDResources.LoadTexture(iStr , GDSettings.TextureDetail,GDSettings.TextureFilter);
-        continue;
-      end
-      else if iStr = 'has_alpha' then //read alpha
-      begin
-        if iMat = nil then
-          continue;
-        iStr := GetNextToken(iFile);
-        iMat.HasAlpha:= iStr = 'true';
-        continue;
-      end
-      else if iStr = 'do_treeanim' then //read tree animation
-      begin
-        if iMat = nil then
-           continue;
-        iStr := GetNextToken(iFile);
-        iMat.DoTreeAnim:= iStr = 'true';
-        continue;
-      end
-      else if iStr = 'alpha_func' then //read alpha function
-      begin
-        if iMat = nil then
-          continue;
-        iStr := GetNextToken(iFile);
-        iMat.AlphaFunc := StrToFloat(iStr);
-        continue;
-      end else if iStr = 'detail_uv_mult' then //read detail uv mult
-      begin
-        if iMat = nil then
-          continue;
-        iStr := GetNextToken(iFile);
-        iMat.DetailUVMult := StrToInt(iStr);
-        continue;
-      end else if iStr = 'detail_mult' then //read detail mult
-      begin
-        if iMat = nil then
-          continue;
-        iStr := GetNextToken(iFile);
-        iMat.DetailMult := StrToFloat(iStr);
-        continue;
-      end;
+      iMat.HasAlpha     := iMaterial.Find('HasAlpha').AsBoolean; 
+      iMat.DoTreeAnim   := iMaterial.Find('DoTreeAnim').AsBoolean;
+      iMat.AlphaFunc    := iMaterial.Find('AlphaFunc').AsNumber;
+      iMat.DetailUVMult := Trunc(iMaterial.Find('DetailUVMult').AsNumber);
+      iMat.DetailMult   := iMaterial.Find('DetailMult').AsNumber;
+
+      AddResource(iName, iMat);
     end;
-    FreeAndNil(iFile);
+
+    FreeAndNil(iMaterials);
   except
     on E: Exception do
     begin
@@ -240,9 +148,6 @@ begin
   end;
 end;
 
-{******************************************************************************}
-{* Add a resources                                                            *}
-{******************************************************************************}
 
 procedure TGDResources.AddResource(aName : String; aResource : TGDResource);
 begin
@@ -252,9 +157,6 @@ begin
   Sort();
 end;
 
-{******************************************************************************}
-{* Add a resources                                                            *}
-{******************************************************************************}
 
 function  TGDResources.GetResource(aIndex : integer): TGDResource;
 begin
@@ -262,9 +164,6 @@ begin
   result.RefCount := result.RefCount-1;
 end;
 
-{******************************************************************************}
-{* Remove a resources                                                         *}
-{******************************************************************************}
 
 procedure TGDResources.RemoveResource(var aResource : TGDResource);
 var
@@ -285,9 +184,6 @@ begin
   end
 end;
 
-{******************************************************************************}
-{* Clear all resources                                                        *}
-{******************************************************************************}
 
 procedure TGDResources.Clear();
 var

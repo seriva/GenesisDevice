@@ -1,32 +1,6 @@
-{*******************************************************************************
-*                            Genesis Device Engine                             *
-*                   Copyright © 2007-2022 Luuk van Venrooij                    *
-*                        http://www.luukvanvenrooij.nl                         *
-********************************************************************************
-*                                                                              *
-*  This file is part of the Genesis Device Engine                              *
-*                                                                              *
-*  The Genesis Device Engine is free software: you can redistribute            *
-*  it and/or modify it under the terms of the GNU Lesser General Public        *
-*  License as published by the Free Software Foundation, either version 3      *
-*  of the License, or any later version.                                       *
-*                                                                              *
-*  The Genesis Device Engine is distributed in the hope that                   *
-*  it will be useful, but WITHOUT ANY WARRANTY; without even the               *
-*  implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.    *
-*  See the GNU Lesser General Public License for more details.                 *
-*                                                                              *
-*  You should have received a copy of the GNU General Public License           *
-*  along with Genesis Device.  If not, see <http://www.gnu.org/licenses/>.     *
-*                                                                              *
-*******************************************************************************}   
 unit uGDCellManager;
 
 {$MODE Delphi}
-
-{******************************************************************************}
-{* This units holds the cell manager                                          *}
-{******************************************************************************}
 
 interface
 
@@ -47,11 +21,6 @@ uses
   uGDMeshManager;
 
 type
-
-{******************************************************************************}
-{* Cellmanager class                                                          *}
-{******************************************************************************}
-
   TGDCellManager = class
   private
     FTriangleCount       : Integer;
@@ -87,10 +56,6 @@ implementation
 uses
   uGDEngine;
 
-{******************************************************************************}
-{* Create the cell manager class                                              *}
-{******************************************************************************}
-
 constructor TGDCellManager.Create();
 begin
   FCells               := TGDBaseCellList.Create();
@@ -101,9 +66,6 @@ begin
   FOctree              := TGDOctree.Create();
 end;
 
-{******************************************************************************}
-{* Destroy the cell manager class                                             *}
-{******************************************************************************}
 
 destructor  TGDCellManager.Destroy();
 begin
@@ -115,9 +77,6 @@ begin
   FreeAndNil(FOctree);
 end;
 
-{******************************************************************************}
-{* Clear the cell manager                                                     *}
-{******************************************************************************}
 
 procedure TGDCellManager.Clear();
 begin
@@ -129,9 +88,6 @@ begin
   FOctree.Clear();
 end;
 
-{******************************************************************************}
-{* Get the visible object count                                               *}
-{******************************************************************************}
 
 function TGDCellManager.ObjectCount(): Integer;
 begin
@@ -139,9 +95,6 @@ begin
             FVisibleMeshCells.Count + FVisibleGrassCells.Count
 end;
 
-{******************************************************************************}
-{* Generate the static terraincell objects from the terrain class             *}
-{******************************************************************************}
 
 procedure TGDCellManager.GenerateTerrainCells(aTerrain : TGDTerrain);
 var
@@ -163,9 +116,6 @@ Begin
   end;
 End;
 
-{******************************************************************************}
-{* Generate the static watercell objects from the water class                 *}
-{******************************************************************************}
 
 procedure TGDCellManager.GenerateWaterCells(aWater : TGDWater; aTerrain : TGDTerrain);
 var
@@ -226,9 +176,6 @@ Begin
   aWater.UpdateVBO();
 End;
 
-{******************************************************************************}
-{* Generate the static grasscell objects from the foliage class               *}
-{******************************************************************************}
 
 procedure TGDCellManager.GenerateFoliageCells(aFoliage : TGDFoliage; aTerrain : TGDTerrain);
 var
@@ -364,9 +311,6 @@ Begin
   GDConsole.Write('......Generated foliage (' + GDTiming.TimeInSeconds + ' Sec)');
 End;
 
-{******************************************************************************}
-{* Generate all the cell                                                      *}
-{******************************************************************************}
 
 procedure TGDCellManager.GenerateCells(aTerrain : TGDTerrain; aWater : TGDWater; aFoliage : TGDFoliage);
 Begin
@@ -376,18 +320,12 @@ Begin
   FOctree.InitOcTree(FCells);
 End;
 
-{******************************************************************************}
-{* Add a meshcell                                                             *}
-{******************************************************************************}
 
 procedure TGDCellManager.AddMeshCell(aMeshCell : TGDMeshCell);
 begin
   FCells.Add(aMeshCell);
 end;
 
-{******************************************************************************}
-{* Detect visible cells                                                       *}
-{******************************************************************************}
 
 procedure TGDCellManager.DetectVisibleCells();
 var
@@ -408,9 +346,6 @@ Begin
   FOctree.GetVisibleCells(iVisibilityQuery);
 End;
 
-{******************************************************************************}
-{* Render the visible cells                                                   *}
-{******************************************************************************}
 
 procedure TGDCellManager.RenderVisibleCells( aRenderAttribute : TGDRenderAttribute;
                                              aRenderFor : TGDRenderFor;

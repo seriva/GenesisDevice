@@ -1,34 +1,6 @@
-{*******************************************************************************
-*                            Genesis Device Engine                             *
-*                   Copyright © 2007-2022 Luuk van Venrooij                    *
-*                        http://www.luukvanvenrooij.nl                         *
-********************************************************************************
-*                                                                              *
-*  This file is part of the Genesis Device Engine                              *
-*                                                                              *
-*  The Genesis Device Engine is free software: you can redistribute            *
-*  it and/or modify it under the terms of the GNU Lesser General Public        *
-*  License as published by the Free Software Foundation, either version 3      *
-*  of the License, or any later version.                                       *
-*                                                                              *
-*  The Genesis Device Engine is distributed in the hope that                   *
-*  it will be useful, but WITHOUT ANY WARRANTY; without even the               *
-*  implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.    *
-*  See the GNU Lesser General Public License for more details.                 *
-*                                                                              *
-*  You should have received a copy of the GNU General Public License           *
-*  along with Genesis Device.  If not, see <http://www.gnu.org/licenses/>.     *
-*                                                                              *
-*******************************************************************************}
 unit uGDGrassCell;
 
 {$MODE Delphi}
-
-{******************************************************************************}
-{* This unit hold the grasscell class. A grasscell is a small patch on the    *}
-{* terrain which has grass on it. Where the patches are depends on the grass  *}
-{* settings.                                                                  *}
-{******************************************************************************}
 
 interface
 
@@ -44,11 +16,6 @@ uses
   uGDBaseCell;
 
 type
-
-{******************************************************************************}
-{* Grasspartical class                                                        *}
-{******************************************************************************}
-
   TGDGrassPartical = record
     Normal    : TGDVector;
     Animation : TGDVector;
@@ -59,9 +26,6 @@ type
     procedure Render();
   end;
 
-{******************************************************************************}
-{* Grasscell class                                                            *}
-{******************************************************************************}
 
   TGDGrassCell = class (TGDBaseCell)
   private
@@ -85,9 +49,6 @@ implementation
 uses
   uGDEngine;
 
-{******************************************************************************}
-{* Init the grasspartical                                                     *}
-{******************************************************************************}
 
 procedure TGDGrassPartical.InitGrassPartical( aMove, aScale, aRotate : TGDVector );
 var
@@ -114,15 +75,10 @@ begin
   begin
     iM1.ApplyToVector(Verts[iI]);
     iM2.ApplyToVector(Verts[iI]);
-    Verts[iI].Multiply(aScale);
-    Verts[iI].Devide(100);
-    Verts[iI].Add(aMove);
+    Verts[iI] := ((Verts[iI] * aScale) / 100) + aMove;
   end;
 end;
 
-{******************************************************************************}
-{* Render the grasspartical                                                   *}
-{******************************************************************************}
 
 procedure TGDGrassPartical.Render();
 var
@@ -138,9 +94,6 @@ begin
   end;
 end;
 
-{******************************************************************************}
-{* Create the grasscell class                                                 *}
-{******************************************************************************}
 
 constructor TGDGrassCell.Create(aTerrain : TGDTerrain; aLayer : TGDLayer; aStartX, aStartY, aEndX, aEndY : Integer );
 var
@@ -234,9 +187,6 @@ begin
   SetLength( iParticalCount, 0);
 end;
 
-{******************************************************************************}
-{* Destroy the grasscell class                                                *}
-{******************************************************************************}
 
 destructor  TGDGrassCell.Destroy();
 begin
@@ -245,9 +195,6 @@ begin
   inherited;
 end;
 
-{******************************************************************************}
-{* Calculate the grasscells AABB                                              *}
-{******************************************************************************}
 
 procedure TGDGrassCell.CalculateBoundingBox(aTerrain : TGDTerrain);
 var
@@ -276,9 +223,6 @@ begin
   BoundingBox.CalculateCenter();
 end;
 
-{******************************************************************************}
-{* Render the grasscell                                                       *}
-{******************************************************************************}
 
 procedure TGDGrassCell.Render( aRenderAttribute : TGDRenderAttribute; aRenderFor : TGDRenderFor );
 begin

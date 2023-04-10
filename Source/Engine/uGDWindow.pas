@@ -5,18 +5,12 @@ unit uGDWindow;
 interface
 
 uses
-  Classes,
   SysUtils,
   SDL2,
   uGDConstants,
   uGDSettings;
 
 type
-
-{******************************************************************************}
-{* Window class                                                               *}
-{******************************************************************************}
-
   TGDWindow = class
   private
     FWindow      : PSDL_Window;
@@ -46,10 +40,6 @@ implementation
 
 uses
   uGDEngine;
-
-{******************************************************************************}
-{* Create window class                                                        *}
-{******************************************************************************}
 
 Constructor TGDWindow.Create();
 var
@@ -90,9 +80,6 @@ begin
   GDConsole.WriteOkFail(FInitialized, iError);
 end;
 
-{******************************************************************************}
-{* Destroy window class                                                       *}
-{******************************************************************************}
 
 Destructor TGDWindow.Destroy();
 var
@@ -115,9 +102,6 @@ begin
   GDConsole.WriteOkFail(iResult, iError);
 end;
 
-{******************************************************************************}
-{* Show                                                                     *}
-{******************************************************************************}
 
 procedure TGDWindow.Show();
 var
@@ -148,9 +132,6 @@ begin
   MakeCurrent();
 end;
 
-{******************************************************************************}
-{* Hide                                                                       *}
-{******************************************************************************}
 
 procedure TGDWindow.Hide();
 begin
@@ -159,27 +140,18 @@ begin
   SDL_HideWindow(FWindow);
 end;
 
-{******************************************************************************}
-{* Make rendercontext current                                                 *}
-{******************************************************************************}
 
 procedure TGDWindow.MakeCurrent();
 begin
   SDL_GL_MakeCurrent(FWindow, FGLContext)
 end;
 
-{******************************************************************************}
-{* Swap the backbuffer                                                        *}
-{******************************************************************************}
 
 procedure TGDWindow.Swap();
 begin
   SDL_GL_SwapWindow(FWindow);
 end;
 
-{******************************************************************************}
-{* Update                                                                     *}
-{******************************************************************************}
 
 procedure TGDWindow.Update();
 var
@@ -201,27 +173,18 @@ begin;
   end;
 end;
 
-{******************************************************************************}
-{* Set the mouse in the center of the windows                                 *}
-{******************************************************************************}
 
 procedure TGDWindow.SetMouse();
 begin
   SDL_WarpMouseInWindow(FWindow, GDWindow.Width() div 2, GDWindow.Height() div 2);
 end;
 
-{******************************************************************************}
-{* Set the title of the window 						      *}
-{******************************************************************************}
 
 procedure TGDWindow.SetTitle(aTitle : String);
 begin
   SDL_SetWindowTitle(FWindow, PChar(aTitle));
 end;
 
-{******************************************************************************}
-{* Get the window width 						      *}
-{******************************************************************************}
 
 function TGDWindow.Width(): integer;
 var
@@ -231,9 +194,6 @@ begin
   result := iW;
 end;
 
-{******************************************************************************}
-{* Get the window height 		   			              *}
-{******************************************************************************}
 
 function TGDWindow.Height(): integer;
 var
@@ -243,9 +203,6 @@ begin
   result := iH;
 end;
 
-{******************************************************************************}
-{* Get the window scaled width 						      *}
-{******************************************************************************}
 
 function TGDWindow.ScaledWidth(): integer;
 var
@@ -258,9 +215,6 @@ begin
     result := iW;
 end;
 
-{******************************************************************************}
-{* Get the window scaled height 		   			              *}
-{******************************************************************************}
 
 function TGDWindow.ScaledHeight(): integer;
 var

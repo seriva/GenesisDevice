@@ -1,25 +1,3 @@
-{*******************************************************************************
-*                            Genesis Device Engine                             *
-*                   Copyright © 2007-2022 Luuk van Venrooij                    *
-*                        http://www.luukvanvenrooij.nl                         *
-********************************************************************************
-*                                                                              *
-*  This file is part of the Genesis Device Engine                              *
-*                                                                              *
-*  The Genesis Device Engine is free software: you can redistribute            *
-*  it and/or modify it under the terms of the GNU Lesser General Public        *
-*  License as published by the Free Software Foundation, either version 3      *
-*  of the License, or any later version.                                       *
-*                                                                              *
-*  The Genesis Device Engine is distributed in the hope that                   *
-*  it will be useful, but WITHOUT ANY WARRANTY; without even the               *
-*  implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.    *
-*  See the GNU Lesser General Public License for more details.                 *
-*                                                                              *
-*  You should have received a copy of the GNU General Public License           *
-*  along with Genesis Device.  If not, see <http://www.gnu.org/licenses/>.     *
-*                                                                              *
-*******************************************************************************}   
 unit uGDFoliage;
 
 {$MODE objfpc}
@@ -28,11 +6,10 @@ interface
 
 uses
   FGL,
-  uGDBmp,
   SysUtils,
   dglOpenGL,
-  IniFiles,
-  uGDStringParsing,
+  JsonTools,
+  uGDBmp,
   uGDTexture,
   uGDTypes,
   uGDConstants,
@@ -40,10 +17,6 @@ uses
   uGDResource;
 
 type
- {******************************************************************************}
- {* Layertype class                                                            *}
- {******************************************************************************}
-
   TGDLayerItem = class
   private
   public
@@ -52,27 +25,21 @@ type
     RandomScale     : TGDVector;
     CoverOfTotal    : Single;
 
-    constructor Create(aIniFile : TIniFile; aSection : String);
+    constructor Create(aNode : TJsonNode);
     destructor  Destroy(); override;
   end;
   TGDLayerItemList = specialize TFPGObjectList<TGDLayerItem>;
 
-{******************************************************************************}
-{* GrassItem class                                                            *}
-{******************************************************************************}
 
   TGDGrassItem = class (TGDLayerItem)
   private
   public
     Texture      : TGDTexture;
 
-    constructor Create(aIniFile : TIniFile; aSection : String);
+    constructor Create(aNode : TJsonNode);
     destructor  Destroy(); override;
   end;
 
-{******************************************************************************}
-{* MeshItem class                                                             *}
-{******************************************************************************}
 
   TGDMeshItem = class (TGDLayerItem)
   private
@@ -86,13 +53,10 @@ type
  		CastShadow     : Boolean;
 		ReceiveShadow  : Boolean;
 
-    constructor Create(aIniFile : TIniFile; aSection : String);
+    constructor Create(aNode : TJsonNode);
     destructor  Destroy(); override;
   end;
 
-{******************************************************************************}
-{* Layer class                                                                *}
-{******************************************************************************}
 
   TGDLayer = class
   private
@@ -104,16 +68,13 @@ type
     LowerLimit : Integer;
     UpperLimit : Integer;
 
-    constructor Create(aIniFile : TIniFile; aSection : String);
+    constructor Create(aNode : TJsonNode);
     destructor  Destroy(); override;
 
     Function CheckMap( aX, aY : Integer ) : Boolean;
   end;
   TGDLayerList = specialize TFPGObjectList<TGDLayer>;
 
-{******************************************************************************}
-{* Foliage class                                                              *}
-{******************************************************************************}
 
   TGDFoliage = class
   private
@@ -135,7 +96,7 @@ type
     constructor Create();
     destructor  Destroy(); override;
 
-    Function  InitFoliage( aIniFile : TIniFile ) : boolean;
+    Function  InitFoliage( aNode : TJsonNode ) : boolean;
     procedure Clear();
 
     procedure StartRenderingGrass( aRenderAttribute : TGDRenderAttribute );
@@ -147,40 +108,26 @@ implementation
 uses
   uGDEngine;
 
-{******************************************************************************}
-{* Create the layertype class                                                 *}
-{******************************************************************************}
-
-constructor TGDLayerItem.Create(aIniFile : TIniFile; aSection : String);
+constructor TGDLayerItem.Create(aNode : TJsonNode);
 begin
-  TerrainRotation := aIniFile.ReadBool( aSection, 'TerrainRotation', false );
-  Scale           := ReadVector(aIniFile, aSection, 'Scale');
-  RandomScale     := ReadVector(aIniFile, aSection, 'RandomScale');
-  CoverOfTotal    := aIniFile.ReadFloat( aSection, 'CoverOfTotal', 100 );
+  TerrainRotation := aNode.Find('TerrainRotation').AsBoolean;
+  Scale.Reset(aNode.Find('Scale'));
+  RandomScale.Reset(aNode.Find('RandomScale'));
+  CoverOfTotal    := aNode.Find('CoverOfTotal').AsNumber;
 end;
 
-{******************************************************************************}
-{* Create the layertype class                                                 *}
-{******************************************************************************}
 
 destructor  TGDLayerItem.Destroy();
 begin
 end;
 
-{******************************************************************************}
-{* Create the grasstype class                                                 *}
-{******************************************************************************}
 
-constructor TGDGrassItem.Create(aIniFile : TIniFile; aSection : String);
+constructor TGDGrassItem.Create(aNode : TJsonNode);
 begin
-  inherited Create(aIniFile, aSection);
-  Texture := GDResources.LoadTexture(aIniFile.ReadString( aSection, 'Texture', ''),
-                                         TD_HIGH, GDSettings.TextureFilter);
+  inherited Create(aNode);
+  Texture := GDResources.LoadTexture(aNode.Find('Texture').AsString, TD_HIGH, GDSettings.TextureFilter);
 end;
 
-{******************************************************************************}
-{* Destroy the grasstype                                                      *}
-{******************************************************************************}
 
 destructor  TGDGrassItem.Destroy();
 begin
@@ -188,26 +135,20 @@ begin
   inherited
 end;
 
-{******************************************************************************}
-{* Create the treetype class                                                  *}
-{******************************************************************************}
 
-constructor TGDMeshItem.Create(aIniFile : TIniFile; aSection : String);
+constructor TGDMeshItem.Create(aNode : TJsonNode);
 begin
-  inherited Create(aIniFile, aSection);
-  Mesh           := GDResources.Loadmesh(aIniFile.ReadString( aSection, 'Model', ''));
-  MeshLOD1       := GDResources.Loadmesh(aIniFile.ReadString( aSection, 'ModelLOD1', ''));
-  MeshLOD2       := GDResources.Loadmesh(aIniFile.ReadString( aSection, 'ModelLOD2', ''));
-  OffsetPosition := ReadVector(aIniFile, aSection, 'OffsetPosition');
-  Rotation       := ReadVector(aIniFile, aSection, 'Rotation');
-  RandomRotation := ReadVector(aIniFile, aSection, 'RandomRotation');
- 	CastShadow     := aIniFile.ReadBool( aSection, 'CastShadow', false);
-	ReceiveShadow  := aIniFile.ReadBool( aSection, 'ReceiveShadow', false);
+  inherited Create(aNode);
+  Mesh           := GDResources.Loadmesh(aNode.Find('Model').AsString);
+  MeshLOD1       := GDResources.Loadmesh(aNode.Find('ModelLOD1').AsString);
+  MeshLOD2       := GDResources.Loadmesh(aNode.Find('ModelLOD2').AsString);
+  OffsetPosition.Reset(aNode.Find('OffsetPosition'));
+  Rotation.Reset(aNode.Find('Rotation'));
+  RandomRotation.Reset(aNode.Find('RandomRotation'));
+ 	CastShadow     := aNode.Find('CastShadow').AsBoolean;
+	ReceiveShadow  := aNode.Find('ReceiveShadow').AsBoolean;
 end;
 
-{******************************************************************************}
-{* Destroy the treetype                                                       *}
-{******************************************************************************}
 
 destructor  TGDMeshItem.Destroy();
 begin
@@ -217,26 +158,24 @@ begin
   inherited
 end;
 
-{******************************************************************************}
-{* Create layer                                                               *}
-{******************************************************************************}
 
-constructor TGDLayer.Create(aIniFile : TIniFile; aSection : String);
+constructor TGDLayer.Create(aNode : TJsonNode);
 var
+  iLayerItems : TJsonNode;
   iMap : TGDBmp;
   iX, iY : integer;
 begin
   LayerItems := TGDLayerItemList.Create();
 
-  if aIniFile.ReadString( aSection, 'Type', 'MESH' ) = 'MESH' then
+  if aNode.Find('Type').AsString = 'MESH' then
     LayerType := LT_MESH
   else
     LayerType := LT_GRASS;
 
-  iMap        := TGDBmp.Create(aIniFile.ReadString( aSection, 'Map', 'map.bmp'));
-  Count      := aIniFile.ReadInteger( aSection, 'Count', 0 );
-  LowerLimit := aIniFile.ReadInteger( aSection, 'LowerLimit', -2147483648 );
-  UpperLimit := aIniFile.ReadInteger( aSection, 'UpperLimit',  2147483647 );
+  iMap       := TGDBmp.Create(aNode.Find('Map').AsString);
+  Count      := Trunc(aNode.Find('Count').AsNumber); 
+  LowerLimit := Trunc(aNode.Find('LowerLimit').AsNumber);
+  UpperLimit := Trunc(aNode.Find('UpperLimit').AsNumber);
 
   if ((iMap.Width mod 2) <> 0) or ((iMap.Height mod 2) <> 0) then
     Raise Exception.Create('Map dimensions are incorrect!');
@@ -250,22 +189,17 @@ begin
   end;
   FreeAndNil(iMap);
 
-  //tree types
-  iX := 1;
-  while(aIniFile.SectionExists(aSection + '_Item' + IntToStr(iX))) do
+  //layer types
+  iLayerItems := aNode.Find('Items');
+  for iX := 0 to iLayerItems.Count-1 do
   begin
     if LayerType = LT_MESH then
-      LayerItems.Add(TGDMeshItem.Create(aIniFile, aSection + '_Item' + IntToStr(iX)))
+      LayerItems.Add(TGDMeshItem.Create(iLayerItems.Child(iX)))
     else
-      LayerItems.Add(TGDGrassItem.Create(aIniFile, aSection + '_Item' + IntToStr(iX)));
-
-    iX := iX + 1;
+      LayerItems.Add(TGDGrassItem.Create(iLayerItems.Child(iX)));    
   end;
 end;
 
-{******************************************************************************}
-{* Destroy layer                                                              *}
-{******************************************************************************}
 
 destructor TGDLayer.Destroy();
 var
@@ -280,27 +214,18 @@ begin
   FreeAndNil(LayerItems);
 end;
 
-{******************************************************************************}
-{* Check location on layermap                                                 *}
-{******************************************************************************}
 
 Function TGDLayer.CheckMap( aX, aY : Integer ) : Boolean;
 begin
   result := Map[aX, aY];
 end;
 
-{******************************************************************************}
-{* Create the foliage class                                                   *}
-{******************************************************************************}
 
 constructor TGDFoliage.Create();
 begin
   FLayers := TGDLayerList.Create();
 end;
 
-{******************************************************************************}
-{* Destroy the foliage class                                                  *}
-{******************************************************************************}
 
 destructor  TGDFoliage.Destroy();
 begin
@@ -308,12 +233,10 @@ begin
   FreeAndNil(FLayers);
 end;
 
-{******************************************************************************}
-{* Init the foliage                                                           *}
-{******************************************************************************}
 
-Function TGDFoliage.InitFoliage( aIniFile : TIniFile ) : boolean;
+Function TGDFoliage.InitFoliage( aNode : TJsonNode ) : boolean;
 var
+  iLayers : TJsonNode;
   iX : integer;
   iError : String;
 begin
@@ -323,17 +246,14 @@ begin
   try
     result := true;
 
-    FGrassAnimationSpeed    := aIniFile.ReadFloat( 'Foliage', 'GrassAnimationSpeed', 1000 );
-    FGrassAnimationStrength := aIniFile.ReadFloat( 'Foliage', 'GrassAnimationStrength', 5);
-    FTreeAnimationSpeed     := aIniFile.ReadFloat( 'Foliage', 'TreeAnimationSpeed', 1000 );
-    FTreeAnimationStrength  := aIniFile.ReadFloat( 'Foliage', 'TreeAnimationStrength', 5 );
+    FGrassAnimationSpeed    := aNode.Find('GrassAnimationSpeed').AsNumber;
+    FGrassAnimationStrength := aNode.Find('GrassAnimationStrength').AsNumber;
+    FTreeAnimationSpeed     := aNode.Find('TreeAnimationSpeed').AsNumber;
+    FTreeAnimationStrength  := aNode.Find('TreeAnimationStrength').AsNumber;
 
-    iX := 1;
-    while(aIniFile.SectionExists('Layer' + IntToStr(iX))) do
-    begin
-      FLayers.Add(TGDLayer.Create(aIniFile, 'Layer' + IntToStr(iX)));
-      iX := iX + 1;
-    end;
+    iLayers := aNode.Find('Layers');
+    for iX := 0 to iLayers.Count-1 do
+      FLayers.Add(TGDLayer.Create(iLayers.Child(iX))); 
   except
     on E: Exception do
     begin
@@ -346,18 +266,12 @@ begin
   GDConsole.Use := true;
 end;
 
-{******************************************************************************}
-{* Clear the foliage                                                          *}
-{******************************************************************************}
 
 procedure TGDFoliage.Clear();
 begin
   FLayers.Clear();
 end;
 
-{******************************************************************************}
-{* Start the rendering of a grasscell                                         *}
-{******************************************************************************}
 
 procedure TGDFoliage.StartRenderingGrass( aRenderAttribute : TGDRenderAttribute );
 begin
@@ -384,9 +298,6 @@ begin
   end;
 end;
 
-{******************************************************************************}
-{* End the rendering of a grasscell                                           *}
-{******************************************************************************}
 
 procedure TGDFoliage.EndRenderingGrass();
 begin

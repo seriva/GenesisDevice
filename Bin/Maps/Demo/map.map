@@ -1,0 +1,715 @@
+{
+    "SpawnPoint": {
+        "Position": [-8287,0,17512],
+        "ViewAngle": [0,0,0]
+    },
+    "Fog": {
+        "Color": [0.85,0.95,0.95,1.0]
+    },
+    "Light": {
+        "Direction": [-0.5,-0.6,-0.5],
+        "Ambient": [0.625,0.625,0.625,1.0],
+        "Diffuse": [0.80,0.84,0.85,1.0]
+    },  
+    "Terrain": {
+        "HeightMap": "Maps/Demo/heightmap.bmp",
+        "ColorMap": "Maps/Demo/colormap.dds",
+        "DetailDistribution": "Maps/Demo/detaillookup.dds",
+        "DetailMap1": "Textures/Detail/rock.dds",
+        "DetailMap2": "Textures/Detail/grass.dds",
+        "DetailMap3": "Textures/Detail/sand.dds",
+        "DetailMap4": "Textures/Detail/road.dds",
+        "TriangleSize": 256,
+        "HeightScale": 56,
+        "DetailMapUV": 55,
+        "CausticMapUV": 150,
+        "DetailMap": "Textures/Detail/detail.dds",
+        "DetailUVMult": 6,
+        "DetailMult": 0.40
+    },        
+    "Sky": {
+        "CloudMap": "Textures/Sky/cloud.dds",
+        "SunMap": "Textures/Sky/sun.dds",
+        "SunFlareMap": "Textures/Sky/sunflare.dds",
+        "SunSize": 0.35,
+        "CloudUV": 1.5,
+        "Intensity": 0.40,
+        "AniSpeed1": 2000,
+        "AniSpeed2": 500
+    },   
+    "Water": {
+        "Height": 1535.0,
+        "RefractionUV": 125,
+        "WavesUV": 25,
+        "Color": [0.37,0.38,0.39,0.6],
+        "WaterTexturesCount": 32,
+        "WaterMapPath": "Textures/Water/",
+        "WaterMapPrefix": "wave",
+        "WaterMapExtension": "dds",
+        "CausticTexturesCount": 32,
+        "CausticsMapPath": "Textures/Water/",
+        "CausticsMapPrefix": "caust",
+        "CausticsMapExtension": "dds",
+        "Depth": 500,
+        "MinDistance": 0.11,
+        "MaxDistance": 0.17
+    },
+    "Foliage": {
+        "GrassAnimationSpeed": 700,
+        "GrassAnimationStrength": 8,
+        "TreeAnimationSpeed": 400,
+        "TreeAnimationStrength": 9,
+        "Layers": [{
+                "Type": "GRASS",
+                "Map": "Maps/Demo/grassmap.bmp",
+                "Count": 0,
+                "LowerLimit": 1540,
+                "UpperLimit": 50000,
+                "Items": [
+                    {
+                        "Texture": "Textures/Grass/grass1.dds",
+                        "Scale": [80,60,80],
+                        "RandomScale": [25,25,25],
+                        "CoverOfTotal": 3,
+                        "TerrainRotation": true
+                    },
+                    {
+                        "Texture": "Textures/Grass/grass2.dds",
+                        "Scale": [120,40,120],
+                        "RandomScale": [25,15,25],
+                        "CoverOfTotal": 32,
+                        "TerrainRotation": true
+                    },
+                    {
+                        "Texture": "Textures/Grass/grass3.dds",
+                        "Scale": [105,60,105],
+                        "RandomScale": [20,20,20],
+                        "CoverOfTotal": 40,
+                        "TerrainRotation": true
+                    },
+                    {
+                        "Texture": "Textures/Grass/grass4.dds",
+                        "Scale": [110,60,110],
+                        "RandomScale": [20,20,20],
+                        "CoverOfTotal": 6,
+                        "TerrainRotation": true
+                    },
+                    {
+                        "Texture": "Textures/Grass/grass5.dds",
+                        "Scale": [80,60,80],
+                        "RandomScale": [20,20,20],
+                        "CoverOfTotal": 6,
+                        "TerrainRotation": true
+                    },
+                    {
+                        "Texture": "Textures/Grass/grass6.dds",
+                        "Scale": [65,70,65],
+                        "RandomScale": [20,20,20],
+                        "CoverOfTotal": 10,
+                        "TerrainRotation": true
+                    },
+                    {
+                        "Texture": "Textures/Grass/grass7.dds",
+                        "Scale": [50,60,50],
+                        "RandomScale": [20,20,20],
+                        "CoverOfTotal": 3,
+                        "TerrainRotation": true
+                    }
+                ]
+            },
+            {
+                "Type": "GRASS",
+                "Map": "Maps/Demo/seaweedmap.bmp",
+                "Count": 0,
+                "LowerLimit": -50000,
+                "UpperLimit": 1250,
+                "Items": [
+                    {
+                        "Texture": "Textures/Seaweed/kelp.dds",
+                        "Scale": [20,100,20],
+                        "RandomScale": [20,150,20],
+                        "CoverOfTotal": 20,
+                        "TerrainRotation": true
+                    },
+                    {
+                        "Texture": "Textures/Seaweed/vallis1.dds",
+                        "Scale": [40,60,40],
+                        "RandomScale": [20,40,20],
+                        "CoverOfTotal": 15,
+                        "TerrainRotation": true
+                    },
+                    {
+                        "Texture": "Textures/Seaweed/vallis2.dds",
+                        "Scale": [40,60,40],
+                        "RandomScale": [20,40,20],
+                        "CoverOfTotal": 15,
+                        "TerrainRotation": true
+                    },
+                    {
+                        "Texture": "Textures/Seaweed/vallis3.dds",
+                        "Scale": [80,60,80],
+                        "RandomScale": [20,40,20],
+                        "CoverOfTotal": 40,
+                        "TerrainRotation": true
+                    }
+                ]
+            },
+            {
+                "Type": "MESH",
+                "Map": "Maps/Demo/treemap.bmp",
+                "Count": 400,
+                "LowerLimit": 1555,
+                "UpperLimit": 7500,
+                "Items": [
+                    {
+                        "Model": "Models/Trees/tree_01_a/tree_01_a.mesh",
+                        "ModelLOD1": "Models/Trees/tree_01_a/tree_01_a_lod1.mesh",
+                        "ModelLOD2": "Models/Trees/tree_01_a/tree_01_a_lod2.mesh",
+                        "OffsetPosition": [0,-120,0],
+                        "Scale": [800,800,800],
+                        "RandomScale": [550,550,550],
+                        "Rotation":[0,0,0],
+                        "RandomRotation": [0,360,0],
+                        "CoverOfTotal": 20,
+                        "CastShadow": true,
+                        "ReceiveShadow": false,
+                        "TerrainRotation": false
+                    },
+                    {
+                        "Model": "Models/Trees/tree_01_f/tree_01_f.mesh",
+                        "ModelLOD1": "Models/Trees/tree_01_f/tree_01_f_lod1.mesh",
+                        "ModelLOD2": "Models/Trees/tree_01_f/tree_01_f_lod2.mesh",
+                        "OffsetPosition": [0,-120,0],
+                        "Scale": [800,800,800],
+                        "RandomScale": [400,400,400],
+                        "Rotation":[0,0,0],
+                        "RandomRotation": [0,360,0],
+                        "CoverOfTotal": 20,
+                        "CastShadow": true,
+                        "ReceiveShadow": false,
+                        "TerrainRotation": false
+                    },
+                    {
+                        "Model": "Models/Trees/tree_02_a/tree_02_a.mesh",
+                        "ModelLOD1": "Models/Trees/tree_02_a/tree_02_a_lod1.mesh",
+                        "ModelLOD2": "Models/Trees/tree_02_a/tree_02_a_lod2.mesh",
+                        "OffsetPosition": [0,-120,0],
+                        "Scale": [800,800,800],
+                        "RandomScale": [400,400,400],
+                        "Rotation":[0,0,0],
+                        "RandomRotation": [0,360,0],
+                        "CoverOfTotal": 25,
+                        "CastShadow": true,
+                        "ReceiveShadow": false,
+                        "TerrainRotation": false
+                    },
+                    {
+                        "Model": "Models/Trees/bush_02/bush_02.mesh",
+                        "ModelLOD1": "",
+                        "ModelLOD2": "",        
+                        "OffsetPosition": [0,-50,0],                    
+                        "Scale": [400,400,400],
+                        "RandomScale": [400,400,400],
+                        "Rotation":[0,0,0],
+                        "RandomRotation": [0,360,0],
+                        "CoverOfTotal": 35,
+                        "CastShadow": true,
+                        "ReceiveShadow": false,
+                        "TerrainRotation": false
+                    }
+                ]
+            },
+            {
+                "Type": "MESH",
+                "Map": "Maps/Demo/rockmap.bmp",
+                "Count": 6000,
+                "LowerLimit": -50000,
+                "UpperLimit": 50000,
+                "Items": [
+                    {
+                        "Model": "Models/Rocks/rock1.mesh",
+                        "ModelLOD1": "",
+                        "ModelLOD2": "",        
+                        "OffsetPosition": [0,0,0],  
+                        "Scale": [4000,4000,4000],
+                        "RandomScale": [7000,7000,7000],
+                        "Rotation":[0,0,0],
+                        "RandomRotation": [0,0,0],
+                        "CoverOfTotal": 6,
+                        "CastShadow": false,
+                        "ReceiveShadow": true,
+                        "TerrainRotation": true
+                    },
+                    {
+                        "Model": "Models/Rocks/rock2.mesh",
+                        "ModelLOD1": "",
+                        "ModelLOD2": "",        
+                        "OffsetPosition": [0,0,0],  
+                        "Scale": [4000,4000,4000],
+                        "RandomScale": [7000,7000,7000],
+                        "Rotation":[0,0,0],
+                        "RandomRotation": [0,0,0],
+                        "CoverOfTotal": 6,
+                        "CastShadow": false,
+                        "ReceiveShadow": true,
+                        "TerrainRotation": true
+                    },
+                    {
+                        "Model": "Models/Rocks/rock3.mesh",
+                        "ModelLOD1": "",
+                        "ModelLOD2": "",        
+                        "OffsetPosition": [0,0,0],  
+                        "Scale": [4000,4000,4000],
+                        "RandomScale": [7000,7000,7000],
+                        "Rotation":[0,0,0],
+                        "RandomRotation": [0,0,0],
+                        "CoverOfTotal": 6,
+                        "CastShadow": false,
+                        "ReceiveShadow": true,
+                        "TerrainRotation": true
+                    },
+                    {
+                        "Model": "Models/Rocks/rock4.mesh",
+                        "ModelLOD1": "",
+                        "ModelLOD2": "",        
+                        "OffsetPosition": [0,0,0],  
+                        "Scale": [4000,4000,4000],
+                        "RandomScale": [7000,7000,7000],
+                        "Rotation":[0,0,0],
+                        "RandomRotation": [0,0,0],
+                        "CoverOfTotal": 6,
+                        "CastShadow": false,
+                        "ReceiveShadow": true,
+                        "TerrainRotation": true
+                    },
+                    {
+                        "Model": "Models/Rocks/rock5.mesh",
+                        "ModelLOD1": "",
+                        "ModelLOD2": "",        
+                        "OffsetPosition": [0,0,0],  
+                        "Scale": [4000,4000,4000],
+                        "RandomScale": [7000,7000,7000],
+                        "Rotation":[0,0,0],
+                        "RandomRotation": [0,0,0],
+                        "CoverOfTotal": 6,
+                        "CastShadow": false,
+                        "ReceiveShadow": true,
+                        "TerrainRotation": true
+                    },
+                    {
+                        "Model": "Models/Rocks/rock6.mesh",
+                        "ModelLOD1": "",
+                        "ModelLOD2": "",        
+                        "OffsetPosition": [0,0,0],  
+                        "Scale": [4000,4000,4000],
+                        "RandomScale": [7000,7000,7000],
+                        "Rotation":[0,0,0],
+                        "RandomRotation": [0,0,0],
+                        "CoverOfTotal": 6,
+                        "CastShadow": false,
+                        "ReceiveShadow": true,
+                        "TerrainRotation": true
+                    },
+                    {
+                        "Model": "Models/Rocks/rock7.mesh",
+                        "ModelLOD1": "",
+                        "ModelLOD2": "",        
+                        "OffsetPosition": [0,0,0],  
+                        "Scale": [4000,4000,4000],
+                        "RandomScale": [7000,7000,7000],
+                        "Rotation":[0,0,0],
+                        "RandomRotation": [0,0,0],
+                        "CoverOfTotal": 8,
+                        "CastShadow": false,
+                        "ReceiveShadow": true,
+                        "TerrainRotation": true
+                    },
+                    {
+                        "Model": "Models/Rocks/rock8.mesh",
+                        "ModelLOD1": "",
+                        "ModelLOD2": "",        
+                        "OffsetPosition": [0,0,0],  
+                        "Scale": [4000,4000,4000],
+                        "RandomScale": [7000,7000,7000],
+                        "Rotation":[0,0,0],
+                        "RandomRotation": [0,0,0],
+                        "CoverOfTotal": 8,
+                        "CastShadow": false,
+                        "ReceiveShadow": true,
+                        "TerrainRotation": true
+                    },
+                    {
+                        "Model": "Models/Rocks/rock9.mesh",
+                        "ModelLOD1": "",
+                        "ModelLOD2": "",        
+                        "OffsetPosition": [0,0,0],  
+                        "Scale": [4000,4000,4000],
+                        "RandomScale": [7000,7000,7000],
+                        "Rotation":[0,0,0],
+                        "RandomRotation": [0,0,0],
+                        "CoverOfTotal": 6,
+                        "CastShadow": false,
+                        "ReceiveShadow": true,
+                        "TerrainRotation": true
+                    },
+                    {
+                        "Model": "Models/Rocks/rock10.mesh",
+                        "ModelLOD1": "",
+                        "ModelLOD2": "",        
+                        "OffsetPosition": [0,0,0],  
+                        "Scale": [4000,4000,4000],
+                        "RandomScale": [7000,7000,7000],
+                        "Rotation":[0,0,0],
+                        "RandomRotation": [0,0,0],
+                        "CoverOfTotal": 8,
+                        "CastShadow": false,
+                        "ReceiveShadow": true,
+                        "TerrainRotation": true
+                    },
+                    {
+                        "Model": "Models/Rocks/rock11.mesh",
+                        "ModelLOD1": "",
+                        "ModelLOD2": "",        
+                        "OffsetPosition": [0,0,0],  
+                        "Scale": [4000,4000,4000],
+                        "RandomScale": [7000,7000,7000],
+                        "Rotation":[0,0,0],
+                        "RandomRotation": [0,0,0],
+                        "CoverOfTotal": 6,
+                        "CastShadow": false,
+                        "ReceiveShadow": true,
+                        "TerrainRotation": true
+                    },
+                    {
+                        "Model": "Models/Rocks/rock13.mesh",
+                        "ModelLOD1": "",
+                        "ModelLOD2": "",        
+                        "OffsetPosition": [0,0,0],  
+                        "Scale": [4000,4000,4000],
+                        "RandomScale": [7000,7000,7000],
+                        "Rotation":[0,0,0],
+                        "RandomRotation": [0,0,0],
+                        "CoverOfTotal": 7,
+                        "CastShadow": false,
+                        "ReceiveShadow": true,
+                        "TerrainRotation": true
+                    },
+                    {
+                        "Model": "Models/Rocks/rock14.mesh",
+                        "ModelLOD1": "",
+                        "ModelLOD2": "",        
+                        "OffsetPosition": [0,0,0],  
+                        "Scale": [4000,4000,4000],
+                        "RandomScale": [7000,7000,7000],
+                        "Rotation":[0,0,0],
+                        "RandomRotation": [0,0,0],
+                        "CoverOfTotal": 7,
+                        "CastShadow": false,
+                        "ReceiveShadow": true,
+                        "TerrainRotation": true
+                    },
+                    {
+                        "Model": "Models/Rocks/rock15.mesh",
+                        "ModelLOD1": "",
+                        "ModelLOD2": "",        
+                        "OffsetPosition": [0,0,0],  
+                        "Scale": [4000,4000,4000],
+                        "RandomScale": [7000,7000,7000],
+                        "Rotation":[0,0,0],
+                        "RandomRotation": [0,0,0],
+                        "CoverOfTotal": 7,
+                        "CastShadow": false,
+                        "ReceiveShadow": true,
+                        "TerrainRotation": true
+                    },
+                    {
+                        "Model": "Models/Rocks/rock16.mesh",
+                        "ModelLOD1": "",
+                        "ModelLOD2": "",        
+                        "OffsetPosition": [0,0,0],  
+                        "Scale": [4000,4000,4000],
+                        "RandomScale": [7000,7000,7000],
+                        "Rotation":[0,0,0],
+                        "RandomRotation": [0,0,0],
+                        "CoverOfTotal": 7,
+                        "CastShadow": false,
+                        "ReceiveShadow": true,
+                        "TerrainRotation": true
+                    }                    
+                ]
+            }
+        ]
+    },
+    "Models": [
+        {
+            "Model": "Models/Buildings/docks.mesh",
+            "ModelLOD1": "",
+            "ModelLOD2": "", 
+            "Position": [-17090,1000,13424],
+            "Rotation": [0,5,0],
+            "Scale": [25000,25000,25000],
+            "CastShadow": true,
+            "ReceiveShadow": true
+        },
+        {
+            "Model": "Models/Buildings/docks.mesh",
+            "ModelLOD1": "",
+            "ModelLOD2": "", 
+            "Position": [-13390,1000,13424],
+            "Rotation": [0,-4,0],
+            "Scale": [25000,25000,25000],
+            "CastShadow": true,
+            "ReceiveShadow": true
+        },
+        {
+            "Model": "Models/Buildings/Longhouse_LOD01.mesh",
+            "ModelLOD1": "",
+            "ModelLOD2": "", 
+            "Position": [-14560,2015,19030],
+            "Rotation": [0,175,0],
+            "Scale": [28000,28000,28000],
+            "CastShadow": true,
+            "ReceiveShadow": true
+        },
+        {
+            "Model": "Models/Buildings/Storehouse_LOD01.mesh",
+            "ModelLOD1": "",
+            "ModelLOD2": "", 
+            "Position": [-18090,2015,19030],
+            "Rotation": [0,5,0],
+            "Scale": [32000,32000,32000],
+            "CastShadow": true,
+            "ReceiveShadow": true
+        },
+        {
+            "Model": "Models/Buildings/Haywagon_LOD01.mesh",
+            "ModelLOD1": "",
+            "ModelLOD2": "", 
+            "Position": [-16818,2015,16138],
+            "Rotation": [0,45,0],
+            "Scale": [28000,28000,28000],
+            "CastShadow": true,
+            "ReceiveShadow": true
+        },
+        {
+            "Model": "Models/Buildings/Barrel_LOD01.mesh",
+            "ModelLOD1": "",
+            "ModelLOD2": "", 
+            "Position": [-18000,2185,20108],
+            "Rotation": [0,60,0],
+            "Scale": [28000,28000,28000],
+            "CastShadow": true,
+            "ReceiveShadow": true
+        },
+        {
+            "Model": "Models/Buildings/Barrel_LOD01.mesh",
+            "ModelLOD1": "",
+            "ModelLOD2": "", 
+            "Position": [-17740,2185,20380],
+            "Rotation": [0,60,0],
+            "Scale": [28000,28000,28000],
+            "CastShadow": true,
+            "ReceiveShadow": true
+        },
+        {
+            "Model": "Models/Buildings/Barrel_LOD01.mesh",
+            "ModelLOD1": "",
+            "ModelLOD2": "", 
+            "Position": [-18260,2185,20108],
+            "Rotation": [0,60,0],
+            "Scale": [28000,28000,28000],
+            "CastShadow": true,
+            "ReceiveShadow": true
+        },
+        {
+            "Model": "Models/Buildings/Barrel_LOD01.mesh",
+            "ModelLOD1": "",
+            "ModelLOD2": "", 
+            "Position": [-17740,2185,20150],
+            "Rotation": [0,90,0],
+            "Scale": [28000,28000,28000],
+            "CastShadow": true,
+            "ReceiveShadow": true
+        },
+        {
+            "Model": "Models/Buildings/Barrel_LOD01.mesh",
+            "ModelLOD1": "",
+            "ModelLOD2": "", 
+            "Position": [-18260,2185,19840],
+            "Rotation": [0,10,0],
+            "Scale": [28000,28000,28000],
+            "CastShadow": true,
+            "ReceiveShadow": true
+        },
+        {
+            "Model": "Models/Buildings/Barrel_LOD01.mesh",
+            "ModelLOD1": "",
+            "ModelLOD2": "", 
+            "Position": [-17950,2185,19800],
+            "Rotation": [0,88,0],
+            "Scale": [28000,28000,28000],
+            "CastShadow": true,
+            "ReceiveShadow": true
+        },
+        {
+            "Model": "Models/Buildings/Barrel_LOD01.mesh",
+            "ModelLOD1": "",
+            "ModelLOD2": "", 
+            "Position": [-18230,2185,19580],
+            "Rotation": [0,155,0],
+            "Scale": [28000,28000,28000],
+            "CastShadow": true,
+            "ReceiveShadow": true
+        },
+        {
+            "Model": "Models/Buildings/Barrel_LOD01.mesh",
+            "ModelLOD1": "",
+            "ModelLOD2": "", 
+            "Position": [-17950,2185,19580],
+            "Rotation": [0,60,0],
+            "Scale": [28000,28000,28000],
+            "CastShadow": true,
+            "ReceiveShadow": true
+        },
+        {
+            "Model": "Models/Buildings/Barrel_LOD01.mesh",
+            "ModelLOD1": "",
+            "ModelLOD2": "", 
+            "Position": [-18250,2185,19310],
+            "Rotation": [0,180,0],
+            "Scale": [28000,28000,28000],
+            "CastShadow": true,
+            "ReceiveShadow": true
+        },
+        {
+            "Model": "Models/Buildings/Barrel_LOD01.mesh",
+            "ModelLOD1": "",
+            "ModelLOD2": "", 
+            "Position": [-18000,2185,19310],
+            "Rotation": [0,50,0],
+            "Scale": [28000,28000,28000],
+            "CastShadow": true,
+            "ReceiveShadow": true
+        },
+        {
+            "Model": "Models/Buildings/Barrel_LOD01.mesh",
+            "ModelLOD1": "",
+            "ModelLOD2": "", 
+            "Position": [-18000,2185,20380],
+            "Rotation": [0,60,0],
+            "Scale": [28000,28000,28000],
+            "CastShadow": true,
+            "ReceiveShadow": true
+        },
+        {
+            "Model": "Models/Buildings/Barrel_LOD01.mesh",
+            "ModelLOD1": "",
+            "ModelLOD2": "", 
+            "Position": [-18260,2185,20380],
+            "Rotation": [0,60,0],
+            "Scale": [28000,28000,28000],
+            "CastShadow": true,
+            "ReceiveShadow": true
+        },
+        {
+            "Model": "Models/Buildings/Barrel_LOD01.mesh",
+            "ModelLOD1": "",
+            "ModelLOD2": "", 
+            "Position": [-18250,2185,19000],
+            "Rotation": [0,50,0],
+            "Scale": [28000,28000,28000],
+            "CastShadow": true,
+            "ReceiveShadow": true
+        },
+        {
+            "Model": "Models/Buildings/Barrel_LOD01.mesh",
+            "ModelLOD1": "",
+            "ModelLOD2": "", 
+            "Position": [-18000,2185,19000],
+            "Rotation": [0,75,0],
+            "Scale": [28000,28000,28000],
+            "CastShadow": true,
+            "ReceiveShadow": true
+        },
+        {
+            "Model": "Models/Buildings/Crate_LOD01.mesh",
+            "ModelLOD1": "",
+            "ModelLOD2": "", 
+            "Position": [-17800,2185,18700],
+            "Rotation": [0,85,0],
+            "Scale": [25000,25000,25000],
+            "CastShadow": true,
+            "ReceiveShadow": true
+        },
+        {
+            "Model": "Models/Buildings/Crate_LOD01.mesh",
+            "ModelLOD1": "",
+            "ModelLOD2": "", 
+            "Position": [-17800,2185,18300],
+            "Rotation": [0,95,0],
+            "Scale": [25000,25000,25000],
+            "CastShadow": true,
+            "ReceiveShadow": true
+        },
+        {
+            "Model": "Models/Buildings/Crate_LOD01.mesh",
+            "ModelLOD1": "",
+            "ModelLOD2": "", 
+            "Position": [-17400,2185,17900],
+            "Rotation": [0,95,0],
+            "Scale": [25000,25000,25000],
+            "CastShadow": true,
+            "ReceiveShadow": true
+        },
+        {
+            "Model": "Models/Buildings/Crate_LOD01.mesh",
+            "ModelLOD1": "",
+            "ModelLOD2": "", 
+            "Position": [-17800,2185,17900],
+            "Rotation": [0,95,0],
+            "Scale": [25000,25000,25000],
+            "CastShadow": true,
+            "ReceiveShadow": true
+        },
+        {
+            "Model": "Models/Buildings/Crate_LOD01.mesh",
+            "ModelLOD1": "",
+            "ModelLOD2": "", 
+            "Position": [-17400,2500,17900],
+            "Rotation": [0,90,0],
+            "Scale": [25000,25000,25000],
+            "CastShadow": true,
+            "ReceiveShadow": true
+        },
+        {
+            "Model": "Models/Buildings/Woodpile_LOD01.mesh",
+            "ModelLOD1": "",
+            "ModelLOD2": "", 
+            "Position": [-16800,2140,19000],
+            "Rotation": [0,5,0],
+            "Scale": [60000,60000,60000],
+            "CastShadow": true,
+            "ReceiveShadow": true
+        },
+        {
+            "Model": "Models/Buildings/Woodpile_LOD01.mesh",
+            "ModelLOD1": "",
+            "ModelLOD2": "", 
+            "Position": [-16800,2140,18000],
+            "Rotation": [0,185,0],
+            "Scale": [60000,60000,60000],
+            "CastShadow": true,
+            "ReceiveShadow": true
+        },
+        {
+            "Model": "Models/Buildings/Woodpile_LOD01.mesh",
+            "ModelLOD1": "",
+            "ModelLOD2": "", 
+            "Position": [-16800,2140,20000],
+            "Rotation": [0,175,0],
+            "Scale": [60000,60000,60000],
+            "CastShadow": true,
+            "ReceiveShadow": true
+        }
+    ]
+}

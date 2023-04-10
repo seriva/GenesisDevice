@@ -1,15 +1,12 @@
-# Wavefront MTL file
-# Creator: Ultimate Unwrap3D Pro v3.27
-# URL: http://www.unwrap3d.com
-# Time: Thu Apr 11 09:29:47 2013
-# num_materials: 1
-
-newmtl crate_crate01_D_tga
-colormap Models/Buildings/crate01_D.dds
-detailmap Textures/Detail/detail.dds    
-has_alpha false
-alpha_func 0.7
-detail_uv_mult 4
-detail_mult 0.4
-
-# num_materials: 1
+[
+    {
+        "Name": "crate_crate01_D_tga",
+        "ColorMap": "Models/Buildings/crate01_D.dds",
+        "DetailMap": "Textures/Detail/detail.dds",
+        "HasAlpha": false,
+        "AlphaFunc": 0.7,
+        "DetailUVMult": 4,
+        "DetailMult": 0.4,
+        "DoTreeAnim": false
+    }
+]

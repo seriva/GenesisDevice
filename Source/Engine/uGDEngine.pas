@@ -1,34 +1,6 @@
-{*******************************************************************************
-*                            Genesis Device Engine                             *
-*                   Copyright © 2007-2022 Luuk van Venrooij                    *
-*                        http://www.luukvanvenrooij.nl                         *
-********************************************************************************
-*                                                                              *
-*  This file is part of the Genesis Device                              *
-*                                                                              *
-*  The Genesis Device Engine is free software: you can redistribute            *
-*  it and/or modify it under the terms of the GNU Lesser General Public        *
-*  License as published by the Free Software Foundation, either version 3      *
-*  of the License, or any later version.                                       *
-*                                                                              *
-*  The Genesis Device Engine is distributed in the hope that                   *
-*  it will be useful, but WITHOUT ANY WARRANTY; without even the               *
-*  implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.    *
-*  See the GNU Lesser General Public License for more details.                 *
-*                                                                              *
-*  You should have received a copy of the GNU General Public License           *
-*  along with Genesis Device.  If not, see <http://www.gnu.org/licenses/>.     *
-*                                                                              *
-*******************************************************************************}   
 unit uGDEngine;
 
 {$MODE Delphi}
-
-{******************************************************************************}
-{* This is the main unit of the  It holds the main variables,          *}
-{* callbacks and loops controling the  This unit will later be extended*}
-{* with multible threads for the different systems                            *}
-{******************************************************************************}
 
 interface
 
@@ -53,11 +25,6 @@ uses
   uGDStatistics;
 
 type
-
-{******************************************************************************}
-{* Engine class                                                               *}
-{******************************************************************************}
-
   TGDEngine = Class
   private
     FDone : boolean;
@@ -91,10 +58,6 @@ var
 
 implementation
 
-{******************************************************************************}
-{* Create engine class                                                        *}
-{******************************************************************************}
-
 constructor TGDEngine.Create();
 begin
   DefaultFormatSettings.DecimalSeparator := '.';
@@ -102,9 +65,6 @@ begin
   GDSettings   := TGDSettings.Create();
 end;
 
-{******************************************************************************}
-{* Destroy main class                                                         *}
-{******************************************************************************}
 
 destructor TGDEngine.Destroy();
 begin
@@ -113,9 +73,6 @@ begin
   FreeAndNil(GDSettings);
 end;
 
-{******************************************************************************}
-{* Init                                                                       *}
-{******************************************************************************}
 
 procedure TGDEngine.Init(aInit : TGDCallback);
 var
@@ -167,9 +124,6 @@ begin
   if assigned(aInit) then aInit();
 end;
 
-{******************************************************************************}
-{* Clear                                                                      *}
-{******************************************************************************}
 
 procedure TGDEngine.Clear(aClear : TGDCallback);
 begin
@@ -192,9 +146,6 @@ begin
   GDConsole.Write('Shutting down SDL...Ok');
 end;
 
-{******************************************************************************}
-{* Loop                                                                       *}
-{******************************************************************************}
 
 procedure TGDEngine.Loop(aLoop : TGDCallback);
 begin

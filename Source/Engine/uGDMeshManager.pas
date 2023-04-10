@@ -1,25 +1,3 @@
-{*******************************************************************************
-*                            Genesis Device Engine                             *
-*                   Copyright © 2007-2022 Luuk van Venrooij                    *
-*                        http://www.luukvanvenrooij.nl                         *
-********************************************************************************
-*                                                                              *
-*  This file is part of the Genesis Device Engine                              *
-*                                                                              *
-*  The Genesis Device Engine is free software: you can redistribute            *
-*  it and/or modify it under the terms of the GNU Lesser General Public        *
-*  License as published by the Free Software Foundation, either version 3      *
-*  of the License, or any later version.                                       *
-*                                                                              *
-*  The Genesis Device Engine is distributed in the hope that                   *
-*  it will be useful, but WITHOUT ANY WARRANTY; without even the               *
-*  implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.    *
-*  See the GNU Lesser General Public License for more details.                 *
-*                                                                              *
-*  You should have received a copy of the GNU General Public License           *
-*  along with Genesis Device.  If not, see <http://www.gnu.org/licenses/>.     *
-*                                                                              *
-*******************************************************************************}
 unit uGDMeshManager;
 
 {$mode objfpc}
@@ -37,17 +15,8 @@ uses
   uGDMesh;
 
 type
-
-{******************************************************************************}
-{* Surface cache                                                              *}
-{******************************************************************************}
-
   TGDMeshCellSurfaceList  = specialize TFPGList<TGDMeshCellSurface>;
   TGDSurfaceCache = specialize TFPGMap<String,TGDMeshCellSurfaceList>;
-
-{******************************************************************************}
-{* Cellmanager class                                                          *}
-{******************************************************************************}
 
   TGDMeshManager = class
   private
@@ -79,9 +48,6 @@ uses
   uGDMaterial,
   uGDEngine;
 
-{******************************************************************************}
-{* Create the mesh manager class                                              *}
-{******************************************************************************}
 
 constructor TGDMeshManager.Create();
 begin
@@ -89,9 +55,6 @@ begin
   FSurfaceCache := TGDSurfaceCache.Create();
 end;
 
-{******************************************************************************}
-{* Destroy the mesh manager class                                             *}
-{******************************************************************************}
 
 destructor  TGDMeshManager.Destroy();
 begin
@@ -100,9 +63,6 @@ begin
   FreeAndNil(FVertices);
 end;
 
-{******************************************************************************}
-{* Start mesh rendering                                                       *}
-{******************************************************************************}
 
 procedure TGDMeshManager.StartRendering( aRenderAttribute : TGDRenderAttribute; aRenderFor : TGDRenderFor );
 begin
@@ -127,9 +87,6 @@ begin
   end;
 end;
 
-{******************************************************************************}
-{* End mesh rendering                                                         *}
-{******************************************************************************}
 
 procedure TGDMeshManager.EndRendering();
 begin
@@ -137,9 +94,6 @@ begin
   FVertexBuffer.Unbind();
 end;
 
-{******************************************************************************}
-{* Add surface to cache                                                       *}
-{******************************************************************************}
 
 procedure TGDMeshManager.AddSurfaceToCache(aSurface : TGDMeshCellSurface);
 var
@@ -157,9 +111,6 @@ begin
   end;
 end;
 
-{******************************************************************************}
-{* Clear surface cache                                                        *}
-{******************************************************************************}
 
 procedure TGDMeshManager.ClearCache();
 var
@@ -176,9 +127,6 @@ begin
   FSurfaceCache.Clear();
 end;
 
-{******************************************************************************}
-{* Render surfaces                                                            *}
-{******************************************************************************}
 
 procedure TGDMeshManager.RenderSurfaces( aRenderAttribute : TGDRenderAttribute; aRenderFor : TGDRenderFor );
 var
@@ -224,9 +172,6 @@ begin
   end;
 end;
 
-{******************************************************************************}
-{* Create buffers                                                             *}
-{******************************************************************************}
 
 procedure TGDMeshManager.CreateBuffers();
 begin
@@ -236,9 +181,6 @@ begin
   FVertexBuffer.Unbind();
 end;
 
-{******************************************************************************}
-{* End buffers                                                                *}
-{******************************************************************************}
 
 procedure TGDMeshManager.ClearBuffers();
 begin

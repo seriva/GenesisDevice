@@ -1,63 +1,72 @@
-# Wavefront MTL file
-# Creator: Ultimate Unwrap3D Pro v3.27
-# URL: http://www.unwrap3d.com
-# Time: Thu Apr 11 09:31:24 2013
-# num_materials: 7
-
-newmtl Beam02_Beam02_D_tga
-colormap Models/Buildings/Beam02_D.dds
-detailmap=Textures/Detail/detail.dds    
-has_alpha false
-alpha_func 0.7
-detail_uv_mult 4
-detail_mult 0.4
-
-newmtl DirtDec_DirtDec01_tga
-colormap Models/Buildings/DirtDec01.dds
-detailmap Textures/Detail/detail.dds    
-has_alpha true
-alpha_func 0.7
-detail_uv_mult 4
-detail_mult 0.4
-
-newmtl DirtDec2_DirtDec02_tga
-colormap Models/Buildings/DirtDec02.dds
-detailmap Textures/Detail/detail.dds    
-has_alpha true
-alpha_func 0.7
-detail_uv_mult 4
-detail_mult 0.4
-
-newmtl MossDec02_MossDec02_tga
-colormap Models/Buildings/MossDec02.dds
-detailmap Textures/Detail/detail.dds    
-has_alpha true
-alpha_func 0.7
-detail_uv_mult 4
-detail_mult 0.4
-
-newmtl Mud01_Mud01_D_tga
-colormap Models/Buildings/Mud01_D.dds
-detailmap Textures/Detail/detail.dds    
-has_alpha true
-alpha_func 0.7
-detail_uv_mult 4
-detail_mult 0.4
-
-newmtl Plank01_PlanksOld01_D_tga
-colormap Models/Buildings/PlanksOld01_D.dds
-detailmap Textures/Detail/detail.dds    
-has_alpha false
-alpha_func 0.7
-detail_uv_mult 4
-detail_mult 0.4
-
-newmtl Roof01_Roof01_D_tga
-colormap Models/Buildings/Roof01_D.dds
-detailmap Textures/Detail/detail.dds    
-has_alpha false
-alpha_func 0.7
-detail_uv_mult 4
-detail_mult 0.4
-
-# num_materials: 7
+[
+    {
+        "Name": "Beam02_Beam02_D_tga",
+        "ColorMap": "Models/Buildings/Beam02_D.dds",
+        "DetailMap": "Textures/Detail/detail.dds",
+        "HasAlpha": false,
+        "AlphaFunc": 0.7,
+        "DetailUVMult": 4,
+        "DetailMult": 0.4,
+        "DoTreeAnim": false
+    },
+    {
+        "Name": "DirtDec_DirtDec01_tga",
+        "ColorMap": "Models/Buildings/DirtDec01.dds",
+        "DetailMap": "Textures/Detail/detail.dds",
+        "HasAlpha": true,
+        "AlphaFunc": 0.7,
+        "DetailUVMult": 4,
+        "DetailMult": 0.4,
+        "DoTreeAnim": false
+    },
+    {
+        "Name": "DirtDec2_DirtDec02_tga",
+        "ColorMap": "Models/Buildings/DirtDec02.dds",
+        "DetailMap": "Textures/Detail/detail.dds",
+        "HasAlpha": true,
+        "AlphaFunc": 0.7,
+        "DetailUVMult": 4,
+        "DetailMult": 0.4,
+        "DoTreeAnim": false
+    },
+    {
+        "Name": "MossDec02_MossDec02_tga",
+        "ColorMap": "Models/Buildings/MossDec02.dds",
+        "DetailMap": "Textures/Detail/detail.dds",
+        "HasAlpha": false,
+        "AlphaFunc": 0.7,
+        "DetailUVMult": 4,
+        "DetailMult": 0.4,
+        "DoTreeAnim": false
+    },
+    {
+        "Name": "Mud01_Mud01_D_tga",
+        "ColorMap": "Models/Buildings/Mud01_D.dds",
+        "DetailMap": "Textures/Detail/detail.dds",
+        "HasAlpha": true,
+        "AlphaFunc": 0.7,
+        "DetailUVMult": 4,
+        "DetailMult": 0.4,
+        "DoTreeAnim": false
+    },
+    {
+        "Name": "Plank01_PlanksOld01_D_tga",
+        "ColorMap": "Models/Buildings/PlanksOld01_D.dds",
+        "DetailMap": "Textures/Detail/detail.dds",
+        "HasAlpha": false,
+        "AlphaFunc": 0.7,
+        "DetailUVMult": 4,
+        "DetailMult": 0.4,
+        "DoTreeAnim": false
+    },
+    {
+        "Name": "Roof01_Roof01_D_tga",
+        "ColorMap": "Models/Buildings/Roof01_D.dds",
+        "DetailMap": "Textures/Detail/detail.dds",
+        "HasAlpha": false,
+        "AlphaFunc": 0.7,
+        "DetailUVMult": 4,
+        "DetailMult": 0.4,
+        "DoTreeAnim": false
+    }
+]

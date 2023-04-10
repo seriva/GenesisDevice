@@ -1,35 +1,6 @@
-{*******************************************************************************
-*                            Genesis Device Engine                             *
-*                   Copyright © 2007-2022 Luuk van Venrooij                    *
-*                        http://www.luukvanvenrooij.nl                         *
-*                         luukvanvenrooij84@gmail.com                          *
-********************************************************************************
-*                                                                              *
-*  This file is part of the Genesis Device Engine                              *
-*                                                                              *
-*  The Genesis Device Engine is free software: you can redistribute            *
-*  it and/or modify it under the terms of the GNU Lesser General Public        *
-*  License as published by the Free Software Foundation, either version 3      *
-*  of the License, or any later version.                                       *
-*                                                                              *
-*  The Genesis Device Engine is distributed in the hope that                   *
-*  it will be useful, but WITHOUT ANY WARRANTY; without even the               *
-*  implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.    *
-*  See the GNU Lesser General Public License for more details.                 *
-*                                                                              *
-*  You should have received a copy of the GNU General Public License           *
-*  along with Genesis Device.  If not, see <http://www.gnu.org/licenses/>.     *
-*                                                                              *
-*******************************************************************************}   
 unit uGDSound;
 
 {$MODE Delphi}
-
-{******************************************************************************}
-{* Simple sound system based on OpenAL. Plays back WAV files and MP3.         *}
-{* For now playback can only be on 16 sources and there is no support for     *}
-{* 3D sound positioning.                                                      *}
-{******************************************************************************}
 
 interface
 
@@ -42,13 +13,9 @@ uses
   libmpg123;
 
 Type
- TGDSoundResource = class (TGDResource)
-   ResourceType : TGDSoundResourceType
- end;
-
-{******************************************************************************}
-{* Sound stream class                                                         *}
-{******************************************************************************}
+  TGDSoundResource = class (TGDResource)
+    ResourceType : TGDSoundResourceType
+  end;
 
   TGDSoundStream = class (TGDSoundResource)
   private
@@ -67,10 +34,6 @@ Type
     procedure PreBuffer();
   end;
 
-{******************************************************************************}
-{* Sound buffer class                                                         *}
-{******************************************************************************}
-
   TGDSoundBuffer = class (TGDSoundResource)
   private
     FBuffer  : ALuint;
@@ -78,10 +41,6 @@ Type
     constructor Create(aFileName : String);
     destructor  Destroy(); override;
   end;
-
-{******************************************************************************}
-{* Sound source class                                                         *}
-{******************************************************************************}
 
   TGDSoundSource = class
   private
@@ -94,10 +53,6 @@ Type
 
     function IsFree(): boolean;
   end;
-
-{******************************************************************************}
-{* Sound class                                                                *}
-{******************************************************************************}
 
   TGDSound = class
   private
@@ -247,9 +202,6 @@ begin
     freemem(data);
 end;
 
-{******************************************************************************}
-{* Create stream class                                                        *}
-{******************************************************************************}
 
 constructor TGDSoundStream.Create( aFileName : String);
 var
@@ -278,9 +230,6 @@ begin
   GDConsole.WriteOkFail(iResult, iError);
 end;
 
-{******************************************************************************}
-{* Destroy stream class                                                       *}
-{******************************************************************************}
 
 destructor TGDSoundStream.Destroy();
 begin
@@ -289,9 +238,6 @@ begin
   mpg123_close(Fhandle);
 end;
 
-{******************************************************************************}
-{* Stream next part in the buffer                                             *}
-{******************************************************************************}
 
 function TGDSoundStream.Stream(aBuffer : ALUInt; aLoop : boolean = false): boolean;
 const
@@ -321,18 +267,12 @@ begin
   freemem(lData);
 end;
 
-{******************************************************************************}
-{* Reset the sounds stream                                                    *}
-{******************************************************************************}
 
 procedure TGDSoundStream.ResetStream();
 begin
   mpg123_seek(Fhandle, 0, 0);
 end;
 
-{******************************************************************************}
-{* Prebuffer the stream                                                       *}
-{******************************************************************************}
 
 procedure TGDSoundStream.PreBuffer();
 begin
@@ -340,9 +280,6 @@ begin
   Stream(FBuffers[1]);
 end;
 
-{******************************************************************************}
-{* Create buffer class                                                        *}
-{******************************************************************************}
 
 constructor TGDSoundBuffer.Create( aFileName : String);
 var
@@ -372,9 +309,6 @@ begin
   GDConsole.WriteOkFail(iResult, iError);
 end;
 
-{******************************************************************************}
-{* Destroy buffer class                                                       *}
-{******************************************************************************}
 
 destructor  TGDSoundBuffer.Destroy();
 begin
@@ -382,9 +316,6 @@ begin
   AlDeleteBuffers(1, @FBuffer);
 end;
 
-{******************************************************************************}
-{* Create source class                                                        *}
-{******************************************************************************}
 
 constructor TGDSoundSource.Create();
 var
@@ -399,18 +330,12 @@ begin
   AlSourcefv( FSource, AL_VELOCITY, @iSourceVel);
 end;
 
-{******************************************************************************}
-{* Destroy source class                                                       *}
-{******************************************************************************}
 
 destructor TGDSoundSource.Destroy();
 begin
   AlDeleteSources(1, @FSource);
 end;
 
-{******************************************************************************}
-{* Check if this source is playing a sound                                    *}
-{******************************************************************************}
 
 function TGDSoundSource.IsFree(): boolean;
 var
@@ -429,9 +354,6 @@ begin
     result := true;
 end;
 
-{******************************************************************************}
-{* Create sound class                                                         *}
-{******************************************************************************}
 
 constructor TGDSound.Create();
 var
@@ -494,9 +416,6 @@ begin
   end;
 end;
 
-{******************************************************************************}
-{* Destroy sound class                                                        *}
-{******************************************************************************}
 
 destructor TGDSound.Destroy();
 var
@@ -527,9 +446,6 @@ begin
   GDConsole.WriteOkFail(iResult, iError);
 end;
 
-{******************************************************************************}
-{* Update the sound engine                                                    *}
-{******************************************************************************}
 
 procedure TGDSound.Update();
 var
@@ -573,9 +489,6 @@ begin
   end;
 end;
 
-{******************************************************************************}
-{* Load                                                                       *}
-{******************************************************************************}
 
 function  TGDSound.Load(aFileName : String) : TGDSoundResource;
 begin
@@ -587,9 +500,6 @@ begin
      result := GDResources.LoadSoundStream(aFileName)
 end;
 
-{******************************************************************************}
-{* Remove                                                                     *}
-{******************************************************************************}
 
 procedure TGDSound.Remove(aSoundResource : TGDSoundResource);
 begin
@@ -597,9 +507,6 @@ begin
   GDResources.RemoveResource(TGDResource(aSoundResource));
 end;
 
-{******************************************************************************}
-{* Play                                                                       *}
-{******************************************************************************}
 
 function TGDSound.Play(aResource : TGDSoundResource; aLoop : boolean): integer;
 var
@@ -651,9 +558,6 @@ begin
   end;
 end;
 
-{******************************************************************************}
-{* Pause                                                                      *}
-{******************************************************************************}
 
 procedure TGDSound.Pause(aIndex : Integer);
 var
@@ -668,9 +572,6 @@ begin
     AlSourcePause(iSource.FSource);
 end;
 
-{******************************************************************************}
-{* Resume                                                                     *}
-{******************************************************************************}
 
 procedure TGDSound.Resume(aIndex : Integer);
 var
@@ -685,9 +586,6 @@ begin
     AlSourcePlay(iSource.FSource);
 end;
 
-{******************************************************************************}
-{* Stop                                                                       *}
-{******************************************************************************}
 
 procedure TGDSound.Stop(aIndex : Integer);
 var

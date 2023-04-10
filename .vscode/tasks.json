@@ -10,6 +10,7 @@
                 "unitOutputDir": "./Build",
                 "searchPath": [
                     "./Source/Engine",
+                    "./Source/Libraries/JsonTools",
                     "./Source/Libraries/Newton",
                     "./Source/Libraries/OpenGL",
                     "./Source/Libraries/OpenAL",
@@ -48,6 +49,7 @@
                 "unitOutputDir": "./Build",
                 "searchPath": [
                     "./Source/Engine",
+                    "./Source/Libraries/JsonTools",
                     "./Source/Libraries/Newton",
                     "./Source/Libraries/OpenGL",
                     "./Source/Libraries/OpenAL",
@@ -86,6 +88,7 @@
                 "unitOutputDir": "./Build",
                 "searchPath": [
                     "./Source/Engine",
+                    "./Source/Libraries/JsonTools",
                     "./Source/Libraries/Newton",
                     "./Source/Libraries/OpenGL",
                     "./Source/Libraries/OpenAL",
@@ -119,6 +122,7 @@
                 "unitOutputDir": "./Build",
                 "searchPath": [
                     "./Source/Engine",
+                    "./Source/Libraries/JsonTools",
                     "./Source/Libraries/Newton",
                     "./Source/Libraries/OpenGL",
                     "./Source/Libraries/OpenAL",

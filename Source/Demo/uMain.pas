@@ -1,32 +1,6 @@
-{*******************************************************************************
-*                            Genesis Device Engine                             *
-*                   Copyright © 2007-2022 Luuk van Venrooij                    *
-*                        http://www.luukvanvenrooij.nl                         *
-********************************************************************************
-*                                                                              *
-*  This file is part of the Genesis Device Engine.                             *
-*                                                                              *
-*  The Genesis Device Engine is free software: you can redistribute            *
-*  it and/or modify it under the terms of the GNU Lesser General Public        *
-*  License as published by the Free Software Foundation, either version 3      *
-*  of the License, or any later version.                                       *
-*                                                                              *
-*  The Genesis Device Engine is distributed in the hope that                   *
-*  it will be useful, but WITHOUT ANY WARRANTY; without even the               *
-*  implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.    *
-*  See the GNU Lesser General Public License for more details.                 *
-*                                                                              *
-*  You should have received a copy of the GNU General Public License           *
-*  along with Genesis Device.  If not, see <http://www.gnu.org/licenses/>.     *
-*                                                                              *
-*******************************************************************************}
 unit uMain;
 
 {$MODE Delphi}
-
-{******************************************************************************}
-{* This units holds the main game procedures                                  *}
-{******************************************************************************}
 
 interface
 
@@ -67,18 +41,11 @@ procedure GameLoop();
 
 implementation
 
-{******************************************************************************}
-{* Exit thee engine                                                           *}
-{******************************************************************************}
-
 procedure ExitCallback();
 begin
   GDEngine.Done := true;
 end;
 
-{******************************************************************************}
-{* Move the player forward                                                    *}
-{******************************************************************************}
 
 procedure PlayerForward();
 begin
@@ -86,9 +53,6 @@ begin
     Player.MoveForward();
 end;
 
-{******************************************************************************}
-{* Move the player backwards                                                  *}
-{******************************************************************************}
 
 procedure PlayerBackward();
 begin
@@ -96,9 +60,6 @@ begin
     Player.MoveBackWard();
 end;
 
-{******************************************************************************}
-{* Move the player right                                                      *}
-{******************************************************************************}
 
 procedure PlayerRight();
 begin
@@ -106,9 +67,6 @@ begin
     Player.MoveRight();
 end;
 
-{******************************************************************************}
-{* Move the player left                                                       *}
-{******************************************************************************}
 
 procedure PlayerLeft();
 begin
@@ -116,9 +74,6 @@ begin
     Player.MoveLeft();
 end;
 
-{******************************************************************************}
-{* Set the walkspeed                                                          *}
-{******************************************************************************}
 
 procedure SetWalk();
 begin
@@ -126,9 +81,6 @@ begin
     Player.Walk();
 end;
 
-{******************************************************************************}
-{* Set the runspeed                                                           *}
-{******************************************************************************}
 
 procedure SetRun();
 begin
@@ -136,9 +88,6 @@ begin
     PLayer.Run();
 end;
 
-{******************************************************************************}
-{* Bool to string                                                             *}
-{******************************************************************************}
 
 function BoolToStr(b : boolean): String;
 begin
@@ -148,9 +97,6 @@ begin
     result := '0';
 end;
 
-{******************************************************************************}
-{* Toggle the stats                                                           *}
-{******************************************************************************}
 
 procedure ToggleStats();
 begin
@@ -158,9 +104,6 @@ begin
   GDConsole.ExecuteCommand ('RStats ' + BoolToStr(Stats));
 end;
 
-{******************************************************************************}
-{* Toggle wireframe rendering                                                 *}
-{******************************************************************************}
 
 procedure ToggleWireFrame();
 begin
@@ -168,9 +111,6 @@ begin
   GDConsole.ExecuteCommand ('RTris ' + BoolToStr(WireFrame));
 end;
 
-{******************************************************************************}
-{* Toggle the octree nodes                                                    *}
-{******************************************************************************}
 
 procedure ToggleOctreeNodes(); stdcall;
 begin
@@ -178,9 +118,6 @@ begin
   GDConsole.ExecuteCommand ('RNodes ' + BoolToStr(TreeNodes));
 end;
 
-{******************************************************************************}
-{* Toggle the OBJ boxes                                                       *}
-{******************************************************************************}
 
 procedure ToggleOBJBoxes(); stdcall;
 begin
@@ -188,18 +125,12 @@ begin
   GDConsole.ExecuteCommand ('RAABB ' + BoolToStr(ObjBoxes));
 end;
 
-{******************************************************************************}
-{* Toggle the collision                                                       *}
-{******************************************************************************}
 
 procedure ToggleClipping();
 begin
   Clip := not(Clip);
 end;
 
-{******************************************************************************}
-{* Toggle the intro text                                                      *}
-{******************************************************************************}
 
 procedure ToggleIntroText();
 begin
@@ -208,9 +139,6 @@ begin
   GDGUI.MouseCursor.Visible := IntroScreen.Visible;
 end;
 
-{******************************************************************************}
-{* Main gameloop                                                              *}
-{******************************************************************************}
 
 procedure GameLoop();
 begin
@@ -230,9 +158,6 @@ begin
   Player.DoPlayerCollisionAndPhysics();
 end;
 
-{******************************************************************************}
-{* Init the main                                                              *}
-{******************************************************************************}
 
 procedure InitGame();
 begin
@@ -260,7 +185,7 @@ begin
   GDGUI.LoadingScreen.Update();
 
   //intro
-  IntroScreen := GDGUI.InitScreen('Ini/Intro.ini');
+  IntroScreen := GDGUI.InitScreen('Intro.json');
   GDGUI.LoadingScreen.Update();
 
   //player
@@ -270,7 +195,7 @@ begin
   GDConsole.Write( '.....Done initializing game resources (' +  GDTiming.TimeInSeconds() + ' Sec)' );
 
   //map
-  GDMap.Load( 'Maps/Demo/map.ini' );
+  GDMap.Load( 'Maps/Demo/map.map' );
 
   //final settings.
   IntroScreen.Visible := true;
@@ -296,9 +221,6 @@ begin
   MusicSource := GDSound.Play( MusicBuffer, true );
 end;
 
-{******************************************************************************}
-{* Clear the game                                                             *}
-{******************************************************************************}
 
 procedure ClearGame();
 begin

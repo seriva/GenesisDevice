@@ -1,32 +1,6 @@
-{*******************************************************************************
-*                            Genesis Device Engine                             *
-*                   Copyright © 2007-2022 Luuk van Venrooij                    *
-*                        http://www.luukvanvenrooij.nl                         *
-********************************************************************************
-*                                                                              *
-*  This file is part of the Genesis Device Engine.                             *
-*                                                                              *
-*  The Genesis Device Engine is free software: you can redistribute            *
-*  it and/or modify it under the terms of the GNU Lesser General Public        *
-*  License as published by the Free Software Foundation, either version 3      *
-*  of the License, or any later version.                                       *
-*                                                                              *
-*  The Genesis Device Engine is distributed in the hope that                   *
-*  it will be useful, but WITHOUT ANY WARRANTY; without even the               *
-*  implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.    *
-*  See the GNU Lesser General Public License for more details.                 *
-*                                                                              *
-*  You should have received a copy of the GNU General Public License           *
-*  along with Genesis Device.  If not, see <http://www.gnu.org/licenses/>.     *
-*                                                                              *
-*******************************************************************************}
 unit uConfiguration;
 
 {$MODE Delphi}
-
-{******************************************************************************}
-{* This units holds the configurationform of the demoapplication              *}
-{******************************************************************************}
 
 interface
 
@@ -46,10 +20,6 @@ uses
   LazFileUtils;
 
 type
-
-{******************************************************************************}
-{* COnfiguration form                                                         *}
-{******************************************************************************}
 
   { TConfigurationForm }
 
@@ -133,10 +103,6 @@ end;
 
 {$R *.lfm}
 
-{******************************************************************************}
-{* Form create                                                                *}
-{******************************************************************************}
-
 procedure TConfigurationForm.FormCreate(Sender: TObject);
 begin
   FillComboboxes();
@@ -145,9 +111,6 @@ begin
   ScalePanel.Visible := FullScreenCheckBox.Checked;
 end;
 
-{******************************************************************************}
-{* Form destroy                                                               *}
-{******************************************************************************}
 
 procedure TConfigurationForm.FormDestroy(Sender: TObject);
 begin
@@ -155,9 +118,6 @@ begin
   GDSettings.Save();
 end;
 
-{******************************************************************************}
-{* Set position on configurationform show                                     *}
-{******************************************************************************}
 
 procedure TConfigurationForm.FormShow(Sender: TObject);
 begin
@@ -165,27 +125,18 @@ begin
   self.Top  := 5;
 end;
 
-{******************************************************************************}
-{* Display the resolution scale tools                                         *}
-{******************************************************************************}
 
 procedure TConfigurationForm.FullScreenCheckBoxChange(Sender: TObject);
 begin
   ScalePanel.Visible := FullScreenCheckBox.Checked;
 end;
 
-{******************************************************************************}
-{* Recaluclate the resolution                                                 *}
-{******************************************************************************}
 
 procedure TConfigurationForm.MonitorComboBoxChange(Sender: TObject);
 begin
   ScaleTrackBarChange(nil);
 end;
 
-{******************************************************************************}
-{* Recalculate the scaled resolution                                          *}
-{******************************************************************************}
 
 procedure TConfigurationForm.ScaleTrackBarChange(Sender: TObject);
 var
@@ -197,9 +148,6 @@ begin
                             ' x ' + IntToStr(Round(iM.Height * GDSettings.DisplayScale))
 end;
 
-{******************************************************************************}
-{* Fill the settings comboboxes on the configurationform                      *}
-{******************************************************************************}
 
 procedure TConfigurationForm.FillComboboxes();
 var
@@ -224,9 +172,6 @@ begin
     WaterDetailComboBox.Items.Add(TWaterDetail[iI]);
 end;
 
-{******************************************************************************}
-{* Set the engines current settings on the interface                          *}
-{******************************************************************************}
 
 procedure TConfigurationForm.SettingsToInterface();
 var
@@ -271,9 +216,6 @@ begin
   ScaleTrackBarChange(nil);
 end;
 
-{******************************************************************************}
-{* Get the settings from the interface and pas them to the engine             *}
-{******************************************************************************}
 
 procedure TConfigurationForm.SettingsFromInterface();
 begin
@@ -305,9 +247,6 @@ begin
   GDSettings.SoundVolume      := SoundVolumeTrackBar.Position / 100;
 end;
 
-{******************************************************************************}
-{* Run the engine                                                             *}
-{******************************************************************************}
 
 procedure TConfigurationForm.RunButtonClick(Sender: TObject);
 begin
@@ -318,9 +257,6 @@ begin
   ModalResult := mrOK;
 end;
 
-{******************************************************************************}
-{* Fill Displays                                                              *}
-{******************************************************************************}
 
 procedure TConfigurationForm.FillDisplays();
 var

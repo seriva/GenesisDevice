@@ -1,32 +1,6 @@
-{*******************************************************************************
-*                            Genesis Device Engine                             *
-*                   Copyright © 2007-2022 Luuk van Venrooij                    *
-*                        http://www.luukvanvenrooij.nl                         *
-********************************************************************************
-*                                                                              *
-*  This file is part of the Genesis Device Engine                              *
-*                                                                              *
-*  The Genesis Device Engine is free software: you can redistribute            *
-*  it and/or modify it under the terms of the GNU Lesser General Public        *
-*  License as published by the Free Software Foundation, either version 3      *
-*  of the License, or any later version.                                       *
-*                                                                              *
-*  The Genesis Device Engine is distributed in the hope that                   *
-*  it will be useful, but WITHOUT ANY WARRANTY; without even the               *
-*  implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.    *
-*  See the GNU Lesser General Public License for more details.                 *
-*                                                                              *
-*  You should have received a copy of the GNU General Public License           *
-*  along with Genesis Device.  If not, see <http://www.gnu.org/licenses/>.     *
-*                                                                              *
-*******************************************************************************}   
-unit uGDTerrainCell;
+  unit uGDTerrainCell;
 
 {$MODE Delphi}
-
-{******************************************************************************}
-{* Holds the terraincell class
-{******************************************************************************}
 
 interface
 
@@ -42,11 +16,6 @@ uses
   uGDBaseCell;
 
 type
-
-{******************************************************************************}
-{* Terraincell class                                                          *}
-{******************************************************************************}
-
   TGDTerrainCell = class (TGDBaseCell)
   private
     FTerrain     : TGDTerrain;
@@ -67,10 +36,6 @@ implementation
 
 uses
   uGDEngine;
-
-{******************************************************************************}
-{* Create the terraincell class                                               *}
-{******************************************************************************}
 
 constructor TGDTerrainCell.Create( aTerrain : TGDTerrain; aStartX, aStartY, aEndX, aEndY : Integer);
 var
@@ -110,9 +75,6 @@ begin
   FreeAndNil(iIdxs);
 end;
 
-{******************************************************************************}
-{* Destroy the terraincell class                                              *}
-{******************************************************************************}
 
 destructor  TGDTerrainCell.Destroy();
 begin
@@ -120,9 +82,6 @@ begin
   Inherited;
 end;
 
-{******************************************************************************}
-{* Calculate the terraincell AABB                                             *}
-{******************************************************************************}
 
 procedure TGDTerrainCell.CalculateBoundingBox();
 var
@@ -150,9 +109,6 @@ begin
   BoundingBox.CalculateCenter();
 end;
 
-{******************************************************************************}
-{* Render the terraincell                                                     *}
-{******************************************************************************}
 
 procedure TGDTerrainCell.Render( aRenderAttribute : TGDRenderAttribute; aRenderFor : TGDRenderFor );
 var
@@ -176,8 +132,8 @@ begin
                               begin
                                 iV1 := GetPoint(iX,iY).Vertex.Copy();
                                 iV2 := GetPoint(iX,iY).Normal.Copy();
-                                iV2.Multiply(R_NORMAL_LENGTH);
-                                iV2.Add(iV1);
+                                iV2 *= R_NORMAL_LENGTH;
+                                iV2 += iV1;
                                 GDRenderer.AddLine(iV1, iV2);
                               end;
                             end;
