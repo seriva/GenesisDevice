@@ -20,8 +20,8 @@ type
     procedure   SetY(aY : Single);
     procedure   SetZ(aZ : Single);
     function    Copy(): TGDVector;
-    function    DotProduct(const aVector : TGDVector) : Single; overload;
-    procedure   CrossProduct(const aVector1, aVector2: TGDVector);overload;
+    function    Dot(const aVector : TGDVector) : Single; overload;
+    procedure   Dot(const aVector1, aVector2: TGDVector); overload;
     function    Angle(const aVector : TGDVector ) : Single;
     procedure   Normalize();
     function    Magnitude(): Single;
@@ -174,9 +174,9 @@ begin
   iBA := aB - aA;
   iP1A := aP1 - aA;
   iP2A := aP2 - aA;
-  iCP1.CrossProduct( iBA, iP1A );
-  iCP2.CrossProduct( iBA, iP2A );
-  result := (iCP1.DotProduct(iCP2) >= 0)
+  iCP1.Dot( iBA, iP1A );
+  iCP2.Dot( iBA, iP2A );
+  result := (iCP1.Dot(iCP2) >= 0)
 end;
 
 
@@ -312,13 +312,13 @@ begin
 end;
 
 
-function TGDVector.DotProduct( const aVector : TGDVector) : Single;
+function TGDVector.Dot( const aVector : TGDVector) : Single;
 begin
   Result :=  ( (X * aVector.x) + (Y * aVector.y) + (Z * aVector.z) );
 end;
 
 
-procedure TGDVector.CrossProduct(const aVector1, aVector2: TGDVector);
+procedure TGDVector.Dot(const aVector1, aVector2: TGDVector);
 begin
 	X := ((aVector1.y * aVector2.z) - (aVector1.z * aVector2.y));
 	Y := ((aVector1.z * aVector2.x) - (aVector1.x * aVector2.z));
@@ -328,13 +328,13 @@ end;
 
 function TGDVector.Angle(const aVector : TGDVector ) : Single;
 var
-  iDotProduct : Single;
+  iDot : Single;
   iVectorsMagnitude : Single;
   iAngle : real;
 begin
-  iDotProduct := self.DotProduct(aVector);
+  iDot := self.Dot(aVector);
   iVectorsMagnitude := self.Magnitude() * aVector.Magnitude();
-	iAngle := arccos( iDotProduct / iVectorsMagnitude );
+	iAngle := arccos( iDot / iVectorsMagnitude );
 	if(isnan(iAngle)) then
   begin
 		result := 0;
@@ -677,7 +677,7 @@ begin
   iVVector1 -= V1;
   iVVector2.Reset(V2.x, V2.Y, V2.Z);
   iVVector2 -= V1;
-  Normal.CrossProduct( iVVector1, iVVector2 );
+  Normal.Dot( iVVector1, iVVector2 );
   Normal.Normalize();
 end;
 

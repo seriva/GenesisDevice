@@ -322,7 +322,7 @@ begin
       iRight.Normalize();
     end;
 
-    iUp.CrossProduct( iRight, iForward );
+    iUp.Dot( iRight, iForward );
     iUp.Normalize();
 
     if abs(iUp.X) > 0.998 then

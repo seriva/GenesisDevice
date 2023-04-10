@@ -33,7 +33,7 @@
         "Name": "MossDec02_MossDec02_tga",
         "ColorMap": "Models/Buildings/MossDec02.dds",
         "DetailMap": "Textures/Detail/detail.dds",
-        "HasAlpha": false,
+        "HasAlpha": true,
         "AlphaFunc": 0.7,
         "DetailUVMult": 4,
         "DetailMult": 0.4,
