@@ -10,23 +10,3 @@
         "DoTreeAnim": false
     }
 ]
-
-
-
-
-
-material
-{
-	name "Female01"
-	shader "Base\Shaders\Materials\Diffuse.glsl"
-	texture0 "female_d.dds"
-	alpha 0.5
-}
-
-material
-{
-	name "Female02"
-	shader "Base\Shaders\Materials\Diffuse.glsl"
-	texture0 "female2_d.dds"
-	alpha 0.5
-}
