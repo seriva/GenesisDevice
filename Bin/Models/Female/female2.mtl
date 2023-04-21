@@ -1,0 +1,12 @@
+[
+    {
+        "Name": "Female02",
+        "ColorMap": "Models/Female/female2_d.dds",
+        "DetailMap": "",
+        "HasAlpha": true,
+        "AlphaFunc": 0.5,
+        "DetailUVMult": 4,
+        "DetailMult": 0.4,
+        "DoTreeAnim": false
+    }
+]

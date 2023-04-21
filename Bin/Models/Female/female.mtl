@@ -1,0 +1,32 @@
+[
+    {
+        "Name": "Female01",
+        "ColorMap": "Models/Female/female_d.dds",
+        "DetailMap": "",
+        "HasAlpha": true,
+        "AlphaFunc": 0.5,
+        "DetailUVMult": 4,
+        "DetailMult": 0.4,
+        "DoTreeAnim": false
+    }
+]
+
+
+
+
+
+material
+{
+	name "Female01"
+	shader "Base\Shaders\Materials\Diffuse.glsl"
+	texture0 "female_d.dds"
+	alpha 0.5
+}
+
+material
+{
+	name "Female02"
+	shader "Base\Shaders\Materials\Diffuse.glsl"
+	texture0 "female2_d.dds"
+	alpha 0.5
+}

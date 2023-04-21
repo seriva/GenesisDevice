@@ -1,0 +1,22 @@
+[
+    {
+        "Name": "armor",
+        "ColorMap": "Models/Barbarian/armor_d.dds",
+        "DetailMap": "",
+        "HasAlpha": false,
+        "AlphaFunc": 0.7,
+        "DetailUVMult": 4,
+        "DetailMult": 0.4,
+        "DoTreeAnim": false
+    },
+    {
+        "Name": "barbarian",
+        "ColorMap": "Models/Barbarian/barbarian_d.dds",
+        "DetailMap": "",
+        "HasAlpha": false,
+        "AlphaFunc": 0.7,
+        "DetailUVMult": 4,
+        "DetailMult": 0.4,
+        "DoTreeAnim": false
+    }
+]
