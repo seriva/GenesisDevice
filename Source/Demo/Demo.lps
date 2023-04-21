@@ -413,7 +413,7 @@
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit56>
       <Unit57>
-        <Filename Value="..\Engine\uGDMeshManager.pas"/>
+        <Filename Value="..\Engine\uGDStaticMeshCache.pas"/>
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="6"/>
         <TopLine Value="178"/>
@@ -997,7 +997,7 @@
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit126>
       <Unit127>
-        <Filename Value="..\Engine\GDMeshManager.pas"/>
+        <Filename Value="..\Engine\GDStaticMeshCache.pas"/>
         <EditorIndex Value="-1"/>
         <TopLine Value="198"/>
         <CursorPos X="50" Y="228"/>

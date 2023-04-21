@@ -1,4 +1,4 @@
-unit uGDMeshManager;
+unit uGDStaticMeshCache;
 
 {$mode objfpc}
 
@@ -18,7 +18,7 @@ type
   TGDMeshCellSurfaceList  = specialize TFPGList<TGDMeshCellSurface>;
   TGDSurfaceCache = specialize TFPGMap<String,TGDMeshCellSurfaceList>;
 
-  TGDMeshManager = class
+  TGDStaticMeshCache = class
   private
     FVertices     : TGDVertex_V_UV_N_C_List;
     FVertexBuffer : TGDGLVertexBuffer;
@@ -49,14 +49,14 @@ uses
   uGDEngine;
 
 
-constructor TGDMeshManager.Create();
+constructor TGDStaticMeshCache.Create();
 begin
   FVertices := TGDVertex_V_UV_N_C_List.Create();
   FSurfaceCache := TGDSurfaceCache.Create();
 end;
 
 
-destructor  TGDMeshManager.Destroy();
+destructor  TGDStaticMeshCache.Destroy();
 begin
   ClearCache();
   FreeAndNil(FSurfaceCache);
@@ -64,7 +64,7 @@ begin
 end;
 
 
-procedure TGDMeshManager.StartRendering( aRenderAttribute : TGDRenderAttribute; aRenderFor : TGDRenderFor );
+procedure TGDStaticMeshCache.StartRendering( aRenderAttribute : TGDRenderAttribute; aRenderFor : TGDRenderFor );
 begin
   ClearCache();
   FVertexBuffer.Bind(VL_V_UV_N_C);
@@ -88,14 +88,14 @@ begin
 end;
 
 
-procedure TGDMeshManager.EndRendering();
+procedure TGDStaticMeshCache.EndRendering();
 begin
   GDRenderer.MeshShader.UnBind();
   FVertexBuffer.Unbind();
 end;
 
 
-procedure TGDMeshManager.AddSurfaceToCache(aSurface : TGDMeshCellSurface);
+procedure TGDStaticMeshCache.AddSurfaceToCache(aSurface : TGDMeshCellSurface);
 var
   iIdx : Integer;
   iList : TGDMeshCellSurfaceList;
@@ -112,7 +112,7 @@ begin
 end;
 
 
-procedure TGDMeshManager.ClearCache();
+procedure TGDStaticMeshCache.ClearCache();
 var
   iList : TGDMeshCellSurfaceList;
   iK : integer;
@@ -128,7 +128,7 @@ begin
 end;
 
 
-procedure TGDMeshManager.RenderSurfaces( aRenderAttribute : TGDRenderAttribute; aRenderFor : TGDRenderFor );
+procedure TGDStaticMeshCache.RenderSurfaces( aRenderAttribute : TGDRenderAttribute; aRenderFor : TGDRenderFor );
 var
   iI, iJ, iK, iL : Integer;
   iKey : String;
@@ -173,7 +173,7 @@ begin
 end;
 
 
-procedure TGDMeshManager.CreateBuffers();
+procedure TGDStaticMeshCache.CreateBuffers();
 begin
   FVertexBuffer := TGDGLVertexBuffer.Create();
   FVertexBuffer.Bind(VL_NONE);
@@ -182,7 +182,7 @@ begin
 end;
 
 
-procedure TGDMeshManager.ClearBuffers();
+procedure TGDStaticMeshCache.ClearBuffers();
 begin
   FreeAndNil(FVertexBuffer);
   FVertices.Clear();

@@ -14,7 +14,7 @@ uses
   uGDSkyDome,
   uGDWater,
   uGDCellManager,
-  uGDMeshManager,
+  uGDStaticMeshCache,
   uGDMeshCell;
 
 type
@@ -38,7 +38,7 @@ type
     FSkyDome         : TGDSkyDome;
 
     FCellManager     : TGDCellManager;
-    FMeshManager		 : TGDMeshManager;
+    FStaticMeshCache : TGDStaticMeshCache;
   public
     property PlayerStart : TGDVector read FPlayerStart;
     property PlayerViewAngle : TGDVector read FPlayerViewAngle;
@@ -56,7 +56,7 @@ type
     property Water       : TGDWater read FWater;
     property Foliage     : TGDFoliage read FFoliage;
     property SkyDome     : TGDSkyDome read FSkyDome;
-    property MeshManager : TGDMeshManager read FMeshManager;
+    property StaticMeshCache : TGDStaticMeshCache read FStaticMeshCache;
 
     constructor Create();
     destructor  Destroy(); override;
@@ -85,7 +85,7 @@ begin
   FFoliage := TGDFoliage.Create();
   FSkyDome := TGDSkyDome.Create();
   FCellManager := TGDCellManager.Create();
-  FMeshManager := TGDMeshManager.Create();
+  FStaticMeshCache := TGDStaticMeshCache.Create();
 end;
 
 
@@ -98,7 +98,7 @@ begin
   FreeAndNil(FFoliage);
   FreeAndNil(FSkyDome);
   FreeAndNil(FCellManager);
-  FreeAndNil(FMeshManager);
+  FreeAndNil(FStaticMeshCache);
 end;
 
 
@@ -174,7 +174,7 @@ begin
   GDConsole.Write('......Done loading map (' + GDTiming.TimeInSeconds + ' Sec)');
 
   FCellManager.GenerateCells(FTerrain, FWater, FFoliage);
-  FMeshManager.CreateBuffers();
+  FStaticMeshCache.CreateBuffers();
 
   GDCamera.Position := FPlayerStart.Copy();
   GDCamera.Rotation := FPlayerViewAngle.Copy();
@@ -202,8 +202,8 @@ begin
   FSkyDome.Clear();
 
   FCellManager.Clear();
-  FMeshManager.ClearCache();
-  FMeshManager.ClearBuffers();
+  FStaticMeshCache.ClearCache();
+  FStaticMeshCache.ClearBuffers();
 end;
 
 
@@ -233,7 +233,7 @@ end;
 
 procedure TGDMap.RenderVisibleCells(aRenderAttribute : TGDRenderAttribute; aRenderFor : TGDRenderFor);
 begin
-  FCellManager.RenderVisibleCells(aRenderAttribute, aRenderFor, FTerrain, FWater, FFoliage, FMeshManager);
+  FCellManager.RenderVisibleCells(aRenderAttribute, aRenderFor, FTerrain, FWater, FFoliage, FStaticMeshCache);
 end;
 
 end.

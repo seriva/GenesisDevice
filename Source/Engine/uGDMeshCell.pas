@@ -73,7 +73,7 @@ type
 implementation
 
 uses
-  uGDMeshManager,
+  uGDStaticMeshCache,
   uGDEngine;
 
 class operator TGDMeshCellSurface.Equal(smc1, smc2: TGDMeshCellSurface) B: Boolean;
@@ -118,7 +118,7 @@ begin
   begin
 		For iJ := 0 to FMesh.Surfaces[iI].Indexes.Count - 1 do
     begin
-      iVector := GDMap.MeshManager.Vertices.Items[FMesh.Surfaces[iI].Indexes[iJ]].Vertex.Copy();
+      iVector := GDMap.StaticMeshCache.Vertices.Items[FMesh.Surfaces[iI].Indexes[iJ]].Vertex.Copy();
       iVector := (iVector * FScale) / 100;
       FRotation.ApplyToVector(iVector);
       iVector += FPosition;
@@ -209,7 +209,7 @@ begin
                           begin
                             iMCS.Surface  := iMesh.Surfaces.Items[iI];
                             iMCS.MeshCell := self;
-                            GDMap.MeshManager.AddSurfaceToCache(iMCS);
+                            GDMap.StaticMeshCache.AddSurfaceToCache(iMCS);
                           end;
                         end;
     RA_FRUSTUM_BOXES  : BoundingBox.RenderWireFrame();
@@ -219,12 +219,12 @@ begin
                             iSur := iMesh.Surfaces.Items[iI];
                             for iJ := 0 to iSur.Indexes.Count-1 do
                             begin
-                              iV1 := GDMap.MeshManager.Vertices.Items[iSur.Indexes.Items[iJ]].Vertex.Copy();
+                              iV1 := GDMap.StaticMeshCache.Vertices.Items[iSur.Indexes.Items[iJ]].Vertex.Copy();
                               iV1 *= FScale;
                               iV1 /= 100;
                               FRotation.ApplyToVector(iV1);
                               iV1 += FPosition;
-                              iV2 := GDMap.MeshManager.Vertices.Items[iSur.Indexes.Items[iJ]].Normal.Copy();
+                              iV2 := GDMap.StaticMeshCache.Vertices.Items[iSur.Indexes.Items[iJ]].Normal.Copy();
                               FRotation.ApplyToVector(iV2);
                               iV2 *= R_NORMAL_LENGTH;
                               iV2 += iV1;

@@ -142,7 +142,7 @@ begin
     iUVs   :=  iMesh.Find('UVs');
 
     iCount := iVerts.count div 3;
-    iOffset := GDMap.MeshManager.Vertices.count;
+    iOffset := GDMap.StaticMeshCache.Vertices.count;
     for iI := 0 to iCount-1 do
     begin
       //vertex
@@ -161,7 +161,7 @@ begin
 
       //color
       iV.Color  := Color(1,1,1,1);
-      GDMap.MeshManager.Vertices.Add(iV);
+      GDMap.StaticMeshCache.Vertices.Add(iV);
     end;
 
     //load surfaces
@@ -189,9 +189,9 @@ begin
         iSur.FIndexes.Add(iIdx);
         if iSur.Material.DoTreeAnim then
         begin
-          iV := GDMap.MeshManager.Vertices[iIdx];
+          iV := GDMap.StaticMeshCache.Vertices[iIdx];
           iV.Color := Color(0.75 + (Random(25)/100), 0.75 + (Random(25)/100), 0.75 + (Random(25)/100), 1);
-          GDMap.MeshManager.Vertices[iIdx] := iV;
+          GDMap.StaticMeshCache.Vertices[iIdx] := iV;
         end;
       end;
     end; 

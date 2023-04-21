@@ -124,12 +124,6 @@ type
   end;
 
 
-  TGDIdxVertex = record
-    Vertex : Integer;
-    UV     : Integer;
-    Normal : Integer;
-  end;
-
   TGDVertex_V_UV = record
     Vertex : TGDVector;
     UV     : TGDUVCoord;

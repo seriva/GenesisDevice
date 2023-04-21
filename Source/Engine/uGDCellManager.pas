@@ -18,7 +18,7 @@ uses
   uGDOctree,
   uGDTypes,
   uGDMeshCell,
-  uGDMeshManager;
+  uGDStaticMeshCache;
 
 type
   TGDCellManager = class
@@ -48,7 +48,7 @@ type
     procedure DetectVisibleCells();
     procedure RenderVisibleCells( aRenderAttribute : TGDRenderAttribute; aRenderFor : TGDRenderFor;
                                   aTerrain : TGDTerrain; aWater : TGDWater; aFoliage : TGDFoliage;
-                                  aMeshManager : TGDMeshManager);
+                                  aStaticMeshCache : TGDStaticMeshCache);
   end;
 
 implementation
@@ -349,7 +349,7 @@ End;
 
 procedure TGDCellManager.RenderVisibleCells( aRenderAttribute : TGDRenderAttribute;
                                              aRenderFor : TGDRenderFor;
-                                             aTerrain : TGDTerrain; aWater : TGDWater; aFoliage : TGDFoliage; aMeshManager : TGDMeshManager);
+                                             aTerrain : TGDTerrain; aWater : TGDWater; aFoliage : TGDFoliage; aStaticMeshCache : TGDStaticMeshCache);
 var
   iI : Integer;
   iTerrainCell : TGDTerrainCell;
@@ -397,7 +397,7 @@ Begin
   //render the visible mesh cells
   if GDModes.RenderMeshes then
   begin
-    aMeshManager.StartRendering(aRenderAttribute, aRenderFor);
+    aStaticMeshCache.StartRendering(aRenderAttribute, aRenderFor);
 
     for iI := 0 to FVisibleMeshCells.Count - 1 do
     begin
@@ -406,9 +406,9 @@ Begin
       TriangleCount := TriangleCount + iMeshCell.TriangleCount();
     end;
     if aRenderAttribute = RA_NORMAL then
-      GDMap.MeshManager.RenderSurfaces(aRenderAttribute, aRenderFor);
+      GDMap.StaticMeshCache.RenderSurfaces(aRenderAttribute, aRenderFor);
 
-    aMeshManager.EndRendering();
+    aStaticMeshCache.EndRendering();
   end;
 
   //Render the sun

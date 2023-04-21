@@ -32,7 +32,7 @@ type
     FDetailTexture4    : TGDTexture;
     FDetailLookup      : TGDTexture;
     FDetailTexture     : TGDTexture;
-    FDetailMult        : double;
+    FDetailMult        : Double;
     FDetailUVMult      : Integer;
     FDetailMapUV       : Integer;
     FCausticMapUV      : Integer;

@@ -352,7 +352,7 @@
         <IsPartOfProject Value="True"/>
       </Unit56>
       <Unit57>
-        <Filename Value="..\Engine\uGDMeshManager.pas"/>
+        <Filename Value="..\Engine\uGDStaticMeshCache.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit57>
       <Unit58>
