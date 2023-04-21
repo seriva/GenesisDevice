@@ -12,8 +12,7 @@ uses
   uGDMesh,
   uGDGLWrappers,
   uGDResource,
-  uGDBaseCell,
-  uGDTypesGenerics;
+  uGDBaseCell;
 
 type
   TGDMeshCellInput = record

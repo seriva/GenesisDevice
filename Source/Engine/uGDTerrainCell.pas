@@ -12,7 +12,6 @@ uses
   uGDTerrain,
   uGDTypes,
   uGDGLWrappers,
-  uGDTypesGenerics,
   uGDBaseCell;
 
 type

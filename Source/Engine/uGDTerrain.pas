@@ -14,7 +14,6 @@ uses
   uGDTexture,
   uGDTypes,
   uGDGLWrappers,
-  uGDTypesGenerics,
   uGDResource,
   uGDConstants;
 

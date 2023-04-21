@@ -15,7 +15,6 @@ Uses
   uGDMaterial,
   uGDGLWrappers,
   LazFileUtils,
-  uGDTypesGenerics,
   uGDResource;
 
 Type

@@ -14,7 +14,6 @@ uses
   dglOpenGL,
   uGDTexture,
   uGDTypes,
-  uGDTypesGenerics,
   uGDGLWrappers,
   uGDConstants,
   uGDResource,

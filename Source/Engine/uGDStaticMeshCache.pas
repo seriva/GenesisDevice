@@ -9,7 +9,7 @@ uses
   FGL,
   SysUtils,
   uGDGLWrappers,
-  uGDTypesGenerics,
+  uGDTypes,
   uGDConstants,
   uGDMeshCell,
   uGDMesh;

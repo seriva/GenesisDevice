@@ -13,8 +13,7 @@ uses
   uGDTypes,
   uGDGLWrappers,
   uGDConstants,
-  uGDResource,
-  uGDTypesGenerics;
+  uGDResource;
 
 type
   TGDSkyDome = class

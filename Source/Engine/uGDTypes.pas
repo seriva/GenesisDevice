@@ -1,13 +1,15 @@
 
 unit uGDTypes;
 
-{$MODE Delphi}
+{$mode objfpc}{$H+}
+{$modeswitch advancedrecords}
 
 interface
 
 uses
   Classes,
   Math,
+  FGL,
   JsonTools,
   SysUtils,
   dglOpenGL;
@@ -28,20 +30,21 @@ type
     function    Inverse(): TGDVector;
     function    ArrayPointer() : PGLfloat;
 
-    class operator Add(const aV1, aV2: TGDVector): TGDVector; overload;
-    class operator Add(const aV: TGDVector; aD: Single): TGDVector; overload;
-    class operator Subtract(const aV1, aV2: TGDVector): TGDVector; overload;
-    class operator Subtract(const aV: TGDVector; aD: Single): TGDVector; overload;
-    class operator Multiply(const aV1, aV2: TGDVector): TGDVector; overload;
-    class operator Multiply(const aV: TGDVector; aD: Single): TGDVector; overload;
-    class operator Divide(const aV1, aV2: TGDVector): TGDVector; overload;
-    class operator Divide(const aV: TGDVector; aD: Single): TGDVector; overload;
-    class operator Equal(aV1, aV2: TGDVector) B: Boolean;
+    class operator +(const aV1, aV2: TGDVector): TGDVector; overload;
+    class operator +(const aV: TGDVector; aD: Single): TGDVector; overload;
+    class operator -(const aV1, aV2: TGDVector): TGDVector; overload;
+    class operator -(const aV: TGDVector; aD: Single): TGDVector; overload;
+    class operator *(const aV1, aV2: TGDVector): TGDVector; overload;
+    class operator *(const aV: TGDVector; aD: Single): TGDVector; overload;
+    class operator /(const aV1, aV2: TGDVector): TGDVector; overload;
+    class operator /(const aV: TGDVector; aD: Single): TGDVector; overload;
+    class operator =(aV1, aV2: TGDVector) B: Boolean;
 
     case Boolean of
       TRUE: ( x, y, z : Single; );
       FALSE: ( xyz: array [0..2] of Single; );
   end;
+  TGDVertex_V_List  = specialize TFPGList<TGDVector>;
 
 
   TGDUVCoord  = record
@@ -49,12 +52,13 @@ type
     function    Copy(): TGDUVCoord;
 
     function    ArrayPointer() : PGLfloat;
-    class operator Equal (uv1, uv2: TGDUVCoord) B: Boolean;
+    class operator =(uv1, uv2: TGDUVCoord) B: Boolean;
 
     case Boolean of
       TRUE: ( u, v : Single; );
       FALSE: ( uv: array [0..1] of Single; );
   end;
+  TGDVertex_UV_List  = specialize TFPGList<TGDUVCoord>;
 
 
   TGDColor = record
@@ -69,12 +73,13 @@ type
     procedure   Black();
 
     function    ArrayPointer() : PGLFloat;
-    class operator Equal (c1, c2: TGDColor) B: Boolean;
+    class operator =(c1, c2: TGDColor) B: Boolean;
 
     case Boolean of
       TRUE: ( r, g, b, a : Single; );
       FALSE: ( rgba: array [0..3] of Single; );
   end;
+  TGDColor_List  = specialize TFPGList<TGDColor>;
 
 
   TGDQuaternion = record
@@ -132,20 +137,27 @@ type
   end;
 
 
+  TGDIndexList = specialize TFPGList<Integer>;
+  
+
   TGDVertex_V_UV = record
     Vertex : TGDVector;
     UV     : TGDUVCoord;
 
-    class operator Equal(v1, v2: TGDVertex_V_UV) B: Boolean;
+    class operator =(v1, v2: TGDVertex_V_UV) B: Boolean;
   end;
+  TGDVertex_V_UV_List = specialize TFPGList<TGDVertex_V_UV>;
+
 
   TGDVertex_V_UV_N = record
     Vertex : TGDVector;
     UV     : TGDUVCoord;
     Normal : TGDVector;
 
-    class operator Equal(v1, v2: TGDVertex_V_UV_N) B: Boolean;
+    class operator =(v1, v2: TGDVertex_V_UV_N) B: Boolean;
   end;
+  TGDVertex_V_UV_N_List = specialize TFPGList<TGDVertex_V_UV_N>;
+
 
   TGDVertex_V_UV_N_C = record
     Vertex : TGDVector;
@@ -153,8 +165,9 @@ type
     Normal : TGDVector;
     Color  : TGDColor;
 
-    class operator Equal(v1, v2: TGDVertex_V_UV_N_C) B: Boolean;
+    class operator =(v1, v2: TGDVertex_V_UV_N_C) B: Boolean;
   end;
+  TGDVertex_V_UV_N_C_List = specialize TFPGList<TGDVertex_V_UV_N_C>;
 
 
 function Vector(aX,aY,aZ: Single) : TGDVector;
@@ -229,14 +242,14 @@ begin
 end;
 
 
-class operator TGDVector.Add(const aV1, aV2: TGDVector): TGDVector;
+class operator TGDVector.+(const aV1, aV2: TGDVector): TGDVector;
 begin
   Result.x := aV1.x + aV2.x;
   Result.y := aV1.y + aV2.y;
   Result.z := aV1.z + aV2.z;
 end;
 
-class operator TGDVector.Add(const aV: TGDVector; aD: Single): TGDVector;
+class operator TGDVector.+(const aV: TGDVector; aD: Single): TGDVector;
 begin
   Result.x := aV.x + aD;
   Result.y := aV.y + aD;
@@ -244,14 +257,14 @@ begin
 end;
 
 
-class operator TGDVector.Subtract(const aV1, aV2: TGDVector): TGDVector;
+class operator TGDVector.-(const aV1, aV2: TGDVector): TGDVector;
 begin
   Result.x := aV1.x - aV2.x;
   Result.y := aV1.y - aV2.y;
   Result.z := aV1.z - aV2.z;
 end;
 
-class operator TGDVector.Subtract(const aV: TGDVector; aD: Single): TGDVector;
+class operator TGDVector.-(const aV: TGDVector; aD: Single): TGDVector;
 begin
   Result.x := aV.x - aD;
   Result.y := aV.y - aD;
@@ -259,14 +272,14 @@ begin
 end;
 
 
-class operator TGDVector.Multiply(const aV1, aV2: TGDVector): TGDVector;
+class operator TGDVector.*(const aV1, aV2: TGDVector): TGDVector;
 begin
   Result.x := aV1.x * aV2.x;
   Result.y := aV1.y * aV2.y;
   Result.z := aV1.z * aV2.z;
 end;
 
-class operator TGDVector.Multiply(const aV: TGDVector; aD: Single): TGDVector;
+class operator TGDVector.*(const aV: TGDVector; aD: Single): TGDVector;
 begin
   Result.x := aV.x * aD;
   Result.y := aV.y * aD;
@@ -274,14 +287,14 @@ begin
 end;
 
 
-class operator TGDVector.Divide(const aV1, aV2: TGDVector): TGDVector;
+class operator TGDVector./(const aV1, aV2: TGDVector): TGDVector;
 begin
   Result.x := aV1.x / aV2.x;
   Result.y := aV1.y / aV2.y;
   Result.z := aV1.z / aV2.z;
 end;
 
-class operator TGDVector.Divide(const aV: TGDVector; aD: Single): TGDVector;
+class operator TGDVector./(const aV: TGDVector; aD: Single): TGDVector;
 begin
   Result.x := aV.x / aD;
   Result.y := aV.y / aD;
@@ -354,7 +367,7 @@ begin
 end;
 
 
-class operator TGDVector.Equal(aV1, aV2: TGDVector) B: Boolean;
+class operator TGDVector.=(aV1, aV2: TGDVector) B: Boolean;
 begin
   B := (Abs(aV1.x - aV2.x) < EPSILON) and
        (Abs(aV1.y - aV2.y) < EPSILON) and
@@ -382,7 +395,7 @@ begin
 end;
 
 
-class operator TGDUVCoord.Equal (uv1, uv2: TGDUVCoord)B: Boolean;
+class operator TGDUVCoord.=(uv1, uv2: TGDUVCoord)B: Boolean;
 begin
   B := (Abs(uv1.u - uv2.u) < EPSILON) and
        (Abs(uv1.v - uv2.v) < EPSILON);
@@ -472,7 +485,7 @@ begin
 end;
 
 
-class operator TGDColor.Equal (c1, c2: TGDColor) B: Boolean;
+class operator TGDColor.=(c1, c2: TGDColor) B: Boolean;
 begin
   B := (Abs(c1.r - c2.r) < EPSILON) and
        (Abs(c1.g - c2.g) < EPSILON) and
@@ -750,17 +763,17 @@ begin
 end;
 
 
-class operator TGDVertex_V_UV.Equal(v1, v2: TGDVertex_V_UV) B: Boolean;
+class operator TGDVertex_V_UV.=(v1, v2: TGDVertex_V_UV) B: Boolean;
 begin
   B := (v1.Vertex = v2.Vertex) and (v1.UV = v2.UV);
 end;
 
-class operator TGDVertex_V_UV_N.Equal(v1, v2: TGDVertex_V_UV_N) B: Boolean;
+class operator TGDVertex_V_UV_N.=(v1, v2: TGDVertex_V_UV_N) B: Boolean;
 begin
   B := (v1.Vertex = v2.Vertex) and (v1.UV = v2.UV) and (v1.Normal = v2.Normal);
 end;
 
-class operator TGDVertex_V_UV_N_C.Equal(v1, v2: TGDVertex_V_UV_N_C) B: Boolean;
+class operator TGDVertex_V_UV_N_C.=(v1, v2: TGDVertex_V_UV_N_C) B: Boolean;
 begin
   B := (v1.Vertex = v2.Vertex) and (v1.UV = v2.UV) and (v1.Normal = v2.Normal);
 end;

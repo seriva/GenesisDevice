@@ -122,7 +122,7 @@
         <PackageName Value="LCL"/>
       </Item1>
     </RequiredPackages>
-    <Units Count="87">
+    <Units Count="86">
       <Unit0>
         <Filename Value="Demo.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -416,65 +416,61 @@
         <IsPartOfProject Value="True"/>
       </Unit72>
       <Unit73>
-        <Filename Value="..\Engine\uGDTypesGenerics.pas"/>
+        <Filename Value="..\Engine\uGDWater.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit73>
       <Unit74>
-        <Filename Value="..\Engine\uGDWater.pas"/>
+        <Filename Value="..\Engine\uGDWaterCell.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit74>
       <Unit75>
-        <Filename Value="..\Engine\uGDWaterCell.pas"/>
+        <Filename Value="..\Engine\uGDWindow.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit75>
       <Unit76>
-        <Filename Value="..\Engine\uGDWindow.pas"/>
+        <Filename Value="uPlayer.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit76>
       <Unit77>
-        <Filename Value="uPlayer.pas"/>
+        <Filename Value="uMain.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit77>
       <Unit78>
-        <Filename Value="uMain.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit78>
-      <Unit79>
         <Filename Value="uConfiguration.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="ConfigurationForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
+      </Unit78>
+      <Unit79>
+        <Filename Value="..\Libraries\OpenAL\al.inc"/>
+        <IsPartOfProject Value="True"/>
       </Unit79>
       <Unit80>
-        <Filename Value="..\Libraries\OpenAL\al.inc"/>
+        <Filename Value="..\Libraries\OpenAL\alc.inc"/>
         <IsPartOfProject Value="True"/>
       </Unit80>
       <Unit81>
-        <Filename Value="..\Libraries\OpenAL\alc.inc"/>
+        <Filename Value="..\Libraries\OpenAL\alext.inc"/>
         <IsPartOfProject Value="True"/>
       </Unit81>
       <Unit82>
-        <Filename Value="..\Libraries\OpenAL\alext.inc"/>
+        <Filename Value="..\Libraries\OpenAL\openalsoft.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit82>
       <Unit83>
-        <Filename Value="..\Libraries\OpenAL\openalsoft.pas"/>
+        <Filename Value="..\Libraries\OpenAL\efx.inc"/>
         <IsPartOfProject Value="True"/>
       </Unit83>
       <Unit84>
-        <Filename Value="..\Libraries\OpenAL\efx.inc"/>
+        <Filename Value="..\Libraries\OpenAL\libmpg123.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit84>
       <Unit85>
-        <Filename Value="..\Libraries\OpenAL\libmpg123.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit85>
-      <Unit86>
         <Filename Value="..\Libraries\JsonTools\jsontools.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="JsonTools"/>
-      </Unit86>
+      </Unit85>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

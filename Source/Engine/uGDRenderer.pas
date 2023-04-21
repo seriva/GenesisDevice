@@ -10,7 +10,6 @@ uses
   uGDConstants,
   uGDTexture,
   uGDGLWrappers,
-  uGDTypesGenerics,
   uGDTypes;
 
 type

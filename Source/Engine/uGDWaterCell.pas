@@ -11,7 +11,6 @@ uses
   uGDConstants,
   uGDGLWrappers,
   uGDTypes,
-  uGDTypesGenerics,
   uGDBaseCell;
 
 type

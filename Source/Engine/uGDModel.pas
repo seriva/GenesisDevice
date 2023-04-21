@@ -16,7 +16,6 @@ Uses
   uGDConstants,
   uGDMaterial,
   uGDGLWrappers,
-  uGDTypesGenerics,
   uGDResource,
   uGDMesh;
 
