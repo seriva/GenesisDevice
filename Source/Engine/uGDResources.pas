@@ -11,6 +11,7 @@ uses
   uGDResource,
   uGDTexture,
   uGDMesh,
+  uGDModel,
   LazFileUtils,
   uGDMaterial,
   uGDConstants,
@@ -26,6 +27,7 @@ type
    public
      function  LoadTexture(aFileName : String; aDetail : TGDTextureDetail; aTextureFilter : TGDTextureFilter): TGDTexture;
      function  LoadMesh(aFileName : String): TGDMesh;
+     function  LoadModel(aFileName : String): TGDModel;
      function  LoadSoundBuffer(aFileName : String): TGDSoundBuffer;
      function  LoadSoundStream(aFileName : String): TGDSoundStream;
      procedure LoadMaterials(aFileName : String);
@@ -70,6 +72,27 @@ begin
   else
   begin
     result := TGDMesh.Create(aFileName);
+    AddResource(aFileName, result);
+  end;
+end;
+
+
+function TGDResources.LoadModel(aFileName : String): TGDModel;
+var
+  iIdx : Integer;
+begin
+  if aFileName = '' then
+  begin
+    result := nil;
+    exit
+  end;
+
+  iIdx := IndexOf(aFileName);
+  if iIdx >= 0 then
+    result := GetResource(iIdx) as TGDModel
+  else
+  begin
+    result := TGDModel.Create(aFileName);
     AddResource(aFileName, result);
   end;
 end;

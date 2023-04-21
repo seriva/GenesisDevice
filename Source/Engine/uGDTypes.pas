@@ -77,6 +77,14 @@ type
   end;
 
 
+  TGDQuaternion = record
+
+    case Boolean of
+      TRUE: ( w, x, y, z: Single; );
+      FALSE: ( wxyz: array [0..3] of Single; );
+  end;
+
+
   TGDMatrix = record
     data : array[0..3, 0..3] of Single;
 
@@ -112,8 +120,8 @@ type
 
 
   TGDBoundingBox = record
-    Min : TGDVector;
-    Max : TGDVector;
+    Min    : TGDVector;
+    Max    : TGDVector;
     Center : TGDVector;
 
     procedure CalculateCenter();

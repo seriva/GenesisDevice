@@ -18,6 +18,7 @@ uses
   uGDOctree,
   uGDTypes,
   uGDMeshCell,
+  uGDModelCell,
   uGDStaticMeshCache;
 
 type
