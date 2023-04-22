@@ -89,6 +89,8 @@ begin
     begin
       glEnable(GL_ALPHA_TEST);
       glAlphaFunc(GL_GREATER, FAlphaFunc);
+      glSampleCoverage(1.0, false);
+      glEnable(GL_SAMPLE_ALPHA_TO_COVERAGE);
     end;
   end;
 end;
@@ -97,7 +99,10 @@ end;
 procedure TGDMaterial.DisableMaterial();
 begin
   if FHasAlpha then
+  begin
     glDisable(GL_ALPHA_TEST);
+    glDisable(GL_SAMPLE_ALPHA_TO_COVERAGE);
+  end;
 end;
 
 end.

@@ -285,6 +285,8 @@ begin
   else
   begin
     glEnable(GL_ALPHA_TEST);
+    glSampleCoverage(1.0, false);
+    glEnable(GL_SAMPLE_ALPHA_TO_COVERAGE);
     glAlphaFunc(GL_GREATER, 0.7);
     glDisable(GL_CULL_FACE);
     with GDRenderer do
@@ -301,6 +303,7 @@ end;
 
 procedure TGDFoliage.EndRenderingGrass();
 begin
+  glDisable(GL_SAMPLE_ALPHA_TO_COVERAGE);
   glDisable(GL_ALPHA_TEST);
   glEnable(GL_CULL_FACE);
 end;

@@ -4,7 +4,7 @@
         "ColorMap": "Models/Trees/shared/leaves_07_c.dds",
         "DetailMap": "",
         "HasAlpha": true,
-        "AlphaFunc": 0.6,
+        "AlphaFunc": 0.45,
         "DetailUVMult": 1,
         "DetailMult": 0.5,
         "DoTreeAnim": true
@@ -34,7 +34,7 @@
         "ColorMap": "Models/Trees/shared/branch_01_c.dds",
         "DetailMap": "",
         "HasAlpha": true,
-        "AlphaFunc": 0.6,
+        "AlphaFunc": 0.45,
         "DetailUVMult": 1,
         "DetailMult": 0.5,
         "DoTreeAnim": true
