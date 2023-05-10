@@ -149,19 +149,19 @@ begin
     If  ((iI) >= 0) then
     begin
       If copy(Uppercase(FLogText.Strings[iI]), 0, 5) = 'ERROR' then
-        GDGUI.Font.Color.Red
+        GDGUI.DefaultFont.Color.Red
       else
-        GDGUI.Font.Color := GDGUI.FontColor.Copy();
-      GDGUI.Font.Render(0, (R_HUD_HEIGHT/2)+28+(iJ*25), 0.40, FLogText.Strings[iI] );
+        GDGUI.DefaultFont.Color := GDGUI.FontColor.Copy();
+      GDGUI.DefaultFont.Render(0, (R_HUD_HEIGHT/2)+28+(iJ*25), 0.40, FLogText.Strings[iI] );
       iJ := iJ + 1;
     end;
   end;
 
-  GDGUI.Font.Color := GDGUI.FontColor.Copy();
-  GDGUI.Font.Render(0, (R_HUD_HEIGHT/2)-3, 0.40, FCommand);
-  iX := GDGUI.Font.TextWidth(Copy(FCommand, 1, FCursorpos-1), 0.40);
+  GDGUI.DefaultFont.Color := GDGUI.FontColor.Copy();
+  GDGUI.DefaultFont.Render(0, (R_HUD_HEIGHT/2)-3, 0.40, FCommand);
+  iX := GDGUI.DefaultFont.TextWidth(Copy(FCommand, 1, FCursorpos-1), 0.40);
   if FCursorUpdate then
-     GDGUI.Font.Render(iX, (R_HUD_HEIGHT/2)-3, 0.40, '_' );
+     GDGUI.DefaultFont.Render(iX, (R_HUD_HEIGHT/2)-3, 0.40, '_' );
 
   glDisable(GL_BLEND);
 end;

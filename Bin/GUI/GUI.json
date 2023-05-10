@@ -4,11 +4,9 @@
         "Outline": [1.0,1.0,1.0,1.0],
         "Fill": [0.3,0.3,0.3,0.8]
     },
-    "Font": {
-        "Texture": "Textures/System/font.dds"
-    },
+    "DefaultFont": "GUI/Fonts/system.json",
     "Mouse": {
-        "Texture": "Textures/System/mouse.dds",
+        "Texture": "GUI/cursor.dds",
         "Size": 40
     },
     "Loading": {

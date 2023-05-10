@@ -112,7 +112,7 @@ begin
   GDTiming.Start();
   iMap := TJsonNode.Create();
   Clear();
-  GDConsole.Write('......Loading map (' + aFileName + ')');
+  GDConsole.Write('.....Loading map (' + aFileName + ')');
   GDGUI.LoadingScreen.Start('Loading ' + StringReplace( ExtractFileName(aFileName), ExtractFileExt(aFileName), '',  [rfReplaceAll] ) + '...', 6 );
 
   //load map json

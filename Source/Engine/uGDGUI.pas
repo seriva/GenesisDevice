@@ -1,6 +1,7 @@
 unit uGDGUI;
 
-{$MODE objfpc}
+{$mode objfpc}{$H+}
+{$modeswitch advancedrecords}
 
 interface
 
@@ -15,106 +16,6 @@ uses
   uGDConstants,
   uGDWindow,
   uGDTypes;
-
-const
-  FONT_TEXHEIGHT = 512;
-  FONT_HEIGHT    = 64;
-  FONT_CHARCOORDS : array[0..93,0..3] of Word = (
-      (0,0,25,64),        //!
-      (25,0,54,64),       //"
-      (54,0,107,64),      //#
-      (107,0,148,64),     //dollar
-      (148,0,217,64),     //%
-      (217,0,263,64),     //&
-      (263,0,280,64),     //'
-      (280,0,309,64),     //(
-      (309,0,338,64),     //)
-      (338,0,379,64),     //*
-      (379,0,432,64),     //+
-      (432,0,455,64),     //,
-      (455,0,484,64),     //-
-      (0,64,21,128),      //.
-      (23,64,52,128),     ///
-      (52,64,93,128),     //0
-      (93,64,133,128),    //1
-      (133,64,174,128),   //2
-      (174,64,215,128),   //3
-      (215,64,256,128),   //4
-      (256,64,296,128),   //5
-      (296,64,337,128),   //6
-      (337,64,378,128),   //7
-      (378,64,419,128),   //8
-      (419,64,459,128),   //9
-      (459,64,488,128),   //:
-      (0,128,29,192),     //;
-      (29,128,81,192),    //<
-      (81,128,134,192),   //=
-      (134,128,186,192),  //>
-      (186,128,221,192),  //?
-      (221,128,285,192),  //@
-      (285,128,329,192),  //A
-      (329,128,373,192),  //B
-      (373,128,418,192),  //C
-      (418,128,467,192),  //D
-      (0,192,40,256),     //E
-      (40,192,77,256),    //F
-      (77,192,127,256),   //G
-      (127,192,175,256),  //H
-      (175,192,202,256),  //I
-      (202,192,231,256),  //J
-      (231,192,275,256),  //K
-      (275,192,311,256),  //L
-      (311,192,365,256),  //M
-      (365,192,413,256),  //N
-      (413,192,463,256),  //O
-      (1,256,38,320),     //P
-      (38,256,89,320),    //Q
-      (89,256,133,320),   //R
-      (133,256,176,320),  //S
-      (177,256,216,320),  //T
-      (217,256,263,320),  //U
-      (263,256,307,320),  //V
-      (307,256,370,320),  //W
-      (370,256,414,320),  //X
-      (414,256,453,320),  //Y
-      (453,256,497,320),  //Z
-      (0,320,29,384),     //[
-      (29,320,58,384),    //"\"
-      (59,320,87,384),    //]
-      (87,320,139,384),   //^
-      (139,320,180,384),  //_
-      (180,320,221,384),  //`
-      (221,320,259,384),  //a
-      (259,320,299,384),  //b
-      (299,320,332,384),  //c
-      (332,320,372,384),  //d
-      (372,320,411,384),  //e
-      (411,320,433,384),  //f
-      (435,320,473,384),  //g
-      (0,384,40,448),     //h
-      (40,384,56,448),    //i
-      (58,384,80,448),    //j
-      (80,384,118,448),   //k
-      (118,384,135,448),  //l
-      (135,384,197,448),  //m
-      (197,384,238,448),  //n
-      (238,384,277,448),  //o
-      (277,384,317,448),  //p
-      (317,384,356,448),  //q
-      (357,384,384,448),  //r
-      (385,384,417,448),  //s
-      (417,384,442,448),  //t
-      (443,384,483,448),  //u
-      (0,448,38,512),     //v
-      (38,448,90,512),    //w
-      (90,448,128,512),   //x
-      (128,448,166,512),  //y
-      (166,448,200,512),  //z
-      (200,448,241,512),  //{
-      (241,448,270,512),  //|
-      (270,448,310,512),  //}
-      (310,448,363,512)   //~
-  );
 
 type
   TGDComponent = class
@@ -166,18 +67,25 @@ type
   end;
   TGDScreenList = specialize TFPGObjectList<TGDScreen>;
 
+  TGDCharacterRect = Record
+    X1,Y1,X2,Y2, W, H : single;
 
+    class operator =(aC1, aC2: TGDCharacterRect) B: Boolean;
+  end;
+  TGDCharacterRectList = specialize TFPGList<TGDCharacterRect>;
   TGDFont = class
   private
-    FTexture : TGDTexture;
-    FColor   : TGDColor;
+    FSpaceWidth : Integer;
+    FCharacters : TGDCharacterRectList;
+    FTexture    : TGDTexture;
+    FColor      : TGDColor;
   public
     property Color : TGDColor read FColor write FColor;
 
-    constructor Create(aTexture : string);
+    constructor Create(aFileName : string);
     destructor  Destroy(); override;
     procedure   Render( aLeft, aTop, aScale : Double; aString : string);
-    function    TextWidth(const str : String; const scale : Single = 1): Integer;
+    function    TextWidth(const aString : String; const aScale : Single = 1): Integer;
   end;
 
 
@@ -224,7 +132,7 @@ type
   TGDGUI = class
   private
     //Base components
-    FFont          : TGDFont;
+    FDefaultFont   : TGDFont;
     FMouseCursor   : TGDMouseCursor;
     FLoadingScreen : TGDLoadingScreen;
 
@@ -236,7 +144,7 @@ type
     //Screens
     FScreens : TGDScreenList;
   public
-    property Font : TGDFont read FFont;
+    property DefaultFont : TGDFont read FDefaultFont;
     property MouseCursor : TGDMouseCursor read FMouseCursor;
     property LoadingScreen : TGDLoadingScreen read FLoadingScreen;
 
@@ -255,10 +163,8 @@ type
   end;
 
 procedure RenderTexturedQuad(x, y, width, height : Integer;
-                             u1 : Single=1; v1 : Single=1;
-                             u2 : Single=0; v2 : Single=1;
-                             u3 : Single=0; v3 : Single=0;
-                             u4 : Single=1; v4 : Single=0);
+                             u1 : Single=1; u2 : Single=0;
+                             v1 : Single=0; v2 : Single=1);
 procedure RenderFlatQuad(x, y, width, height : Integer; inside : boolean = true; outline : boolean = true);
 
 implementation
@@ -267,17 +173,14 @@ uses
   uGDEngine,
   uGDResource;
 
-procedure RenderTexturedQuad(x, y, width, height : Integer;
-                             u1 : Single=1; v1 : Single=1;
-                             u2 : Single=0; v2 : Single=1;
-                             u3 : Single=0; v3 : Single=0;
-                             u4 : Single=1; v4 : Single=0);
+
+procedure RenderTexturedQuad(x, y, width, height : Integer; u1 : Single=1; u2 : Single=0; v1 : Single=0; v2 : Single=1);
 begin
   glBegin(GL_QUADS);
-    glTexCoord2f(u1, v1); glVertex2f( x,       y);
+    glTexCoord2f(u1, v2); glVertex2f( x,       y);
     glTexCoord2f(u2, v2); glVertex2f( x+width, y);
-    glTexCoord2f(u3, v3); glVertex2f( x+width, y+height);
-    glTexCoord2f(u4, v4); glVertex2f( x,       y+height);
+    glTexCoord2f(u2, v1); glVertex2f( x+width, y+height);
+    glTexCoord2f(u1, v1); glVertex2f( x,       y+height);
   glEnd;
 end;
 
@@ -373,8 +276,8 @@ end;
 procedure   TGDLabel.Render();
 begin
   GDRenderer.RenderState( RS_TEXTS );
-  GDGUI.Font.Color := FColor.Copy();
-  GDGUI.Font.Render(X,Y,FScale,FText);
+  GDGUI.DefaultFont.Color := FColor.Copy();
+  GDGUI.DefaultFont.Render(X,Y,FScale,FText);
 end;
 
 constructor TGDScreen.Create(aFileName : String);
@@ -415,31 +318,69 @@ begin
 end;
 
 
-constructor TGDFont.Create(aTexture : string);
+class operator TGDCharacterRect.=(aC1, aC2: TGDCharacterRect)B: Boolean;
 begin
+  B := false
+end;
+
+
+constructor TGDFont.Create(aFileName : string);
+var
+  iFont, iCharacters, iChar : TJsonNode;
+  iI : Integer;
+  iC : TGDCharacterRect;
+begin
+  FCharacters := TGDCharacterRectList.create();
+  iFont := TJsonNode.Create();
+  iFont.LoadFromFile(aFileName);
+
+  FTexture    := GDResources.LoadTexture(iFont.Find('Texture').AsString, TD_HIGH, TF_TRILINEAR);
+  FSpaceWidth := Trunc(iFont.Find('SpaceWidth').AsNumber);
   FColor.White();
-  FTexture := GDResources.LoadTexture(aTexture, TD_HIGH, TF_TRILINEAR);
+
+  //Characters
+  iCharacters := iFont.Find('Characters');
+  iI := iCharacters.Count;
+  for iI := 0 to iCharacters.Count-1 do
+  begin
+    iChar := iCharacters.Child(iI);
+
+    iC.X1 := iChar.Find('X1').AsNumber;
+    iC.Y1 := iChar.Find('Y1').AsNumber;
+    iC.X2 := iChar.Find('X2').AsNumber;
+    iC.Y2 := iChar.Find('Y2').AsNumber;
+    iC.W  := iChar.Find('Width').AsNumber;
+    iC.H  := iChar.Find('Height').AsNumber;
+
+    FCharacters.Add(iC);
+  end;
+  FreeAndNil(iFont);
 end;
 
 
 destructor TGDFont.Destroy();
 begin
+  FreeAndNil(FCharacters);
   GDResources.RemoveResource(TGDResource(FTexture));
   inherited;
 end;
 
 
-function TGDFont.TextWidth(const str : String; const scale : Single = 1): Integer;
+function TGDFont.TextWidth(const aString : String; const aScale : Single = 1): Integer;
 var
   i, x, c, inwidth : integer;
 begin
   x := 0;
-  for i := 1 to length(str) do
+  for i := 1 to length(aString) do
   begin
-    if(str[i] = ' ') then begin x := x + round((FONT_HEIGHT/2) * scale); continue; end;
-    c := Ord(str[i])-33;
+    if(aString[i] = ' ') then 
+    begin 
+      x := x + round(FSpaceWidth * aScale); 
+      continue; 
+    end;
+    c := Ord(aString[i])-33;
     if(c < 0) or (c >= 95) then continue;
-    inwidth := round((FONT_CHARCOORDS[c][2] - FONT_CHARCOORDS[c][0]) * scale);
+    inwidth  := Round(FCharacters[c].W * aScale);
     x := x + inwidth + 1;
   end;
   result := x;
@@ -449,7 +390,6 @@ end;
 Procedure TGDFont.Render( aLeft, aTop, aScale : Double; aString : string);
 var
   i, x, y, c, inwidth, inheight : integer;
-  inleft, intop, inright, inbottom : Single;
 begin
   FTexture.BindTexture(GL_TEXTURE0);
   GDRenderer.SetColor(FColor);
@@ -457,16 +397,16 @@ begin
   y := Round(aTop);
   for i := 1 to length(aString) do
   begin
-    if(aString[i] = ' ') then begin x := x + round((FONT_HEIGHT/2) * aScale); continue; end;
+    if(aString[i] = ' ') then 
+    begin 
+      x := x + round(FSpaceWidth * aScale); 
+      continue; 
+    end;
     c := Ord(aString[i])-33;
     if(c < 0) or (c >= 95) then continue;
-    inleft   := FONT_CHARCOORDS[c][0]   / FONT_TEXHEIGHT;
-    intop    := ((FONT_CHARCOORDS[c][1+2]) / FONT_TEXHEIGHT);
-    inright  := FONT_CHARCOORDS[c][2]   / FONT_TEXHEIGHT;
-    inbottom := ((FONT_CHARCOORDS[c][3-2]) / FONT_TEXHEIGHT);
-    inwidth  := Round((FONT_CHARCOORDS[c][2] - FONT_CHARCOORDS[c][0]) * aScale);
-    inheight := Round((FONT_CHARCOORDS[c][3] - FONT_CHARCOORDS[c][1]) * aScale);
-    RenderTexturedQuad(x,y,inwidth,inheight,inleft,intop,inright,intop,inright,inbottom,inleft,inbottom);
+    inwidth  := Round(FCharacters[c].W * aScale);
+    inheight := Round(FCharacters[c].H * aScale);
+    RenderTexturedQuad(x,y,inwidth,inheight,FCharacters[c].X1, FCharacters[c].X2, FCharacters[c].Y1, FCharacters[c].Y2);
     x := x + inwidth + 1;
   end;
 end;
@@ -604,9 +544,9 @@ begin
   If Not(FBarOnly) then
   begin
     GDRenderer.RenderState( RS_TEXTS );
-    GDGUI.Font.Color := GDGUI.FontColor.Copy();
-    GDGUI.Font.Render(7+FX,65+FY,0.5,FProcesName);
-    GDGUI.Font.Render(270+FX,16+FY,0.5,IntToStr(round(iPercent)) + '%');
+    GDGUI.DefaultFont.Color := GDGUI.FontColor.Copy();
+    GDGUI.DefaultFont.Render(7+FX,65+FY,0.5,FProcesName);
+    GDGUI.DefaultFont.Render(270+FX,16+FY,0.5,IntToStr(round(iPercent)) + '%');
   end;
   glDisable(GL_BLEND);
 
@@ -626,7 +566,7 @@ begin
   FFontColor.Reset(iSettings.Find('DefaultColors/Font'));
   FOutlineColor.Reset(iSettings.Find('DefaultColors/Outline'));
   FFillColor.Reset(iSettings.Find('DefaultColors/Fill'));
-  FFont          := TGDFont.Create(iSettings.Find('Font/Texture').AsString);
+  FDefaultFont   := TGDFont.Create(iSettings.Find('DefaultFont').AsString);
   FMouseCursor   := TGDMouseCursor.Create(iSettings.Find('Mouse/Texture').AsString, Trunc(iSettings.Find('Mouse/Size').AsNumber));
   FLoadingScreen := TGDLoadingScreen.Create(iSettings);
   FScreens       := TGDScreenList.Create();
@@ -638,7 +578,7 @@ end;
 
 destructor  TGDGUI.Destroy();
 begin
-  FreeAndNil(FFont);
+  FreeAndNil(FDefaultFont);
   FreeAndNil(FMouseCursor);
   FreeAndNil(FLoadingScreen);
   FreeAndNil(FScreens);

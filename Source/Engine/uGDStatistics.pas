@@ -78,21 +78,21 @@ begin
   RenderFlatQuad(20, 20, 375, 195);
   GDRenderer.RenderState( RS_TEXTS );
 
-  GDGUI.Font.Color := GDGUI.FontColor.Copy();
-  GDGUI.Font.Render(25,215-32,0.4,'FPS');
-  GDGUI.Font.Render(25,190-32,0.4,'TRIS');
-  GDGUI.Font.Render(25,165-32,0.4,'VOBJ');
-  GDGUI.Font.Render(25,140-32,0.4,'FTIME');
-  GDGUI.Font.Render(25,115-32,0.4,'X');
-  GDGUI.Font.Render(25,90-32,0.4,'Y');
-  GDGUI.Font.Render(25,65-32,0.4,'Z');
-  GDGUI.Font.Render(150,215-32,0.4,': ' + IntToStr(FFpsCount));
-  GDGUI.Font.Render(150,190-32,0.4,': ' + IntToStr(GDMap.TriangleCount()));
-  GDGUI.Font.Render(150,165-32,0.4,': ' + IntToStr(GDMap.ObjectCount()));
-  GDGUI.Font.Render(150,140-32,0.4,': ' + FFrameTimeSlice + ' ms' );;
-  GDGUI.Font.Render(150,115-32,0.4,': ' + IntToStr( Round(GDCamera.Position.X) ));
-  GDGUI.Font.Render(150,90-32,0.4,': ' + IntToStr( Round(GDCamera.Position.Y) ));
-  GDGUI.Font.Render(150,65-32,0.4,': ' + IntToStr( Round(GDCamera.Position.Z) ));
+  GDGUI.DefaultFont.Color := GDGUI.FontColor.Copy();
+  GDGUI.DefaultFont.Render(25,215-32,0.4,'FPS');
+  GDGUI.DefaultFont.Render(25,190-32,0.4,'TRIS');
+  GDGUI.DefaultFont.Render(25,165-32,0.4,'VOBJ');
+  GDGUI.DefaultFont.Render(25,140-32,0.4,'FTIME');
+  GDGUI.DefaultFont.Render(25,115-32,0.4,'X');
+  GDGUI.DefaultFont.Render(25,90-32,0.4,'Y');
+  GDGUI.DefaultFont.Render(25,65-32,0.4,'Z');
+  GDGUI.DefaultFont.Render(150,215-32,0.4,': ' + IntToStr(FFpsCount));
+  GDGUI.DefaultFont.Render(150,190-32,0.4,': ' + IntToStr(GDMap.TriangleCount()));
+  GDGUI.DefaultFont.Render(150,165-32,0.4,': ' + IntToStr(GDMap.ObjectCount()));
+  GDGUI.DefaultFont.Render(150,140-32,0.4,': ' + FFrameTimeSlice + ' ms' );;
+  GDGUI.DefaultFont.Render(150,115-32,0.4,': ' + IntToStr( Round(GDCamera.Position.X) ));
+  GDGUI.DefaultFont.Render(150,90-32,0.4,': ' + IntToStr( Round(GDCamera.Position.Y) ));
+  GDGUI.DefaultFont.Render(150,65-32,0.4,': ' + IntToStr( Round(GDCamera.Position.Z) ));
 
   glDisable(GL_BLEND);
 end;
