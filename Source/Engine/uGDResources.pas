@@ -16,6 +16,7 @@ uses
   uGDMaterial,
   uGDConstants,
   uGDSound,
+  uGDGUI,
   FGL;
 
 type
@@ -31,6 +32,7 @@ type
      function  LoadSoundBuffer(aFileName : String): TGDSoundBuffer;
      function  LoadSoundStream(aFileName : String): TGDSoundStream;
      procedure LoadMaterials(aFileName : String);
+     function  LoadFont(aFileName : String): TGDFont;
 
      procedure RemoveResource(var aResource : TGDResource);
      procedure Clear();
@@ -168,6 +170,21 @@ begin
     on E: Exception do
     begin
     end;
+  end;
+end;
+
+
+function  TGDResources.LoadFont(aFileName : String): TGDFont;
+var
+  iIdx : Integer;
+begin
+  iIdx := IndexOf(aFileName);
+  if iIdx >= 0 then
+    result := GetResource(iIdx) as TGDFont
+  else
+  begin
+    result := TGDFont.Create(aFileName);
+    AddResource(aFileName, result);
   end;
 end;
 

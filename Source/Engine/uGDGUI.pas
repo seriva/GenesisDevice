@@ -15,9 +15,31 @@ uses
   uGDTexture,
   uGDConstants,
   uGDWindow,
+  uGDResource,
   uGDTypes;
 
 type
+  TGDCharacterRect = Record
+    X1,Y1,X2,Y2, W, H : single;
+    class operator =(aC1, aC2: TGDCharacterRect) B: Boolean;
+  end;
+  TGDCharacterRectList = specialize TFPGList<TGDCharacterRect>;
+  TGDFont = class (TGDResource)
+  private
+    FSpaceWidth : Integer;
+    FCharacters : TGDCharacterRectList;
+    FTexture    : TGDTexture;
+    FColor      : TGDColor;
+  public
+    property Color : TGDColor read FColor write FColor;
+
+    constructor Create(aFileName : string);
+    destructor  Destroy(); override;
+    procedure   Render( aLeft, aTop, aScale : Double; aString : string);
+    function    TextWidth(const aString : String; const aScale : Single = 1): Integer;
+  end;
+
+
   TGDComponent = class
   private
     FDepth : Integer;
@@ -32,6 +54,7 @@ type
   end;
   TGDComponentList = specialize TFPGObjectList<TGDComponent>;
 
+
   TGDPanel = class (TGDComponent)
   private
     FWidth : Integer;
@@ -43,8 +66,10 @@ type
     procedure   Render();  override;
   end;
 
+
   TGDLabel = class (TGDComponent)
   private
+    FFont: TGDFont;
     FScale : Single;
     FText : String;
     FColor : TGDColor;
@@ -53,6 +78,7 @@ type
     destructor  Destroy(); override;
     procedure   Render();  override;
   end;
+
 
   TGDScreen = class
   private
@@ -66,27 +92,6 @@ type
     procedure   Render();
   end;
   TGDScreenList = specialize TFPGObjectList<TGDScreen>;
-
-  TGDCharacterRect = Record
-    X1,Y1,X2,Y2, W, H : single;
-
-    class operator =(aC1, aC2: TGDCharacterRect) B: Boolean;
-  end;
-  TGDCharacterRectList = specialize TFPGList<TGDCharacterRect>;
-  TGDFont = class
-  private
-    FSpaceWidth : Integer;
-    FCharacters : TGDCharacterRectList;
-    FTexture    : TGDTexture;
-    FColor      : TGDColor;
-  public
-    property Color : TGDColor read FColor write FColor;
-
-    constructor Create(aFileName : string);
-    destructor  Destroy(); override;
-    procedure   Render( aLeft, aTop, aScale : Double; aString : string);
-    function    TextWidth(const aString : String; const aScale : Single = 1): Integer;
-  end;
 
 
   TGDMouseCursor = class
@@ -170,8 +175,7 @@ procedure RenderFlatQuad(x, y, width, height : Integer; inside : boolean = true;
 implementation
 
 uses
-  uGDEngine,
-  uGDResource;
+  uGDEngine;
 
 
 procedure RenderTexturedQuad(x, y, width, height : Integer; u1 : Single=1; u2 : Single=0; v1 : Single=0; v2 : Single=1);
@@ -265,19 +269,21 @@ begin
   FText  := aLabel.Find('Text').AsString; 
   X      := Trunc(aLabel.Find('X').AsNumber);
   Y      := Trunc(aLabel.Find('Y').AsNumber); 
+  FFont  := GDResources.LoadFont(aLabel.Find('Font').AsString);
   FColor.Reset(aLabel.Find('Color'));
 end;
 
 destructor  TGDLabel.Destroy();
 begin
+  GDResources.RemoveResource(TGDResource(FFont));
    inherited;
 end;
 
 procedure   TGDLabel.Render();
 begin
   GDRenderer.RenderState( RS_TEXTS );
-  GDGUI.DefaultFont.Color := FColor.Copy();
-  GDGUI.DefaultFont.Render(X,Y,FScale,FText);
+  FFont.Color := FColor.Copy();
+  FFont.Render(X,Y,FScale,FText);
 end;
 
 constructor TGDScreen.Create(aFileName : String);
@@ -566,7 +572,7 @@ begin
   FFontColor.Reset(iSettings.Find('DefaultColors/Font'));
   FOutlineColor.Reset(iSettings.Find('DefaultColors/Outline'));
   FFillColor.Reset(iSettings.Find('DefaultColors/Fill'));
-  FDefaultFont   := TGDFont.Create(iSettings.Find('DefaultFont').AsString);
+  FDefaultFont   := GDResources.LoadFont(iSettings.Find('DefaultFont').AsString);
   FMouseCursor   := TGDMouseCursor.Create(iSettings.Find('Mouse/Texture').AsString, Trunc(iSettings.Find('Mouse/Size').AsNumber));
   FLoadingScreen := TGDLoadingScreen.Create(iSettings);
   FScreens       := TGDScreenList.Create();
@@ -578,7 +584,7 @@ end;
 
 destructor  TGDGUI.Destroy();
 begin
-  FreeAndNil(FDefaultFont);
+  GDResources.RemoveResource(TGDResource(FDefaultFont));
   FreeAndNil(FMouseCursor);
   FreeAndNil(FLoadingScreen);
   FreeAndNil(FScreens);

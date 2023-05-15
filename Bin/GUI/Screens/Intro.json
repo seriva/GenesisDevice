@@ -15,6 +15,7 @@
             "X": 400,
             "Y": 795,
             "Text": "Welcome to the Genesis Device Engine Demo",
+            "Font": "GUI/Fonts/game.json",
             "Scale": 0.45,
             "Color": [0,0,0,1]
         },
@@ -23,126 +24,142 @@
             "X": 400,
             "Y": 765,
             "Text": "This demo shows the following capabilities:",
+            "Font": "GUI/Fonts/game.json",
             "Scale": 0.45,
             "Color": [0,0,0,1]
         },
         {
             "Depth": 1,
-            "X": 430,
+            "X": 420,
             "Y": 735,
             "Text": "- Multilayered terrain",
+            "Font": "GUI/Fonts/game.json",
             "Scale": 0.45,
             "Color": [0,0,0,1]
         },
         {
             "Depth": 1,
-            "X": 430,
+            "X": 420,
             "Y": 705,
             "Text": "- Skydome with animated clouds",
+            "Font": "GUI/Fonts/game.json",
             "Scale": 0.45,
             "Color": [0,0,0,1]
         },
         {
             "Depth": 1,
-            "X": 430,
+            "X": 420,
             "Y": 675,
             "Text": "- Water with reflections, distortion and waves",
+            "Font": "GUI/Fonts/game.json",
             "Scale": 0.45,
             "Color": [0,0,0,1]
         },
         {
             "Depth": 1,
-            "X": 430,
+            "X": 420,
             "Y": 645,
-            "Text": "- Per vertex directional lighting with soft shadows",
+            "Text": "- Per-pixel lighting with soft shadows",
+            "Font": "GUI/Fonts/game.json",
             "Scale": 0.45,
             "Color": [0,0,0,1]
         },
         {
             "Depth": 1,
-            "X": 430,
+            "X": 420,
             "Y": 615,
             "Text": "- Foliage with animations",
+            "Font": "GUI/Fonts/game.json",
             "Scale": 0.45,
             "Color": [0,0,0,1]
         },
         {
             "Depth": 1,
-            "X": 430,
+            "X": 420,
             "Y": 585,
             "Text": "- SSAO and FXAA post processing effects",
+            "Font": "GUI/Fonts/game.json",
             "Scale": 0.45,
             "Color": [0,0,0,1]
         },
         {
             "Depth": 1,
-            "X": 430,
+            "X": 400,
             "Y": 555,
             "Text": "Some tips:",
+            "Font": "GUI/Fonts/game.json",
             "Scale": 0.45,
             "Color": [0,0,0,1]
         },
         {
             "Depth": 1,
-            "X": 430,
+            "X": 420,
             "Y": 525,
             "Text": "- WASD keys for movement",
+            "Font": "GUI/Fonts/game.json",
             "Scale": 0.45,
             "Color": [0,0,0,1]
         },
         {
             "Depth": 1,
-            "X": 430,
+            "X": 420,
             "Y": 495,
             "Text": "- SHIFT to run",
+            "Font": "GUI/Fonts/game.json",
             "Scale": 0.45,
             "Color": [0,0,0,1]
         },
         {
             "Depth": 1,
-            "X": 430,
+            "X": 420,
             "Y": 465,
             "Text": "- Mouse to look arround",
+            "Font": "GUI/Fonts/game.json",
             "Scale": 0.45,
             "Color": [0,0,0,1]
         },
         {
             "Depth": 1,
-            "X": 430,
+            "X": 420,
             "Y": 435,
             "Text": "- Tilde for console, type help for commands",
+            "Font": "GUI/Fonts/game.json",
             "Scale": 0.45,
             "Color": [0,0,0,1]
         },
         {
             "Depth": 1,
-            "X": 430,
+            "X": 420,
             "Y": 405,
             "Text": "- F1 to F5 toggle some debug functions",
+            "Font": "GUI/Fonts/game.json",
             "Scale": 0.45,
             "Color": [0,0,0,1]
         },
         {
             "Depth": 1,
-            "X": 430,
+            "X": 400,
             "Y": 375,
             "Text": "Visit for more information:",
+            "Font": "GUI/Fonts/game.json",
             "Scale": 0.45,
             "Color": [0,0,0,1]
         },
         {
             "Depth": 1,
-            "X": 430,
+            "X": 420,
             "Y": 345,
-            "Text": "www.luukvanvenrooij.nl",
+            "Text": "https://github.com/seriva/genesisdevice/",
+            "Font": "GUI/Fonts/game.json",
             "Scale": 0.45,
-            "Color": [0,0,0,1]
+            "Color": [0,0,1,1]
         },
         {
             "Depth": 1,
             "X": 650,
             "Y": 270,
-            "Text": "Press P to toggle",
+            "Text": "Press 'P' to toggle",
+            "Font": "GUI/Fonts/game.json",
             "Scale": 0.45,
             "Color": [0,0,0,1]
         }
