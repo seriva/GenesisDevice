@@ -1,5 +1,5 @@
 ## About
-A project started in early 2007 insprired by the Elder Scrolls: Oblivion and Skyrim. The goal is/was to create an engine with similar capabilities while in the process creating some basic gameplay elements. I revisit this project every so often adding new features or improving it for nostagic reasons;)
+A project started in early 2007 insprired by the Elder Scrolls: Oblivion and Skyrim. The goal is/was to create an engine with similar capabilities while in the process creating some basic gameplay elements. I revisit this project every so often adding new features or improving it for nostagic reasons;) 
 
 ## Features
 * Multi-platform using SDL supporting Linux/Windows
