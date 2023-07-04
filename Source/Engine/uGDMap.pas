@@ -155,7 +155,7 @@ begin
   for iI := 0 to iModels.Count-1 do
   begin
     iModel := iModels.Child(iI);
-    iMeshInput.Model         := iModel.Find('Model').AsString; 
+    iMeshInput.Model         := iModel.Find('Model').AsString;
     iMeshInput.ModelLOD1     := iModel.Find('ModelLOD1').AsString;
     iMeshInput.ModelLOD2     := iModel.Find('ModelLOD2').AsString;
     iMeshInput.Position.Reset(iModel.Find('Position'));
@@ -163,10 +163,10 @@ begin
     iMeshInput.Scale.Reset(iModel.Find('Scale'));
     iMeshInput.FadeDistance  := 0;
     iMeshInput.FadeScale     := 0;
-    iMeshInput.CastShadow    := iModel.Find('CastShadow').AsBoolean; 
+    iMeshInput.CastShadow    := iModel.Find('CastShadow').AsBoolean;
     iMeshInput.ReceiveShadow := iModel.Find('ReceiveShadow').AsBoolean;
-    FCellManager.AddMeshCell( TGDMeshCell.Create(iMeshInput)   );   
-  end; 
+    FCellManager.AddMeshCell( TGDMeshCell.Create(iMeshInput)   );
+  end;
   GDGUI.LoadingScreen.Update();
 
   GDTiming.Stop();

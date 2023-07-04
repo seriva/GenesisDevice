@@ -337,36 +337,22 @@ begin
       WriteOkFail(false, 'Command pointer nul!', false)
     else
     begin
-      case iCommand.CommandType of
-        CT_BOOLEAN   : begin
-                         if iCommandPara = '0' then
-                           iCommand.Bool^ := false
-                         else if iCommandPara = '1' then
-                           iCommand.Bool^ := true
-                         else
-                           WriteOkFail(false, 'Unknown Parameter!', false);
-                       end;
-        CT_INTEGER   : begin
-                         try
-                           iCommand.Int^ := StrToInt(iCommandPara);
-                         except
-                           WriteOkFail(false, 'Unknown Parameter!', false);
+      try
+        case iCommand.CommandType of
+          CT_BOOLEAN   : begin
+                          if iCommandPara = '0' then
+                            iCommand.Bool^ := false
+                          else if iCommandPara = '1' then
+                            iCommand.Bool^ := true
+                          else
+                            Raise Exception.Create('');
                          end;
-                       end;
-        CT_FLOAT     : begin
-                         try
-                           iCommand.Float^ := StrToFloat(iCommandPara);
-                         except
-                           WriteOkFail(false, 'Unknown Parameter!', false);
-                         end;
-                       end;
-        CT_FUNCTION  : begin
-                         try
-                           iCommand.Func();
-                         except
-                           WriteOkFail(false, 'Unknown Parameter!' ,false);
-                         end;
-                       end;
+          CT_INTEGER   : iCommand.Int^ := StrToInt(iCommandPara);
+          CT_FLOAT     : iCommand.Float^ := StrToFloat(iCommandPara);
+          CT_FUNCTION  : iCommand.Func();
+        end;
+      except
+        WriteOkFail(false, 'Unknown Parameter!' ,false);
       end;
     end;
   end

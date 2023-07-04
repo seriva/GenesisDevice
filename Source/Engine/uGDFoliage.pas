@@ -173,7 +173,7 @@ begin
     LayerType := LT_GRASS;
 
   iMap       := TGDBmp.Create(aNode.Find('Map').AsString);
-  Count      := Trunc(aNode.Find('Count').AsNumber); 
+  Count      := Trunc(aNode.Find('Count').AsNumber);
   LowerLimit := Trunc(aNode.Find('LowerLimit').AsNumber);
   UpperLimit := Trunc(aNode.Find('UpperLimit').AsNumber);
 
@@ -196,7 +196,7 @@ begin
     if LayerType = LT_MESH then
       LayerItems.Add(TGDMeshItem.Create(iLayerItems.Child(iX)))
     else
-      LayerItems.Add(TGDGrassItem.Create(iLayerItems.Child(iX)));    
+      LayerItems.Add(TGDGrassItem.Create(iLayerItems.Child(iX)));
   end;
 end;
 
@@ -253,7 +253,7 @@ begin
 
     iLayers := aNode.Find('Layers');
     for iX := 0 to iLayers.Count-1 do
-      FLayers.Add(TGDLayer.Create(iLayers.Child(iX))); 
+      FLayers.Add(TGDLayer.Create(iLayers.Child(iX)));
   except
     on E: Exception do
     begin
