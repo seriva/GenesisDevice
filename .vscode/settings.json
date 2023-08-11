@@ -1,0 +1,9 @@
+{
+
+    "fpctoolkit.env.PP": "C:\\fpcupdeluxe\\fpc\\bin\\x86_64-win64\\fpc.exe",
+    "fpctoolkit.searchPath": [
+        "C:\\fpcupdeluxe\\lazarus\\lcl\\units\\x86_64-win64",
+        "C:\\fpcupdeluxe\\lazarus\\components\\lazutils\\lib\\x86_64-win64",
+        "C:\\fpcupdeluxe\\lazarus\\lcl\\units\\x86_64-win64\\win32"
+    ]
+}
